@@ -1,0 +1,28 @@
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50">
+
+  <a routerLink="/accueil" routerLinkActive="text-[#0EA5A4]" class="flex flex-col items-center gap-1 text-slate-400 text-xs font-medium">
+    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11v10a1 1 0 01-1 1h-3m-6 0h6m-6 0v-6a1 1 0 011-1h4a1 1 0 011 1v6" />
+    </svg>
+    Accueil
+  </a>
+
+  <!-- Scanner : mis en avant au centre, icône QR-code -->
+  <a routerLink="/scandechet" routerLinkActive="ring-2 ring-[#0EA5A4]" class="flex items-center justify-center h-14 w-14 rounded-full bg-[#0EA5A4] text-white -translate-y-3 shadow-lg">
+    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z" />
+    </svg>
+  </a>
+
+  <a routerLink="/points-collecte" routerLinkActive="text-[#0EA5A4]" class="flex flex-col items-center gap-1 text-slate-400 text-xs font-medium">
+    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+      <circle cx="8" cy="12" r="5" />
+      <circle cx="16" cy="12" r="5" />
+    </svg>
+    Points
+  </a>
+
+</nav>
