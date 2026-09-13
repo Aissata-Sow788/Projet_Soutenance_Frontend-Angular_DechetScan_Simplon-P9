@@ -1,0 +1,1003 @@
+<!-- =========================================================
+     DECHETSCAN — ACCUEIL
+     Html + Tailwind CSS
+========================================================= -->
+
+<div class="min-h-screen w-full bg-[#f3f5f5] text-[#142337]">
+
+  <!-- =======================================================
+       HEADER
+  ======================================================== -->
+  <header class="w-full bg-[#f7f8fd]">
+
+    <div
+      class="mx-auto flex h-[72px] w-full max-w-[1200px] items-center justify-between px-5 sm:px-7 lg:px-10"
+    >
+
+      <!-- Logo -->
+      <img
+        src="assets/logo1-dechetscan.png"
+        alt="DechetScan"
+        class="h-[120px] w-auto object-contain"
+      />
+
+      <!-- Notification -->
+      <button
+        type="button"
+        aria-label="Notifications"
+        class="flex h-10 w-10 items-center justify-center"
+      >
+        <svg
+          class="h-[25px] w-[25px] text-[#4d575b]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+          />
+          <path d="M10 21h4" />
+        </svg>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =======================================================
+       CONTENU PRINCIPAL
+  ======================================================== -->
+  <main
+    class="mx-auto w-full max-w-[1200px] px-4 pb-12 sm:px-6 lg:px-10"
+  >
+
+    <!-- =====================================================
+         BADGES
+    ====================================================== -->
+    <section class="pt-3 sm:pt-5">
+
+      <div class="flex items-center justify-between gap-3">
+
+        <!-- Citoyenne -->
+        <div
+          class="flex items-center gap-2 rounded-full bg-[#dceafa] px-3.5 py-1.5"
+        >
+          <span
+            class="h-2.5 w-2.5 rounded-full bg-[#087e7a]"
+          ></span>
+
+          <span
+            class="text-[11px] font-bold tracking-[0.4px] text-[#087e7a] sm:text-xs"
+          >
+            CITOYENNE ENGAGÉE
+          </span>
+        </div>
+
+
+        <!-- Localisation -->
+        <div
+          class="flex items-center gap-1.5 rounded-full bg-[#c5f3e9] px-3.5 py-1.5"
+        >
+
+          <svg
+            class="h-[17px] w-[17px] text-[#087e7a]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
+            />
+            <circle cx="12" cy="10" r="2.5" />
+          </svg>
+
+          <span
+            class="text-[11px] font-bold text-[#087e7a] sm:text-xs"
+          >
+            Dakar, SN
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+    <section class="pt-4">
+
+      <h1
+        class="text-[34px] font-bold leading-[1.05] tracking-[-1.2px] sm:text-[40px] lg:text-[46px]"
+      >
+        Bonjour Aissata
+      </h1>
+
+      <h2
+        class="mt-1 text-[23px] font-semibold leading-tight tracking-[-0.5px] text-[#007d78] sm:text-[27px]"
+      >
+        Prête à faire un geste pour la planète ?
+      </h2>
+
+      <p
+        class="mt-2 max-w-[650px] text-[18px] leading-[1.48] text-[#20272c] sm:text-[19px]"
+      >
+        Scannez un déchet ou importez une image pour
+        connaître la catégorie de votre déchet et recevoir les
+        conseils de tri adaptés.
+      </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         ACTIONS
+    ====================================================== -->
+    <section class="mt-5 space-y-3">
+
+      <!-- Scanner -->
+      <button
+        type="button"
+        class="flex h-[66px] w-full items-center justify-center gap-3 rounded-[20px] bg-[#10aaa9] text-[18px] font-bold text-white shadow-[0_7px_18px_rgba(16,170,169,0.25)] transition active:scale-[0.99]"
+      >
+
+        <svg
+          class="h-[29px] w-[29px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <!-- caméra -->
+          <path d="M4 7.5h4l1.5-2h5L16 7.5h4v11H4z" />
+          <circle cx="12" cy="13" r="3.5" />
+        </svg>
+
+        <span>Scanner un déchet</span>
+
+      </button>
+
+
+      <!-- Historique -->
+      <button
+        type="button"
+        class="flex h-[66px] w-full items-center justify-center gap-3 rounded-[20px] bg-white text-[18px] font-bold text-[#142337] shadow-[0_4px_14px_rgba(20,40,60,0.07)]"
+      >
+
+        <svg
+          class="h-[27px] w-[27px] text-[#007d78]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 12a9 9 0 1 0 3-6.7" />
+          <path d="M3 5v5h5" />
+          <path d="M12 7v5l3 2" />
+        </svg>
+
+        <span>Voir mon historique</span>
+
+      </button>
+
+    </section>
+
+
+    <!-- =====================================================
+         IMPACT ÉCOLOGIQUE
+    ====================================================== -->
+    <section class="mt-9">
+
+      <div class="flex items-center justify-between">
+
+        <h2
+          class="text-[25px] font-semibold tracking-[-0.6px]"
+        >
+          Mon impact écologique
+        </h2>
+
+        <span
+          class="text-[13px] font-bold text-[#007d78]"
+        >
+          Ce mois-ci
+        </span>
+
+      </div>
+
+
+      <!-- Statistiques -->
+      <div class="mt-3 grid grid-cols-2 gap-3">
+
+        <!-- Déchets scannés -->
+        <article
+          class="min-h-[180px] rounded-[22px] bg-white p-4 shadow-[0_2px_8px_rgba(20,40,60,0.06)] sm:p-5"
+        >
+
+          <div
+            class="flex h-[55px] w-[55px] items-center justify-center rounded-[17px] bg-[#e4eeee]"
+          >
+
+            <svg
+              class="h-[29px] w-[29px] text-[#007d78]"
+              viewBox="0 0 32 32"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M16 4l4 7h-4l3 5" />
+              <path d="M22 11l6 3-4 7-3-5" />
+              <path d="M24 21h-8l2-4" />
+              <path d="M10 17l-4 7-4-7h5" />
+              <path d="M7 17l4-7" />
+              <path d="M11 10H3l4-7 4 7" />
+            </svg>
+
+          </div>
+
+          <div
+            class="mt-4 text-[25px] font-bold leading-none text-[#007d78]"
+          >
+            24
+          </div>
+
+          <p
+            class="mt-2 text-[15px] text-[#586266]"
+          >
+            Déchets scannés
+          </p>
+
+        </article>
+
+
+        <!-- Citoyen actifs -->
+        <article
+          class="min-h-[180px] rounded-[22px] bg-white p-4 shadow-[0_2px_8px_rgba(20,40,60,0.06)] sm:p-5"
+        >
+
+          <div
+            class="flex h-[55px] w-[55px] items-center justify-center rounded-[17px] bg-[#b9f2e9]"
+          >
+
+            <svg
+              class="h-[28px] w-[28px] text-[#007d78]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="9" cy="8" r="3" />
+              <path d="M3.5 19c0-3 2.2-5 5.5-5s5.5 2 5.5 5" />
+              <path d="M16 6.5a3 3 0 0 1 0 5.5" />
+              <path d="M17 14c2.3.4 3.5 2 3.5 4" />
+            </svg>
+
+          </div>
+
+          <div
+            class="mt-4 text-[25px] font-bold leading-none text-[#007d78]"
+          >
+            14.2k
+          </div>
+
+          <p
+            class="mt-2 text-[15px] text-[#586266]"
+          >
+            Citoyen actifs
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DERNIERS SCANS
+    ====================================================== -->
+    <section class="mt-12">
+
+      <div class="flex items-center justify-between">
+
+        <h2
+          class="text-[25px] font-semibold tracking-[-0.6px]"
+        >
+          Mes derniers scans
+        </h2>
+
+        <button
+          type="button"
+          class="flex items-center text-[13px] font-bold text-[#007d78]"
+        >
+          Voir tout
+
+          <svg
+            class="ml-0.5 h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="m9 5 7 7-7 7" />
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <!-- Scroll horizontal -->
+      <div
+        class="mt-3 -mr-4 flex gap-3 overflow-x-auto pb-2 pr-4 scrollbar-hide sm:-mr-6 sm:pr-6 lg:mr-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:pr-0"
+      >
+
+        <!-- =================================================
+             SCAN 1
+        ================================================== -->
+        <article
+          class="w-[350px] min-w-[350px] rounded-[22px] bg-white p-4 shadow-[0_2px_8px_rgba(20,40,60,0.06)] sm:w-[370px] sm:min-w-[370px] lg:w-auto lg:min-w-0"
+        >
+
+          <!-- Image -->
+          <div
+            class="relative h-[153px] overflow-hidden rounded-[16px] bg-[#dce9fb]"
+          >
+
+            <!-- Remplace par l'image réelle -->
+            <img
+              src="assets/bouteille-eau.png"
+              alt="Bouteille d'eau"
+              class="h-full w-full object-cover"
+            />
+
+            <!-- Badge plastique -->
+            <span
+              class="absolute right-2.5 top-2.5 rounded-[8px] bg-[#536174] px-2.5 py-1 text-[11px] font-bold text-white"
+            >
+              Plastique
+            </span>
+
+          </div>
+
+
+          <h3
+            class="mt-3 text-[18px] font-bold"
+          >
+            Bouteille d'eau
+          </h3>
+
+          <p
+            class="mt-0.5 text-[15px] text-[#596367]"
+          >
+            Aujourd'hui — 10:32
+          </p>
+
+
+          <div class="mt-5 flex items-center justify-between">
+
+            <span
+              class="rounded-full bg-[#aaf0e2] px-3 py-1.5 text-[11px] font-bold text-[#087e79]"
+            >
+              <span class="mr-1">●</span>
+              Bac Jaune
+            </span>
+
+
+            <button
+              type="button"
+              aria-label="Voir le scan"
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-[#edf4ff]"
+            >
+
+              <svg
+                class="h-5 w-5 text-[#526273]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="m13 6 6 6-6 6" />
+              </svg>
+
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- =================================================
+             SCAN 2
+        ================================================== -->
+        <article
+          class="w-[350px] min-w-[350px] rounded-[22px] bg-white p-4 shadow-[0_2px_8px_rgba(20,40,60,0.06)] sm:w-[370px] sm:min-w-[370px] lg:w-auto lg:min-w-0"
+        >
+
+          <div
+            class="relative h-[153px] overflow-hidden rounded-[16px] bg-[#d2e1f8]"
+          >
+
+            <img
+              src="assets/canette.png"
+              alt="Canette métal"
+              class="h-full w-full object-cover"
+            />
+
+            <span
+              class="absolute right-2.5 top-2.5 rounded-[8px] bg-[#536174] px-2.5 py-1 text-[11px] font-bold text-white"
+            >
+              Métal
+            </span>
+
+          </div>
+
+
+          <h3
+            class="mt-3 text-[18px] font-bold"
+          >
+            Canette métal
+          </h3>
+
+          <p
+            class="mt-0.5 text-[15px] text-[#596367]"
+          >
+            Hier — 16:45
+          </p>
+
+
+          <div class="mt-5 flex items-center justify-between">
+
+            <span
+              class="rounded-full bg-[#aaf0e2] px-3 py-1.5 text-[11px] font-bold text-[#087e79]"
+            >
+              <span class="mr-1">●</span>
+              Bac Métal
+            </span>
+
+
+            <button
+              type="button"
+              aria-label="Voir le scan"
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-[#edf4ff]"
+            >
+
+              <svg
+                class="h-5 w-5 text-[#526273]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M5 12h14" />
+                <path d="m13 6 6 6-6 6" />
+              </svg>
+
+            </button>
+
+          </div>
+
+        </article>
+
+
+        <!-- =================================================
+             SCAN 3
+        ================================================== -->
+        <article
+          class="w-[350px] min-w-[350px] rounded-[22px] bg-white p-4 shadow-[0_2px_8px_rgba(20,40,60,0.06)] sm:w-[370px] sm:min-w-[370px] lg:w-auto lg:min-w-0"
+        >
+
+          <div
+            class="relative h-[153px] overflow-hidden rounded-[16px] bg-[#dce9fb]"
+          >
+
+            <img
+              src="assets/carton.png"
+              alt="Carton"
+              class="h-full w-full object-cover"
+            />
+
+            <span
+              class="absolute right-2.5 top-2.5 rounded-[8px] bg-[#536174] px-2.5 py-1 text-[11px] font-bold text-white"
+            >
+              Carton
+            </span>
+
+          </div>
+
+
+          <h3
+            class="mt-3 text-[18px] font-bold"
+          >
+            Boîte en carton
+          </h3>
+
+          <p
+            class="mt-0.5 text-[15px] text-[#596367]"
+          >
+            Lundi — 14:20
+          </p>
+
+
+          <div class="mt-5 flex items-center justify-between">
+
+            <span
+              class="rounded-full bg-[#aaf0e2] px-3 py-1.5 text-[11px] font-bold text-[#087e79]"
+            >
+              <span class="mr-1">●</span>
+              Bac Jaune
+            </span>
+
+
+            <button
+              type="button"
+              aria-label="Voir le scan"
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-[#edf4ff]"
+            >
+
+              <svg
+                class="h-5 w-5 text-[#526273]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M5 12h14" />
+                <path d="m13 6 6 6-6 6" />
+              </svg>
+
+            </button>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CONSEIL DU JOUR
+    ====================================================== -->
+    <section
+      class="mt-10 rounded-[27px] bg-[#c7e2e2] p-5 sm:p-6"
+    >
+
+      <div class="flex gap-3">
+
+        <!-- Icône ampoule -->
+        <div
+          class="flex h-[55px] w-[55px] shrink-0 items-center justify-center rounded-[17px] bg-[#9deee2]"
+        >
+
+          <svg
+            class="h-[28px] w-[28px] text-[#007d78]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M9 18h6"
+            />
+            <path
+              d="M10 21h4"
+            />
+            <path
+              d="M8.5 14.5A6 6 0 1 1 15.5 14c-.8.7-1.5 1.7-1.5 3H10c0-1.3-.7-2.3-1.5-2.5Z"
+            />
+          </svg>
+
+        </div>
+
+
+        <div class="min-w-0 flex-1">
+
+          <div class="flex items-center justify-between gap-3">
+
+            <span
+              class="text-[14px] font-bold tracking-[0.7px] text-[#007d78]"
+            >
+              CONSEIL DU JOUR
+            </span>
+
+            <span
+              class="hidden text-[12px] font-bold text-[#4c595c] sm:block"
+            >
+              Astuce Dakar Propre
+            </span>
+
+          </div>
+
+
+          <p
+            class="mt-1 text-[18px] font-medium leading-[1.35] text-[#142337]"
+          >
+            « Pensez à vider et rincer légèrement les
+            bouteilles avant de les déposer dans un
+            point de collecte adapté. »
+          </p>
+
+
+          <button
+            type="button"
+            class="mt-3 flex items-center gap-2 text-[15px] font-bold text-[#007d78]"
+          >
+            Découvrir d'autres conseils
+
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         POINTS DE COLLECTE PROCHES
+    ====================================================== -->
+    <section class="mt-10">
+
+      <div class="flex items-start justify-between gap-4">
+
+        <h2
+          class="max-w-[350px] text-[25px] font-semibold leading-[1.25] tracking-[-0.6px]"
+        >
+          Points de collecte proches de vous
+        </h2>
+
+        <div
+          class="pt-1 text-right text-[13px] font-bold leading-tight text-[#007d78]"
+        >
+          Dakar<br />
+          Centre
+        </div>
+
+      </div>
+
+
+      <div class="mt-5 space-y-2.5">
+
+        <!-- Point Plateau -->
+        <article
+          class="flex min-h-[80px] items-center gap-3 rounded-[20px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(20,40,60,0.06)]"
+        >
+
+          <!-- Icône -->
+          <div
+            class="flex h-[49px] w-[49px] shrink-0 items-center justify-center rounded-[15px] bg-[#e6f0f1]"
+          >
+
+            <svg
+              class="h-6 w-6 text-[#007d78]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="m15.5 8.5-2.7 5.3-5.3 2.7 2.7-5.3z" />
+            </svg>
+
+          </div>
+
+
+          <div class="min-w-0 flex-1">
+
+            <h3
+              class="truncate text-[16px] font-bold"
+            >
+              Point de collecte — Plateau
+            </h3>
+
+            <p
+              class="truncate text-[14px] text-[#536064]"
+            >
+              Distance : 1,2 km • Ouvert jusqu'à 19h
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="shrink-0 rounded-full bg-[#aaf0e2] px-4 py-2 text-[12px] font-bold text-[#087e79]"
+          >
+            Itinéraire
+          </button>
+
+        </article>
+
+
+        <!-- Point Médina -->
+        <article
+          class="flex min-h-[80px] items-center gap-3 rounded-[20px] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(20,40,60,0.06)]"
+        >
+
+          <!-- Icône recyclage -->
+          <div
+            class="flex h-[49px] w-[49px] shrink-0 items-center justify-center rounded-[15px] bg-[#b8f2e8]"
+          >
+
+            <svg
+              class="h-7 w-7 text-[#007d78]"
+              viewBox="0 0 32 32"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M16 4l4 7h-4l3 5" />
+              <path d="M22 11l6 3-4 7-3-5" />
+              <path d="M24 21h-8l2-4" />
+              <path d="M10 17l-4 7-4-7h5" />
+              <path d="M7 17l4-7" />
+              <path d="M11 10H3l4-7 4 7" />
+            </svg>
+
+          </div>
+
+
+          <div class="min-w-0 flex-1">
+
+            <h3
+              class="truncate text-[16px] font-bold"
+            >
+              Point de collecte — Médina
+            </h3>
+
+            <p
+              class="truncate text-[14px] text-[#536064]"
+            >
+              Distance : 2,4 km • Bac plastique & verre
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="shrink-0 rounded-full bg-[#d8e5f8] px-4 py-2 text-[12px] font-bold text-[#3d536c]"
+          >
+            Itinéraire
+          </button>
+
+        </article>
+
+      </div>
+
+
+      <!-- Voir tous les points -->
+      <button
+        type="button"
+        class="mt-10 mb-20 flex h-[57px] w-full items-center justify-center gap-2 rounded-[19px] bg-[#e2ecfa] text-[15px] font-bold text-[#007d78]"
+      >
+
+        <svg
+          class="h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" />
+          <path d="M9 4v14" />
+          <path d="M15 6v14" />
+        </svg>
+
+        <span>
+          Voir tous les points sur la carte
+        </span>
+
+      </button>
+
+    </section>
+
+  </main>
+
+</div>
+
+<!-- =====================================================
+     NAVIGATION BASSE — COMPACTE
+====================================================== -->
+<nav
+  class="fixed bottom-0 left-0 z-50 w-full bg-white"
+  style="box-shadow: 0 -5px 20px rgba(20, 40, 60, 0.10);"
+>
+  <div
+    class="relative mx-auto flex h-[68px] w-full max-w-[1200px] items-end justify-around px-2 pb-2"
+  >
+
+    <!-- ACCUEIL -->
+    <button
+      type="button"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#007d78]"
+    >
+      <svg
+        class="h-[24px] w-[24px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3.5 10.5L12 3.5l8.5 7" />
+        <path d="M5.5 9.5V20h13V9.5" />
+        <path d="M9.5 20v-6h5v6" />
+      </svg>
+
+      <span class="text-[12px] font-bold">
+        Accueil
+      </span>
+    </button>
+
+
+    <!-- HISTORIQUE -->
+    <button
+      type="button"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
+    >
+      <svg
+        class="h-[25px] w-[25px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 12a9 9 0 1 0 3-6.7" />
+        <path d="M3 5v5h5" />
+        <path d="M12 7v5l3 2" />
+      </svg>
+
+      <span class="text-[12px] font-bold">
+        Historique
+      </span>
+    </button>
+
+
+    <!-- SCANNER CENTRAL -->
+    <button
+      type="button"
+      class="relative flex w-1/5 flex-col items-center text-[#414b4e]"
+    >
+
+      <!-- Cercle extérieur -->
+      <div
+        class="absolute -top-[43px] flex h-[84px] w-[84px] items-center justify-center rounded-full bg-white"
+        style="box-shadow: 0 5px 18px rgba(20, 40, 60, 0.14);"
+      >
+
+        <!-- Cercle turquoise -->
+        <div
+          class="flex h-[70px] w-[70px] items-center justify-center rounded-full bg-[#0eaaa9]"
+        >
+
+          <!-- QR -->
+          <svg
+            class="h-[32px] w-[32px] text-white"
+            viewBox="0 0 32 32"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="square"
+          >
+            <path d="M5 11V6h5" />
+            <path d="M21 6h5v5" />
+            <path d="M5 21v5h5" />
+            <path d="M26 21v5h-5" />
+
+            <rect x="8" y="8" width="6" height="6" />
+            <rect x="18" y="8" width="6" height="6" />
+            <rect x="8" y="18" width="6" height="6" />
+
+            <path d="M18 18h3v3h-3z" />
+            <path d="M23 21h3" />
+            <path d="M18 24h3" />
+            <path d="M24 24v2" />
+          </svg>
+
+        </div>
+
+      </div>
+
+      <!-- espace du bouton central -->
+      <div class="h-[36px]"></div>
+
+      <span class="text-[12px] font-bold">
+        Scanner
+      </span>
+
+    </button>
+
+
+    <!-- POINTS -->
+    <button
+      type="button"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
+    >
+      <svg
+        class="h-[25px] w-[25px]"
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+      >
+        <circle cx="12" cy="16" r="9" />
+        <circle cx="20" cy="16" r="9" />
+      </svg>
+
+      <span class="text-[12px] font-bold">
+        Points
+      </span>
+    </button>
+
+
+    <!-- PROFIL -->
+    <button
+      type="button"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
+    >
+      <svg
+        class="h-[25px] w-[25px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="9" r="3" />
+        <path d="M6.5 18c1.3-2.4 3.1-3.5 5.5-3.5s4.2 1.1 5.5 3.5" />
+      </svg>
+
+      <span class="text-[12px] font-bold">
+        Profil
+      </span>
+    </button>
+
+  </div>
+</nav>
