@@ -1,1 +1,530 @@
-<p>types-dechets works!</p>
+<!-- ============================================================
+     CONTENU DE LA PAGE
+     ============================================================ -->
+
+<!--
+  Conteneur du contenu uniquement.
+  Aucun changement sur le SidebarAdmin ou le HeaderAdmin.
+  Les marges internes donnent de l'espace autour de la page.
+-->
+<div class="w-full px-6 py-6 pb-24">
+
+  <!-- ============================================================
+       INFORMATIONS DE SYNCHRONISATION
+       ============================================================ -->
+
+  <!-- Affiche le nombre réel de catégories récupérées depuis Django. -->
+  <div class="mb-3 flex items-center gap-2 text-[11px] text-[#59646d]">
+
+    <!-- Petit indicateur vert. -->
+    <span class="h-1.5 w-1.5 rounded-full bg-[#0aa6a4]"></span>
+
+    <!-- Nombre réel de catégories. -->
+    <span>
+      {{ typesDechets().length }} catégories synchronisées
+    </span>
+
+  </div>
+
+
+  <!-- ============================================================
+       EN-TÊTE DE LA PAGE
+       ============================================================ -->
+
+  <!-- Contient le titre et le bouton d'ajout. -->
+  <div
+    class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between"
+  >
+
+    <!-- Bloc contenant le titre et la description. -->
+    <div>
+
+      <!-- Titre principal. -->
+      <h1
+        class="text-[26px] font-bold leading-tight tracking-[-0.6px] text-[#142337]"
+      >
+        Référentiel des déchets
+      </h1>
+
+      <!-- Description de la page. -->
+      <p
+        class="mt-1.5 max-w-[620px] text-[13px] leading-[1.5] text-[#53606b]"
+      >
+        Gérez les types de déchets et leurs conseils de tri pour guider
+        les algorithmes de reconnaissance visuelle DechetScan.
+      </p>
+
+    </div>
+
+
+    <!-- Bouton d'ajout. -->
+    <button
+      type="button"
+      (click)="ajouterType()"
+      class="flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-[11px] bg-[#0aa6a4] px-5 text-[12px] font-semibold text-white shadow-[0_4px_10px_rgba(10,166,164,0.16)] transition hover:bg-[#07938f]"
+    >
+
+      <!-- Icône plus. -->
+      <svg
+        class="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+
+        <!-- Ligne verticale. -->
+        <path d="M12 5v14"></path>
+
+        <!-- Ligne horizontale. -->
+        <path d="M5 12h14"></path>
+
+      </svg>
+
+      <!-- Texte du bouton. -->
+      <span>
+        Ajouter un type
+      </span>
+
+    </button>
+
+  </div>
+
+
+  <!-- ============================================================
+       RECHERCHE ET PRÉCISION IA
+       ============================================================ -->
+
+  <!-- Ligne contenant la recherche et la précision IA. -->
+  <div
+    class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"
+  >
+
+    <!-- Barre de recherche. -->
+    <div
+      class="flex h-[42px] w-full max-w-[620px] items-center rounded-[11px] bg-white px-3.5 shadow-[0_2px_8px_rgba(20,35,55,0.035)]"
+    >
+
+      <!-- Icône de recherche. -->
+      <svg
+        class="mr-2.5 h-4 w-4 shrink-0 text-[#506077]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+
+        <!-- Cercle de recherche. -->
+        <circle
+          cx="11"
+          cy="11"
+          r="7"
+        ></circle>
+
+        <!-- Manche de la loupe. -->
+        <path d="m20 20-4-4"></path>
+
+      </svg>
+
+
+      <!-- Champ relié au signal recherche. -->
+      <input
+        type="text"
+        [ngModel]="recherche()"
+        (ngModelChange)="recherche.set($event)"
+        placeholder="Rechercher par nom ou consigne..."
+        class="min-w-0 flex-1 bg-transparent text-[12px] text-[#25334a] outline-none placeholder:text-[#7b858c]"
+      />
+
+
+      <!-- Raccourci clavier. -->
+      <span
+        class="ml-2 rounded-full bg-[#edf2fb] px-2 py-1 text-[9px] font-semibold text-[#65738a]"
+      >
+        ⌘ K
+      </span>
+
+    </div>
+
+
+    <!-- Indicateur de précision IA. -->
+    <div
+      class="flex h-[34px] items-center justify-center self-start rounded-full bg-white px-4 text-[10px] text-[#4d5960] shadow-[0_2px_8px_rgba(20,35,55,0.03)] lg:self-auto"
+    >
+
+      <!-- Icône IA. -->
+      <svg
+        class="mr-2 h-4 w-4 text-[#008f8a]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+
+        <!-- Forme de l'ampoule. -->
+        <path
+          d="M9 18h6M10 21h4M8.5 14.5C7.55 13.65 7 12.4 7 11a5 5 0 0 1 10 0c0 1.4-.55 2.65-1.5 3.5-.6.55-1 1.2-1 2.5h-5c0-1.3-.4-1.95-1-2.5Z"
+        ></path>
+
+      </svg>
+
+      <!-- Texte de précision. -->
+      <span>
+        Précision IA :
+        <strong class="text-[#142337]">
+          98.4%
+        </strong>
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       CHARGEMENT
+       ============================================================ -->
+
+  <!-- Message affiché pendant le chargement. -->
+  <div
+    *ngIf="chargement()"
+    class="rounded-[14px] bg-white px-5 py-10 text-center text-[12px] text-[#69747d]"
+  >
+    Chargement du référentiel...
+  </div>
+
+
+  <!-- ============================================================
+       MESSAGE D'ERREUR
+       ============================================================ -->
+
+  <!-- Affiche l'erreur uniquement lorsqu'elle existe. -->
+  <div
+    *ngIf="!chargement() && erreur()"
+    class="mb-5 rounded-[11px] border border-red-100 bg-red-50 px-4 py-3 text-[12px] text-red-600"
+  >
+    {{ erreur() }}
+  </div>
+
+
+  <!-- ============================================================
+       GRILLE DES TYPES DE DÉCHETS
+       ============================================================ -->
+
+  <!--
+    1 colonne sur petit écran.
+    2 colonnes sur écran moyen.
+    3 colonnes sur grand écran.
+  -->
+  <div
+    *ngIf="!chargement()"
+    class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+  >
+
+    <!-- Parcourt le computed typesFiltres. -->
+    @for (type of typesFiltres; track type.idTypeDechet) {
+
+      <!-- ========================================================
+           CARTE D'UN TYPE DE DÉCHET
+           ======================================================== -->
+
+      <article
+        class="flex min-h-[270px] flex-col rounded-[14px] bg-white p-5 shadow-[0_2px_7px_rgba(20,35,55,0.035)]"
+      >
+
+        <!-- En-tête de la carte. -->
+        <div
+          class="flex items-start justify-between gap-3"
+        >
+
+          <!-- Partie gauche de l'en-tête. -->
+          <div
+            class="flex min-w-0 items-start gap-3"
+          >
+
+            <!-- Conteneur de l'icône. -->
+            <div
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]"
+              [ngClass]="getPresentation(type).iconClass"
+            >
+
+              <!-- Icône du type de déchet. -->
+              <svg
+                class="h-[19px] w-[19px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+
+                <!-- Conteneur. -->
+                <path d="M5 7h14l-1 13H6L5 7Z"></path>
+
+                <!-- Partie supérieure. -->
+                <path d="M9 7V4h6v3"></path>
+
+                <!-- Ligne centrale. -->
+                <path d="M8 10h8"></path>
+
+                <!-- Lignes intérieures. -->
+                <path d="M10 13v4M14 13v4"></path>
+
+              </svg>
+
+            </div>
+
+
+            <!-- Nom et badge. -->
+            <div class="min-w-0">
+
+              <!-- Badge de présentation. -->
+              <span
+                class="inline-flex max-w-full rounded-full px-2.5 py-1 text-[9px] font-bold"
+                [ngClass]="getPresentation(type).badgeClass"
+              >
+                {{ getPresentation(type).badge }}
+              </span>
+
+              <!-- Nom provenant de Django. -->
+              <h2
+                class="mt-1 truncate text-[16px] font-semibold leading-tight text-[#142337]"
+              >
+                {{ type.nom }}
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <!-- Date visuelle de la maquette. -->
+          <span
+            class="shrink-0 rounded-full bg-[#edf3fb] px-2.5 py-1 text-[9px] font-semibold text-[#687681]"
+          >
+            08/09/2026
+          </span>
+
+        </div>
+
+
+        <!-- Description provenant de Django. -->
+        <p
+          class="mt-4 text-[11px] leading-[1.55] text-[#43505e]"
+        >
+          {{ type.description }}
+        </p>
+
+
+        <!-- ======================================================
+             CONSEIL DE TRI
+             ====================================================== -->
+
+        <!-- Bloc de conseil associé au type. -->
+        <div
+          class="mt-4 rounded-[10px] bg-[#f0f5fd] px-3.5 py-3"
+        >
+
+          <!-- Titre de la consigne. -->
+          <div
+            class="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.3px] text-[#007e7a]"
+          >
+
+            <!-- Icône ampoule. -->
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <!-- Forme de l'ampoule. -->
+              <path
+                d="M9 18h6M10 21h4M8.5 14.5C7.55 13.65 7 12.4 7 11a5 5 0 0 1 10 0c0 1.4-.55 2.65-1.5 3.5-.6.55-1 1.2-1 2.5h-5c0-1.3-.4-1.95-1-2.5Z"
+              ></path>
+
+            </svg>
+
+            <!-- Texte du titre. -->
+            <span>
+              Consigne directe
+            </span>
+
+          </div>
+
+
+          <!-- Conseil provenant de Django. -->
+          <p
+            class="mt-1.5 text-[11px] leading-[1.55] text-[#25334a]"
+          >
+            {{ type.conseil?.consigne || 'Aucune consigne disponible.' }}
+          </p>
+
+        </div>
+
+
+        <!-- ======================================================
+             ACTIONS
+             ====================================================== -->
+
+        <!-- Boutons d'action alignés en bas de la carte. -->
+        <div
+          class="mt-auto flex items-center justify-end gap-4 pt-4"
+        >
+
+          <!-- Bouton modifier. -->
+          <button
+            type="button"
+            (click)="modifier(type)"
+            class="text-[#3e4a4c] transition hover:text-[#008f8a]"
+            aria-label="Modifier"
+          >
+
+            <!-- Icône crayon. -->
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <!-- Corps du crayon. -->
+              <path
+                d="m4 20 4.2-1 10.9-10.9a2.1 2.1 0 0 0-3-3L5.2 16 4 20Z"
+              ></path>
+
+              <!-- Ligne du crayon. -->
+              <path d="m14.8 6.2 3 3"></path>
+
+            </svg>
+
+          </button>
+
+
+          <!-- Bouton supprimer. -->
+          <button
+            type="button"
+            (click)="supprimer(type)"
+            class="text-[#3e4a4c] transition hover:text-red-500"
+            aria-label="Supprimer"
+          >
+
+            <!-- Icône poubelle. -->
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+
+              <!-- Couvercle. -->
+              <path d="M4 7h16"></path>
+
+              <!-- Manche. -->
+              <path d="M9 7V4h6v3"></path>
+
+              <!-- Corps. -->
+              <path d="M6 7l1 14h10l1-14"></path>
+
+              <!-- Traits intérieurs. -->
+              <path d="M10 11v6M14 11v6"></path>
+
+            </svg>
+
+          </button>
+
+        </div>
+
+      </article>
+
+    }
+
+
+    <!-- ========================================================
+         AUCUN RÉSULTAT
+         ======================================================== -->
+
+    <!-- Affiché lorsque la recherche ne donne aucun résultat. -->
+    @if (typesFiltres.length === 0) {
+
+      <!-- Message aucun résultat. -->
+      <div
+        class="col-span-full rounded-[14px] bg-white px-5 py-10 text-center text-[12px] text-[#69747d]"
+      >
+        Aucun type de déchet trouvé.
+      </div>
+
+    }
+
+  </div>
+
+
+  <!-- ============================================================
+       SYNCHRONISATION MOBILE
+       ============================================================ -->
+
+  <!--
+    Bloc inférieur.
+    mt-7 crée un espace avec les cartes.
+    mb-6 ajoute une marge supplémentaire avant la fin du contenu.
+  -->
+  <section
+    class="mt-7 mb-6 flex items-center gap-4 rounded-[14px] bg-[#edf4ff] px-5 py-4"
+  >
+
+    <!-- Icône de synchronisation. -->
+    <div
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#0aa6a4] text-white"
+    >
+
+      <!-- SVG de synchronisation. -->
+      <svg
+        class="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+      >
+
+        <!-- Première flèche circulaire. -->
+        <path d="M20 11a8 8 0 0 0-14-5L4 8"></path>
+
+        <!-- Première pointe. -->
+        <path d="M4 4v4h4"></path>
+
+        <!-- Deuxième flèche circulaire. -->
+        <path d="M4 13a8 8 0 0 0 14 5l2-2"></path>
+
+        <!-- Deuxième pointe. -->
+        <path d="M20 20v-4h-4"></path>
+
+      </svg>
+
+    </div>
+
+
+    <!-- Texte de synchronisation. -->
+    <div class="min-w-0">
+
+      <!-- Titre. -->
+      <h3
+        class="text-[13px] font-semibold text-[#142337]"
+      >
+        Synchronisation avec DechetScan Mobile
+      </h3>
+
+      <!-- Description. -->
+      <p
+        class="mt-1 text-[14px] leading-[1.5] text-[#53606b] w-150"
+      >
+        Toute modification ou ajout de conseil de tri s'applique en temps réel sur les terminaux des éco-
+        citoyens à Dakar lors de la numérisation optique.
+      </p>
+
+    </div>
+
+  </section>
+
+</div>
