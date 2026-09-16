@@ -1,1 +1,467 @@
-<p>points-collecte works!</p>
+<!--
+  Page administrateur des points de collecte.
+  Les données sont récupérées depuis PointCollecteService.
+-->
+
+<section class="min-h-[calc(100vh-60px)] bg-[#F3F3F3] px-7 py-5">
+
+  <!-- ====================================================== -->
+  <!-- EN-TÊTE DE LA PAGE -->
+  <!-- ====================================================== -->
+
+  <div class="flex items-start justify-between">
+
+    <!-- Informations de la page -->
+    <div>
+
+      <!-- Petit indicateur -->
+      <div class="mb-1 flex items-center gap-2">
+
+        <span class="h-2 w-2 rounded-full bg-[#0EA5A4]"></span>
+
+        <span class="text-[9px] font-extrabold uppercase tracking-[0.12em] text-[#087C78]">
+          Infrastructures géolocalisées
+        </span>
+
+      </div>
+
+      <!-- Titre -->
+      <h1 class="text-[28px] font-extrabold leading-tight tracking-[-0.8px] text-[#142337]">
+        Points de collecte
+      </h1>
+
+      <!-- Description -->
+      <p class="mt-1 max-w-[540px] text-[12px] leading-[1.45] text-slate-600">
+        Gérez les points de collecte disponibles pour les citoyens et le réseau
+        de tri intelligent.
+      </p>
+
+    </div>
+
+
+    <!-- Bouton ajout -->
+    <button
+      type="button"
+      class="mt-10 flex h-[42px] items-center gap-2 rounded-xl bg-[#0EA5A4] px-5 text-[12px] font-extrabold text-white shadow-[0_6px_18px_rgba(14,165,164,0.25)] transition hover:bg-[#0B9695]"
+    >
+
+      <!-- Icône plus -->
+      <svg
+        class="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </svg>
+
+      Ajouter un point de collecte
+
+    </button>
+
+  </div>
+
+
+  <!-- ====================================================== -->
+  <!-- BARRE DE RECHERCHE ET FILTRES -->
+  <!-- ====================================================== -->
+
+  <div class="mt-7 flex h-[66px] items-center gap-2 rounded-2xl bg-white px-4 shadow-sm">
+
+    <!-- Recherche -->
+    <div class="relative flex-1">
+
+      <!-- Icône recherche -->
+      <svg
+        class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-600"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </svg>
+
+      <!-- Champ -->
+      <input
+        type="text"
+        placeholder="Rechercher par nom, rue ou quartier..."
+        (input)="rechercher($event)"
+        class="h-[36px] w-full rounded-xl bg-[#EEF4FF] pl-10 pr-3 text-[11px] text-[#142337] outline-none placeholder:text-slate-500"
+      />
+
+    </div>
+
+
+    <!-- Filtre Tous -->
+    <button
+      type="button"
+      (click)="changerQuartier('Tous')"
+      [class.bg-[#0EA5A4]]="filtreQuartier() === 'Tous'"
+      [class.text-white]="filtreQuartier() === 'Tous'"
+      class="h-[30px] rounded-full bg-[#0EA5A4] px-4 text-[10px] font-extrabold text-slate-600"
+    >
+      Tous ({{ points().length }})
+    </button>
+
+
+    <!-- Filtre Plateau -->
+    <button
+      type="button"
+      (click)="changerQuartier('Plateau')"
+      [class.bg-[#0EA5A4]]="filtreQuartier() === 'Plateau'"
+      [class.text-white]="filtreQuartier() === 'Plateau'"
+      class="h-[30px] rounded-full bg-[#EEF4FF] px-4 text-[10px] font-extrabold text-slate-600"
+    >
+      Plateau
+    </button>
+
+
+    <!-- Filtre Almadies -->
+    <button
+      type="button"
+      (click)="changerQuartier('Almadies')"
+      [class.bg-[#0EA5A4]]="filtreQuartier() === 'Almadies'"
+      [class.text-white]="filtreQuartier() === 'Almadies'"
+      class="h-[30px] rounded-full bg-[#EEF4FF] px-4 text-[10px] font-extrabold text-slate-600"
+    >
+      Almadies
+    </button>
+
+
+    <!-- Filtre Grand Dakar -->
+    <button
+      type="button"
+      (click)="changerQuartier('Grand Dakar')"
+      [class.bg-[#0EA5A4]]="filtreQuartier() === 'Grand Dakar'"
+      [class.text-white]="filtreQuartier() === 'Grand Dakar'"
+      class="h-[30px] rounded-full bg-[#EEF4FF] px-4 text-[10px] font-extrabold text-slate-600"
+    >
+      Grand Dakar
+    </button>
+
+  </div>
+
+
+  <!-- ====================================================== -->
+  <!-- CHARGEMENT -->
+  <!-- ====================================================== -->
+
+  @if (chargement()) {
+
+    <div class="flex h-[250px] items-center justify-center">
+
+      <div class="flex items-center gap-2 text-[12px] text-slate-500">
+
+        <!-- Spinner -->
+        <span class="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+
+        Chargement des points...
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- ====================================================== -->
+  <!-- CARTES DES POINTS -->
+  <!-- ====================================================== -->
+
+  @if (!chargement()) {
+
+    <div class="mt-7 grid grid-cols-4 gap-5">
+
+      @for (point of pointsFiltres(); track point.idPoint) {
+
+        <article
+          class="relative min-h-[312px] rounded-2xl bg-white px-5 py-5 shadow-sm"
+        >
+
+          <!-- Zone + statut -->
+          <div class="flex items-center justify-between">
+
+            <!-- Zone -->
+            <span class="rounded-full bg-[#E8F1FF] px-3 py-1 text-[9px] font-bold leading-tight text-[#315273]">
+              Zone {{ quartier(point) }}
+            </span>
+
+            <!-- Statut -->
+            @if (point.statut === 'actif') {
+
+              <span class="flex items-center gap-1 rounded-full bg-[#CFFAF0] px-2.5 py-1 text-[8px] font-extrabold text-[#087C78]">
+
+                <span class="h-1.5 w-1.5 rounded-full bg-[#0EA5A4]"></span>
+
+                Actif
+
+              </span>
+
+            } @else {
+
+              <span class="flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[8px] font-extrabold text-slate-500">
+
+                <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+
+                Inactif
+
+              </span>
+
+            }
+
+          </div>
+
+
+          <!-- Nom du point -->
+          <h2 class="mt-4 text-[17px] font-extrabold leading-[1.15] text-[#142337]">
+            {{ point.nom }}
+          </h2>
+
+
+          <!-- Adresse -->
+          <div class="mt-2 flex items-start gap-1.5 text-[10px] leading-[1.35] text-slate-600">
+
+            <!-- Icône localisation -->
+            <svg
+              class="mt-0.5 h-3.5 w-3.5 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+              <circle cx="12" cy="10" r="2.5"></circle>
+            </svg>
+
+            <span>
+              {{ point.ville }}
+            </span>
+
+          </div>
+
+
+          <!-- Types acceptés -->
+          <div class="mt-4">
+
+            <p class="text-[9px] font-extrabold uppercase tracking-wide text-slate-500">
+              Types acceptés
+            </p>
+
+            <div class="mt-1.5 flex flex-wrap gap-1.5">
+
+              @for (dechet of point.dechetsAcceptes; track dechet.idType) {
+
+                <span
+                  class="rounded-full bg-[#D8F7F4] px-2.5 py-1 text-[9px] font-semibold text-[#087C78]"
+                >
+                  {{ dechet.nom }}
+                </span>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <!-- Séparateur -->
+          <div class="absolute bottom-[55px] left-5 right-5 border-t border-slate-100"></div>
+
+
+          <!-- GPS -->
+          <div class="absolute bottom-4 left-5 right-5 flex items-end justify-between">
+
+            <div class="text-[10px] leading-[1.35] text-slate-500">
+
+              <p>
+                GPS: {{ point.latitude | number:'1.4-4' }},
+              </p>
+
+              <p>
+                {{ point.longitude | number:'1.4-4' }}
+              </p>
+
+            </div>
+
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+
+              <!-- Modifier -->
+              <button
+                type="button"
+                (click)="modifierPoint(point)"
+                class="text-slate-600 transition hover:text-[#087C78]"
+                aria-label="Modifier"
+              >
+
+                <svg
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                </svg>
+
+              </button>
+
+
+              <!-- Supprimer -->
+              <button
+                type="button"
+                (click)="supprimerPoint(point)"
+                class="text-slate-600 transition hover:text-red-500"
+                aria-label="Supprimer"
+              >
+
+                <svg
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M4 7h16"></path>
+                  <path d="M10 11v6"></path>
+                  <path d="M14 11v6"></path>
+                  <path d="M6 7l1 14h10l1-14"></path>
+                  <path d="M9 7V4h6v3"></path>
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      }
+
+    </div>
+
+  }
+
+
+  <!-- ====================================================== -->
+  <!-- CARTE -->
+  <!-- ====================================================== -->
+
+  <article class="mt-7 rounded-2xl bg-white p-5 shadow-sm">
+
+    <!-- En-tête de la carte -->
+    <div class="mb-4 flex items-center justify-between">
+
+      <!-- Titre -->
+      <div class="flex items-center gap-2">
+
+        <!-- Icône carte -->
+        <svg
+          class="h-5 w-5 text-[#0EA5A4]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Z"></path>
+          <path d="M9 3v15"></path>
+          <path d="M15 6v15"></path>
+        </svg>
+
+        <h2 class="text-[17px] font-extrabold text-[#142337]">
+          Cartographie en direct du réseau de collecte
+        </h2>
+
+      </div>
+
+
+      <!-- Texte SIG -->
+      <span class="text-[10px] text-slate-600">
+        Synchronisé avec le SIG Métropolitain de Dakar
+      </span>
+
+    </div>
+
+
+    <!-- Carte Leaflet -->
+    <div
+      id="carte-admin-points"
+      class="relative h-[275px] w-full overflow-hidden rounded-xl"
+    >
+
+      <!-- Légende -->
+      <div class="absolute bottom-4 left-4 z-[500]">
+
+        <div class="rounded-lg bg-black/20 px-3 py-2 text-white backdrop-blur-sm">
+
+          <div class="flex items-center gap-2 text-[10px] font-bold">
+
+            <!-- Icône recyclage -->
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m7 7 3-4 3 4"></path>
+              <path d="M10 3v8"></path>
+              <path d="m17 17-3 4-3-4"></path>
+              <path d="M14 21v-8"></path>
+              <path d="m17 7 4 3-4 3"></path>
+              <path d="M21 10H8"></path>
+            </svg>
+
+            Référentiel des déchets
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Légende des statuts -->
+      <div class="absolute bottom-4 left-4 z-[500] translate-y-0 mt-8">
+
+        <div class="mt-8 flex items-center gap-3 rounded-lg bg-white px-3 py-2 text-[9px] font-semibold shadow-md">
+
+          <!-- Actif -->
+          <span class="flex items-center gap-1.5">
+            <span class="h-2.5 w-2.5 rounded-full bg-[#6EE7D8]"></span>
+            Point Actif
+          </span>
+
+          <!-- Maintenance -->
+          <span class="flex items-center gap-1.5">
+            <span class="h-2.5 w-2.5 rounded-full bg-[#94A3B8]"></span>
+            En maintenance
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </article>
+
+</section>

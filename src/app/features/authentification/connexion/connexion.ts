@@ -6,10 +6,11 @@ import { Auth } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-connexion',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   styleUrl: './connexion.css',
   templateUrl: './connexion.html',
-})export class Connexion {
+})
+export class Connexion {
 
   // Formulaire de connexion
   loginForm: FormGroup;
@@ -47,41 +48,73 @@ import { Auth } from '../../../core/services/auth';
     return !!champ && champ.valid && champ.touched;
   }
 
-  // Soumission du formulaire
-  onSubmit(): void {
+// Soumission du formulaire de connexion.
+onSubmit(): void {
 
-    // Affiche les informations dans la console
-    console.log('BOUTON CLIQUÉ');
-    console.log('Formulaire:', this.loginForm.value);
-    console.log('Valide:', this.loginForm.valid);
+  // Affiche les informations dans la console pour le débogage.
+  console.log('BOUTON CLIQUÉ');
+  console.log('Formulaire:', this.loginForm.value);
+  console.log('Valide:', this.loginForm.valid);
 
-    // Vérifie si le formulaire est invalide
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
+  // Vérifie si le formulaire est invalide.
+  if (this.loginForm.invalid) {
 
-    // Active le chargement
-    this.chargement.set(true);
-    this.erreurServeur.set(null);
+    // Affiche les erreurs de validation des champs.
+    this.loginForm.markAllAsTouched();
 
-    // Récupère les valeurs du formulaire
-    const { identifiant, motDePasse } = this.loginForm.value;
-
-    // Envoie les données au service Auth
-    this.authService.login(identifiant, motDePasse).subscribe({
-
-      // Connexion réussie
-      next: () => {
-        this.chargement.set(false);
-        this.router.navigate(['/']);
-      },
-
-      // Erreur de connexion
-      error: (err) => {
-        this.chargement.set(false);
-        this.erreurServeur.set(err.message ?? 'Une erreur est survenue.');
-      }
-    });
+    // Arrête la méthode.
+    return;
   }
+
+  // Active l'indicateur de chargement.
+  this.chargement.set(true);
+
+  // Supprime l'ancien message d'erreur.
+  this.erreurServeur.set(null);
+// Récupère les valeurs saisies dans le formulaire.
+const { identifiant, motDePasse } = this.loginForm.value;
+
+// Construit le payload attendu par le serializer Django.
+const payload = {
+  identifiant: identifiant,
+  password: motDePasse
+};
+
+// Envoie les identifiants au backend.
+this.authService.login(payload).subscribe({
+
+  // Exécuté lorsque la connexion est réussie.
+  next: (response) => {
+
+    // Affiche la réponse JWT dans la console pour vérifier.
+    console.log('Connexion réussie :', response);
+
+    // Arrête l'indicateur de chargement.
+    this.chargement.set(false);
+
+    // Redirige vers la page d'accueil.
+    this.router.navigate(['/']);
+  },
+
+  // Exécuté lorsque Django retourne une erreur.
+  error: (err) => {
+
+    // Affiche le statut HTTP.
+    console.error('Status HTTP :', err.status);
+
+    // Affiche exactement la réponse envoyée par Django.
+    console.error('Réponse Django :', err.error);
+
+    // Arrête l'indicateur de chargement.
+    this.chargement.set(false);
+
+    // Affiche le message retourné par Django.
+    this.erreurServeur.set(
+      err.error?.detail ||
+      err.error?.non_field_errors?.[0] ||
+      'Identifiant ou mot de passe incorrect.'
+    );
+  }
+});
+}
 }

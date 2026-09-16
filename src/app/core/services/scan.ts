@@ -12,42 +12,76 @@ const TYPES_DECHET_MOCK = [
   { idType: 5, nom: 'Organique', description: 'Déchets alimentaires et végétaux', consigne: 'Déposez ce déchet dans le compost ou le bac organique le plus proche.' },
   { idType: 6, nom: 'Électronique', description: 'Piles, appareils électroniques', consigne: 'Ne jetez jamais ce déchet avec les ordures classiques : déposez-le dans un point de collecte électronique.' },
 ];
-
+// Service utilisé pour gérer les scans de déchets
 @Injectable({ providedIn: 'root' })
 export class ScanService {
 
-  // Dernier résultat de scan, lisible depuis n'importe quel composant (ex: la page /resultat après navigation)
+  // Stocke le dernier résultat du scan pour pouvoir
+  // le récupérer depuis les autres composants
   dernierResultat = signal<ScanDechet | null>(null);
 
+  // Simule l'envoi d'une image au backend
   envoyerImage(fichier: File): Observable<ScanDechet> {
-    // ---- MOCK : à remplacer par this.http.post<ScanDechet>('/api/scans', formData) ----
-    console.log('[MOCK] Envoi de l\'image au backend :', fichier.name, fichier.size, 'octets');
 
-    // Tire un type au hasard pour simuler une réponse IA variée
-    const typeAleatoire = TYPES_DECHET_MOCK[Math.floor(Math.random() * TYPES_DECHET_MOCK.length)];
+    // Affiche les informations du fichier dans la console
+    console.log(
+      '[MOCK] Envoi de l\'image au backend :',
+      fichier.name,
+      fichier.size,
+      'octets'
+    );
 
+    // Choisit aléatoirement un type de déchet
+    // afin de simuler le résultat de l'intelligence artificielle
+    const typeAleatoire =
+      TYPES_DECHET_MOCK[
+        Math.floor(Math.random() * TYPES_DECHET_MOCK.length)
+      ];
+
+    // Construction de la réponse simulée du scan
     const reponseSimulee: ScanDechet = {
+      // Identifiant temporaire généré à partir de l'heure actuelle
       idScan: Date.now(),
+
+      // Date et heure du scan
       dateScan: new Date().toISOString(),
-      photoUrl: URL.createObjectURL(fichier), // URL locale temporaire pour afficher la photo
+
+      // Crée une URL temporaire permettant d'afficher
+      // l'image sélectionnée par l'utilisateur
+      photoUrl: URL.createObjectURL(fichier),
+
+      // Informations sur le type de déchet détecté
       typeDechet: {
-        idType: typeAleatoire.idType,
+        idTypeDechet: typeAleatoire.idType,
         nom: typeAleatoire.nom,
-        description: typeAleatoire.description
+        description: typeAleatoire.description,
+
+        // Conseil de tri associé au type de déchet
+        conseil: {
+          idConseil: typeAleatoire.idType,
+          consigne: typeAleatoire.consigne,
+          idTypeDechet: typeAleatoire.idType
+        }
       },
+
+      // Résultat simulé de l'analyse IA
       analyseIA: {
         idAnalyse: Date.now() + 1,
         resultat: typeAleatoire.nom.toLowerCase(),
-        scoreConfiance: +(0.75 + Math.random() * 0.24).toFixed(2), // score simulé entre 0.75 et 0.99
+
+        // Génère un score de confiance entre 0.75 et 0.99
+        scoreConfiance: +(
+          0.75 + Math.random() * 0.24
+        ).toFixed(2),
+
         dateAnalyse: new Date().toISOString()
-      },
-      conseilTri: {
-        idConseil: typeAleatoire.idType,
-        consigne: typeAleatoire.consigne
       }
     };
 
-    // Délai de 2s pour simuler le temps réel d'upload + inférence IA
-    return of(reponseSimulee).pipe(delay(2000));
+    // Simule un délai de 2 secondes correspondant
+    // au temps d'envoi et d'analyse de l'image
+    return of(reponseSimulee).pipe(
+      delay(2000)
+    );
   }
 }

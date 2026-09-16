@@ -1,0 +1,24 @@
+<!--
+  Layout global de l'espace administrateur.
+  Le sidebar et le header sont affichés une seule fois.
+-->
+<div class="min-h-screen bg-[#F5F7FC]">
+
+  <!-- Sidebar réutilisable -->
+  <app-sidebar-admin></app-sidebar-admin>
+
+  <!-- Header réutilisable -->
+  <app-header-admin></app-header-admin>
+
+  <!--
+    Zone réservée au contenu de chaque page.
+    Le router-outlet affichera ici :
+    Dashboard, Utilisateurs, Scans, etc.
+  -->
+  <main
+    class="min-h-screen pt-[72px] lg:ml-[250px]"
+  >
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

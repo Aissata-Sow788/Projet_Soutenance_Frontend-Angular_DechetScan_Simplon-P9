@@ -1,0 +1,10 @@
+/*
+  Styles spécifiques du tableau de bord.
+  La majorité du design est réalisée directement avec Tailwind CSS.
+*/
+
+/* Permet de garder une présentation propre sur les petits écrans. */
+:host {
+  display: block;
+  width: 100%;
+}

@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Profil } from './profil';
+import { SidebarAdmin } from './sidebar-admin';
 
-describe('Profil', () => {
-  let component: Profil;
-  let fixture: ComponentFixture<Profil>;
+describe('SidebarAdmin', () => {
+  let component: SidebarAdmin;
+  let fixture: ComponentFixture<SidebarAdmin>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Profil]
-    })
-      .compileComponents();
+      imports: [SidebarAdmin],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(Profil);
+    fixture = TestBed.createComponent(SidebarAdmin);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

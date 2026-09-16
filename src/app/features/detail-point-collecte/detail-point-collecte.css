@@ -1,468 +1,780 @@
-/* =========================================================
-   RESPONSIVE — POINTS DE COLLECTE
-   ========================================================= */
 
-.points-page,
-.points-page *,
-.points-page *::before,
-.points-page *::after {
-  box-sizing: border-box;
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.points-page {
+.detail-header {
+  height: 124px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 48px;
+  background: #f8f9fd;
+}
+
+.detail-header h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1;
+  font-weight: 750;
+  color: #172536;
+}
+
+.header-back {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  color: #172536;
+  cursor: pointer;
+}
+
+.header-back svg {
+  width: 30px;
+  height: 30px;
+}
+
+.map-section {
+  position: relative;
+  height: 940px;
+  overflow: hidden;
+  background: #67d5e4;
+}
+
+.detail-map {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+:host ::ng-deep .leaflet-control-attribution {
+  display: none;
+}
+
+:host ::ng-deep .leaflet-control-container {
+  z-index: 5;
+}
+
+.gps-pill {
+  position: absolute;
+  z-index: 20;
+  top: 31px;
+  left: 28px;
+  height: 58px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 32px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 8px 24px rgba(15,23,42,.10);
+  color: #172536;
+}
+
+.gps-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #087f7d;
+}
+
+.gps-title {
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.gps-precision {
+  margin-left: 3px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: #ccf5ef;
+  color: #078b86;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.location-button {
+  position: absolute;
+  z-index: 20;
+  top: 26px;
+  right: 28px;
+  width: 67px;
+  height: 67px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.95);
+  color: #172536;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 24px rgba(15,23,42,.10);
+}
+
+.location-button svg {
+  width: 31px;
+  height: 31px;
+}
+
+.map-search {
+  position: absolute;
+  z-index: 20;
+  top: 114px;
+  left: 28px;
+  right: 28px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  border-radius: 27px;
+  background: rgba(248,252,255,.97);
+  box-shadow: 0 7px 22px rgba(15,23,42,.08);
+}
+
+.search-icon {
+  width: 58px;
+  height: 58px;
+  margin-left: 10px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  background: #cff9f6;
+  color: #087f7d;
+}
+
+.search-icon svg {
+  width: 29px;
+  height: 29px;
+}
+
+.search-text {
+  margin-left: 17px;
+  font-size: 23px;
+  color: #27394d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filter-button {
+  margin-left: auto;
+  margin-right: 20px;
+  border: 0;
+  background: transparent;
+  color: #667477;
+}
+
+.filter-button svg {
+  width: 28px;
+  height: 28px;
+}
+
+.waste-filters {
+  position: absolute;
+  z-index: 20;
+  top: 213px;
+  left: 28px;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+  padding-right: 16px;
+}
+
+.waste-chip {
+  flex: 0 0 auto;
+  height: 46px;
+  padding: 0 19px;
+  border: 0;
+  border-radius: 25px;
+  background: rgba(255,255,255,.96);
+  color: #172536;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 17px;
+  font-weight: 750;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(15,23,42,.05);
+}
+
+.waste-chip svg {
+  width: 23px;
+  height: 23px;
+  color: #087f7d;
+}
+
+.waste-chip.active {
+  background: #087f7d;
+  color: white;
+}
+
+.waste-chip.active svg {
+  color: white;
+}
+
+.map-controls {
+  position: absolute;
+  z-index: 20;
+  top: 318px;
+  right: 28px;
+  width: 58px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 7px 20px rgba(15,23,42,.12);
+}
+
+.map-controls button {
+  width: 58px;
+  height: 58px;
+  border: 0;
+  background: white;
+  color: #172536;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.map-controls button + button {
+  border-top: 1px solid #e7ebef;
+}
+
+.map-controls .layers-control {
+  margin-top: 9px;
+  border-radius: 16px;
+  height: 58px;
+}
+
+.layers-control svg {
+  width: 28px;
+  height: 28px;
+}
+
+.optimized-route {
+  position: absolute;
+  z-index: 20;
+  right: 35px;
+  bottom: 167px;
+  height: 54px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 27px;
+  background: #1d3b50;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 18px;
+  font-weight: 650;
+  box-shadow: 0 8px 20px rgba(15,23,42,.15);
+}
+
+.optimized-route svg {
+  width: 24px;
+  height: 24px;
+  color: #4fe1dc;
+}
+
+.point-card {
+  position: relative;
+  z-index: 30;
+  margin: -110px 28px 0;
+  padding: 37px 40px 40px;
+  border-radius: 38px;
+  background: #ffffff;
+  box-shadow: 0 18px 45px rgba(15,23,42,.12);
+}
+
+.card-handle {
+  width: 55px;
+  height: 7px;
+  border-radius: 8px;
+  background: #dce5e7;
+  margin: 0 auto 28px;
+}
+
+.point-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.point-title-row h2 {
+  margin: 0;
+  font-size: 29px;
+  line-height: 1.12;
+  font-weight: 800;
+  color: #102237;
+}
+
+.point-address {
+  margin: 8px 0 0;
+  font-size: 19px;
+  line-height: 1.35;
+  color: #617074;
+}
+
+.verified-icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #078b86;
+}
+
+.verified-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.opening-row {
+  min-height: 59px;
+  margin-top: 24px;
+  padding: 0 19px;
+  border-radius: 18px;
+  background: #eef3ff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #55636a;
+  font-size: 18px;
+}
+
+.opening-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0c8f88;
+}
+
+.opening-dot.closed {
+  background: #ef4444;
+}
+
+.opening-status {
+  font-weight: 750;
+  color: #172536;
+}
+
+.separator {
+  color: #738087;
+}
+
+.accepted-title {
+  margin: 29px 0 13px;
+  color: #7a8788;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.accepted-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.accepted-chip {
+  min-height: 39px;
+  padding: 0 14px;
+  border-radius: 17px;
+  background: #e9f1ff;
+  color: #1b2e42;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.accepted-chip svg {
+  width: 21px;
+  height: 21px;
+  color: #078b86;
+}
+
+.route-button {
   width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+  height: 74px;
+  margin-top: 86px;
+  border: 0;
+  border-radius: 25px;
+  background: #11aaa8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  font-size: 24px;
+  font-weight: 800;
+  box-shadow: 0 12px 28px rgba(17,170,168,.28);
 }
 
-/* Empêche les textes et blocs de forcer la largeur */
-.points-page h1,
-.points-page h2,
-.points-page h3,
-.points-page p,
-.points-page span,
-.points-page button {
-  max-width: 100%;
+.route-button svg {
+  width: 26px;
+  height: 26px;
 }
 
-.points-page button {
+.nearby-section {
+  padding: 42px 28px 45px;
+}
+
+.nearby-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.nearby-heading h3 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 800;
+  color: #102237;
+}
+
+.nearby-heading button {
+  border: 0;
+  background: transparent;
+  color: #087f7d;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.nearby-card {
+  width: 100%;
+  min-height: 112px;
+  margin-bottom: 18px;
+  padding: 17px 19px;
+  border: 0;
+  border-radius: 25px;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  text-align: left;
+  box-shadow: 0 3px 10px rgba(15,23,42,.06);
+}
+
+.nearby-icon {
+  width: 67px;
+  height: 67px;
+  flex: 0 0 auto;
+  border-radius: 19px;
+  background: #dce9ff;
+  color: #087f7d;
+  display: grid;
+  place-items: center;
+}
+
+.nearby-icon svg {
+  width: 31px;
+  height: 31px;
+}
+
+.nearby-content {
   min-width: 0;
+  flex: 1;
 }
 
-/* =========================================================
-   PETITS ÉCRANS
-   ========================================================= */
+.nearby-name {
+  margin: 0;
+  color: #15263a;
+  font-size: 20px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nearby-meta {
+  margin-top: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  color: #5c686c;
+  font-size: 16px;
+}
+
+.nearby-meta strong {
+  color: #087f7d;
+  font-weight: 800;
+}
+
+.nearby-arrow {
+  width: 25px;
+  height: 25px;
+  color: #6f7a7d;
+  flex: 0 0 auto;
+}
 
 @media (max-width: 640px) {
-
-  /* ---------- Header ---------- */
-
-  .points-page header > div {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+  .detail-header {
+    height: 88px;
+    gap: 12px;
+    padding: 0 16px;
   }
 
-  .points-page header h1 {
-    font-size: 17px !important;
+  .detail-header h1 {
+    font-size: 24px;
   }
 
-
-  /* ---------- Carte ---------- */
-
-  .points-page section.relative > div:first-child {
-    height: 500px !important;
-    min-height: 500px !important;
+  .header-back {
+    width: 40px;
+    height: 40px;
   }
 
-
-  /* ---------- GPS ---------- */
-
-  .points-page .absolute.left-5.right-5.top-7 {
-    left: 12px !important;
-    right: 12px !important;
-    top: 18px !important;
+  .header-back svg {
+    width: 27px;
+    height: 27px;
   }
 
-  .points-page .absolute.left-5.right-5.top-7 > div:first-child {
-    max-width: calc(100% - 58px);
-    padding: 8px 11px !important;
-    gap: 6px !important;
+  .map-section {
+    height: 660px;
   }
 
-  .points-page .absolute.left-5.right-5.top-7 > div:first-child span:nth-child(2) {
-    font-size: 13px !important;
+  .gps-pill {
+    top: 20px;
+    left: 16px;
+    height: 45px;
+    padding: 0 13px;
+    gap: 8px;
   }
 
-  .points-page .absolute.left-5.right-5.top-7 > div:first-child span:nth-child(3) {
-    font-size: 10px !important;
-    padding: 5px 7px !important;
+  .gps-dot {
+    width: 12px;
+    height: 12px;
   }
 
-  .points-page .absolute.left-5.right-5.top-7 button {
-    width: 48px !important;
-    height: 48px !important;
+  .gps-title {
+    font-size: 14px;
   }
 
-
-  /* ---------- Recherche ---------- */
-
-  .points-page .absolute.left-5.right-5.top-\[112px\] {
-    left: 12px !important;
-    right: 12px !important;
-    top: 88px !important;
+  .gps-precision {
+    padding: 6px 9px;
+    font-size: 12px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[112px\] > div {
-    height: 58px !important;
-    border-radius: 20px !important;
+  .location-button {
+    top: 17px;
+    right: 16px;
+    width: 54px;
+    height: 54px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[112px\] > div > div:first-child {
-    width: 46px !important;
-    height: 46px !important;
-    border-radius: 15px !important;
+  .location-button svg {
+    width: 26px;
+    height: 26px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[112px\] > div > div:first-child svg {
-    width: 23px !important;
-    height: 23px !important;
+  .map-search {
+    top: 91px;
+    left: 16px;
+    right: 16px;
+    height: 61px;
+    border-radius: 22px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[112px\] span {
-    margin-left: 9px !important;
-    font-size: 15px !important;
+  .search-icon {
+    width: 47px;
+    height: 47px;
+    margin-left: 7px;
+    border-radius: 18px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[112px\] button {
-    width: 38px !important;
-    height: 38px !important;
+  .search-icon svg {
+    width: 25px;
+    height: 25px;
   }
 
-
-  /* =======================================================
-     FILTRES : LES 4 DOIVENT TENIR ENSEMBLE
-     ======================================================= */
-
-  .points-page .absolute.left-5.right-5.top-\[205px\] {
-    left: 12px !important;
-    right: 12px !important;
-    top: 158px !important;
+  .search-text {
+    margin-left: 12px;
+    font-size: 17px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] .grid {
-    width: 100% !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 5px !important;
+  .filter-button {
+    margin-right: 12px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] button {
-    width: 100% !important;
-    min-width: 0 !important;
-    height: 38px !important;
-    padding: 0 4px !important;
-    gap: 3px !important;
-    border-radius: 19px !important;
+  .waste-filters {
+    top: 165px;
+    left: 16px;
+    gap: 8px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] button svg {
-    width: 15px !important;
-    height: 15px !important;
-    flex-shrink: 0;
+  .waste-chip {
+    height: 40px;
+    padding: 0 14px;
+    font-size: 14px;
   }
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] button span {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 9px !important;
+  .waste-chip svg {
+    width: 19px;
+    height: 19px;
   }
 
-
-  /* =======================================================
-     MARKER SANDAGA
-     ======================================================= */
-
-  .points-page .absolute.left-1\/2.top-\[57\%\] {
-    top: 57% !important;
+  .map-controls {
+    top: 250px;
+    right: 16px;
+    width: 48px;
   }
 
-  .points-page .absolute.left-1\/2.top-\[57\%\] > div:first-child {
-    width: 105px !important;
-    height: 105px !important;
-    border-width: 7px !important;
+  .map-controls button {
+    width: 48px;
+    height: 48px;
   }
 
-  .points-page .absolute.left-1\/2.top-\[57\%\] > div:first-child > div {
-    width: 54px !important;
-    height: 54px !important;
+  .optimized-route {
+    right: 18px;
+    bottom: 125px;
+    height: 45px;
+    padding: 0 15px;
+    font-size: 14px;
   }
 
-  .points-page .absolute.left-1\/2.top-\[57\%\] > div:first-child svg {
-    width: 27px !important;
-    height: 27px !important;
+  .point-card {
+    margin: -75px 16px 0;
+    padding: 27px 22px 27px;
+    border-radius: 30px;
   }
 
-  .points-page .absolute.left-1\/2.top-\[57\%\] > div:last-child {
-    top: 74px !important;
-    font-size: 11px !important;
-    padding: 4px 9px !important;
+  .card-handle {
+    margin-bottom: 23px;
   }
 
-
-  /* ---------- autres marqueurs ---------- */
-
-  .points-page .absolute.left-\[27\%\].top-\[42\%\] > div:first-child,
-  .points-page .absolute.left-\[45\%\].top-\[51\%\] > div:first-child,
-  .points-page .absolute.left-\[52\%\].top-\[73\%\] > div:first-child {
-    width: 42px !important;
-    height: 42px !important;
+  .point-title-row h2 {
+    font-size: 23px;
   }
 
-  .points-page .absolute.left-\[27\%\].top-\[42\%\] svg,
-  .points-page .absolute.left-\[45\%\].top-\[51\%\] svg,
-  .points-page .absolute.left-\[52\%\].top-\[73\%\] svg {
-    width: 20px !important;
-    height: 20px !important;
+  .point-address {
+    font-size: 16px;
   }
 
-
-  /* ---------- Zoom ---------- */
-
-  .points-page .absolute.right-5.top-\[330px\] {
-    right: 12px !important;
-    top: 275px !important;
+  .opening-row {
+    margin-top: 18px;
+    min-height: 48px;
+    padding: 0 13px;
+    font-size: 14px;
+    gap: 8px;
   }
 
-  .points-page .absolute.right-5.top-\[330px\] button {
-    width: 46px !important;
-    height: 46px !important;
+  .opening-dot {
+    width: 11px;
+    height: 11px;
   }
 
-  .points-page .absolute.right-5.top-\[330px\] span {
-    font-size: 25px !important;
+  .accepted-title {
+    margin-top: 22px;
+    font-size: 13px;
   }
 
-  .points-page .absolute.right-5.top-\[330px\] button:last-child {
-    margin-top: 12px !important;
+  .accepted-chip {
+    min-height: 35px;
+    padding: 0 10px;
+    font-size: 14px;
   }
 
-
-  /* ---------- Itinéraire optimisé ---------- */
-
-  .points-page .absolute.bottom-7.right-5 {
-    right: 12px !important;
-    bottom: 14px !important;
+  .route-button {
+    height: 58px;
+    margin-top: 58px;
+    border-radius: 21px;
+    font-size: 19px;
   }
 
-  .points-page .absolute.bottom-7.right-5 button {
-    padding: 9px 12px !important;
+  .nearby-section {
+    padding: 31px 16px 35px;
   }
 
-  .points-page .absolute.bottom-7.right-5 button svg {
-    width: 19px !important;
-    height: 19px !important;
+  .nearby-heading h3 {
+    font-size: 22px;
   }
 
-  .points-page .absolute.bottom-7.right-5 button span {
-    font-size: 12px !important;
+  .nearby-heading button {
+    font-size: 14px;
   }
 
-
-  /* =======================================================
-     PANNEAU BLANC
-     ======================================================= */
-
-  .points-page section.relative.z-30 {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-top: -28px !important;
-    padding: 22px 14px 26px !important;
-    border-radius: 30px 30px 0 0 !important;
+  .nearby-card {
+    min-height: 91px;
+    margin-bottom: 13px;
+    padding: 12px;
+    border-radius: 21px;
+    gap: 12px;
   }
 
-  .points-page section.relative.z-30 h2 {
-    font-size: 21px !important;
-    line-height: 1.15 !important;
+  .nearby-icon {
+    width: 53px;
+    height: 53px;
+    border-radius: 16px;
   }
 
-  .points-page section.relative.z-30 > div:first-child {
-    margin-bottom: 17px !important;
+  .nearby-icon svg {
+    width: 25px;
+    height: 25px;
   }
 
-  .points-page section.relative.z-30 p {
-    font-size: 14px !important;
+  .nearby-name {
+    font-size: 16px;
   }
 
-
-  /* ---------- statut ---------- */
-
-  .points-page section.relative.z-30 .mt-5 {
-    margin-top: 15px !important;
+  .nearby-meta {
+    font-size: 13px;
+    gap: 5px;
   }
 
-  .points-page section.relative.z-30 .min-h-\[59px\] {
-    min-height: 50px !important;
-    padding: 0 13px !important;
-    border-radius: 16px !important;
-  }
-
-  .points-page section.relative.z-30 .min-h-\[59px\] span {
-    font-size: 13px !important;
-  }
-
-
-  /* ---------- déchets ---------- */
-
-  .points-page section.relative.z-30 .mt-7 {
-    margin-top: 20px !important;
-  }
-
-  .points-page section.relative.z-30 .mt-7 > p {
-    font-size: 11px !important;
-    margin-bottom: 8px !important;
-  }
-
-  .points-page section.relative.z-30 .mt-7 span {
-    font-size: 12px !important;
-    padding: 6px 8px !important;
-    border-radius: 9px !important;
-  }
-
-  .points-page section.relative.z-30 .mt-7 span svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-
-  /* =======================================================
-     BOUTONS ITINERAIRE / DETAILS
-     ======================================================= */
-
-  .points-page section.relative.z-30 .mt-10 {
-    margin-top: 25px !important;
-    grid-template-columns: minmax(0, 1fr) 105px !important;
-    gap: 8px !important;
-  }
-
-  .points-page section.relative.z-30 .mt-10 button {
-    width: 100% !important;
-    min-width: 0 !important;
-    height: 56px !important;
-    padding: 0 8px !important;
-    border-radius: 18px !important;
-  }
-
-  .points-page section.relative.z-30 .mt-10 button span {
-    font-size: 13px !important;
-    white-space: nowrap;
-  }
-
-  .points-page section.relative.z-30 .mt-10 button svg {
-    width: 21px !important;
-    height: 21px !important;
-    flex-shrink: 0;
-  }
-
-
-  /* =======================================================
-     AUTRES POINTS
-     ======================================================= */
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 22px 12px 30px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] h2 {
-    font-size: 20px !important;
-    line-height: 1.15 !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] .mb-5 {
-    margin-bottom: 13px !important;
-  }
-
-
-  /* ---------- cartes proximité ---------- */
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article {
-    width: 100% !important;
-    min-width: 0 !important;
-    min-height: 82px !important;
-    padding: 11px !important;
-    gap: 10px !important;
-    border-radius: 18px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article > div:first-child {
-    width: 48px !important;
-    height: 48px !important;
-    border-radius: 14px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article > div:first-child svg {
-    width: 24px !important;
-    height: 24px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article h3 {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 13px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article .mt-1 {
-    display: block !important;
-    line-height: 1.4 !important;
-    font-size: 11px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article .mt-1 span {
-    margin-right: 3px;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article > svg {
-    width: 18px !important;
-    height: 18px !important;
+  .nearby-arrow {
+    width: 21px;
+    height: 21px;
   }
 }
 
 
-/* =========================================================
-   TRÈS PETITS TÉLÉPHONES : 320–350px
-   ========================================================= */
+/* ================= MARQUEUR LEAFLET PERSONNALISÉ ================= */
 
-@media (max-width: 350px) {
+:host ::ng-deep .custom-point-marker {
+  background: transparent !important;
+  border: 0 !important;
+}
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] {
-    left: 8px !important;
-    right: 8px !important;
-  }
+:host ::ng-deep .marker-main {
+  position: relative;
+  width: 132px;
+  height: 110px;
+}
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] .grid {
-    gap: 3px !important;
-  }
+:host ::ng-deep .marker-trash {
+  position: absolute;
+  left: 31px;
+  top: 2px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #087f7d;
+  border: 8px solid rgba(15, 206, 201, .62);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, .20);
+  display: grid;
+  place-items: center;
+}
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] button {
-    height: 35px !important;
-    padding: 0 2px !important;
-    gap: 2px !important;
-  }
+:host ::ng-deep .marker-trash svg {
+  width: 29px;
+  height: 29px;
+}
 
-  .points-page .absolute.left-5.right-5.top-\[205px\] button svg {
-    width: 13px !important;
-    height: 13px !important;
-  }
-
-  .points-page .absolute.left-5.right-5.top-\[205px\] button span {
-    font-size: 8px !important;
-  }
-
-  .points-page section.relative.z-30 h2 {
-    font-size: 19px !important;
-  }
-
-  .points-page section.relative.z-30 .mt-10 {
-    grid-template-columns: minmax(0, 1fr) 94px !important;
-  }
-
-  .points-page section.relative.z-30 .mt-10 button span {
-    font-size: 11px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] h2 {
-    font-size: 18px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article h3 {
-    font-size: 12px !important;
-  }
-
-  .points-page section.mx-auto.w-full.max-w-\[640px\] article .mt-1 {
-    font-size: 10px !important;
-  }
+:host ::ng-deep .marker-label {
+  position: absolute;
+  top: 72px;
+  left: 8px;
+  min-width: 116px;
+  padding: 6px 10px;
+  border-radius: 13px;
+  background: white;
+  color: #1a2c40;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(15,23,42,.12);
+  white-space: nowrap;
 }

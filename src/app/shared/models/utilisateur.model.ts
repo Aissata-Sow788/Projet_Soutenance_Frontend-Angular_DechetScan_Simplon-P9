@@ -1,32 +1,48 @@
-
+// Représente le rôle d'un utilisateur dans l'application.
 export enum Role {
-  CITOYEN = 'CITOYEN',
-  ADMINISTRATEUR = 'ADMINISTRATEUR'
+  CITOYEN = 'citoyen',
+  ADMINISTRATEUR = 'admin'
 }
 
+// Représente l'utilisateur tel qu'il est retourné par Django.
 export interface Utilisateur {
-  idUtilisateur: number;
-  nom: string;
-  prenom: string;
+  id: number;
+  first_name: string;
+  last_name: string;
   email: string;
+  telephone: string | null;
+  ville: string;
   role: Role;
-  telephone: string;
-  ville: string;
-  dateInscription: string; // ISO date string
-  compteActif: boolean;
+  is_active: boolean;
+  date_joined: string;
 }
 
-export interface RegisterRequest {
-  prenom: string;
-  nom: string;
+// Données envoyées à Django pour l'inscription.
+export interface RegisterPayload {
+  first_name: string;
+  last_name: string;
   email: string;
   telephone: string;
+  password: string;
+  password2: string;
   ville: string;
-  motDePasse: string;
 }
 
+// Données envoyées à Django pour la connexion.
+export interface LoginPayload {
+  identifiant: string;
+  password: string;
+}
+
+// Réponse retournée par Django après une connexion réussie.
+export interface LoginResponse {
+  access: string;
+  refresh: string;
+}
+
+// Réponse retournée par Django après une inscription.
 export interface RegisterResponse {
-  success: boolean;
   message: string;
-  userId?: string;
+  email: string;
+  role: string;
 }

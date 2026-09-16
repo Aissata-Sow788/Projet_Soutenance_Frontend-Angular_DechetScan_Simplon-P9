@@ -1,0 +1,238 @@
+<!--
+  Sidebar principal de l'espace administrateur.
+  Version compacte avec des écritures réduites.
+-->
+<aside
+  class="fixed inset-y-0 left-0 z-40 hidden w-[220px] flex-col bg-[#0E172B] px-4 py-5 lg:flex"
+>
+
+  <!-- ========================================================= -->
+  <!-- LOGO -->
+  <!-- ========================================================= -->
+
+  <div class="flex items-center px-1">
+
+    <!-- Logo DechetScan -->
+    <img
+      src="assets/logo-dechetscan.png"
+      alt="DechetScan"
+      class="h-[110px] w-auto object-contain"
+    />
+
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- BADGE ADMIN -->
+  <!-- ========================================================= -->
+
+  <div
+    class="mt-6 inline-flex w-fit rounded-full bg-[#8FEDE2] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wide text-[#087C78]"
+  >
+    Console Admin
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- MENU PRINCIPAL -->
+  <!-- ========================================================= -->
+
+  <nav class="mt-2.5 space-y-1">
+
+    <!-- Tableau de bord -->
+    <a
+      routerLink="/admin"
+      routerLinkActive="bg-[#11AAA9] text-white"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="group flex h-[40px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+    >
+
+      <!-- Icône dashboard -->
+      <svg
+        class="h-4 w-4 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+        <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+        <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+        <rect x="14" y="14" width="6" height="6" rx="1"></rect>
+      </svg>
+
+      Tableau de bord
+
+    </a>
+
+
+    <!-- Utilisateurs -->
+    <a
+      routerLink="/utilisateurs"
+      routerLinkActive="bg-[#11AAA9] text-white"
+      class="group flex h-[40px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+    >
+
+      <!-- Icône utilisateurs -->
+      <svg
+        class="h-4 w-4 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="9" cy="8" r="3"></circle>
+        <path d="M3.5 19c.6-3.2 2.4-5 5.5-5s4.9 1.8 5.5 5"></path>
+        <path d="M16 5.5a3 3 0 0 1 0 5.5"></path>
+        <path d="M16 14c2.3.2 3.8 1.8 4.5 4"></path>
+      </svg>
+
+      Utilisateurs
+
+    </a>
+
+
+    <!-- Points de collecte -->
+    <a
+      routerLink="/admin/points-collecte"
+      routerLinkActive="bg-[#11AAA9] text-white"
+      class="group flex h-[40px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+    >
+
+      <!-- Icône localisation -->
+      <svg
+        class="h-4 w-4 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+        <circle cx="12" cy="10" r="2.5"></circle>
+      </svg>
+
+      Points de collecte
+
+    </a>
+
+
+    <!-- Référentiel des déchets -->
+    <a
+      routerLink="/admin/referentiel-dechets/types"
+      routerLinkActive="bg-[#11AAA9] text-white"
+      class="group flex h-[40px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+    >
+
+      <!-- Icône référentiel -->
+      <svg
+        class="h-4 w-4 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 7h6l2 3h8"></path>
+        <path d="M4 7v11h16V10"></path>
+        <path d="M8 14h8"></path>
+      </svg>
+
+      Référentiel des déchets
+
+    </a>
+
+
+    <!-- Scans -->
+    <a
+      routerLink="/admin/scans"
+      routerLinkActive="bg-[#11AAA9] text-white"
+      class="group flex h-[40px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+    >
+
+      <!-- Icône scans -->
+      <svg
+        class="h-4 w-4 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="5" y="5" width="14" height="16" rx="2"></rect>
+        <path d="M8 9h8"></path>
+        <path d="M8 13h8"></path>
+        <path d="M8 17h5"></path>
+      </svg>
+
+      Scans
+
+    </a>
+
+  </nav>
+
+
+  <!-- ========================================================= -->
+  <!-- PROFIL ADMINISTRATEUR -->
+  <!-- ========================================================= -->
+
+  <div class="mt-auto rounded-xl bg-[#F1F5FF] p-2.5">
+
+    <div class="flex items-center gap-2">
+
+      <!-- Initiales de l'administrateur -->
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#087C78] text-[10px] font-extrabold text-white"
+      >
+        AD
+      </div>
+
+      <!-- Informations administrateur -->
+      <div class="min-w-0 flex-1">
+
+        <p class="truncate text-[10px] font-extrabold text-[#142337]">
+          Administrateur
+        </p>
+
+        <p class="truncate text-[9px] text-slate-600">
+          admin@dechetscan.com
+        </p>
+
+      </div>
+
+      <!-- Bouton de déconnexion -->
+      <button
+        type="button"
+        class="text-slate-600 transition hover:text-[#087C78]"
+        aria-label="Se déconnecter"
+      >
+
+        <!-- Icône déconnexion -->
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M10 17l5-5-5-5"></path>
+          <path d="M15 12H3"></path>
+          <path d="M21 5v14"></path>
+        </svg>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</aside>

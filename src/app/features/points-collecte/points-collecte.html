@@ -1,145 +1,225 @@
-<div class="min-h-screen bg-slate-50 pb-24">
+<!-- Page principale avec espace pour la navigation du bas. -->
+<div class="min-h-screen bg-[#f5f6f8] pb-24">
 
-  <!-- Header avec logo -->
-  <header class="flex items-center justify-between bg-[#f8f9fd] px-4 py-4">
-    <img src="assets/logo1-dechetscan.png" alt="DechetScan" class="h-9 w-auto object-contain" />
+  <!-- En-tête avec logo et notifications. -->
+  <header class="flex h-[88px] items-center justify-between bg-[#f8f9fd] px-6">
+    <img
+      src="assets/logo1-dechetscan.png"
+      alt="DechetScan"
+      class="h-30 w-auto object-contain"
+    />
+
     <button type="button" aria-label="Notifications" class="text-[#172536]">
-      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      <!-- Icône cloche. -->
+      <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
+             a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
+             C7.67 6.165 6 8.388 6 11v3.159
+             c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1
+             a3 3 0 11-6 0v-1m6 0H9" />
       </svg>
     </button>
   </header>
 
-  <div class="px-4 mt-4 space-y-4">
+  <!-- Zone supérieure arrondie de recherche et filtres. -->
+  <section class="mx-4 mt-4 rounded-[30px] bg-white px-5 py-5 shadow-sm">
 
-    <!-- Badge localisation + lien "à proximité" -->
+    <!-- Localisation et proximité. -->
     <div class="flex items-center justify-between">
-      <span class="text-xs font-semibold bg-[#99F6E4]/50 text-[#0F172A] rounded-full px-3 py-1">
+      <span class="rounded-full bg-[#c7f7ef] px-4 py-2 text-xs font-bold text-[#087f7a]">
         Dakar · GPS {{ positionUtilisateur() ? 'Actif' : 'Inactif' }}
       </span>
-      <span class="flex items-center gap-1 text-xs font-semibold text-[#0EA5A4]">
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+      <span class="flex items-center gap-1 text-xs font-bold text-[#087f7a]">
+        <!-- Icône localisation. -->
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="7"></circle>
+          <circle cx="12" cy="12" r="2"></circle>
+          <path stroke-linecap="round" d="M12 3v2M12 19v2M3 12h2M19 12h2"></path>
         </svg>
         À proximité
       </span>
     </div>
 
-    <h1 class="text-2xl font-bold text-[#172536]">Points de collecte</h1>
+    <!-- Titre principal. -->
+    <h1 class="mt-4 text-[30px] font-bold leading-tight text-[#172536]">
+      Points de collecte
+    </h1>
 
-    <!-- Barre de recherche (visuelle pour l'instant, pas encore fonctionnelle) -->
-    <div class="flex items-center gap-2">
-      <input
-        type="text"
-        placeholder="Rechercher un lieu, quartier..."
-        disabled
-        class="flex-1 rounded-xl bg-slate-100 border-none px-4 py-3 text-sm text-slate-400 placeholder-slate-400"
-      />
-      <button type="button" class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-[#0EA5A4] text-white" aria-label="Filtres">
-        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M6 12h12M9 18h6" />
+    <!-- Recherche + bouton filtres. -->
+    <div class="mt-5 flex items-center gap-2">
+      <div class="flex h-[54px] flex-1 items-center rounded-[18px] bg-[#eef4fd] px-4">
+        <!-- Icône recherche. -->
+        <svg class="h-6 w-6 text-[#0EA5A4]" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path stroke-linecap="round" d="m20 20-4-4"></path>
+        </svg>
+
+        <input
+          type="text"
+          placeholder="Rechercher un lieu, quartier..."
+          disabled
+          class="ml-3 min-w-0 flex-1 border-0 bg-transparent text-base text-slate-500
+                 outline-none placeholder:text-slate-400"
+        />
+      </div>
+
+      <!-- Bouton filtres. -->
+      <button
+        type="button"
+        aria-label="Filtres"
+        class="flex h-[58px] w-[58px] flex-shrink-0 items-center justify-center
+               rounded-[18px] bg-[#0EA5A4] text-white shadow-[0_8px_18px_rgba(14,165,164,0.25)]"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"></path>
+          <path stroke-linecap="round" d="M8 4v4M15 10v4M11 16v4"></path>
         </svg>
       </button>
     </div>
 
-    <!-- Filtres par catégorie (visuels pour l'instant, pas encore fonctionnels) -->
-    <div class="flex gap-2 overflow-x-auto pb-1">
-      <button type="button" class="flex-shrink-0 rounded-full bg-[#0EA5A4] text-white text-xs font-bold px-4 py-2">
+    <!-- Filtres de catégories. -->
+    <div class="mt-4 flex gap-2 overflow-hidden">
+      <button type="button"
+        class="flex-shrink-0 rounded-full bg-[#0EA5A4] px-5 py-2.5 text-sm font-bold text-white">
         Tous ({{ pointsTries().length }})
       </button>
-      <button type="button" class="flex-shrink-0 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold px-4 py-2">
+
+      <button type="button"
+        class="flex-shrink-0 rounded-full bg-[#eef3fb] px-5 py-2.5 text-sm font-semibold text-slate-600">
         Bacs Plastique
       </button>
-      <button type="button" class="flex-shrink-0 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold px-4 py-2">
+
+      <button type="button"
+        class="flex-shrink-0 rounded-full bg-[#eef3fb] px-5 py-2.5 text-sm font-semibold text-slate-600">
         Déchetteries
       </button>
     </div>
+  </section>
 
-    <h2 class="text-lg font-bold text-[#172536] pt-2">Bornes recommandées</h2>
+  <!-- Titre de la liste. -->
+  <h2 class="mx-8 mt-8 text-[25px] font-bold text-[#172536]">
+    Bornes recommandées
+  </h2>
 
-    <!-- Message si géoloc indisponible -->
-    <p *ngIf="erreurGeoloc()" class="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
-      {{ erreurGeoloc() }}
-    </p>
+  <!-- Message GPS si nécessaire. -->
+  <p *ngIf="erreurGeoloc()"
+     class="mx-6 mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-600">
+    {{ erreurGeoloc() }}
+  </p>
 
-    <!-- Chargement -->
-    <div *ngIf="chargement()" class="text-center text-slate-500 py-10">
-      Chargement des points de collecte...
-    </div>
+  <!-- Message pendant le chargement. -->
+  <div *ngIf="chargement()" class="py-10 text-center text-slate-500">
+    Chargement des points de collecte...
+  </div>
 
-    <!-- Liste des points, triée par distance -->
-    <div
+  <!-- Liste des points. -->
+  <div class="mx-4 mt-5 space-y-4">
+    <article
       *ngFor="let point of pointsTries()"
-      class="rounded-2xl bg-white p-4 shadow-sm"
+      class="rounded-[28px] bg-white px-5 py-5 shadow-sm"
     >
-      <div class="flex items-center gap-3">
+
+      <!-- Nom + icône du point. -->
+      <div class="flex items-center gap-4">
         <span
-          class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full text-[#0EA5A4]"
-          [class.bg-\[\#99F6E4\]]="point.icone === 'recyclage' || point.icone === 'ecran'"
-          [class.bg-slate-100]="point.icone === 'poubelle' || point.icone === 'maison'"
-          [class.text-slate-500]="point.icone === 'poubelle' || point.icone === 'maison'"
+          class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-[20px]
+                 bg-[#c8f7ef] text-[#078b85]"
           [ngSwitch]="point.icone"
         >
-          <!-- Recyclage -->
-          <svg *ngSwitchCase="'recyclage'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M7 19l-3-3m0 0l3-3m-3 3h13a4 4 0 004-4v-1m-4-9l3 3m0 0l-3 3m3-3H8a4 4 0 00-4 4v1" />
+          <!-- Icône recyclage. -->
+          <svg *ngSwitchCase="'recyclage'" class="h-8 w-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M7 19l-3-3m0 0l3-3m-3 3h13a4 4 0 004-4v-1m-4-9l3 3m0 0l-3 3m3-3H8a4 4 0 00-4 4v1" />
           </svg>
 
-          <!-- Poubelle -->
-          <svg *ngSwitchCase="'poubelle'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <!-- Icône poubelle. -->
+          <svg *ngSwitchCase="'poubelle'" class="h-7 w-7" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862
+                 a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4
+                 a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
 
-          <!-- Écran / électronique -->
-          <svg *ngSwitchCase="'ecran'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <rect x="3" y="4" width="18" height="12" rx="2" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 20h8M12 16v4" />
+          <!-- Icône électronique. -->
+          <svg *ngSwitchCase="'ecran'" class="h-7 w-7" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+            <path stroke-linecap="round" d="M8 20h8M12 16v4"></path>
           </svg>
 
-          <!-- Maison -->
-          <svg *ngSwitchCase="'maison'" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11v10a1 1 0 01-1 1h-3m-6 0h6m-6 0v-6a1 1 0 011-1h4a1 1 0 011 1v6" />
+          <!-- Icône maison. -->
+          <svg *ngSwitchCase="'maison'" class="h-7 w-7" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3m10-11v10
+                 a1 1 0 01-1 1h-3m-6 0h6m-6 0v-6a1 1 0 011-1h4
+                 a1 1 0 011 1v6" />
           </svg>
         </span>
-        <div class="flex-1 min-w-0">
-          <h3 class="font-bold text-[#0F172A] truncate">{{ point.nom }}</h3>
-          <p class="text-sm text-slate-500 flex items-center gap-1">
-            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-            Ouvert · {{ point.heureOuverture }} - {{ point.heureFermeture }}
-            <span *ngIf="positionUtilisateur()"> · {{ point.distanceKm.toFixed(1) }} km</span>
+
+        <div class="min-w-0 flex-1">
+          <h3 class="truncate text-[22px] font-bold text-[#172536]">
+            {{ point.nom }}
+          </h3>
+
+          <!-- Statut et horaires. -->
+          <p class="mt-1 flex items-center gap-2 text-sm text-slate-600">
+            <span class="h-2.5 w-2.5 rounded-full bg-[#0EA5A4]"></span>
+            <span class="font-semibold text-[#172536]">Ouvert</span>
+            <span class="text-slate-400">•</span>
+            {{ point.heureOuverture }} - {{ point.heureFermeture }}
           </p>
         </div>
       </div>
 
-      <div class="flex gap-2 mt-3 flex-wrap">
+      <!-- Types de déchets acceptés. -->
+      <div class="mt-5 flex flex-wrap gap-2">
         <span
           *ngFor="let dechet of point.dechetsAcceptes"
-          class="text-xs font-semibold bg-[#e8ecfb] text-[#3d4a6b] rounded-full px-3 py-1"
+          class="rounded-full bg-[#e7eefb] px-3.5 py-1.5 text-xs font-semibold text-slate-600"
         >
           {{ dechet.nom }}
         </span>
       </div>
 
-      <button
-        type="button"
-        (click)="ouvrirDetail(point.idPoint)"
-        class="mt-4 w-full flex items-center justify-center gap-2 rounded-full bg-[#0EA5A4] py-3 text-sm font-bold text-white"
-      >
-        Voir sur la carte
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-      </button>
-    </div>
+      <!-- Bouton vers la carte. -->
+      <div class="mt-5 flex justify-end">
+        <button
+          type="button"
+          (click)="ouvrirDetail(point.idPoint)"
+          class="flex items-center gap-2 rounded-full bg-[#0EA5A4] px-5 py-3
+                 text-sm font-bold text-white shadow-[0_7px_16px_rgba(14,165,164,0.25)]"
+        >
+          Voir sur la carte
 
-    <!-- Aucun point -->
-    <p *ngIf="!chargement() && pointsTries().length === 0" class="text-center text-slate-500 py-10">
-      Aucun point de collecte trouvé.
-    </p>
-
+          <!-- Icône flèche. -->
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M5 12h14m-6-6l6 6-6 6" />
+          </svg>
+        </button>
+      </div>
+    </article>
   </div>
 
-  <!-- Barre de navigation fixée en bas -->
+  <!-- Aucun point trouvé. -->
+  <p
+    *ngIf="!chargement() && pointsTries().length === 0"
+    class="py-10 text-center text-slate-500"
+  >
+    Aucun point de collecte trouvé.
+  </p>
+
+  <!-- Navigation fixe identique au reste de l'application. -->
   <app-barre-navigations></app-barre-navigations>
 
 </div>

@@ -10,6 +10,7 @@ import { ScanDechet as ScanDechetModel } from '../../shared/models/scan.model';
   styleUrl: './scan.css',
   templateUrl: './scan.html',
 })
+
 export class Scan {
 
   private scanService = inject(ScanService);

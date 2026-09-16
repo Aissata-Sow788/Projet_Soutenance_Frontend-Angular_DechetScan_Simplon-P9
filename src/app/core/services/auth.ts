@@ -1,129 +1,139 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { Utilisateur } from '../../shared/models/utilisateur.model';
-import { Role } from '../../shared/models/utilisateur.model';
+import { inject, Injectable } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 
-export interface LoginResponse {
-  token: string;
-  utilisateur: Utilisateur;
-}
+// HttpClient pour communiquer avec Django.
+import { HttpClient } from '@angular/common/http';
 
-export interface RegisterPayload {
-  nom: string;
-  prenom: string;
-  email: string;
-  telephone: string;
-  motDePasse: string;
-  ville: string;
-}
+// Importe tous les modèles utilisés par le service Auth.
+import {
+  Utilisateur,
+  LoginPayload,
+  LoginResponse,
+  RegisterPayload,
+  RegisterResponse
+} from '../../shared/models/utilisateur.model';
 
-// ---- Données simulées (à retirer quand l'API Django sera branchée) ----
-const MOCK_USERS: (Utilisateur & { motDePasse: string })[] = [
-  {
-    idUtilisateur: 1,
-    nom: 'Sow',
-    prenom: 'Aïssata',
-    email: 'aissata@test.com',
-    motDePasse: 'test1234',
-    role: Role.CITOYEN,
-    telephone: '+221771234567',
-    ville: 'Dakar',
-    dateInscription: '2026-01-15T00:00:00Z',
-    compteActif: true
-  },
-  {
-    idUtilisateur: 2,
-    nom: 'Ndiaye',
-    prenom: 'Fatou',
-    email: 'fatou.admin@test.com',
-    motDePasse: 'test1234',
-    role: Role.ADMINISTRATEUR,
-    telephone: '+221781234567',
-    ville: 'Dakar',
-    dateInscription: '2026-01-10T00:00:00Z',
-    compteActif: true
-  }
-];
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  // Rend le service disponible dans toute l'application.
+  providedIn: 'root'
+})
 export class Auth {
 
+  // Clé du token d'accès dans le Local Storage.
   private readonly TOKEN_KEY = 'dechetscan_token';
+
+  // Clé des informations utilisateur dans le Local Storage.
   private readonly USER_KEY = 'dechetscan_user';
 
+  // Clé du token de renouvellement dans le Local Storage.
+  private readonly REFRESH_KEY = 'dechetscan_refresh';
 
-  login(identifiant: string, motDePasse: string): Observable<LoginResponse> {
-    const user = MOCK_USERS.find(
-      u =>
-        (u.email === identifiant || u.telephone === identifiant) &&
-        u.motDePasse === motDePasse
+  // Permet d'effectuer les requêtes HTTP vers Django.
+  private readonly httpurl = inject(HttpClient);
+
+  // URL de base des endpoints d'authentification.
+  private readonly apiUrl = 'http://127.0.0.1:8000/api/auth';
+
+  // Connecte l'utilisateur auprès de Django.
+  login(payload: LoginPayload): Observable<LoginResponse> {
+
+    // Envoie les identifiants au backend.
+    return this.httpurl
+      .post<LoginResponse>(`${this.apiUrl}/login/`, payload)
+
+      // Stocke les tokens après une connexion réussie.
+      .pipe(
+        tap((response) => {
+          this.stocker(response);
+        })
+      );
+  }
+
+  // Inscrit un nouvel utilisateur auprès de Django.
+  register(payload: RegisterPayload): Observable<RegisterResponse> {
+
+    // Envoie les informations d'inscription au backend.
+    return this.httpurl.post<RegisterResponse>(
+      `${this.apiUrl}/register/`,
+      payload
     );
-
-    if (!user) {
-      return throwError(() => new Error('Identifiants invalides')).pipe(delay(500));
-    }
-
-    const { motDePasse: _, ...utilisateur } = user;
-
-    const response: LoginResponse = {
-      token: 'mock-jwt-token-' + utilisateur.idUtilisateur,
-      utilisateur
-    };
-
-    this.stocker(response);
-
-    return of(response).pipe(delay(500));
   }
 
+  // Récupère l'utilisateur actuellement connecté.
+  me(): Observable<Utilisateur> {
 
-  register(payload: RegisterPayload): Observable<LoginResponse> {
-    console.log('register appelé', payload);
-    // ---- MOCK : à remplacer par this.http.post<LoginResponse>('/api/utilisateurs', payload) ----
-    const nouvelUtilisateur: Utilisateur = {
-      idUtilisateur: MOCK_USERS.length + 1,
-      nom: payload.nom,
-      prenom: payload.prenom,
-      email: payload.email,
-      telephone: payload.telephone,
-      role: Role.CITOYEN,
-      ville: payload.ville,
-      dateInscription: new Date().toISOString(),
-      compteActif: true
-    };
+    // Appelle l'endpoint protégé /me/.
+    return this.httpurl
+      .get<Utilisateur>(`${this.apiUrl}/me/`)
 
-    const response: LoginResponse = {
-      token: 'mock-jwt-token-' + nouvelUtilisateur.idUtilisateur,
-      utilisateur: nouvelUtilisateur
-    };
-
-    this.stocker(response);
-    return of(response).pipe(delay(500));
+      // Enregistre les données récupérées localement.
+      .pipe(
+        tap((utilisateur) => {
+          this.stockerUtilisateur(utilisateur);
+        })
+      );
   }
 
+  // Déconnecte l'utilisateur.
   logout(): void {
+
+    // Supprime le token d'accès.
     localStorage.removeItem(this.TOKEN_KEY);
+
+    // Supprime le token de renouvellement.
+    localStorage.removeItem(this.REFRESH_KEY);
+
+    // Supprime les informations utilisateur.
     localStorage.removeItem(this.USER_KEY);
   }
 
+  // Récupère l'utilisateur enregistré localement.
   getCurrentUser(): Utilisateur | null {
+
+    // Récupère les données JSON du Local Storage.
     const raw = localStorage.getItem(this.USER_KEY);
+
+    // Transforme le JSON en objet utilisateur.
     return raw ? JSON.parse(raw) : null;
   }
 
+  // Récupère le token d'accès.
   getToken(): string | null {
+
+    // Retourne le token enregistré.
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  // Vérifie si un utilisateur est connecté.
   isAuthenticated(): boolean {
+
+    // Vérifie simplement la présence du token.
     return !!this.getToken();
   }
 
-
+  // Enregistre les tokens JWT.
   private stocker(response: LoginResponse): void {
-    console.log('stockage', response)
 
-    localStorage.setItem(this.TOKEN_KEY, response.token);
-    localStorage.setItem(this.USER_KEY, JSON.stringify(response.utilisateur));
+    // Enregistre le token d'accès.
+    localStorage.setItem(
+      this.TOKEN_KEY,
+      response.access
+    );
+
+    // Enregistre le token de renouvellement.
+    localStorage.setItem(
+      this.REFRESH_KEY,
+      response.refresh
+    );
+  }
+
+  // Enregistre les informations de l'utilisateur.
+  private stockerUtilisateur(utilisateur: Utilisateur): void {
+
+    // Convertit l'utilisateur en JSON avant de le sauvegarder.
+    localStorage.setItem(
+      this.USER_KEY,
+      JSON.stringify(utilisateur)
+    );
   }
 }

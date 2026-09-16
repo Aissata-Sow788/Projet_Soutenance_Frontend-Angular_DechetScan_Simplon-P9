@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Navbar } from './navbar';
+import { HeaderAdmin } from './header-admin';
 
-describe('Navbar', () => {
-  let component: Navbar;
-  let fixture: ComponentFixture<Navbar>;
+describe('HeaderAdmin', () => {
+  let component: HeaderAdmin;
+  let fixture: ComponentFixture<HeaderAdmin>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Navbar]
-    })
-      .compileComponents();
+      imports: [HeaderAdmin],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(Navbar);
+    fixture = TestBed.createComponent(HeaderAdmin);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { AccueilService } from '../../core/services/accueil.service';
 import {
@@ -10,7 +11,7 @@ import {
 
 
 @Component({
-  imports: [],
+  imports: [RouterLink],
   selector: 'app-accueil',
   styleUrl: './accueil.css',
   templateUrl: './accueil.html',

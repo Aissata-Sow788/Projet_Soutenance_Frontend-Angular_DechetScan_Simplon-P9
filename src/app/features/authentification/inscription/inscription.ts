@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Auth, RegisterPayload } from '../../../core/services/auth';
+import { Auth } from '../../../core/services/auth';
+import { RegisterPayload } from '../../../shared/models/utilisateur.model';
 
 
 @Component({
@@ -57,7 +58,9 @@ export class Inscription {
       // Téléphone obligatoire
       telephone: ['', [
         Validators.required,
-        Validators.pattern(/^(\+221)?[0-9]{9}$/)
+        // Accepte un numéro sénégalais à 9 chiffres,
+        // avec le préfixe +221 facultatif.
+        Validators.pattern(/^(?:\+221)?[0-9]{9}$/)
       ]],
 
       // Ville obligatoire
@@ -138,15 +141,29 @@ export class Inscription {
     this.chargement = true;
     this.erreurServeur = null;
 
-    // Prépare les données à envoyer
-    const payload: RegisterPayload = {
-      prenom: this.registerForm.value.prenom,
-      nom: this.registerForm.value.nom,
-      email: this.registerForm.value.email,
-      telephone: this.registerForm.value.telephone,
-      ville: this.registerForm.value.ville,
-      motDePasse: this.registerForm.value.motDePasse
-    };
+// Prépare les données à envoyer au backend.
+const payload: RegisterPayload = {
+  // Convertit le champ prenom du formulaire vers first_name attendu par Django.
+  first_name: this.registerForm.value.prenom,
+
+  // Convertit le champ nom du formulaire vers last_name attendu par Django.
+  last_name: this.registerForm.value.nom,
+
+  // Envoie l'adresse email.
+  email: this.registerForm.value.email,
+
+  // Envoie le numéro de téléphone.
+  telephone: this.registerForm.value.telephone,
+
+  // Envoie la ville.
+  ville: this.registerForm.value.ville,
+
+  // Convertit motDePasse vers password attendu par Django.
+  password: this.registerForm.value.motDePasse,
+
+  // Utilise le vrai nom du champ de confirmation du formulaire.
+  password2: this.registerForm.value.confirmerMotDePasse
+};
 
     // Envoie les données au service Auth
     this.authService.register(payload).subscribe({

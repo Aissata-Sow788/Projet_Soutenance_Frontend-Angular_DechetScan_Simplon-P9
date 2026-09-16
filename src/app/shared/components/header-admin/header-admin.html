@@ -1,0 +1,132 @@
+<!--
+  Header commun à toutes les pages administrateur.
+  Il commence après le sidebar sur desktop.
+  Version compacte pour réduire l'espace occupé.
+-->
+<header
+  class="fixed right-0 top-0 z-30 flex h-[60px] items-center justify-end border-b border-slate-100 bg-white px-4 lg:left-[220px] xl:px-6"
+>
+
+  <div class="flex items-center gap-3">
+
+    <!-- ========================================================= -->
+    <!-- STATUT DE LA PLATEFORME -->
+    <!-- ========================================================= -->
+
+    <div class="hidden items-center gap-1.5 md:flex">
+
+      <!-- Petit indicateur vert -->
+      <span
+        class="h-1.5 w-1.5 rounded-full bg-[#0B8D80]"
+      ></span>
+
+      <!-- État de la plateforme -->
+      <div class="leading-tight">
+
+        <p class="text-[9px] text-slate-600">
+          Plateforme active
+        </p>
+
+        <p class="text-[9px] text-slate-600">
+          (Dakar)
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- SYSTÈME OPÉRATIONNEL -->
+    <!-- ========================================================= -->
+
+    <div
+      class="hidden items-center gap-1.5 rounded-full bg-[#EEF4FF] px-2.5 py-1.5 sm:flex"
+    >
+
+      <!-- Icône de connexion -->
+      <svg
+        class="h-3.5 w-3.5 text-[#087C78]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 18h.01"></path>
+        <path d="M8.5 14.5a5 5 0 0 1 7 0"></path>
+        <path d="M5 11a10 10 0 0 1 14 0"></path>
+      </svg>
+
+      <!-- Texte du statut -->
+      <span class="text-[9px] font-bold leading-tight text-[#142337]">
+        Système<br />
+        Opérationnel
+      </span>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- NOTIFICATIONS -->
+    <!-- ========================================================= -->
+
+    <button
+      type="button"
+      (click)="ouvrirNotifications()"
+      class="relative flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-50 hover:text-[#087C78]"
+      aria-label="Notifications"
+    >
+
+      <!-- Icône cloche -->
+      <svg
+        class="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+        <path d="M10 21h4"></path>
+      </svg>
+
+      <!-- Indicateur de nouvelle notification -->
+      <span
+        class="absolute right-1.5 top-1.5 h-1 w-1 rounded-full bg-[#0EA5A4]"
+      ></span>
+
+    </button>
+
+
+    <!-- ========================================================= -->
+    <!-- AVATAR ADMINISTRATEUR -->
+    <!-- ========================================================= -->
+
+    <button
+      type="button"
+      class="flex h-8 w-8 items-center justify-center rounded-full bg-[#0EA5A4] text-white"
+      aria-label="Profil administrateur"
+    >
+
+      <!-- Icône utilisateur -->
+      <svg
+        class="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="8" r="3"></circle>
+        <path d="M5 20c.8-3.5 3.1-5.5 7-5.5s6.2 2 7 5.5"></path>
+      </svg>
+
+    </button>
+
+  </div>
+
+</header>

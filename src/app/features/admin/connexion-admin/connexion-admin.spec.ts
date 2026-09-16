@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Statistiques } from './statistiques';
+import { ConnexionAdmin } from './connexion-admin';
 
-describe('Statistiques', () => {
-  let component: Statistiques;
-  let fixture: ComponentFixture<Statistiques>;
+describe('ConnexionAdmin', () => {
+  let component: ConnexionAdmin;
+  let fixture: ComponentFixture<ConnexionAdmin>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Statistiques]
-    })
-      .compileComponents();
+      imports: [ConnexionAdmin],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(Statistiques);
+    fixture = TestBed.createComponent(ConnexionAdmin);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

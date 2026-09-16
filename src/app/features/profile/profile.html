@@ -1,0 +1,340 @@
+<div class="min-h-screen bg-[#F5F7FC] px-3 pb-6">
+
+  <!-- ================= HEADER ================= -->
+  <header class="relative flex items-center justify-center pt-6 pb-5">
+
+    <!-- Bouton retour -->
+    <button
+      type="button"
+      (click)="retour()"
+      aria-label="Retour"
+      class="absolute left-0 flex h-9 w-9 items-center justify-center
+             rounded-full bg-white shadow-sm"
+    >
+      <svg
+        class="h-5 w-5 text-[#374151]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+
+    <h1 class="text-[22px] font-bold text-[#172536]">
+      Mon profil
+    </h1>
+
+  </header>
+
+
+  <!-- ================= CARTE PROFIL ================= -->
+  <section
+    class="rounded-[22px] bg-white px-3 py-6
+           shadow-[0_2px_6px_rgba(15,23,42,0.05)]"
+  >
+
+    <!-- Avatar -->
+    <div class="flex flex-col items-center">
+
+      <div class="relative">
+
+        <!-- Initiales -->
+        <div
+          class="flex h-[120px] w-[120px] items-center justify-center
+                 rounded-full bg-[#12A6A8]
+                 text-[38px] font-semibold text-white
+                 shadow-sm"
+        >
+          {{ initiales() }}
+        </div>
+
+        <!-- Bouton caméra -->
+        <button
+          type="button"
+          aria-label="Modifier la photo"
+          class="absolute bottom-0 right-0
+                 flex h-10 w-10 items-center justify-center
+                 rounded-full bg-white shadow-md"
+        >
+          <svg
+            class="h-5 w-5 text-[#0EA5A4]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 7h4l2-2h4l2 2h4v12H4V7z"/>
+            <circle cx="12" cy="13" r="3.5"/>
+          </svg>
+        </button>
+
+      </div>
+
+
+      <!-- Nom complet -->
+      <h2 class="mt-4 text-[24px] font-bold text-[#101D30]">
+        {{ nomComplet() }}
+      </h2>
+
+
+      <!-- Compte vérifié -->
+      <div
+        class="mt-2 flex items-center gap-1.5 rounded-full
+               bg-[#C8F7EE] px-3 py-1.5
+               text-[11px] font-bold tracking-wide
+               text-[#087C78]"
+      >
+
+        <!-- Icône vérification -->
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d="M12 2l2.1 2.1 3-.3.9 2.9 2.7 1.3-.8 2.9
+               1.6 2.5-1.6 2.5.8 2.9-2.7 1.3-.9 2.9-3-.3L12 22
+               l-2.1-2.1-3 .3-.9-2.9-2.7-1.3.8-2.9L2.5 11l1.6-2.5-.8-2.9
+               2.7-1.3.9-2.9 3 .3L12 2z"
+          />
+          <path
+            d="M8.5 12.2l2.2 2.2 4.8-5"
+            fill="none"
+            stroke="white"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        COMPTE CITOYEN VÉRIFIÉ
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= INFORMATIONS ================= -->
+
+    <div class="mt-6 space-y-2.5">
+
+      <!-- Prénom -->
+      <div
+        class="flex items-center gap-3 rounded-xl
+               bg-[#EEF3FF] px-3 py-3"
+      >
+
+        <div
+          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
+                 rounded-full bg-white shadow-sm"
+        >
+          <svg
+            class="h-5 w-5 text-[#007F7B]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <circle cx="12" cy="8" r="3.5"/>
+            <path
+              stroke-linecap="round"
+              d="M5 20c.7-3.3 3.1-5 7-5s6.3 1.7 7 5"
+            />
+          </svg>
+        </div>
+
+        <div class="min-w-0">
+          <p class="text-[11px] text-[#4B5563]">
+            Prénom
+          </p>
+
+          <p class="truncate text-[18px] font-semibold text-[#101D30]">
+            {{ utilisateur()?.first_name }}
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- Nom -->
+      <div
+        class="flex items-center gap-3 rounded-xl
+               bg-[#EEF3FF] px-3 py-3"
+      >
+
+        <div
+          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
+                 rounded-full bg-white shadow-sm"
+        >
+          <svg
+            class="h-5 w-5 text-[#007F7B]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="4" y="5" width="16" height="15" rx="2"/>
+            <path d="M9 5V3h6v2"/>
+            <circle cx="12" cy="11" r="2"/>
+            <path d="M8 17c.7-2 2-3 4-3s3.3 1 4 3"/>
+          </svg>
+        </div>
+
+        <div>
+          <p class="text-[11px] text-[#4B5563]">
+            Nom
+          </p>
+
+          <p class="text-[18px] font-semibold text-[#101D30]">
+            {{ utilisateur()?.last_name }}
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- Email -->
+      <div
+        class="flex items-center gap-3 rounded-xl
+               bg-[#EEF3FF] px-3 py-3"
+      >
+
+        <div
+          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
+                 rounded-full bg-white shadow-sm"
+        >
+          <svg
+            class="h-5 w-5 text-[#007F7B]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <path d="M3 7l9 6 9-6"/>
+          </svg>
+        </div>
+
+        <div class="min-w-0">
+          <p class="text-[11px] text-[#4B5563]">
+            Adresse e-mail
+          </p>
+
+          <p class="truncate text-[17px] font-semibold text-[#101D30]">
+            {{ utilisateur()?.email }}
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- Téléphone -->
+      <div
+        class="flex items-center gap-3 rounded-xl
+               bg-[#EEF3FF] px-3 py-3"
+      >
+
+        <div
+          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
+                 rounded-full bg-white shadow-sm"
+        >
+          <svg
+            class="h-5 w-5 text-[#007F7B]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <rect x="7" y="3" width="10" height="18" rx="2"/>
+            <path d="M10 18h4"/>
+          </svg>
+        </div>
+
+        <div>
+          <p class="text-[11px] text-[#4B5563]">
+            Téléphone
+          </p>
+
+          <p class="text-[17px] font-semibold text-[#101D30]">
+            {{ utilisateur()?.telephone }}
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= MODIFIER ================= -->
+
+    <button
+      type="button"
+      (click)="modifierProfil()"
+      class="mt-5 flex w-full items-center justify-center gap-2
+             rounded-xl bg-[#0EA5A4]
+             py-3 text-[15px] font-bold text-white
+             shadow-[0_4px_12px_rgba(14,165,164,0.25)]"
+    >
+
+      <!-- Icône crayon -->
+      <svg
+        class="h-5 w-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 20h9"/>
+        <path
+          d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"
+        />
+      </svg>
+
+      Modifier mes informations
+
+    </button>
+
+  </section>
+
+
+  <!-- ================= DECONNEXION ================= -->
+
+  <button
+    type="button"
+    (click)="deconnecter()"
+    class="mt-4 flex w-full items-center justify-center gap-2
+           rounded-xl bg-[#EEF3FF]
+           py-3.5 text-[15px] font-semibold text-red-600"
+  >
+
+    <svg
+      class="h-5 w-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M10 17l5-5-5-5"/>
+      <path d="M15 12H3"/>
+      <path d="M21 19V5a2 2 0 0 0-2-2h-6"/>
+    </svg>
+
+    Se déconnecter
+
+  </button>
+
+</div>
