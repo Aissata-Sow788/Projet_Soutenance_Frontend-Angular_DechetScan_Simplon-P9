@@ -1,1 +1,652 @@
-<p>utilisateurs works!</p>
+<!--
+  Contenu central de la page "Gestion des utilisateurs".
+  Le SidebarAdmin et le HeaderAdmin sont gérés par AdminLayout.
+-->
+
+<section class="min-h-[calc(100vh-60px)] bg-[#F6F8FD] px-7 py-5">
+
+  <!-- ============================================================
+       BANDEAU SYSTÈME
+       ============================================================ -->
+  <!-- <div class="mb-5 flex items-center justify-between"> -->
+
+    <!-- Badge indiquant que le système est opérationnel. -->
+    <!-- <div
+      class="inline-flex items-center gap-2 rounded-full bg-[#E6F8F7] px-3 py-1.5 text-[10px] font-semibold text-[#087C78]"
+    > -->
+      <!-- Petit indicateur vert. -->
+      <!-- <span class="h-1.5 w-1.5 rounded-full bg-[#0EA5A4]"></span>
+
+      SYSTÈME OPÉRATIONNEL — HUB NATIONAL
+    </div>
+
+  </div> -->
+
+
+  <!-- ============================================================
+       EN-TÊTE DE LA PAGE
+       ============================================================ -->
+  <div class="mb-5">
+
+    <!-- Ligne d'information : système + date + localisation. -->
+    <div class="mb-2 flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
+
+      <!-- Badge système. -->
+      <span
+        class="inline-flex items-center gap-1.5 rounded-full bg-[#E6F8F7] px-2.5 py-1 font-semibold text-[#087C78]"
+      >
+        <span class="h-1.5 w-1.5 rounded-full bg-[#0EA5A4]"></span>
+        SYSTÈME OPÉRATIONNEL — HUB NATIONAL
+      </span>
+
+      <!-- Séparateur. -->
+      <span class="text-slate-300">|</span>
+
+      <!-- Date et localisation. -->
+      <span>
+        10 Septembre 2026
+      </span>
+
+      <span class="text-slate-300">•</span>
+
+      <span>
+        Dakar, SN
+      </span>
+
+    </div>
+
+
+    <!-- Titre principal. -->
+    <h1 class="text-[28px] font-bold leading-tight text-[#142337]">
+      Gestion des utilisateurs
+    </h1>
+
+    <!-- Description de la page. -->
+    <p class="mt-1 max-w-[520px] text-[13px] leading-[1.5] text-slate-500">
+      Consultez et gérez la communauté civique :
+      comptes citoyens répertoriés et sessions de scan anonymes.
+    </p>
+
+  </div>
+
+
+  <!-- ============================================================
+       CARTE PRINCIPALE
+       ============================================================ -->
+  <div class="overflow-hidden rounded-2xl bg-white shadow-sm">
+
+
+    <!-- ==========================================================
+         ONGLET UTILISATEURS
+         ========================================================== -->
+    <div class="flex border-b border-slate-100 px-3 pt-1">
+
+      <!-- --------------------------------------------------------
+           ONGLET UTILISATEURS CONNECTÉS
+           -------------------------------------------------------- -->
+      <button
+        type="button"
+        (click)="changerOnglet('connectes')"
+        class="flex items-center gap-2 rounded-xl px-4 py-3 text-[12px] font-semibold transition"
+        [class.bg-[#0EA5A4]]="ongletActif() === 'connectes'"
+        [class.text-white]="ongletActif() === 'connectes'"
+        [class.text-slate-500]="ongletActif() !== 'connectes'"
+      >
+
+        <!-- Icône utilisateurs. -->
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+
+        <span>
+          Utilisateurs connectés
+        </span>
+
+        <!-- Nombre total d'utilisateurs connectés. -->
+        <span
+          class="rounded-md bg-black/5 px-2 py-0.5 text-[9px]"
+          [class.bg-white/20]="ongletActif() === 'connectes'"
+        >
+          1248
+        </span>
+
+      </button>
+
+
+      <!-- --------------------------------------------------------
+           ONGLET UTILISATEURS ANONYMES
+           -------------------------------------------------------- -->
+      <button
+        type="button"
+        (click)="changerOnglet('anonymes')"
+        class="flex items-center gap-2 rounded-xl px-4 py-3 text-[12px] font-semibold transition"
+        [class.bg-[#EFF5FC]]="ongletActif() === 'anonymes'"
+        [class.text-[#142337]]="ongletActif() === 'anonymes'"
+        [class.text-slate-500]="ongletActif() !== 'anonymes'"
+      >
+
+        <!-- Icône utilisateur masqué. -->
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path d="M3 3l18 18"></path>
+          <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
+          <path d="M9.9 5.2A10.6 10.6 0 0 1 12 5c5.5 0 9.5 7 9.5 7a17.5 17.5 0 0 1-3.1 3.8"></path>
+          <path d="M6.2 6.2C3.8 8 2.5 12 2.5 12s4 7 9.5 7c1 0 2-.2 2.8-.5"></path>
+        </svg>
+
+        <span>
+          Utilisateurs anonymes
+        </span>
+
+        <!-- Nombre de sessions anonymes. -->
+        <span class="rounded-md bg-slate-200/70 px-2 py-0.5 text-[9px]">
+          356
+        </span>
+
+      </button>
+
+    </div>
+
+
+    <!-- ==========================================================
+         RECHERCHE ET FILTRES
+         ========================================================== -->
+    <div class="flex flex-col gap-2.5 p-4 lg:flex-row lg:items-center">
+
+      <!-- --------------------------------------------------------
+           BARRE DE RECHERCHE
+           -------------------------------------------------------- -->
+      <div class="relative min-w-0 flex-1">
+
+        <!-- Icône de recherche. -->
+        <svg
+          class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-4-4"></path>
+        </svg>
+
+        <!-- Champ de recherche. -->
+        <input
+          type="text"
+          [ngModel]="recherche()"
+          (ngModelChange)="changerRecherche($event)"
+          placeholder="Rechercher un utilisateur (nom, email, ID)..."
+          class="h-10 w-full rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-3 text-[11px] text-[#142337] outline-none transition placeholder:text-slate-400 focus:border-[#0EA5A4] focus:ring-2 focus:ring-[#0EA5A4]/10"
+        />
+
+      </div>
+
+
+      <!-- --------------------------------------------------------
+           FILTRE RÔLE
+           -------------------------------------------------------- -->
+      <div class="relative">
+
+        <svg
+          class="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M4 6h16"></path>
+          <path d="M7 12h10"></path>
+          <path d="M10 18h4"></path>
+        </svg>
+
+        <select
+          [ngModel]="filtreRole()"
+          (ngModelChange)="changerRole($event)"
+          class="h-10 appearance-none rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-8 text-[11px] font-semibold text-[#142337] outline-none"
+        >
+          <option>Tous les rôles</option>
+          <option>Citoyen</option>
+          <option>Administrateur</option>
+        </select>
+
+      </div>
+
+
+      <!-- --------------------------------------------------------
+           FILTRE STATUT
+           -------------------------------------------------------- -->
+      <div class="relative">
+
+        <svg
+          class="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M4 5h16"></path>
+          <path d="M7 12h10"></path>
+          <path d="M10 19h4"></path>
+        </svg>
+
+        <select
+          [ngModel]="filtreStatut()"
+          (ngModelChange)="changerStatut($event)"
+          class="h-10 appearance-none rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-8 text-[11px] font-semibold text-[#142337] outline-none"
+        >
+          <option>Tous les statuts</option>
+          <option>Actif</option>
+          <option>Inactif</option>
+        </select>
+
+      </div>
+
+
+      <!-- --------------------------------------------------------
+           FILTRE ACTIVITÉ
+           -------------------------------------------------------- -->
+      <div class="relative">
+
+        <svg
+          class="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M12 6v6l4 2"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+
+        <select
+          [ngModel]="filtreActivite()"
+          (ngModelChange)="changerActivite($event)"
+          class="h-10 appearance-none rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-8 text-[11px] font-semibold text-[#142337] outline-none"
+        >
+          <option>Plus récents</option>
+          <option>Plus anciens</option>
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         TABLEAU
+         ========================================================== -->
+    <div class="px-4 pb-4">
+
+      <!-- Conteneur permettant le scroll horizontal sur petit écran. -->
+      <div class="overflow-x-auto rounded-xl border border-slate-100">
+
+        <table class="w-full min-w-[900px] text-left">
+
+          <!-- ------------------------------------------------------
+               EN-TÊTE DU TABLEAU
+               ------------------------------------------------------ -->
+          <thead class="bg-[#F8FAFD]">
+
+            <tr class="border-b border-slate-100">
+
+              <th class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                Utilisateur
+              </th>
+
+              <th class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                Email
+              </th>
+
+              <th class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                Rôle
+              </th>
+
+              <th class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                Nombre de scans
+              </th>
+
+              <th class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                Dernière activité
+              </th>
+
+              <th class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                Statut
+              </th>
+
+              <th class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                Action
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <!-- ------------------------------------------------------
+               CORPS DU TABLEAU
+               ------------------------------------------------------ -->
+          <tbody class="divide-y divide-slate-100">
+
+            @for (utilisateur of utilisateursFiltres(); track utilisateur.id) {
+
+              <tr class="transition hover:bg-slate-50">
+
+                <!-- =================================================
+                     UTILISATEUR
+                     ================================================= -->
+                <td class="px-4 py-3">
+
+                  <div class="flex items-center gap-3">
+
+                    <!-- Avatar avec les initiales prénom + nom. -->
+                    <div
+                      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0EA5A4]/10 text-[11px] font-bold text-[#0EA5A4]"
+                    >
+                      {{ utilisateur.first_name?.charAt(0) || '?' }}{{ utilisateur.last_name?.charAt(0) || '' }}
+                    </div>
+
+                    <!-- Nom et ville. -->
+                    <div class="min-w-0">
+
+                      <!-- Nom complet. -->
+                      <p class="truncate text-[12px] font-semibold text-[#142337]">
+                        {{ utilisateur.first_name }} {{ utilisateur.last_name }}
+                      </p>
+
+                      <!-- Ville sous le nom. -->
+                      <p class="truncate text-[10px] text-slate-400">
+                        {{ utilisateur.ville || 'Ville non renseignée' }}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+
+                <!-- =================================================
+                     EMAIL
+                     ================================================= -->
+                <td class="px-4 py-3 text-[10px] text-slate-600">
+                  {{ utilisateur.email }}
+                </td>
+
+
+                <!-- =================================================
+                     RÔLE
+                     ================================================= -->
+                <td class="px-4 py-3 text-center">
+
+                  <span
+                    class="inline-flex rounded-full bg-[#E7F0FF] px-2.5 py-1 text-[9px] font-semibold text-[#42689B]"
+                  >
+                    {{ utilisateur.role }}
+                  </span>
+
+                </td>
+
+
+                <!-- =================================================
+                     NOMBRE DE SCANS
+                     ================================================= -->
+                <td class="px-4 py-3 text-center">
+
+                  <!--
+                    Valeur temporaire si le nombre de scans
+                    n'existe pas encore dans le modèle Utilisateur.
+                  -->
+                  <span class="text-[12px] font-bold text-[#142337]">0
+                    <!-- {{ utilisateur.nombre_scans || 0 }} -->
+                  </span>
+
+                </td>
+
+
+                <!-- =================================================
+                     DERNIÈRE ACTIVITÉ
+                     ================================================= -->
+                <td class="px-4 py-3">
+
+                  <div class="text-[10px] text-slate-600">
+
+                    <!-- Date d'activité. -->
+                    <p>
+                     0 <!-- {{ utilisateur.derniere_activite || 'Aucune activité' }} -->
+                    </p>
+
+                  </div>
+
+                </td>
+
+
+                <!-- =================================================
+                     STATUT
+                     ================================================= -->
+                <td class="px-4 py-3 text-center">
+
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-semibold"
+                    [class.bg-emerald-50]="utilisateur.is_active"
+                    [class.text-emerald-600]="utilisateur.is_active"
+                    [class.bg-red-50]="!utilisateur.is_active"
+                    [class.text-red-500]="!utilisateur.is_active"
+                  >
+
+                    <!-- Indicateur visuel du statut. -->
+                    <span
+                      class="h-1.5 w-1.5 rounded-full"
+                      [class.bg-emerald-500]="utilisateur.is_active"
+                      [class.bg-red-500]="!utilisateur.is_active"
+                    ></span>
+
+                    {{ utilisateur.is_active ? 'Actif' : 'Inactif' }}
+
+                  </span>
+
+                </td>
+
+
+                <!-- =================================================
+                     ACTION
+                     ================================================= -->
+                <td class="px-4 py-3 text-center">
+
+                  <!-- Bouton permettant d'ouvrir les détails. -->
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1 rounded-xl bg-[#EAF2FD] px-3 py-2 text-[10px] font-semibold text-[#142337] transition hover:bg-[#DCE9FA]"
+                  >
+                    Voir plus
+
+                    <!-- Flèche. -->
+                    <svg
+                      class="h-3 w-3"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+
+                  </button>
+
+                </td>
+
+              </tr>
+
+            }
+
+
+            <!-- ====================================================
+                 ÉTAT VIDE
+                 ==================================================== -->
+            @if (utilisateursFiltres().length === 0) {
+
+              <tr>
+
+                <td
+                  colspan="7"
+                  class="px-4 py-12 text-center"
+                >
+
+                  <!-- Icône utilisateur. -->
+                  <svg
+                    class="mx-auto h-9 w-9 text-slate-300"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  >
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+
+                  <!-- Message d'état vide. -->
+                  <p class="mt-3 text-[13px] font-medium text-slate-500">
+                    Aucun utilisateur trouvé.
+                  </p>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       BAS DE PAGE : INFORMATIONS + PAGINATION
+       ============================================================ -->
+  <div class="mt-4 flex flex-col gap-3 px-1 sm:flex-row sm:items-center sm:justify-between">
+
+    <!-- Nombre d'utilisateurs affichés. -->
+    <p class="text-[10px] text-slate-500">
+      Affichage de
+      <span class="font-semibold text-[#142337]">1</span>
+      à
+      <span class="font-semibold text-[#142337]">5</span>
+      sur
+      <span class="font-semibold text-[#142337]">1248</span>
+      utilisateurs enregistrés
+    </p>
+
+
+    <!-- Pagination. -->
+    <div class="flex items-center gap-1">
+
+      <!-- Page précédente. -->
+      <button
+        type="button"
+        class="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-white"
+      >
+        <svg
+          class="h-3.5 w-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+      </button>
+
+
+      <!-- Page 1 active. -->
+      <button
+        type="button"
+        class="flex h-7 w-7 items-center justify-center rounded-full bg-[#0EA5A4] text-[10px] font-semibold text-white"
+      >
+        1
+      </button>
+
+
+      <!-- Page 2. -->
+      <button
+        type="button"
+        class="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-slate-500 hover:bg-slate-100"
+      >
+        2
+      </button>
+
+
+      <!-- Page 3. -->
+      <button
+        type="button"
+        class="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-slate-500 hover:bg-slate-100"
+      >
+        3
+      </button>
+
+
+      <!-- Page 4. -->
+      <button
+        type="button"
+        class="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-slate-500 hover:bg-slate-100"
+      >
+        4
+      </button>
+
+
+      <!-- Indication de pages intermédiaires. -->
+      <span class="px-1 text-[10px] text-slate-400">
+        ...
+      </span>
+
+
+      <!-- Dernière page. -->
+      <button
+        type="button"
+        class="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-slate-500 hover:bg-slate-100"
+      >
+        12
+      </button>
+
+
+      <!-- Page suivante. -->
+      <button
+        type="button"
+        class="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-white"
+      >
+        <svg
+          class="h-3.5 w-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="m9 18 6-6-6-6"></path>
+        </svg>
+      </button>
+
+    </div>
+
+  </div>
+
+</section>

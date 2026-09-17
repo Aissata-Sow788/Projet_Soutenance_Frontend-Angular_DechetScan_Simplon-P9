@@ -1,1 +1,205 @@
-<p>historique works!</p>
+<div class="min-h-screen bg-[#f3f4f3] pb-20 text-[#142337]">
+
+  <!-- EN-TÊTE -->
+  <header class="h-[70px] bg-[#f8f9fd] px-5 flex items-center justify-between">
+    <img src="assets/logo1-dechetscan.png" alt="DechetScan"
+         class="h-30 w-auto object-contain">
+
+    <button type="button" aria-label="Notifications"
+            class="flex h-9 w-9 items-center justify-center text-[#3f4a4d]">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+        <path d="M10 21h4"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="px-5 pt-4">
+
+    <!-- TITRE -->
+    <div class="flex items-center gap-1.5">
+      <span class="h-2.5 w-2.5 rounded-full bg-[#0EA5A4]"></span>
+      <p class="text-[11px] font-bold tracking-[0.08em] text-[#087c7c]">
+        JOURNAL ÉCO-CITOYEN
+      </p>
+    </div>
+
+    <h1 class="mt-1.5 text-[26px] leading-[1.08] font-bold tracking-[-0.025em]">
+      Historique des scans
+    </h1>
+
+    <p class="mt-1 text-[15px] leading-5 text-[#536064]">
+      124 objets analysés et triés à Dakar
+    </p>
+
+    <!-- RECHERCHE -->
+    <div class="mt-5 h-[48px] rounded-full bg-white
+                shadow-[0_2px_7px_rgba(15,23,42,0.07)]
+                flex items-center px-5">
+      <svg class="h-4 w-4 text-slate-300 mr-2.5 flex-shrink-0"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="m20 20-4-4"/>
+      </svg>
+
+      <input type="text"
+             [value]="recherche()"
+             (input)="rechercher($event)"
+             placeholder="Rechercher dans l'historique..."
+             class="w-full bg-transparent border-0 outline-none text-[14px]
+                    text-[#334155] placeholder:text-[#8a9497]">
+    </div>
+
+    <!-- FILTRES -->
+    <div class="mt-4 flex gap-2 overflow-x-auto scrollbar-hide">
+      <button type="button"
+              (click)="changerFiltre('semaine')"
+              class="h-[40px] flex-shrink-0 rounded-full px-5 text-[14px] font-bold"
+              [class.bg-[#0EA5A4]]="filtreActif() === 'semaine'"
+              [class.text-white]="filtreActif() === 'semaine'"
+              [class.bg-[#dfeafb]]="filtreActif() !== 'semaine'"
+              [class.text-[#46535a]]="filtreActif() !== 'semaine'">
+        Cette semaine
+      </button>
+
+      <button type="button"
+              (click)="changerFiltre('mois')"
+              class="h-[40px] flex-shrink-0 rounded-full bg-[#dfeafb]
+                     px-5 text-[14px] font-bold text-[#46535a]">
+        Ce mois
+      </button>
+
+      <button type="button"
+              (click)="changerFiltre('tout')"
+              class="h-[40px] flex-shrink-0 rounded-full bg-[#dfeafb]
+                     px-5 text-[14px] font-bold text-[#46535a]">
+        Tout l'historique
+      </button>
+    </div>
+
+    <!-- CARTES DES SCANS -->
+    <section class="mt-5 space-y-4">
+
+      <article *ngFor="let scan of scansFiltres()"
+               class="min-h-[132px] rounded-[22px] bg-white px-4 py-4
+                      shadow-[0_2px_7px_rgba(15,23,42,0.05)]">
+
+        <div class="flex gap-3.5">
+
+          <!-- PHOTO -->
+          <div class="relative h-[84px] w-[84px] flex-shrink-0
+                      overflow-hidden rounded-[17px] bg-slate-100">
+            <img [src]="scan.image" [alt]="scan.objet"
+                 class="h-full w-full object-cover">
+
+            <!-- Petite icône du type de déchet -->
+            <span class="absolute bottom-1.5 right-1.5 flex h-7 w-7
+                         items-center justify-center rounded-full
+                         bg-[#087f7b] text-white">
+
+              <!-- Recyclage -->
+              <svg *ngIf="scan.icone === 'recyclage'"
+                   class="h-4 w-4" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M7 19l-3-3m0 0l3-3m-3 3h13a4 4 0 004-4v-1"/>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M17 5l3 3m0 0l-3 3m3-3H7a4 4 0 00-4 4v1"/>
+              </svg>
+
+              <!-- Bac -->
+              <svg *ngIf="scan.icone === 'bac'"
+                   class="h-4 w-4" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" d="M4 7h16M7 7l1 13h8l1-13M9 7V4h6v3"/>
+              </svg>
+
+              <!-- Carton -->
+              <svg *ngIf="scan.icone === 'carton'"
+                   class="h-4 w-4" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="5" width="16" height="15" rx="2"/>
+                <path stroke-linecap="round" d="M8 9h8M8 13h5"/>
+              </svg>
+
+              <!-- Compost -->
+              <svg *ngIf="scan.icone === 'compost'"
+                   class="h-4 w-4" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 20c5-2 7-7 6-13-6 0-11 3-11 8 0 2 2 4 5 5Z"/>
+                <path stroke-linecap="round" d="M12 20V10"/>
+              </svg>
+            </span>
+          </div>
+
+          <!-- INFORMATIONS -->
+          <div class="min-w-0 flex-1">
+
+            <span class="inline-flex rounded-full bg-[#a8f0e2]
+                         px-3 py-0.5 text-[11px] font-semibold text-[#087c72]">
+              {{ scan.categorie }}
+            </span>
+
+            <h2 class="mt-1.5 text-[19px] leading-[1.1] font-semibold
+                       tracking-[-0.02em] truncate">
+              {{ scan.objet }}
+            </h2>
+
+            <div class="mt-3 flex items-center gap-1.5 text-[13px]
+                        text-[#596467] whitespace-nowrap">
+              <svg class="h-4 w-4 flex-shrink-0"
+                   viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"/>
+                <path stroke-linecap="round" d="M12 7v5l3 2"/>
+              </svg>
+              <span>{{ scan.date }} • {{ scan.heure }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RÉSULTAT -->
+        <div class="mt-[-23px] flex justify-end">
+          <span class="inline-flex items-center gap-1.5 rounded-full
+                       bg-[#d5f8f4] px-3 py-1 text-[11px] font-bold text-[#087c72]">
+
+            <!-- Badge validation -->
+            <svg *ngIf="scan.destination !== 'Composteur'"
+                 class="h-4 w-4" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 3l2 2 3-.1.8 2.8 2.2 2-1.2 2.8 1.2 2.8-2.2 2-.8 2.8-3-.1-2 2-2-2-3 .1-.8-2.8-2.2-2 1.2-2.8-1.2-2.8 2.2-2 .8-2.8 3 .1 2-2Z"/>
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m8.5 12 2.2 2.2 4.8-5"/>
+            </svg>
+
+            <!-- Badge compost -->
+            <svg *ngIf="scan.destination === 'Composteur'"
+                 class="h-4 w-4" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" d="M12 20V9"/>
+              <path stroke-linecap="round"
+                    d="M12 12c-4 0-6-2-6-5 4 0 6 2 6 5Z"/>
+              <path stroke-linecap="round"
+                    d="M12 10c0-4 2-6 6-6 0 4-2 6-6 6Z"/>
+            </svg>
+
+            {{ scan.destination }}
+          </span>
+        </div>
+      </article>
+
+      <div *ngIf="scansFiltres().length === 0"
+           class="rounded-xl bg-white p-6 text-center text-sm text-slate-500">
+        Aucun scan trouvé.
+      </div>
+    </section>
+  </main>
+
+  <!-- Navigation du bas -->
+  <app-barre-navigations></app-barre-navigations>
+
+</div>

@@ -1,1 +1,212 @@
-<p>connexion works!</p>
+<div class="min-h-screen w-full bg-[#f7f8fc] text-[#172633]">
+  <main class="mx-auto w-full max-w-[390px] px-6">
+
+    <!-- ===================================================== -->
+    <!-- LOGO -->
+    <!-- ===================================================== -->
+    <div class="flex justify-center pt-[2px] pb-[2px]">
+      <img
+        src="assets/logo1-dechetscan.png"
+        alt="DechetScan"
+        class="w-[140px] h-auto object-contain"
+      />
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- TITRE -->
+    <!-- ===================================================== -->
+
+    <section>
+
+      <h1
+        class="text-[30px] font-extrabold leading-[36px] tracking-[-1px] text-[#102238]"
+      >
+        Bon retour !
+      </h1>
+
+      <p
+        class="mt-[12px] text-[15px] font-normal leading-[23px] text-[#6c7a7b]"
+      >
+        Connectez-vous pour retrouver votre historique et
+        vos activités.
+      </p>
+
+
+      <!-- ================================================= -->
+      <!-- FORMULAIRE -->
+      <!-- ================================================= -->
+
+      <form
+  class="mt-[39px]"
+  [formGroup]="loginForm"
+  (ngSubmit)="onSubmit()"
+>
+
+        <!-- EMAIL -->
+<label
+  for="identifiant"
+  class="mb-[8px] block text-[14px] font-medium text-[#3d4c4f]"
+>
+  Adresse e-mail ou numéro de téléphone
+</label>
+
+<input
+  id="identifiant"
+  formControlName="identifiant"
+  type="text"
+  placeholder="ex: fallou@exemple.sn ou 77 000 00 00"
+  class="h-[57px] w-full rounded-[29px] border bg-white px-7 text-[14px] text-[#3d4c4f] shadow-[0_2px_3px_rgba(20,30,40,0.06)] outline-none placeholder:text-[#bcc8c9] focus:ring-2 focus:ring-[#13a7a7]"
+  [class.border-red-400]="loginForm.get('identifiant')?.touched && loginForm.get('identifiant')?.invalid"
+/>
+
+@if (loginForm.get('identifiant')?.touched && loginForm.get('identifiant')?.invalid) {
+  <p class="mt-2 px-4 text-[13px] text-red-500">
+    L'adresse e-mail ou le numéro de téléphone est obligatoire.
+  </p>
+}
+
+        <!-- ================================================= -->
+        <!-- MOT DE PASSE -->
+        <!-- ================================================= -->
+
+        <div class="mt-[29px]">
+
+          <div class="mb-[8px] flex items-center justify-between gap-2">
+
+            <label
+              for="password"
+              class="text-[14px] font-medium text-[#3d4c4f]"
+            >
+              Mot de passe
+            </label>
+
+            <button
+              type="button"
+              class="whitespace-nowrap text-[13px] font-bold text-[#087b7d] hover:text-[#056466]"
+            >
+              Mot de passe oublié ?
+            </button>
+
+          </div>
+
+
+          <!-- Champ mot de passe -->
+          <div class="relative">
+
+<input
+  id="password"
+  formControlName="motDePasse"
+  [type]="afficherMotDePasse() ? 'text' : 'password'"
+  placeholder="••••••••••••"
+  class="h-[57px] w-full rounded-[29px] border bg-white px-7 pr-16 text-[15px] tracking-[3px] text-[#3d4c4f] shadow-[0_2px_3px_rgba(20,30,40,0.06)] outline-none placeholder:text-[#bcc8c9] focus:ring-2 focus:ring-[#13a7a7]"
+  [class.border-red-400]="loginForm.get('motDePasse')?.touched && loginForm.get('motDePasse')?.invalid"
+/>
+
+@if (loginForm.get('motDePasse')?.touched && loginForm.get('motDePasse')?.invalid) {
+  <p class="mt-2 px-4 text-[13px] text-red-500">
+    Le mot de passe est obligatoire.
+  </p>
+}
+            <!-- Icône œil -->
+<button
+  type="button"
+  (click)="toggleMotDePasse()"
+  [attr.aria-label]="afficherMotDePasse() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+  class="absolute right-[20px] top-1/2 -translate-y-1/2 text-[#718080]"
+>
+              <svg
+                class="h-[24px] w-[24px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z"
+                />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- BOUTON -->
+        <!-- ================================================= -->
+
+<button
+  type="submit"
+  [disabled]="chargement()"
+  class="mt-[31px] flex h-[64px] w-full items-center justify-center gap-3 rounded-[20px] bg-[#12a8a8] text-[18px] font-bold text-white shadow-[0_10px_22px_rgba(18,168,168,0.20)] transition hover:bg-[#0e9999] active:scale-[0.99]"
+>
+  <span>
+    {{ chargement() ? 'Connexion...' : 'Se connecter' }}
+  </span>
+
+  <svg
+    class="h-[25px] w-[25px]"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M5 12h14"></path>
+    <path d="M13 6l6 6-6 6"></path>
+  </svg>
+</button>
+
+
+        <!-- ================================================= -->
+        <!-- OU -->
+        <!-- ================================================= -->
+
+        <div class="my-[38px] flex items-center gap-5">
+
+          <div class="h-px flex-1 bg-[#d2e0f3]"></div>
+
+          <span
+            class="text-[14px] font-bold text-[#717d7e]"
+          >
+            OU
+          </span>
+
+          <div class="h-px flex-1 bg-[#d2e0f3]"></div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CREER UN COMPTE -->
+        <!-- ================================================= -->
+
+        <div class="pb-10 text-center">
+
+          <p
+            class="text-[15px] font-normal text-[#3f4d4f]"
+          >
+            Vous n'avez pas encore de compte ?
+          </p>
+
+          <button
+            type="button"
+            class="mt-[7px] text-[17px] font-extrabold text-[#087c7d] hover:underline"
+          >
+            Créer un compte
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </main>
+</div>

@@ -1,0 +1,820 @@
+<!-- ============ HERO SECTION ============ -->
+<section class="relative overflow-hidden rounded-[28px] mx-4 mt-4 shadow-xl">
+
+  <!-- Image de fond -->
+  <div
+    class="absolute inset-0 bg-[url('/assets/hero-bg.png')] bg-cover bg-center">
+  </div>
+
+  <!-- Voile sombre -->
+  <div
+    class="absolute inset-0 bg-gradient-to-b from-[#0F172A]/85 via-[#0F172A]/65 to-[#0F172A]/90">
+  </div>
+
+  <!-- Contenu -->
+  <div class="relative z-10 px-5 pt-6 pb-8">
+
+    <!-- ============ NAVBAR ============ -->
+    <div class="flex items-center justify-between mb-8">
+
+      <!-- Logo -->
+      <a routerLink="/accueil">
+        <img
+          src="/assets/logo-dechetscan.png"
+          alt="DechetScan"
+          class="w-[110px] h-auto object-contain"
+        >
+      </a>
+
+      <!-- Boutons -->
+      <div class="flex items-center gap-2">
+
+        <!-- Connexion -->
+        <button
+          routerLink="connexion/"
+          class="text-white text-xs font-medium px-3.5 py-2
+                 rounded-full bg-white/10 backdrop-blur-md
+                 border border-white/10
+                 hover:bg-white/20 transition">
+          Connexion
+        </button>
+
+        <!-- Inscription -->
+        <button
+          routerLink="/inscription"
+          class="text-white text-xs font-semibold px-3.5 py-2
+                 rounded-full bg-[#0EA5A4]
+                 shadow-sm hover:bg-[#0d9488] transition">
+          S'inscrire
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ============ TITRE ============ -->
+    <h1 class="text-white text-4xl font-extrabold leading-tight mb-3 tracking-tight">
+      Chaque déchet a son avenir.
+    </h1>
+
+
+    <!-- ============ SOUS-TITRE ============ -->
+    <p class="text-[#99F6E4] text-sm leading-relaxed mb-6">
+      Scannez, triez, recyclez. Construisons ensemble un Sénégal
+      plus propre et durable, geste après geste.
+    </p>
+
+
+    <!-- ============ BOUTON SCANNER ============ -->
+    <button
+      routerLink="/scanner"
+      class="w-full bg-[#0EA5A4]
+             hover:bg-[#0d9488]
+             text-white font-semibold py-4 rounded-2xl
+             flex items-center justify-center gap-2
+             mb-5 shadow-lg shadow-[#0EA5A4]/30 transition">
+
+      <!-- Icône scanner SVG -->
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 8V5a1 1 0 0 1 1-1h3
+             M16 4h3a1 1 0 0 1 1 1v3
+             M20 16v3a1 1 0 0 1-1 1h-3
+             M8 20H5a1 1 0 0 1-1-1v-3" />
+
+        <rect
+          x="8"
+          y="8"
+          width="8"
+          height="8"
+          rx="1" />
+
+      </svg>
+
+      <span class="text-base font-bold">
+        Scanner un déchet
+      </span>
+
+    </button>
+
+  </div>
+
+  <!-- ============ RÉSULTAT DU SCAN ============ -->
+<div
+  class="bg-black/40 backdrop-blur-md rounded-2xl
+         p-3.5 flex items-center gap-3.5
+         border border-white/10 shadow-inner">
+
+  <!-- Image du déchet -->
+  <div
+    class="w-12 h-12 rounded-xl bg-cover bg-center
+           flex-shrink-0"
+    style="background-image: url('/assets/bottle-thumb.jpg');">
+  </div>
+
+  <!-- Icône validation -->
+  <div
+    class="w-7 h-7 rounded-full bg-[#0EA5A4]
+           flex items-center justify-center
+           flex-shrink-0">
+
+    <svg
+      class="w-4 h-4 text-white"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      viewBox="0 0 24 24">
+
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M5 12l4 4L19 6" />
+
+    </svg>
+
+  </div>
+
+  <!-- Informations -->
+  <div class="flex-1 min-w-0">
+
+    <p class="text-white text-sm font-bold truncate">
+      Bouteille Plastique (PET)
+    </p>
+
+    <div class="flex items-center gap-1.5 mt-1">
+
+      <!-- Icône localisation -->
+      <svg
+        class="w-3.5 h-3.5 text-[#99F6E4] flex-shrink-0"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 21s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" />
+
+        <circle cx="12" cy="9" r="2.5" />
+
+      </svg>
+
+      <p class="text-white/70 text-xs truncate">
+        Bac Jaune / Collecte Dakar Plateau
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Icône flèche -->
+  <svg
+    class="w-5 h-5 text-white/50 flex-shrink-0"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    viewBox="0 0 24 24">
+
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M9 18l6-6-6-6" />
+
+  </svg>
+
+</div>
+
+<!-- ============ STATISTIQUES ============ -->
+<div class="grid grid-cols-2 gap-3 mb-8">
+
+  <!-- Statistique scans -->
+  <div
+    class="bg-white/10 backdrop-blur-md
+           border border-white/10
+           rounded-2xl p-4">
+
+    <!-- Icône scan -->
+    <div
+      class="w-9 h-9 rounded-xl
+             bg-[#99F6E4]/15
+             flex items-center justify-center
+             mb-3">
+
+      <svg
+        class="w-5 h-5 text-[#99F6E4]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        viewBox="0 0 24 24">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 8V5a1 1 0 011-1h3
+             M16 4h3a1 1 0 011 1v3
+             M20 16v3a1 1 0 01-1 1h-3
+             M8 20H5a1 1 0 01-1-1v-3" />
+
+        <rect
+          x="8"
+          y="8"
+          width="8"
+          height="8"
+          rx="1" />
+
+      </svg>
+
+    </div>
+
+    <p class="text-white text-xl font-extrabold">
+      128k+
+    </p>
+
+    <p class="text-white/60 text-xs mt-1">
+      Scannés
+    </p>
+
+  </div>
+
+
+  <!-- Statistique citoyens -->
+  <div
+    class="bg-white/10 backdrop-blur-md
+           border border-white/10
+           rounded-2xl p-4">
+
+    <!-- Icône utilisateurs -->
+    <div
+      class="w-9 h-9 rounded-xl
+             bg-[#99F6E4]/15
+             flex items-center justify-center
+             mb-3">
+
+      <svg
+        class="w-5 h-5 text-[#99F6E4]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        viewBox="0 0 24 24">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M16 21v-2a4 4 0 00-4-4H6
+             a4 4 0 00-4 4v2" />
+
+        <circle
+          cx="9"
+          cy="7"
+          r="4" />
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M22 21v-2a4 4 0 00-3-3.87
+             M16 3.13a4 4 0 010 7.75" />
+
+      </svg>
+
+    </div>
+
+    <p class="text-white text-xl font-extrabold">
+      15.2k
+    </p>
+
+    <p class="text-white/60 text-xs mt-1">
+      Citoyens
+    </p>
+
+  </div>
+
+</div>
+
+</section>
+
+<!-- ============ SOLUTIONS INTELLIGENTES ============ -->
+<section class="px-4 mt-8 pb-32">
+
+  <!-- En-tête -->
+  <div class="flex items-start justify-between mb-5 px-1">
+
+    <div>
+      <p class="text-[#0EA5A4] text-xs font-bold uppercase tracking-[0.12em] mb-1">
+        ÉCOSYSTÈME CIRCULAIRE
+      </p>
+
+      <h2 class="text-[#0F172A] text-[25px] leading-tight font-bold">
+        Solutions intelligentes
+      </h2>
+    </div>
+
+    <!-- Petit bouton à droite -->
+    <button
+      type="button"
+      class="w-11 h-11 rounded-full bg-[#E5EEFF]
+             flex items-center justify-center">
+      <svg
+        class="w-5 h-5 text-[#007C83]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        viewBox="0 0 24 24">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 3l1.6 2.2 2.7-.1.8 2.6 2.4 1.2-1 2.5 1 2.5-2.4 1.2-.8 2.6-2.7-.1L12 21l-1.6-2.2-2.7.1-.8-2.6-2.4-1.2 1-2.5-1-2.5 2.4-1.2.8-2.6 2.7.1L12 3z" />
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9.5 12l1.7 1.7 3.4-3.4" />
+      </svg>
+    </button>
+
+  </div>
+
+
+  <!-- ============ SCAN INTELLIGENT ============ -->
+  <button
+    type="button"
+    routerLink="/scanner"
+    class="w-full text-left bg-white rounded-[28px]
+           p-5 mb-3
+           shadow-[0_2px_8px_rgba(15,23,42,0.04)]
+           border border-slate-100">
+
+    <div class="flex items-start gap-4">
+
+      <!-- Icône -->
+      <div
+        class="shrink-0 w-16 h-16 rounded-[20px]
+               bg-[#D9F8F5]
+               flex items-center justify-center">
+
+        <svg
+          class="w-7 h-7 text-[#007C83]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24">
+
+          <rect
+            x="5"
+            y="7"
+            width="14"
+            height="11"
+            rx="2" />
+
+          <path
+            stroke-linecap="round"
+            d="M8 7V5h8v2" />
+
+          <circle
+            cx="9"
+            cy="12"
+            r="1" />
+
+          <circle
+            cx="15"
+            cy="12"
+            r="1" />
+
+          <path
+            stroke-linecap="round"
+            d="M9 16h6" />
+
+        </svg>
+      </div>
+
+
+      <!-- Texte -->
+      <div class="min-w-0 flex-1">
+
+        <div class="flex flex-wrap items-center gap-2">
+
+          <h3 class="text-[#0F172A] text-[23px] leading-tight font-semibold">
+            Scan intelligent
+          </h3>
+
+          <span
+            class="text-[#0B7F83] bg-[#E5F1EF]
+                   rounded-full px-2 py-0.5
+                   text-[10px] font-medium">
+            IA Vision
+          </span>
+
+        </div>
+
+        <p class="text-[#475569] text-[16px] leading-[1.55] mt-1">
+          Identification ultra-précise des matériaux plastiques,
+          canettes et bio-déchets via votre caméra.
+        </p>
+
+      </div>
+
+    </div>
+
+  </button>
+
+
+  <!-- ============ CONSEILS DE TRI ============ -->
+  <button
+    type="button"
+    routerLink="/conseils-tri"
+    class="w-full text-left bg-white rounded-[28px]
+           p-5 mb-3
+           shadow-[0_2px_8px_rgba(15,23,42,0.04)]
+           border border-slate-100">
+
+    <div class="flex items-start gap-4">
+
+      <!-- Icône -->
+      <div
+        class="shrink-0 w-16 h-16 rounded-[20px]
+               bg-[#D9F8F5]
+               flex items-center justify-center">
+
+        <svg
+          class="w-7 h-7 text-[#007C83]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24">
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h2M4 12h2M4 18h2" />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 6h11M9 12h11M9 18h11" />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5 6l1 1 2-2
+               M5 12l1 1 2-2
+               M5 18l1 1 2-2" />
+
+        </svg>
+      </div>
+
+
+      <!-- Texte -->
+      <div class="min-w-0 flex-1">
+
+        <div class="flex flex-wrap items-center gap-2">
+
+          <h3 class="text-[#0F172A] text-[23px] leading-tight font-semibold">
+            Conseils de tri
+          </h3>
+
+          <span
+            class="text-[#0B7F83] bg-[#E5F1EF]
+                   rounded-full px-2 py-0.5
+                   text-[10px] font-medium">
+            Guide
+          </span>
+
+        </div>
+
+        <p class="text-[#475569] text-[16px] leading-[1.55] mt-1">
+          Des gestes simples et pédagogiques adaptés
+          aux filières de recyclage locales au Sénégal.
+        </p>
+
+      </div>
+
+    </div>
+
+  </button>
+
+
+  <!-- ============ POINTS DE COLLECTE ============ -->
+  <button
+    type="button"
+    routerLink="/points-collecte"
+    class="w-full text-left bg-white rounded-[28px]
+           p-5 mb-3
+           shadow-[0_2px_8px_rgba(15,23,42,0.04)]
+           border border-slate-100">
+
+    <div class="flex items-start gap-4">
+
+      <!-- Icône -->
+      <div
+        class="shrink-0 w-16 h-16 rounded-[20px]
+               bg-[#DCE8FF]
+               flex items-center justify-center">
+
+        <svg
+          class="w-7 h-7 text-[#007C83]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24">
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 3L10 14" />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 3l-7 18-4-7-7-4L21 3z" />
+
+        </svg>
+      </div>
+
+
+      <!-- Texte -->
+      <div class="min-w-0 flex-1">
+
+        <div class="flex flex-wrap items-center gap-2">
+
+          <h3 class="text-[#0F172A] text-[23px] leading-tight font-semibold">
+            Points de collecte
+          </h3>
+
+          <span
+            class="text-[#64748B] bg-[#EEF1F2]
+                   rounded-full px-2 py-0.5
+                   text-[10px] font-medium">
+            Géo
+          </span>
+
+        </div>
+
+        <p class="text-[#475569] text-[16px] leading-[1.55] mt-1">
+          Trouvez instantanément les bacs de recyclage,
+          déchetteries et partenaires proches de vous.
+        </p>
+
+      </div>
+
+    </div>
+
+  </button>
+
+
+  <!-- ============ DÉFI DAKAR PROPRE ============ -->
+  <button
+    type="button"
+    routerLink="/defi-dakar-propre"
+    class="w-full text-left
+           bg-[#DCE9FF]
+           rounded-[28px]
+           p-5 mt-1">
+
+    <div class="flex items-center gap-4">
+
+      <!-- Icône -->
+      <div
+        class="shrink-0 w-14 h-14 rounded-[18px]
+               bg-[#0EA5A4]
+               flex items-center justify-center">
+
+        <svg
+          class="w-7 h-7 text-white"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24">
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3v18" />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8 6h8v5a4 4 0 01-8 0V6z" />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8 8H5v2a4 4 0 004 4
+               M16 8h3v2a4 4 0 01-4 4" />
+
+          <path
+            stroke-linecap="round"
+            d="M9 21h6" />
+
+        </svg>
+
+      </div>
+
+
+      <!-- Texte -->
+      <div>
+
+        <h3
+          class="text-[#0F172A]
+                 text-[23px]
+                 leading-[1.05]
+                 font-semibold">
+          Défi Dakar Propre<br>
+          2025
+        </h3>
+
+        <p class="text-[#475569] text-[16px] leading-tight mt-1">
+          Rejoignez 840 volontaires ce samedi
+        </p>
+
+      </div>
+
+    </div>
+
+  </button>
+
+</section>
+
+
+<!-- ============ BARRE DE NAVIGATION BAS ============ -->
+<nav
+  class="fixed bottom-3 left-3 right-3 z-50
+         h-[78px] rounded-[22px]
+         bg-white/90 backdrop-blur-xl
+         border border-[#D8E6FF]
+         shadow-[0_8px_30px_rgba(15,23,42,0.10)]">
+
+  <div class="relative mx-auto h-full grid grid-cols-3 items-center px-8">
+
+    <!-- ACCUEIL -->
+    <a
+      routerLink="/accueil"
+      class="flex flex-col items-center justify-center gap-1
+             text-[#475569] text-xs font-semibold">
+
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        viewBox="0 0 24 24">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 10.5L12 3l9 7.5" />
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M5 9.5V21h14V9.5" />
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 21v-6h6v6" />
+
+      </svg>
+
+      <span>Accueil</span>
+    </a>
+
+
+<!-- ============ BARRE DE NAVIGATION BAS ============ -->
+<nav
+  class="fixed bottom-3 left-3 right-3 z-50
+         h-[78px] rounded-[22px]
+         bg-white/90 backdrop-blur-xl
+         border border-[#D8E6FF]
+         shadow-[0_8px_30px_rgba(15,23,42,0.10)]">
+
+  <div class="relative mx-auto h-full grid grid-cols-3 items-center px-8">
+
+    <!-- ACCUEIL : GAUCHE -->
+    <a
+      routerLink="/accueil"
+      class="col-start-1 flex flex-col items-center justify-center gap-1
+             text-[#475569] text-xs font-semibold">
+
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        viewBox="0 0 24 24">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 10.5L12 3l9 7.5" />
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M5 9.5V21h14V9.5" />
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 21v-6h6v6" />
+
+      </svg>
+
+      <span>Accueil</span>
+    </a>
+
+
+    <!-- SCANNER : CENTRE -->
+    <a
+      routerLink="/scanner"
+      class="absolute left-1/2 -translate-x-1/2 -top-8
+             w-[76px] h-[76px] rounded-full
+             bg-white p-2
+             shadow-[0_5px_18px_rgba(14,165,164,0.22)]">
+
+      <div
+        class="w-full h-full rounded-full bg-[#0EA5A4]
+               flex items-center justify-center
+               shadow-[0_4px_14px_rgba(14,165,164,0.28)]">
+
+        <svg
+          class="w-7 h-7 text-white"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24">
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 8V5a1 1 0 0 1 1-1h3
+               M16 4h3a1 1 0 0 1 1 1v3
+               M20 16v3a1 1 0 0 1-1 1h-3
+               M8 20H5a1 1 0 0 1-1-1v-3" />
+
+          <rect
+            x="8"
+            y="8"
+            width="8"
+            height="8"
+            rx="1" />
+
+        </svg>
+
+      </div>
+    </a>
+
+
+    <!-- LIBELLÉ SCANNER : CENTRE -->
+    <span
+      class="absolute left-1/2 -translate-x-1/2
+             bottom-[-1px]
+             text-[#475569]
+             text-xs font-semibold">
+      Scanner
+    </span>
+
+
+    <!-- POINTS : DROITE -->
+    <a
+      routerLink="/points-collecte"
+      class="col-start-3 flex flex-col items-center justify-center gap-1
+             text-[#475569] text-xs font-semibold">
+
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        viewBox="0 0 24 24">
+
+        <circle
+          cx="9"
+          cy="12"
+          r="5.5" />
+
+        <circle
+          cx="15"
+          cy="12"
+          r="5.5" />
+
+      </svg>
+
+      <span>Points</span>
+    </a>
+
+  </div>
+</nav>
+
+
+
+
