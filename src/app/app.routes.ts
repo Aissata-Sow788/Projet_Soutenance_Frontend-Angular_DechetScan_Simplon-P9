@@ -90,6 +90,13 @@ export const routes: Routes = [
         .then(m => m.Profile)
   },
 
+  {
+    path: 'scans',
+    loadComponent: () =>
+      import('./features/points-collecte/points-collecte')
+    .then(m => m.PointsCollecte)
+  },
+
 
 
 
