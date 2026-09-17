@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard, adminGuard } from './core/guards/auth-guard' // adapte le chemin réel
 
 export const routes: Routes = [
 
@@ -68,6 +69,7 @@ export const routes: Routes = [
 
   {
     path: 'historique',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/historique/historique')
         .then(m => m.Historique)
@@ -82,6 +84,7 @@ export const routes: Routes = [
 
   {
     path: 'profile',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/profile/profile')
         .then(m => m.Profile)
@@ -97,7 +100,7 @@ export const routes: Routes = [
     {
       // URL : /admin
       path: 'admin',
-
+      canActivate: [adminGuard],
       // Charge le layout qui contient le SidebarAdmin
       // et le HeaderAdmin.
       loadComponent: () =>
