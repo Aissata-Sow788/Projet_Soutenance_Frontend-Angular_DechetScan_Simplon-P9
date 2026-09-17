@@ -88,6 +88,8 @@ export const routes: Routes = [
   },
 
 
+
+
     // ============================================================
     // ESPACE ADMINISTRATEUR
     // ============================================================
@@ -115,6 +117,13 @@ export const routes: Routes = [
             import('./features/admin/dashboard/dashboard')
               .then(m => m.Dashboard)
         },
+
+            {
+    path: 'utilisateurs',
+    loadComponent: () =>
+      import('./features/admin/utilisateurs/utilisateurs')
+        .then(m => m.Utilisateurs)
+  },
 
               // Page des points de collecte.
       {
