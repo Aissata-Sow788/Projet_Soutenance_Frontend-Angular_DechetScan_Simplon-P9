@@ -9,7 +9,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     '/api/auth/register/',
     '/api/auth/login/',
     '/api/types/',
-    '/api/conseils/'
+    '/api/conseils/',
+    '/api/scans/'
   ];
 
   // Vérifie si l'URL actuelle correspond à une route publique.

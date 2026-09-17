@@ -1,18 +1,22 @@
+import { ConseilTri } from "./conseil-tri.model";
 
-export interface TypeDechetAccepte {
-  idType: number;
+// Type de déchet accepté par un point, avec son conseil de tri imbriqué
+export interface TypeDechet {
+  idTypeDechet: number;
   nom: string;
+  description: string;
+  conseil: ConseilTri | null;
 }
 
+// Un point de collecte tel que renvoyé par l'API Django
 export interface PointCollecte {
   idPoint: number;
   nom: string;
   ville: string;
   latitude: number;
   longitude: number;
-  statut: 'actif' | 'inactif'; // 'actif' ou 'inactif'
+  statut: 'actif' | 'inactif';
   heureOuverture: string;
   heureFermeture: string;
-  dechetsAcceptes: TypeDechetAccepte[];
-  icone: 'recyclage' | 'poubelle' | 'ecran' | 'maison'; // détermine l'icône affichée sur la carte
+  dechetsAcceptes: TypeDechet[];
 }
