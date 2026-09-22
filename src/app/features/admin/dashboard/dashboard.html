@@ -1,317 +1,366 @@
-<!--
-  Tableau de bord administrateur.
-  Le SidebarAdmin et le HeaderAdmin sont gérés par AdminLayout.
-  Ce fichier contient uniquement le contenu central du dashboard.
--->
+<!-- ============================================================
+     CONTENU DU DASHBOARD ADMIN
 
-<section class="min-h-[calc(100vh-60px)] bg-[#F6F8FD] px-7 py-5">
+     Le Sidebar et le Header sont déjà gérés par ton
+     composant de layout administrateur.
+     ============================================================ -->
 
-  <!-- ========================================================= -->
-  <!-- EN-TÊTE DU TABLEAU DE BORD -->
-  <!-- ========================================================= -->
+<section class="min-h-full bg-[#f6f8fd] px-9 pb-10 pt-7">
 
-  <div class="mb-6 flex items-end justify-between">
 
-    <!-- Titre -->
+  <!-- ==========================================================
+       EN-TÊTE DU DASHBOARD
+       ========================================================== -->
+
+  <div class="mb-7 flex items-start justify-between">
+
     <div>
-      <!-- Petit indicateur de section -->
-      <div class="mb-1 flex items-center gap-2">
-        <span class="h-1.5 w-1.5 rounded-full bg-[#0EA5A4]"></span>
 
-        <span class="text-[9px] font-extrabold uppercase tracking-[0.14em] text-[#087C78]">
-          Tableau analytique
+      <!-- Petit indicateur de section -->
+      <div class="mb-2 flex items-center gap-2">
+
+        <span
+          class="text-[11px] font-bold uppercase tracking-[0.08em] text-[#079c98]"
+        >
+          ● TABLEAU ANALYTIQUE
         </span>
+
       </div>
 
+
       <!-- Titre principal -->
-      <h1 class="text-[40px] font-extrabold leading-[1.05] tracking-[-1.2px] text-[#142337]">
+      <h1
+        class="text-[34px] font-bold leading-none tracking-[-1.2px] text-[#142238]"
+      >
         Tableau de bord
       </h1>
 
+
       <!-- Description -->
-      <p class="mt-2 text-[13px] text-slate-600">
+      <p class="mt-2 text-[15px] text-[#5d6774]">
         Analysez l'activité globale de tri et la participation des utilisateurs.
       </p>
+
     </div>
 
+
     <!-- Sélecteur de période -->
-    <button
-      type="button"
-      class="flex h-[36px] items-center gap-2 rounded-xl bg-white px-3.5 shadow-sm ring-1 ring-slate-100"
+    <div
+      class="flex h-[44px] items-center gap-2 rounded-[14px] bg-white px-4 shadow-[0_2px_10px_rgba(20,35,60,0.04)]"
     >
 
-      <!-- Icône calendrier -->
-      <svg
-        class="h-[15px] w-[15px] text-[#087C78]"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <rect x="3" y="4" width="18" height="17" rx="2"></rect>
-        <path d="M16 2v4"></path>
-        <path d="M8 2v4"></path>
-        <path d="M3 10h18"></path>
-      </svg>
+      <span class="text-[17px] text-[#0b9d99]">
+        ▣
+      </span>
 
-      <span class="text-[11px] font-bold text-[#142337]">
+      <span class="text-[12px] font-semibold text-[#273448]">
         Période :
       </span>
 
-      <span class="text-[11px] font-bold text-[#0EA5A4]">
-        Derniers 30 jours
+      <span class="text-[12px] font-bold text-[#0b9d99]">
+        {{ periodeActive() }}
       </span>
 
-      <!-- Flèche -->
-      <svg
-        class="h-3.5 w-3.5 text-slate-500"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="m6 9 6 6 6-6"></path>
-      </svg>
+      <span class="ml-2 text-[14px] text-[#77818d]">
+       ⌄
+      </span>
 
-    </button>
+    </div>
 
   </div>
 
 
-  <!-- ========================================================= -->
-  <!-- 4 CARTES STATISTIQUES -->
-  <!-- ========================================================= -->
+  <!-- ==========================================================
+       MESSAGE DE CHARGEMENT
+       ========================================================== -->
+
+  @if (chargement()) {
+
+    <div
+      class="mb-6 flex items-center justify-center rounded-[18px] bg-white px-6 py-8 text-[14px] font-medium text-[#657181]"
+    >
+      Chargement des statistiques...
+    </div>
+
+  }
+
+
+  <!-- ==========================================================
+       MESSAGE D'ERREUR
+       ========================================================== -->
+
+  @if (erreur()) {
+
+    <div
+      class="mb-6 flex items-center justify-between rounded-[18px] border border-red-100 bg-red-50 px-5 py-4"
+    >
+
+      <span class="text-[13px] font-medium text-red-600">
+        {{ erreur() }}
+      </span>
+
+
+      <!-- Permet de relancer l'appel API -->
+      <button
+        type="button"
+        (click)="actualiser()"
+        class="rounded-[10px] bg-[#0ea5a4] px-4 py-2 text-[12px] font-bold text-white"
+      >
+        Réessayer
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ==========================================================
+       CARTES STATISTIQUES PRINCIPALES
+       ========================================================== -->
 
   <div class="grid grid-cols-4 gap-4">
 
-    <!-- Carte scans -->
-    <article class="h-[168px] rounded-2xl bg-white px-6 py-5 shadow-sm">
+
+    <!-- --------------------------------------------------------
+         CARTE : NOMBRE TOTAL DE SCANS
+         -------------------------------------------------------- -->
+
+    <div
+      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+    >
 
       <!-- Icône -->
-      <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F1FF] text-[#087C78]">
-
-        <svg
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <rect x="6" y="4" width="12" height="16" rx="2"></rect>
-          <path d="M9 8h6"></path>
-          <path d="M9 12h6"></path>
-          <path d="M9 16h3"></path>
-        </svg>
-
+      <div
+        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+      >
+        ▣
       </div>
 
-      <!-- Libellé -->
-      <p class="text-[11px] text-slate-600">
+
+      <p class="text-[12px] font-medium text-[#65707c]">
         Nombre total de scans
       </p>
 
-      <!-- Valeur -->
+
       <div class="mt-1 flex items-end gap-2">
-        <span class="text-[31px] font-extrabold leading-none tracking-[-1px] text-[#142337]">
-          {{ nombreScans }}
+
+        <span
+          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+        >
+          {{ nombreScans() | number:'1.0-0' }}
         </span>
 
-        <span class="mb-0.5 text-[9px] font-bold text-slate-500">
+        <span
+          class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
+        >
           scans
         </span>
+
       </div>
 
-    </article>
+    </div>
 
 
-    <!-- Carte utilisateurs -->
-    <article class="h-[168px] rounded-2xl bg-white px-6 py-5 shadow-sm">
+    <!-- --------------------------------------------------------
+         CARTE : UTILISATEURS ACTIFS
+         -------------------------------------------------------- -->
+
+    <div
+      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+    >
 
       <!-- Icône -->
-      <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F1FF] text-[#087C78]">
-
-        <svg
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="9" cy="8" r="3"></circle>
-          <path d="M3.5 19c.6-3.2 2.4-5 5.5-5s4.9 1.8 5.5 5"></path>
-          <path d="M16 5.5a3 3 0 0 1 0 5.5"></path>
-          <path d="M16 14c2.3.2 3.8 1.8 4.5 4"></path>
-        </svg>
-
+      <div
+        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+      >
+        ♙
       </div>
 
-      <!-- Libellé -->
-      <p class="text-[11px] text-slate-600">
+
+      <p class="text-[12px] font-medium text-[#65707c]">
         Utilisateurs actifs
       </p>
 
-      <!-- Valeur -->
+
       <div class="mt-1 flex items-end gap-2">
-        <span class="text-[31px] font-extrabold leading-none tracking-[-1px] text-[#142337]">
-          {{ utilisateursActifs }}
+
+        <span
+          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+        >
+          {{ utilisateursActifs() | number:'1.0-0' }}
         </span>
 
-        <span class="mb-0.5 text-[9px] font-bold text-slate-500">
+        <span
+          class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
+        >
           citoyens
         </span>
+
       </div>
 
-    </article>
+    </div>
 
 
-    <!-- Carte conformité -->
-    <article class="h-[168px] rounded-2xl bg-white px-6 py-5 shadow-sm">
+    <!-- --------------------------------------------------------
+         CARTE : DÉCHETS ANALYSÉS
+         -------------------------------------------------------- -->
+
+    <div
+      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+    >
 
       <!-- Icône -->
-      <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F1FF] text-[#087C78]">
-
-        <svg
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="9"></circle>
-          <path d="m8 12 2.5 2.5L16 9"></path>
-        </svg>
-
+      <div
+        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+      >
+        ✓
       </div>
 
-      <!-- Libellé -->
-      <p class="text-[11px] text-slate-600">
-        Déchets correctement triés
+
+      <p class="text-[12px] font-medium text-[#65707c]">
+        Déchets analysés
       </p>
 
-      <!-- Valeur -->
+
       <div class="mt-1 flex items-end gap-2">
-        <span class="text-[31px] font-extrabold leading-none tracking-[-1px] text-[#142337]">
-          {{ tauxTri }}
+
+        <span
+          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+        >
+          {{ dechetsAnalyses() | number:'1.0-0' }}
         </span>
 
-        <span class="mb-0.5 text-[9px] font-bold text-slate-500">
-          conformité
+        <span
+          class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
+        >
+          déchets
         </span>
+
       </div>
 
-    </article>
+    </div>
 
 
-    <!-- Carte points -->
-    <article class="h-[168px] rounded-2xl bg-white px-6 py-5 shadow-sm">
+    <!-- --------------------------------------------------------
+         CARTE : POINTS DE COLLECTE
+         -------------------------------------------------------- -->
+
+    <div
+      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+    >
 
       <!-- Icône -->
-      <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8F1FF] text-[#087C78]">
-
-        <svg
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
-          <circle cx="12" cy="10" r="2.5"></circle>
-        </svg>
-
+      <div
+        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+      >
+        ⌖
       </div>
 
-      <!-- Libellé -->
-      <p class="text-[11px] text-slate-600">
-        Points de collecte utilisés
+
+      <p class="text-[12px] font-medium text-[#65707c]">
+        Points de collecte actifs
       </p>
 
-      <!-- Valeur -->
-      <div class="mt-1 flex items-end gap-1.5">
 
-        <span class="text-[31px] font-extrabold leading-none tracking-[-1px] text-[#142337]">
-          {{ pointsUtilises }}
+      <div class="mt-1 flex items-end gap-2">
+
+        <span
+          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+        >
+          {{ pointsActifs() | number:'1.0-0' }}
         </span>
 
-        <span class="mb-0.5 text-[17px] font-medium text-slate-500">
-          / {{ pointsTotal }}
+        <span
+          class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
+        >
+          points
         </span>
 
       </div>
 
-    </article>
+    </div>
 
   </div>
 
 
-  <!-- ========================================================= -->
-  <!-- ZONE GRAPHIQUES -->
-  <!-- ========================================================= -->
+  <!-- ==========================================================
+       ZONE GRAPHIQUES
+       ========================================================== -->
 
-  <div class="mt-5 grid grid-cols-[minmax(0,1fr)_337px] gap-5">
+  <div class="mt-7 grid grid-cols-[2fr_1fr] gap-6">
 
 
-    <!-- ======================================================= -->
-    <!-- ÉVOLUTION DES SCANS -->
-    <!-- ======================================================= -->
+    <!-- ========================================================
+         GRAPHIQUE ÉVOLUTION DES SCANS
+         ======================================================== -->
 
-    <article class="h-[382px] rounded-2xl bg-white px-7 py-6 shadow-sm">
+    <div
+      class="rounded-[18px] bg-white px-7 py-6 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+    >
 
-      <!-- En-tête -->
+      <!-- Titre + périodes -->
       <div class="flex items-start justify-between">
 
-        <!-- Titre -->
         <div>
-          <h2 class="text-[18px] font-extrabold leading-tight text-[#142337]">
+
+          <h2
+            class="text-[18px] font-bold tracking-[-0.3px] text-[#142238]"
+          >
             Évolution des scans
           </h2>
 
-          <p class="mt-0.5 text-[10px] text-slate-500">
+          <p class="mt-1 text-[12px] text-[#66717d]">
             Fréquence de scans IA et détections validées
           </p>
+
         </div>
 
-        <!-- Filtres -->
-        <div class="flex rounded-xl bg-[#EEF4FF] p-1">
+
+        <!-- Sélecteur de période -->
+        <div
+          class="flex items-center gap-1 rounded-[12px] bg-[#edf3fc] p-1"
+        >
 
           <button
             type="button"
             (click)="changerPeriode('7 jours')"
-            [class.bg-[#0EA5A4]]="periodeActive === '7 jours'"
-            [class.text-white]="periodeActive === '7 jours'"
-            class="rounded-lg px-3.5 py-1.5 text-[9px] font-bold text-slate-600"
+            [ngClass]="{
+              'bg-[#0ea5a4] text-white':
+                periodeActive() === '7 jours',
+              'text-[#596575]':
+                periodeActive() !== '7 jours'
+            }"
+            class="rounded-[9px] px-4 py-2 text-[10px] font-bold"
           >
             7 jours
           </button>
 
+
           <button
             type="button"
             (click)="changerPeriode('30 jours')"
-            [class.bg-[#0EA5A4]]="periodeActive === '30 jours'"
-            [class.text-white]="periodeActive === '30 jours'"
-            class="rounded-lg px-3.5 py-1.5 text-[9px] font-bold text-slate-600"
+            [ngClass]="{
+              'bg-[#0ea5a4] text-white':
+                periodeActive() === '30 jours',
+              'text-[#596575]':
+                periodeActive() !== '30 jours'
+            }"
+            class="rounded-[9px] px-4 py-2 text-[10px] font-bold"
           >
             30 jours
           </button>
 
+
           <button
             type="button"
             (click)="changerPeriode('3 mois')"
-            [class.bg-[#0EA5A4]]="periodeActive === '3 mois'"
-            [class.text-white]="periodeActive === '3 mois'"
-            class="rounded-lg px-3.5 py-1.5 text-[9px] font-bold text-slate-600"
+            [ngClass]="{
+              'bg-[#0ea5a4] text-white':
+                periodeActive() === '3 mois',
+              'text-[#596575]':
+                periodeActive() !== '3 mois'
+            }"
+            class="rounded-[9px] px-4 py-2 text-[10px] font-bold"
           >
             3 mois
           </button>
@@ -321,167 +370,200 @@
       </div>
 
 
-      <!-- Zone du graphique -->
-      <div class="relative mt-6 h-[270px]">
+      <!-- ======================================================
+           ZONE DU GRAPHIQUE
 
-        <!-- Lignes horizontales du graphique -->
-        <div class="absolute inset-x-0 top-[35px] border-t border-dashed border-slate-100"></div>
+           Le graphique visuel conserve la forme de ta maquette.
+           Les statistiques principales viennent de Django.
+           ====================================================== -->
 
-        <div class="absolute inset-x-0 top-[90px] border-t border-dashed border-slate-100"></div>
-
-        <div class="absolute inset-x-0 top-[145px] border-t border-dashed border-slate-100"></div>
-
-        <div class="absolute inset-x-0 top-[200px] border-t border-dashed border-slate-100"></div>
+      <div class="relative mt-7 h-[245px]">
 
 
-        <!-- Courbe SVG -->
+        <!-- Lignes horizontales -->
+        <div
+          class="absolute left-0 right-0 top-[35px] border-t border-dashed border-[#dce6f2]"
+        ></div>
+
+        <div
+          class="absolute left-0 right-0 top-[88px] border-t border-dashed border-[#dce6f2]"
+        ></div>
+
+        <div
+          class="absolute left-0 right-0 top-[141px] border-t border-dashed border-[#dce6f2]"
+        ></div>
+
+        <div
+          class="absolute left-0 right-0 top-[194px] border-t border-dashed border-[#dce6f2]"
+        ></div>
+
+
+        <!-- Courbe -->
         <svg
-          class="absolute inset-x-0 top-0 h-[235px] w-full"
-          viewBox="0 0 760 235"
+          class="absolute inset-0 h-full w-full overflow-visible"
+          viewBox="0 0 700 245"
           preserveAspectRatio="none"
         >
 
-          <!-- Surface sous la courbe -->
+          <!-- Zone sous la courbe -->
           <path
-            d="M0 190
-               C70 165 125 130 200 100
-               C270 75 335 85 410 70
-               C500 52 585 18 675 35
-               L760 28
-               L760 235
-               L0 235 Z"
-            fill="#0EA5A4"
-            opacity="0.12"
+            d="M0 205
+               C90 175 125 145 210 115
+               C300 83 365 95 440 67
+               C520 38 590 18 700 32
+               L700 245
+               L0 245 Z"
+            fill="#dff4f3"
+            opacity="0.9"
           ></path>
 
-          <!-- Courbe principale -->
+
+          <!-- Ligne principale -->
           <path
-            d="M0 190
-               C70 165 125 130 200 100
-               C270 75 335 85 410 70
-               C500 52 585 18 675 35
-               L760 28"
+            d="M0 205
+               C90 175 125 145 210 115
+               C300 83 365 95 440 67
+               C520 38 590 18 700 32"
             fill="none"
-            stroke="#0EA5A4"
+            stroke="#0ea5a4"
             stroke-width="4"
             stroke-linecap="round"
           ></path>
 
-          <!-- Point semaine 2 -->
+
+          <!-- Points -->
           <circle
-            cx="200"
-            cy="100"
-            r="4.5"
+            cx="210"
+            cy="115"
+            r="5"
             fill="white"
-            stroke="#0EA5A4"
+            stroke="#0ea5a4"
             stroke-width="3"
           ></circle>
 
-          <!-- Point semaine 3 -->
           <circle
-            cx="410"
-            cy="70"
-            r="4.5"
+            cx="440"
+            cy="67"
+            r="5"
             fill="white"
-            stroke="#0EA5A4"
+            stroke="#0ea5a4"
             stroke-width="3"
           ></circle>
 
-          <!-- Point semaine 4 -->
           <circle
-            cx="675"
-            cy="35"
-            r="4.5"
+            cx="590"
+            cy="25"
+            r="5"
             fill="white"
-            stroke="#0EA5A4"
+            stroke="#0ea5a4"
             stroke-width="3"
           ></circle>
 
         </svg>
 
 
-        <!-- Étiquette du pic -->
-        <div class="absolute right-[15%] top-[5px] rounded-md bg-[#26364C] px-3 py-2 text-[9px] font-bold text-white shadow-sm">
-          14 210 scans
+        <!-- Valeur sur le point principal -->
+        <div
+          class="absolute right-[15%] top-[5px] rounded-[6px] bg-[#26364b] px-3 py-2 text-[11px] font-bold text-white"
+        >
+          {{ nombreScans() | number:'1.0-0' }} scans
         </div>
 
 
-        <!-- Étiquettes de semaines -->
-        <div class="absolute inset-x-0 bottom-0 flex justify-between text-[9px] font-semibold text-slate-500">
+        <!-- Labels -->
+        <div
+          class="absolute bottom-0 left-0 right-0 flex justify-between text-[10px] font-semibold text-[#77818a]"
+        >
 
-          <span>Semaine 1</span>
+          <span>
+            Semaine 1
+          </span>
 
-          <span>Semaine 2</span>
+          <span>
+            Semaine 2
+          </span>
 
-          <span>Semaine 3 (Pic Dakar)</span>
+          <span>
+            Semaine 3
+          </span>
 
-          <span>Semaine 4</span>
+          <span>
+            Semaine 4
+          </span>
 
         </div>
 
       </div>
 
-    </article>
+    </div>
 
 
-    <!-- ======================================================= -->
-    <!-- RÉPARTITION DES DÉCHETS -->
-    <!-- ======================================================= -->
+    <!-- ========================================================
+         RÉPARTITION DES DÉCHETS
+         ======================================================== -->
 
-    <article class="h-[400px] rounded-2xl bg-white px-6 py-6 shadow-sm">
+    <div
+      class="rounded-[18px] bg-white px-6 py-6 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+    >
 
-      <!-- En-tête -->
+      <!-- Titre -->
       <div class="flex items-start justify-between">
 
         <div>
-          <h2 class="text-[18px] font-extrabold leading-tight text-[#142337]">
+
+          <h2
+            class="text-[18px] font-bold tracking-[-0.3px] text-[#142238]"
+          >
             Répartition des déchets
           </h2>
 
-          <p class="mt-0.5 text-[10px] text-slate-500">
+          <p class="mt-1 text-[12px] text-[#66717d]">
             Classification par flux IA
           </p>
+
         </div>
 
-        <!-- Bouton options -->
-        <button
-          type="button"
-          class="text-[19px] leading-none text-slate-500"
-          aria-label="Options"
-        >
+        <span class="text-[20px] text-[#7b858e]">
           ⋮
-        </button>
+        </span>
 
       </div>
 
 
-      <!-- Donut -->
-      <div class="relative mx-auto mt-7 h-[170px] w-[170px]">
+      <!-- Graphique circulaire -->
+      <div class="mt-6 flex justify-center">
 
-        <!-- Cercle coloré -->
         <div
-          class="absolute inset-0 rounded-full"
-          style="background: conic-gradient(
-            #0EA5A4 0% 44%,
-            #38BDF8 44% 62%,
-            #F59E0B 62% 76%,
-            #6366F1 76% 87%,
-            #10B981 87% 94%,
-            #84CC16 94% 98%,
-            #94A3B8 98% 100%
-          );"
-        ></div>
+          class="relative flex h-[170px] w-[170px] items-center justify-center rounded-full"
+          [style.background]="
+            'conic-gradient(' +
+            '#0ea5a4 0% ' + plastique() + '%, ' +
+            '#36aee8 ' + plastique() + '% ' + (plastique() + papier()) + '%, ' +
+            '#ffad13 ' + (plastique() + papier()) + '% ' + (plastique() + papier() + carton()) + '%, ' +
+            '#5960e9 ' + (plastique() + papier() + carton()) + '% ' + (plastique() + papier() + carton() + metal()) + '%, ' +
+            '#10b981 ' + (plastique() + papier() + carton() + metal()) + '% ' + (plastique() + papier() + carton() + metal() + verre()) + '%, ' +
+            '#84cc16 ' + (plastique() + papier() + carton() + metal() + verre()) + '% 100%)'
+          "
+        >
 
-        <!-- Centre blanc -->
-        <div class="absolute inset-[29px] flex flex-col items-center justify-center rounded-full bg-white">
+          <!-- Centre du donut -->
+          <div
+            class="flex h-[106px] w-[106px] flex-col items-center justify-center rounded-full bg-white"
+          >
 
-          <span class="text-[25px] font-extrabold leading-none text-[#142337]">
-            {{ dechetsAnalyses }}
-          </span>
+            <span
+              class="text-[25px] font-bold leading-none text-[#142238]"
+            >
+              {{ dechetsAnalyses() | number:'1.0-0' }}
+            </span>
 
-          <span class="mt-1 text-[9px] font-bold text-slate-500">
-            Déchets analysés
-          </span>
+            <span
+              class="mt-1 text-[10px] font-semibold text-[#7b858e]"
+            >
+              Déchets analysés
+            </span>
+
+          </div>
 
         </div>
 
@@ -489,198 +571,263 @@
 
 
       <!-- Légende -->
-      <div class="mt-6 grid grid-cols-2 gap-x-5 gap-y-2.5">
+      <div class="mt-5 grid grid-cols-2 gap-x-5 gap-y-2">
+
 
         <!-- Plastique -->
-        <div class="flex items-center justify-between text-[10px]">
-          <span class="flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-full bg-[#0EA5A4]"></span>
-            Plastique
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-2">
+
+            <span
+              class="h-[9px] w-[9px] rounded-full bg-[#0ea5a4]"
+            ></span>
+
+            <span class="text-[11px] text-[#344052]">
+              Plastique
+            </span>
+
+          </div>
+
+          <span class="text-[11px] font-bold text-[#253348]">
+            {{ plastique() }}%
           </span>
-          <strong>44%</strong>
+
         </div>
+
 
         <!-- Papier -->
-        <div class="flex items-center justify-between text-[10px]">
-          <span class="flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-full bg-[#38BDF8]"></span>
-            Papier
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-2">
+
+            <span
+              class="h-[9px] w-[9px] rounded-full bg-[#36aee8]"
+            ></span>
+
+            <span class="text-[11px] text-[#344052]">
+              Papier
+            </span>
+
+          </div>
+
+          <span class="text-[11px] font-bold text-[#253348]">
+            {{ papier() }}%
           </span>
-          <strong>18%</strong>
+
         </div>
+
 
         <!-- Carton -->
-        <div class="flex items-center justify-between text-[10px]">
-          <span class="flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-full bg-[#F59E0B]"></span>
-            Carton
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-2">
+
+            <span
+              class="h-[9px] w-[9px] rounded-full bg-[#ffad13]"
+            ></span>
+
+            <span class="text-[11px] text-[#344052]">
+              Carton
+            </span>
+
+          </div>
+
+          <span class="text-[11px] font-bold text-[#253348]">
+            {{ carton() }}%
           </span>
-          <strong>14%</strong>
+
         </div>
+
 
         <!-- Métal -->
-        <div class="flex items-center justify-between text-[10px]">
-          <span class="flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-full bg-[#6366F1]"></span>
-            Métal
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-2">
+
+            <span
+              class="h-[9px] w-[9px] rounded-full bg-[#5960e9]"
+            ></span>
+
+            <span class="text-[11px] text-[#344052]">
+              Métal
+            </span>
+
+          </div>
+
+          <span class="text-[11px] font-bold text-[#253348]">
+            {{ metal() }}%
           </span>
-          <strong>11%</strong>
+
         </div>
+
 
         <!-- Verre -->
-        <div class="flex items-center justify-between text-[10px]">
-          <span class="flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-full bg-[#10B981]"></span>
-            Verre
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-2">
+
+            <span
+              class="h-[9px] w-[9px] rounded-full bg-[#10b981]"
+            ></span>
+
+            <span class="text-[11px] text-[#344052]">
+              Verre
+            </span>
+
+          </div>
+
+          <span class="text-[11px] font-bold text-[#253348]">
+            {{ verre() }}%
           </span>
-          <strong>7%</strong>
+
         </div>
 
+
         <!-- Organique -->
-        <div class="flex items-center justify-between text-[10px]">
-          <span class="flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-full bg-[#84CC16]"></span>
-            Organique
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-2">
+
+            <span
+              class="h-[9px] w-[9px] rounded-full bg-[#84cc16]"
+            ></span>
+
+            <span class="text-[11px] text-[#344052]">
+              Organique
+            </span>
+
+          </div>
+
+          <span class="text-[11px] font-bold text-[#253348]">
+            {{ organique() }}%
           </span>
-          <strong>4%</strong>
+
         </div>
 
       </div>
 
-    </article>
+    </div>
 
   </div>
 
 
-  <!-- ========================================================= -->
-  <!-- INDICE DE PARTICIPATION CITOYENNE -->
-  <!-- ========================================================= -->
+  <!-- ==========================================================
+       PARTICIPATION CITOYENNE
+       ========================================================== -->
 
-  <article class="mt-5 rounded-2xl bg-white px-7 py-6 shadow-sm">
+  <div
+    class="mt-7 rounded-[18px] bg-white px-7 py-6 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+  >
 
     <!-- En-tête -->
     <div class="flex items-start justify-between">
 
       <div>
-        <h2 class="text-[18px] font-extrabold text-[#142337]">
+
+        <h2
+          class="text-[18px] font-bold tracking-[-0.3px] text-[#142238]"
+        >
           Indice de participation citoyenne
         </h2>
 
-        <p class="mt-0.5 text-[10px] text-slate-500">
-          Engagement communautaire sur les 30 derniers jours à Dakar
+        <p class="mt-1 text-[12px] text-[#66717d]">
+          Engagement communautaire sur les données disponibles
         </p>
+
       </div>
 
-      <!-- Icône -->
-      <svg
-        class="h-6 w-6 text-[#087C78]"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+
+      <!-- Petite icône -->
+      <span
+        class="text-[24px] font-bold text-[#008b88]"
       >
-        <path d="M3 17h5"></path>
-        <path d="M3 20h5"></path>
-        <path d="M14 6h7v11h-7z"></path>
-        <path d="M14 10c-2.5-2-5-1.5-6 1.5 2 0 3.5 1 4 3"></path>
-        <path d="M17 3v3"></path>
-      </svg>
+        ♡
+      </span>
 
     </div>
 
 
-    <!-- 3 statistiques -->
-    <div class="mt-6 grid grid-cols-3 gap-5">
+    <!-- ========================================================
+         CARTES DE PARTICIPATION
+         ======================================================== -->
 
-      <!-- Utilisateurs actifs -->
-      <div class="rounded-xl bg-[#EEF4FF] px-4 py-4">
+    <div class="mt-7 grid grid-cols-3 gap-5">
 
-        <p class="max-w-[120px] text-[10px] leading-[1.3] text-slate-500">
-          Nombre d'utilisateurs actifs
+
+      <!-- Utilisateurs ayant participé -->
+      <div
+        class="rounded-[13px] bg-[#edf4ff] px-5 py-4"
+      >
+
+        <p class="text-[11px] text-[#75808d]">
+          Utilisateurs ayant réalisé un scan
         </p>
 
-        <p class="mt-2 text-[27px] font-extrabold leading-none tracking-[-0.8px] text-[#142337]">
-          {{ utilisateursActifs }}
+
+        <p
+          class="mt-2 text-[28px] font-bold leading-none text-[#142238]"
+        >
+          {{ utilisateursAyantScan() | number:'1.0-0' }}
         </p>
 
-        <p class="mt-2 flex items-center gap-1 text-[9px] font-bold text-[#087C78]">
 
-          <svg
-            class="h-3 w-3"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle cx="12" cy="12" r="9"></circle>
-            <path d="m8 12 2.5 2.5L16 9"></path>
-          </svg>
-
-          Inscrits actifs
-
+        <p
+          class="mt-2 text-[10px] font-bold text-[#008b88]"
+        >
+          ✓ Utilisateurs participants
         </p>
 
       </div>
 
 
-      <!-- Scans réalisés -->
-      <div class="rounded-xl bg-[#EEF4FF] px-4 py-4">
+      <!-- Nombre de scans -->
+      <div
+        class="rounded-[13px] bg-[#edf4ff] px-5 py-4"
+      >
 
-        <p class="max-w-[120px] text-[10px] leading-[1.3] text-slate-500">
+        <p class="text-[11px] text-[#75808d]">
           Nombre de scans réalisés
         </p>
 
-        <p class="mt-2 text-[27px] font-extrabold leading-none tracking-[-0.8px] text-[#142337]">
-          {{ nombreScans }}
+
+        <p
+          class="mt-2 text-[28px] font-bold leading-none text-[#142238]"
+        >
+          {{ nombreScans() | number:'1.0-0' }}
         </p>
 
-        <p class="mt-2 flex items-center gap-1 text-[9px] font-bold text-[#0EA5A4]">
 
-          <svg
-            class="h-3 w-3"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M13 2 3 14h9l-1 8 10-12h-9z"></path>
-          </svg>
-
-          {{ scansParCitoyen }} scans/citoyen
-
+        <p
+          class="mt-2 text-[10px] font-bold text-[#008b88]"
+        >
+          ⚡ Scans enregistrés
         </p>
 
       </div>
 
 
-      <!-- Taux participation -->
-      <div class="rounded-xl bg-[#EEF4FF] px-4 py-4">
+      <!-- Taux de participation -->
+      <div
+        class="rounded-[13px] bg-[#edf4ff] px-5 py-4"
+      >
 
-        <p class="text-[10px] leading-[1.3] text-slate-500">
+        <p class="text-[11px] text-[#75808d]">
           Taux de participation
         </p>
 
-        <p class="mt-2 text-[27px] font-extrabold leading-none tracking-[-0.8px] text-[#087C78]">
-          {{ tauxParticipation }}
+
+        <p
+          class="mt-2 text-[28px] font-bold leading-none text-[#007f7c]"
+        >
+          {{ tauxParticipation() }}%
         </p>
 
-        <p class="mt-2 flex items-center gap-1 text-[9px] font-bold text-slate-500">
 
-          <svg
-            class="h-3 w-3"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle cx="12" cy="12" r="9"></circle>
-            <path d="M12 7v5l3 2"></path>
-          </svg>
-
-          Cible trimestrielle : {{ objectifParticipation }}
-
+        <p
+          class="mt-2 text-[10px] font-semibold text-[#75808d]"
+        >
+          Utilisateurs ayant participé
         </p>
 
       </div>
@@ -688,57 +835,45 @@
     </div>
 
 
-    <!-- Pied -->
-    <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+    <!-- ========================================================
+         PIED DU BLOC
+         ======================================================== -->
 
-      <!-- Information -->
-      <div class="flex items-center gap-2 text-[10px] text-slate-500">
+    <div
+      class="mt-6 flex items-center justify-between border-t border-[#edf0f5] pt-4"
+    >
 
-        <svg
-          class="h-4 w-4 text-[#087C78]"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="m12 3 2 2 3-.2.9 2.8 2.5 1.6-1.2 2.8 1.2 2.8-2.5 1.6-.9 2.8-3-.2-2 2-2-2-3 .2-.9-2.8-2.5-1.6 1.2-2.8-1.2-2.8 2.5-1.6.9-2.8 3 .2z"></path>
-          <circle cx="12" cy="12" r="2.5"></circle>
-        </svg>
+      <div
+        class="flex items-center gap-2 text-[11px] text-[#65717c]"
+      >
 
-        Données consolidées via les bornes intelligentes connectées
+        <span class="text-[15px] text-[#008b88]">
+          ◉
+        </span>
+
+        Données consolidées depuis la base de données Django.
 
       </div>
 
 
-      <!-- Export CSV -->
+      <!-- Bouton actualiser -->
       <button
         type="button"
-        (click)="exporterRapport()"
-        class="flex items-center gap-1 text-[10px] font-extrabold text-[#087C78] hover:underline"
+        (click)="actualiser()"
+        class="text-[11px] font-bold text-[#008b88] transition hover:text-[#006f6c]"
       >
-
-        Exporter le rapport CSV
-
-        <svg
-          class="h-3.5 w-3.5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M12 3v13"></path>
-          <path d="m7 11 5 5 5-5"></path>
-          <path d="M5 21h14"></path>
-        </svg>
-
+        Actualiser les données ↻
       </button>
 
     </div>
 
-  </article>
+  </div>
+
+
+  <!-- ==========================================================
+       ESPACE FINAL
+       ========================================================== -->
+
+  <div class="h-2"></div>
 
 </section>

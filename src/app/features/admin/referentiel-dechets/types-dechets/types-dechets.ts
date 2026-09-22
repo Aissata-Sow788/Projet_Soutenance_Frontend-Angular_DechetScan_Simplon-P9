@@ -1,42 +1,39 @@
 // Importe les fonctionnalités Angular nécessaires.
 import {Component, OnInit, inject, signal} from '@angular/core';
-
+import { Router } from '@angular/router';
 // CommonModule pour les directives Angular.
 import { CommonModule } from '@angular/common';
-
+import { RouterLink } from '@angular/router';
 // FormsModule pour la recherche.
 import { FormsModule } from '@angular/forms';
 import { TypeDechet } from '../../../../shared/models/type-dechet.model';
-import { ReferentielDechetsService } from '../../../../core/services/referentiel-dechets';
+import { ReferentielService } from '../../../../core/services/referentiel-dechets';
 
 @Component({
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   selector: 'app-types-dechets',
   styleUrl: './types-dechets.css',
   templateUrl: './types-dechets.html',
 })
 export class TypesDechets implements OnInit {
 
- // Injecte le service du référentiel.
-  private readonly referentielService = inject(ReferentielDechetsService);
+  // Injecte le service du référentiel.
+  private readonly referentielService = inject(ReferentielService);
 
+  private readonly router = inject(Router)
 
   // Stocke les types de déchets récupérés depuis Django.
   // Le signal permet de mettre automatiquement l'interface à jour.
   typesDechets = signal<TypeDechet[]>([]);
 
-
   // Stocke le texte saisi dans la barre de recherche.
   recherche = signal('');
-
 
   // Indique si les données sont en cours de chargement.
   chargement = signal(false);
 
-
   // Stocke le message d'erreur éventuel.
   erreur = signal<string | null>(null);
-
 
   // Configuration visuelle des différents types.
   private readonly presentation: Record<
@@ -98,78 +95,86 @@ export class TypesDechets implements OnInit {
     }
   };
 
-
   // Initialise le composant.
   ngOnInit(): void {
 
-    // Charge les types depuis Django.
+    // Charge les types depuis Django au chargement de la page.
     this.chargerTypes();
   }
 
+  // ---------------------------------------------------------
+  // RÉCUPÉRATION DES TYPES
+  // ---------------------------------------------------------
 
-// Charge les types de déchets depuis l'API Django.
-chargerTypes(): void {
+  /**
+   * Charge les types de déchets depuis l'API Django.
+   */
+  chargerTypes(): void {
 
-  // Active l'état de chargement.
-  this.chargement.set(true);
+    // Active l'état de chargement.
+    this.chargement.set(true);
 
-  // Réinitialise l'ancien message d'erreur.
-  this.erreur.set(null);
+    // Réinitialise l'ancien message d'erreur.
+    this.erreur.set(null);
 
-  // Appelle l'API Django pour récupérer les types.
-  this.referentielService.listerTypes().subscribe({
+    // Appelle l'API Django pour récupérer les types.
+    this.referentielService.listerTypes().subscribe({
 
-    // Exécuté lorsque Django répond correctement.
-    next: (types) => {
+      // Exécuté lorsque Django répond correctement.
+      next: (types) => {
 
-      // Affiche la réponse exacte reçue depuis Django.
-      console.log('TYPES REÇUS DE DJANGO :', types);
+        // Affiche les données reçues dans la console.
+        console.log('TYPES REÇUS DE DJANGO :', types);
 
-      // Affiche le nombre de types reçus.
-      console.log('NOMBRE DE TYPES :', types.length);
+        // Affiche le nombre de types reçus.
+        console.log('NOMBRE DE TYPES :', types.length);
 
-      // Enregistre les données dans le signal.
-      this.typesDechets.set(types);
+        // Enregistre les types dans le signal.
+        this.typesDechets.set(types);
 
-      // Désactive le chargement.
-      this.chargement.set(false);
-    },
+        // Désactive le chargement.
+        this.chargement.set(false);
+      },
 
-    // Exécuté lorsqu'une erreur HTTP se produit.
-    error: (error) => {
+      // Exécuté lorsqu'une erreur HTTP se produit.
+      error: (error) => {
 
-      // Affiche l'erreur complète.
-      console.error('ERREUR API TYPES :', error);
+        // Affiche l'erreur complète dans la console.
+        console.error('ERREUR API TYPES :', error);
 
-      // Affiche le statut HTTP.
-      console.error('STATUT HTTP :', error.status);
+        // Affiche le statut HTTP.
+        console.error('STATUT HTTP :', error.status);
 
-      // Affiche le corps de la réponse.
-      console.error('RÉPONSE DJANGO :', error.error);
+        // Affiche la réponse Django.
+        console.error('RÉPONSE DJANGO :', error.error);
 
-      // Désactive le chargement.
-      this.chargement.set(false);
+        // Désactive le chargement.
+        this.chargement.set(false);
 
-      // Affiche un message dans l'interface.
-      this.erreur.set(
-        'Impossible de charger le référentiel des déchets.'
-      );
-    }
-  });
-}
+        // Affiche un message dans l'interface.
+        this.erreur.set(
+          'Impossible de charger le référentiel des déchets.'
+        );
+      }
+    });
+  }
 
-  // Retourne les types correspondant à la recherche.
+  // ---------------------------------------------------------
+  // RECHERCHE
+  // ---------------------------------------------------------
+
+  /**
+   * Retourne uniquement les types correspondant à la recherche.
+   */
   get typesFiltres(): TypeDechet[] {
 
-    // Récupère la recherche depuis le signal.
+    // Récupère la recherche et la normalise.
     const recherche = this.recherche()
       .trim()
       .toLowerCase();
 
-
-    // Récupère les types depuis le signal.
+    // Récupère les types actuellement chargés.
     const types = this.typesDechets();
-
 
     // Si aucune recherche n'est saisie,
     // retourne directement tous les types.
@@ -177,15 +182,14 @@ chargerTypes(): void {
       return types;
     }
 
-
-    // Filtre les types.
+    // Filtre les types selon leur nom,
+    // leur description ou leur conseil.
     return types.filter((type) => {
 
-      // Récupère la consigne si elle existe.
+      // Récupère la consigne du conseil si elle existe.
       const consigne = type.conseil?.consigne ?? '';
 
-
-      // Regroupe les informations recherchables.
+      // Regroupe toutes les informations recherchables.
       const contenu = [
         type.nom,
         type.description,
@@ -194,20 +198,24 @@ chargerTypes(): void {
         .join(' ')
         .toLowerCase();
 
-
-      // Vérifie si la recherche existe dans le contenu.
+      // Vérifie si le texte recherché est présent.
       return contenu.includes(recherche);
     });
   }
 
+  // ---------------------------------------------------------
+  // PRÉSENTATION VISUELLE
+  // ---------------------------------------------------------
 
-  // Retourne la présentation visuelle d'un type.
+  /**
+   * Retourne la présentation visuelle d'un type.
+   */
   getPresentation(type: TypeDechet) {
 
-    // Cherche la présentation correspondant au nom.
+    // Cherche la présentation correspondant au nom du type.
     return this.presentation[type.nom] ?? {
 
-      // Badge par défaut.
+      // Badge utilisé lorsqu'aucune présentation spécifique n'existe.
       badge: 'Type de déchet',
 
       // Classe du badge par défaut.
@@ -216,29 +224,37 @@ chargerTypes(): void {
       // Classe de l'icône par défaut.
       iconClass: 'bg-[#e8eef5] text-[#405064]',
 
-      // Icône par défaut.
+      // Icône utilisée par défaut.
       icon: 'box'
     };
   }
 
+  // ---------------------------------------------------------
+  // SUPPRESSION
+  // ---------------------------------------------------------
 
-  // Supprime un type de déchet.
+  /**
+   * Supprime un type de déchet après confirmation.
+   */
   supprimer(type: TypeDechet): void {
 
-    // Demande une confirmation.
+    // Demande une confirmation avant la suppression.
     const confirmation = confirm(
       `Voulez-vous supprimer « ${type.nom} » ?`
     );
-
 
     // Arrête l'action si l'utilisateur annule.
     if (!confirmation) {
       return;
     }
 
+    // Affiche l'identifiant du type supprimé.
+    console.log(
+      'Suppression du type :',
+      type.idTypeDechet
+    );
 
-    // Utilise bien idTypeDechet,
-    // car c'est le nom du champ dans Django.
+    // Appelle Django pour supprimer le type.
     this.referentielService
       .supprimerType(type.idTypeDechet)
       .subscribe({
@@ -246,15 +262,20 @@ chargerTypes(): void {
         // Si la suppression réussit.
         next: () => {
 
-          // Recharge les données depuis Django.
+          // Affiche la confirmation dans la console.
+          console.log(
+            'Type supprimé avec succès :',
+            type.idTypeDechet
+          );
+
+          // Recharge la liste depuis Django.
           this.chargerTypes();
         },
-
 
         // Si la suppression échoue.
         error: (error) => {
 
-          // Affiche l'erreur dans la console.
+          // Affiche l'erreur complète.
           console.error(
             'Erreur lors de la suppression :',
             error
@@ -268,23 +289,20 @@ chargerTypes(): void {
       });
   }
 
+  // ---------------------------------------------------------
+  // MODIFICATION DU TYPE
+  // ---------------------------------------------------------
 
-  // Prépare la modification d'un type.
-  modifier(type: TypeDechet): void {
+/**
+ * Ouvre la page de modification du type sélectionné.
+ */
+modifierType(type: TypeDechet): void {
+  console.log('Modification du type :', type.idTypeDechet);
 
-    // Utilise l'identifiant réel venant de Django.
-    console.log(
-      'Modifier le type :',
-      type.idTypeDechet
-    );
-  }
-
-
-  // Prépare l'ajout d'un type.
-  ajouterType(): void {
-
-    // Cette action sera remplacée plus tard
-    // par la navigation vers le formulaire.
-    console.log('Ajouter un type de déchet');
-  }
+  this.router.navigate([
+    '/admin/referentiel-dechets/types',
+    type.idTypeDechet,
+    'modifier'
+  ]);
+}
 }

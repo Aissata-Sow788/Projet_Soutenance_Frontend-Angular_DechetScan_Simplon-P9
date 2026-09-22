@@ -1,0 +1,771 @@
+<!-- ============================================================
+     PAGE : AJOUTER UN TYPE DE DÉCHET AU RÉFÉRENTIEL
+
+     Le Sidebar et le Header sont déjà fournis par le layout admin.
+     Cette page contient uniquement la zone centrale.
+     ============================================================ -->
+
+<section
+  class="min-h-full bg-[#f7f9fe] px-10 pb-10 pt-5"
+>
+
+  <!-- ==========================================================
+       BARRE SUPÉRIEURE
+       ========================================================== -->
+
+  <div
+    class="mx-auto flex max-w-[920px] items-center justify-between"
+  >
+
+    <!-- Retour + badge -->
+    <div class="flex items-center gap-3">
+
+      <button
+      /* [routerLink]="['/admin/referentiel-dechets/types']" routerLinkActive="router-link-active" */
+        type="button"
+        (click)="retourReferentiel()"
+        class="flex h-[36px] items-center gap-2 rounded-full bg-[#edf4fb] px-4 text-[12px] font-semibold text-[#43515e] transition hover:bg-[#e5eef8]"
+      >
+
+        <svg
+          class="h-[16px] w-[16px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            d="M19 12H5"
+            stroke-linecap="round"
+          />
+
+          <path
+            d="M12 19l-7-7 7-7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        Retour au référentiel
+
+      </button>
+
+
+      <span
+        class="flex h-[36px] items-center gap-2 rounded-full bg-[#e2edff] px-4 text-[11px] font-bold text-[#38658b]"
+      >
+
+        <span
+          class="h-[6px] w-[6px] rounded-full bg-[#0ea5a4]"
+        ></span>
+
+        Entrée Référentiel
+
+      </span>
+
+    </div>
+
+
+    <!-- Actions -->
+    <div
+      class="flex items-center gap-1 rounded-full bg-[#eef3fa] p-1"
+    >
+
+      <button
+        type="button"
+        (click)="nouveauType()"
+        class="flex h-[34px] items-center gap-2 rounded-full bg-white px-4 text-[11px] font-bold text-[#087f83] shadow-[0_1px_4px_rgba(20,35,60,0.04)]"
+      >
+
+        <svg
+          class="h-[15px] w-[15px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          />
+
+          <path
+            d="M12 8v8M8 12h8"
+            stroke-linecap="round"
+          />
+        </svg>
+
+        Nouveau
+
+      </button>
+
+
+      <button
+        type="button"
+        class="flex h-[34px] items-center gap-2 rounded-full px-4 text-[11px] font-semibold text-[#4c5864]"
+      >
+
+        <svg
+          class="h-[14px] w-[14px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            d="M12 20h9"
+            stroke-linecap="round"
+          />
+
+          <path
+            d="M16.5 3.5a2.12 2.12 0 013 3L8 18l-4 1 1-4z"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        Mode Édition
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================================
+       TITRE
+       ========================================================== -->
+
+  <div
+    class="mx-auto mb-6 mt-7 max-w-[920px]"
+  >
+
+    <h1
+      class="text-[30px] font-bold leading-tight tracking-[-1px] text-[#142238]"
+    >
+      Ajouter au référentiel
+    </h1>
+
+    <p
+      class="mt-1 text-[14px] text-[#52606d]"
+    >
+      Ajoutez un type de déchet et sa consigne de tri.
+    </p>
+
+  </div>
+
+
+  <!-- ==========================================================
+       ERREUR
+       ========================================================== -->
+
+  @if (erreur) {
+
+    <div
+      class="mx-auto mb-4 max-w-[920px] rounded-[12px] border border-red-200 bg-red-50 px-4 py-3 text-[12px] font-semibold text-red-600"
+    >
+      {{ erreur }}
+    </div>
+
+  }
+
+
+  <!-- ==========================================================
+       SUCCÈS
+       ========================================================== -->
+
+  @if (succes) {
+
+    <div
+      class="mx-auto mb-4 max-w-[920px] rounded-[12px] border border-green-200 bg-green-50 px-4 py-3 text-[12px] font-semibold text-green-700"
+    >
+      {{ succes }}
+    </div>
+
+  }
+
+
+  <!-- ==========================================================
+       CARTE PRINCIPALE
+       ========================================================== -->
+
+  <div
+    class="mx-auto max-w-[920px] rounded-[22px] bg-white px-10 pb-8 pt-10 shadow-[0_5px_25px_rgba(26,45,75,0.045)]"
+  >
+
+    <!-- ========================================================
+         BANDEAU ASSOCIATION
+         ======================================================== -->
+
+    <div
+      class="flex h-[64px] items-center justify-between rounded-[15px] bg-[#eaf2ff] px-4"
+    >
+
+      <div class="flex items-center gap-3">
+
+        <div
+          class="flex h-[38px] w-[38px] items-center justify-center rounded-[11px] bg-white text-[#078d92]"
+        >
+
+          <svg
+            class="h-[20px] w-[20px]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <circle cx="12" cy="12" r="2.5"></circle>
+
+            <circle cx="5" cy="7" r="2"></circle>
+            <circle cx="19" cy="7" r="2"></circle>
+            <circle cx="5" cy="17" r="2"></circle>
+            <circle cx="19" cy="17" r="2"></circle>
+
+            <path d="M7 8.5l3.2 2"></path>
+            <path d="M17 8.5l-3.2 2"></path>
+            <path d="M7 15.5l3.2-2"></path>
+            <path d="M17 15.5l-3.2-2"></path>
+          </svg>
+
+        </div>
+
+
+        <div>
+
+          <p
+            class="text-[12px] font-bold text-[#24334a]"
+          >
+            Association directe & intelligente
+          </p>
+
+          <p
+            class="mt-0.5 text-[11px] text-[#53606b]"
+          >
+            Type de matière
+            <span class="mx-1">▏</span>
+            Recommandation pour les citoyens et le modèle IA DechetScan
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <span
+        class="rounded-full bg-white px-3 py-1.5 text-[10px] font-bold text-[#087f83]"
+      >
+        Synchro Dakar v2.4
+      </span>
+
+    </div>
+
+
+    <!-- ========================================================
+         TYPE DE DÉCHET
+         ======================================================== -->
+
+    <div class="mt-7">
+
+      <div
+        class="mb-2 flex items-center justify-between"
+      >
+
+        <div class="flex items-center gap-2">
+
+          <svg
+            class="h-[17px] w-[17px] text-[#078d92]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M7 3l2 3-2 3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M9 6H6a2 2 0 00-1.7 1L3 9"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M17 21l-2-3 2-3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M15 18h3a2 2 0 001.7-1l1.3-2"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M20 10l-3-1-3 1"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M17 9l-1.5-2.6A2 2 0 0013.8 5H11"
+              stroke-linecap="round"
+            />
+          </svg>
+
+          <label
+            class="text-[13px] font-bold text-[#142238]"
+          >
+            Type de déchet
+
+            <span class="ml-1 text-[#d94b4b]">
+              *
+            </span>
+          </label>
+
+        </div>
+
+
+        <span
+          class="text-[10px] font-bold text-[#59636d]"
+        >
+          Reconnaissance optique
+        </span>
+
+      </div>
+
+
+      <!-- ======================================================
+           CHAMP NOM
+           ====================================================== -->
+
+      <div
+        class="flex h-[56px] items-center rounded-[14px] bg-[#edf3fd] px-5"
+      >
+
+        <svg
+          class="mr-3 h-[20px] w-[20px] text-[#087f83]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path d="M9 3h6"></path>
+
+          <path
+            d="M10 3v5l-4 7a4 4 0 003.5 6h5a4 4 0 003.5-6l-4-7V3"
+          ></path>
+
+          <path d="M8 15h8"></path>
+        </svg>
+
+
+        <input
+          type="text"
+          [(ngModel)]="nom"
+          placeholder="Nom du type de déchet"
+          class="w-full border-0 bg-transparent text-[16px] font-medium text-[#263448] outline-none placeholder:text-[#68798b]"
+        />
+
+      </div>
+
+
+      <!-- ======================================================
+           TYPES RÉCUPÉRÉS DE DJANGO
+           ====================================================== -->
+
+      <div class="mt-4">
+
+        <div
+          class="mb-2 flex items-center justify-between"
+        >
+
+          <p
+            class="text-[10px] font-bold text-[#59636d]"
+          >
+            Types présents dans le référentiel :
+          </p>
+
+
+          @if (chargementTypes) {
+
+            <span
+              class="text-[10px] font-semibold text-[#087f83]"
+            >
+              Chargement...
+            </span>
+
+          }
+
+        </div>
+
+
+        <!-- ====================================================
+             LISTE DYNAMIQUE
+             ==================================================== -->
+
+        @if (!chargementTypes && typesDechets.length > 0) {
+
+          <div
+            class="flex flex-wrap gap-2"
+          >
+
+            @for (type of typesDechets; track type.idTypeDechet) {
+
+              <button
+                type="button"
+                (click)="selectionnerType(type)"
+                class="rounded-full px-4 py-2 text-[11px] font-semibold transition"
+                [class.bg-[#8ee9d7]]="typeSelectionne?.idTypeDechet === type.idTypeDechet"
+                [class.text-[#087f83]]="typeSelectionne?.idTypeDechet === type.idTypeDechet"
+                [class.bg-[#edf3fb]]="typeSelectionne?.idTypeDechet !== type.idTypeDechet"
+                [class.text-[#263448]]="typeSelectionne?.idTypeDechet !== type.idTypeDechet"
+              >
+
+                {{ type.nom }}
+
+              </button>
+
+            }
+
+          </div>
+
+        }
+
+
+        <!-- Aucun type -->
+        @if (!chargementTypes && typesDechets.length === 0) {
+
+          <p
+            class="rounded-[10px] bg-[#f5f8fc] px-4 py-3 text-[11px] text-[#68798b]"
+          >
+            Aucun type de déchet n'est encore enregistré dans le référentiel.
+          </p>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         SÉPARATEUR
+         ======================================================== -->
+
+    <div class="relative my-7">
+
+      <div class="h-px bg-[#dce8f4]"></div>
+
+      <div
+        class="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white px-4 py-1.5 text-[10px] font-bold text-[#087f83]"
+      >
+
+        <svg
+          class="h-[15px] w-[15px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            d="M12 5v14"
+            stroke-linecap="round"
+          />
+
+          <path
+            d="M7 14l5 5 5-5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        Consigne de tri associée pour ce matériau
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         CONSEIL DE TRI
+         ======================================================== -->
+
+    <div>
+
+      <div
+        class="mb-2 flex items-center justify-between"
+      >
+
+        <div class="flex items-center gap-2">
+
+          <svg
+            class="h-[18px] w-[18px] text-[#078d92]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path
+              d="M9 18h6"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M10 22h4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M8.5 14.5a6 6 0 117 0c-.8.7-1.5 1.7-1.5 3.5h-5c0-1.8-.7-2.8-1.5-3.5z"
+            />
+          </svg>
+
+          <label
+            class="text-[13px] font-bold text-[#142238]"
+          >
+            Conseil de tri
+
+            <span class="ml-1 text-[#d94b4b]">
+              *
+            </span>
+          </label>
+
+        </div>
+
+
+        <span
+          class="text-[10px] font-bold text-[#59636d]"
+        >
+          {{ conseil.length }} caractères
+        </span>
+
+      </div>
+
+
+      <textarea
+        [(ngModel)]="conseil"
+        rows="5"
+        maxlength="250"
+        placeholder="Saisissez la consigne de tri..."
+        class="block w-full resize-none rounded-[14px] border-0 bg-[#edf3fd] px-5 py-5 text-[16px] font-medium leading-7 text-[#263448] outline-none placeholder:text-[#68798b] focus:ring-2 focus:ring-[#b9e9e5]"
+      ></textarea>
+
+
+      <div
+        class="mt-3 flex items-center gap-2 text-[11px] text-[#59636d]"
+      >
+
+        <svg
+          class="h-[15px] w-[15px] text-[#087f83]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          />
+
+          <path
+            d="M12 11v5"
+            stroke-linecap="round"
+          />
+
+          <circle
+            cx="12"
+            cy="8"
+            r=".5"
+            fill="currentColor"
+          />
+        </svg>
+
+        Phrase d'action claire • Recommandé pour l'application mobile et l'affichage borne
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         APERÇU EN DIRECT
+         ======================================================== -->
+
+    <div
+      class="mt-7 rounded-[15px] bg-[#eaf2ff] p-4"
+    >
+
+      <div
+        class="mb-3 flex items-center justify-between"
+      >
+
+        <div class="flex items-center gap-2">
+
+          <svg
+            class="h-[17px] w-[17px] text-[#087f83]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <rect
+              x="6"
+              y="2"
+              width="12"
+              height="20"
+              rx="2"
+            />
+
+            <path
+              d="M10 18h4"
+              stroke-linecap="round"
+            />
+          </svg>
+
+
+          <span
+            class="text-[11px] font-bold text-[#24334a]"
+          >
+            Aperçu en direct (Vue citoyenne sur mobile)
+          </span>
+
+        </div>
+
+
+        <span
+          class="rounded-[6px] bg-white px-3 py-1.5 text-[9px] font-bold text-[#59636d]"
+        >
+          Écran de détection IA
+        </span>
+
+      </div>
+
+
+      <!-- Carte aperçu -->
+      <div
+        class="flex min-h-[72px] items-center gap-3 rounded-[13px] bg-white px-4"
+      >
+
+        <div
+          class="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[11px] bg-[#8ee9d7] text-[#087f83]"
+        >
+
+          <svg
+            class="h-[21px] w-[21px]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path
+              d="M12 3l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z"
+            />
+
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+              opacity=".45"
+            />
+          </svg>
+
+        </div>
+
+
+        <div class="min-w-0">
+
+          <div class="flex items-center gap-2">
+
+            <span
+              class="rounded-full bg-[#8ee9d7] px-3 py-1 text-[9px] font-bold text-[#087f83]"
+            >
+              {{ nom || 'Nouveau type' }}
+            </span>
+
+
+            @if (typeSelectionne?.description) {
+
+              <span
+                class="text-[10px] text-[#59636d]"
+              >
+                • {{ typeSelectionne?.description }}
+              </span>
+
+            }
+
+          </div>
+
+
+          <p
+            class="mt-1 text-[13px] font-bold text-[#142238]"
+          >
+            {{ conseil || 'Saisissez une consigne de tri.' }}
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         BOUTONS
+         ======================================================== -->
+
+    <div
+      class="mt-8 flex items-center justify-end gap-3"
+    >
+
+      <button
+        type="button"
+        (click)="retourReferentiel()"
+        class="flex h-[46px] items-center justify-center rounded-[13px] bg-[#edf3fc] px-6 text-[13px] font-bold text-[#4d5965] transition hover:bg-[#e4ebf5]"
+      >
+        Annuler
+      </button>
+
+
+      <button
+        type="button"
+        (click)="enregistrer()"
+        [disabled]="chargementEnregistrement"
+        class="flex h-[46px] min-w-[165px] items-center justify-center gap-2 rounded-[13px] bg-[#0ea5a4] px-6 text-[13px] font-bold text-white shadow-[0_4px_10px_rgba(14,165,164,0.18)] transition hover:bg-[#0c9695] disabled:cursor-not-allowed disabled:opacity-60"
+      >
+
+        <svg
+          class="h-[17px] w-[17px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          />
+
+          <path
+            d="M8 12l2.5 2.5L16 9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        @if (chargementEnregistrement) {
+          Enregistrement...
+        } @else {
+          Enregistrer
+        }
+
+      </button>
+
+    </div>
+
+  </div>
+
+</section>

@@ -15,6 +15,12 @@ export interface Utilisateur {
   role: Role;
   is_active: boolean;
   date_joined: string;
+   // Date de dernière connexion.
+  // Peut être null si l'utilisateur ne s'est jamais connecté.
+  last_login?: string | null;
+   // Nombre total de scans réalisés par l'utilisateur.
+  // Ce champ sera alimenté par le backend lorsqu'il sera ajouté à l'API.
+  nombreScans?: number;
 }
 
 // Données envoyées à Django pour l'inscription.

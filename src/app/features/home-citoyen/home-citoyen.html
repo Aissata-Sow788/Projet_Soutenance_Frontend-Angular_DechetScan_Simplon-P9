@@ -1,468 +1,645 @@
-<div class="min-h-screen bg-[#f4f5f4] pb-24 text-[#172536]">
+<!-- =========================================================
+     PAGE ACCUEIL CITOYEN CONNECTÉ
+     Les données affichées proviennent des services Angular
+     et des API Django.
+========================================================= -->
+<div class="min-h-screen bg-[#f3f4f3] pb-[106px] text-[#142337]">
 
-  <!-- =========================================================
+  <!-- =======================================================
        HEADER
-       Logo à gauche + cloche de notification à droite.
-       ========================================================= -->
-  <header class="flex h-[76px] items-center justify-between bg-[#f8f9fd] px-4">
+       ======================================================= -->
+  <header class="flex h-[95px] items-center justify-between bg-[#f8f9fd] px-[21px]">
+
+    <!-- Logo DechetScan -->
     <img
       src="assets/logo1-dechetscan.png"
       alt="DechetScan"
-      class="h-30 w-auto object-contain"
+      class="h-[100px] w-auto object-contain"
     />
 
+    <!-- Accès aux notifications du citoyen connecté -->
     <button
       type="button"
       aria-label="Notifications"
-      class="flex h-9 w-9 items-center justify-center text-[#172536]">
-
+      class="flex h-[40px] w-[40px] items-center justify-center text-[#465153]"
+    >
       <svg
-        class="h-5 w-5"
-        fill="none"
+        class="h-[24px] w-[24px]"
         viewBox="0 0 24 24"
+        fill="none"
         stroke="currentColor"
-        stroke-width="1.8">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+        <path d="M10 21h4"/>
       </svg>
     </button>
+
   </header>
 
 
-  <main class="px-4 pt-3">
+  <!-- =======================================================
+       CONTENU PRINCIPAL
+       ======================================================= -->
+  <main class="px-[21px] pt-[14px]">
 
-    <!-- =========================================================
+    <!-- =====================================================
          BADGES
-         ========================================================= -->
-    <div class="flex items-center justify-between gap-2.5">
+         ===================================================== -->
+    <div class="flex items-center justify-between gap-3">
 
-      <span
-        class="inline-flex items-center gap-2 rounded-full bg-[#dceaf9] px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-[#006f70]">
-        <span class="h-2 w-2 rounded-full bg-[#0EA5A4]"></span>
-        Citoyenne engagée
-      </span>
+      <!-- Statut du citoyen connecté -->
+      <div class="flex h-[30px] items-center gap-[8px] rounded-full bg-[#dceafb] px-[15px]">
 
-      <span
-        class="inline-flex items-center gap-1.5 rounded-full bg-[#c9f4e9] px-3 py-1.5 text-[11px] font-bold text-[#007a77]">
+        <span class="h-[10px] w-[10px] rounded-full bg-[#087c7c]"></span>
+
+        <span class="text-[12px] font-bold tracking-[0.06em] text-[#08706f]">
+          CITOYENNE ENGAGÉE
+        </span>
+
+      </div>
+
+
+      <!-- Localisation -->
+      <div class="flex h-[30px] items-center gap-[6px] rounded-full bg-[#c8f5ed] px-[13px]">
 
         <svg
-          class="h-3.5 w-3.5"
-          fill="none"
+          class="h-[17px] w-[17px] text-[#087c72]"
           viewBox="0 0 24 24"
+          fill="none"
           stroke="currentColor"
-          stroke-width="2">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 21s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" />
-          <circle cx="12" cy="9" r="2.2" />
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+          <circle cx="12" cy="10" r="2.5"/>
         </svg>
 
-        Dakar, SN
-      </span>
+        <span class="text-[12px] font-bold text-[#08706f]">
+          Dakar, SN
+        </span>
+
+      </div>
+
     </div>
 
 
-    <!-- =========================================================
-         INTRODUCTION
-         ========================================================= -->
-    <section class="mt-3">
-      <h1 class="text-[29px] font-extrabold leading-[1.05] tracking-[-1px]">
-        Bonjour Aissata
+    <!-- =====================================================
+         MESSAGE D'ACCUEIL
+         ===================================================== -->
+    <section class="mt-[16px]">
+
+      <!-- Prénom récupéré depuis l'utilisateur connecté -->
+      <h1 class="text-[38px] font-bold leading-[1.02] tracking-[-0.035em] text-[#102238]">
+        Bonjour {{ nomUtilisateur() }}
       </h1>
 
-      <h2 class="mt-2 text-[21px] font-bold leading-tight text-[#007d7c]">
+      <h2 class="mt-[7px] text-[24px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#087c7c]">
         Prête à faire un geste pour la planète ?
       </h2>
 
-      <p class="mt-2 max-w-[480px] text-[14px] leading-[1.5] text-[#20252b]">
-        Scannez un déchet ou importez une image pour connaître la catégorie
-        de votre déchet et recevoir les conseils de tri adaptés.
+      <p class="mt-[8px] max-w-[480px] text-[17px] leading-[1.58] text-[#202d35]">
+        Scannez un déchet ou importez une image pour connaître la catégorie de votre déchet et recevoir les conseils de tri adaptés.
       </p>
+
     </section>
 
 
-    <!-- =========================================================
-         BOUTONS PRINCIPAUX
-         ========================================================= -->
-    <section class="mt-4 space-y-2">
+    <!-- =====================================================
+         BOUTON SCANNER
+         ===================================================== -->
+    <button
+      type="button"
+      (click)="scanner()"
+      class="mt-[19px] flex h-[65px] w-full items-center justify-center gap-[12px] rounded-[21px] bg-[#0EA5A4] text-white shadow-[0_5px_12px_rgba(14,165,164,0.20)]"
+    >
 
-      <button
-        type="button"
-        (click)="scanner()"
-        class="flex h-[56px] w-full items-center justify-center gap-2.5 rounded-[17px]
-               bg-[#0EA5A4] text-[15px] font-bold text-white
-               shadow-[0_8px_20px_rgba(14,165,164,0.22)]">
+      <svg
+        class="h-[27px] w-[27px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 7h3l1.5-2h7L17 7h3v12H4V7Z"/>
+        <circle cx="12" cy="13" r="3.5"/>
+      </svg>
 
-        <svg
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3 8.5A2.5 2.5 0 015.5 6h2l1.2-1.8h6.6L16.5 6h2A2.5 2.5 0 0121 8.5v9A2.5 2.5 0 0118.5 20h-13A2.5 2.5 0 013 17.5v-9z" />
-          <circle cx="12" cy="13" r="3.5" />
-        </svg>
-
+      <span class="text-[18px] font-bold">
         Scanner un déchet
-      </button>
+      </span>
+
+    </button>
 
 
-      <button
-        type="button"
-        (click)="voirHistorique()"
-        class="flex h-[56px] w-full items-center justify-center gap-2.5 rounded-[17px]
-               bg-white text-[14px] font-bold text-[#172536]
-               shadow-[0_5px_18px_rgba(15,23,42,0.05)]">
+    <!-- =====================================================
+         BOUTON HISTORIQUE
+         ===================================================== -->
+    <button
+      type="button"
+      (click)="voirHistorique()"
+      class="mt-[10px] flex h-[65px] w-full items-center justify-center gap-[12px] rounded-[21px] bg-white text-[#17283b] shadow-[0_3px_10px_rgba(15,23,42,0.06)]"
+    >
 
-        <svg
-          class="h-5 w-5 text-[#007d7c]"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.8">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3 12a9 9 0 109-9c-2.2 0-4.2.8-5.8 2.2L4 8.5" />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3 4v4.5h4.5M12 7v5l3 2" />
-        </svg>
+      <svg
+        class="h-[27px] w-[27px] text-[#087c7c]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 12a9 9 0 1 0 3-6.7"/>
+        <path d="M3 4v5h5"/>
+        <path d="M12 7v5l3 2"/>
+      </svg>
 
+      <span class="text-[18px] font-bold">
         Voir mon historique
-      </button>
-    </section>
+      </span>
+
+    </button>
 
 
-    <!-- =========================================================
-         IMPACT ÉCOLOGIQUE
-         ========================================================= -->
-    <section class="mt-7">
+    <!-- =====================================================
+         MON IMPACT ÉCOLOGIQUE
+         ===================================================== -->
+    <section class="mt-[34px]">
 
       <div class="flex items-center justify-between">
-        <h2 class="text-[21px] font-bold tracking-[-0.5px]">
+
+        <h2 class="text-[24px] font-bold leading-none tracking-[-0.025em] text-[#142337]">
           Mon impact écologique
         </h2>
 
-        <span class="text-[12px] font-bold text-[#007d7c]">
+        <span class="text-[13px] font-bold text-[#087c72]">
           Ce mois-ci
         </span>
+
       </div>
 
 
-      <div class="mt-2 grid grid-cols-2 gap-2.5">
+      <!-- ===================================================
+           STATISTIQUES
+           =================================================== -->
+      <div class="mt-[18px] grid grid-cols-2 gap-[10px]">
 
-        <!-- Carte scans -->
-        <article class="rounded-[17px] bg-white p-4 shadow-[0_3px_12px_rgba(15,23,42,0.05)]">
+        <!-- =================================================
+             NOMBRE DE SCANS
+             Valeur provenant de l'API historique.
+             ================================================== -->
+        <article class="h-[175px] rounded-[21px] bg-[#0EA5A4] px-[21px] py-[21px] shadow-[0_2px_7px_rgba(15,23,42,0.05)]">
 
-          <div class="flex h-12 w-12 items-center justify-center rounded-[16px] bg-[#e4eeee] text-[#007d7c]">
+          <div class="flex h-[55px] w-[55px] items-center justify-center rounded-[16px] bg-[#e3eeee] text-[#087c7c]">
+
             <svg
-              class="h-5 w-5"
-              fill="none"
+              class="h-[27px] w-[27px]"
               viewBox="0 0 24 24"
+              fill="none"
               stroke="currentColor"
-              stroke-width="1.8">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3" />
-              <rect x="8" y="8" width="8" height="8" rx="1" />
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="4" y="4" width="6" height="6"/>
+              <rect x="14" y="4" width="6" height="6"/>
+              <rect x="4" y="14" width="6" height="6"/>
+              <rect x="14" y="14" width="6" height="6"/>
             </svg>
+
           </div>
 
-          <p class="mt-3 text-[24px] font-extrabold text-[#007d7c]">
+          <!-- Nombre réel de scans du citoyen -->
+          <p class="mt-[13px] text-[26px] font-bold leading-none text-white">
             {{ nombreScans() }}
           </p>
 
-          <p class="text-[14px] text-[#4b5558]">
+          <p class="mt-[9px] text-[15px] text-white">
             Déchets scannés
           </p>
+
         </article>
 
 
-        <!-- Carte citoyens -->
-        <article class="rounded-[17px] bg-white p-4 shadow-[0_3px_12px_rgba(15,23,42,0.05)]">
+        <!-- =================================================
+             NOMBRE DE CITOYENS
+             Cette valeur doit provenir de l'API statistique.
+             ================================================== -->
+        <article class="h-[175px] rounded-[21px] bg-[#0EA5A4] px-[21px] py-[21px] shadow-[0_2px_7px_rgba(15,23,42,0.05)]">
 
-          <div class="flex h-12 w-12 items-center justify-center rounded-[16px] bg-[#b8f3e7] text-[#007d7c]">
+          <div class="flex h-[55px] w-[55px] items-center justify-center rounded-[16px] bg-[#b8f4eb] text-[#087c7c]">
+
             <svg
-              class="h-5 w-5"
-              fill="none"
+              class="h-[27px] w-[27px]"
               viewBox="0 0 24 24"
+              fill="none"
               stroke="currentColor"
-              stroke-width="1.8">
-              <circle cx="9" cy="8" r="3" />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 19c0-3 2.5-5 6-5s6 2 6 5M16 5.5a3 3 0 010 5.8M18 14c1.9.6 3 2.2 3 5" />
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="9" cy="8" r="3"/>
+              <path d="M3 19c0-3.2 2.7-5 6-5s6 1.8 6 5"/>
+              <path d="M16 6a3 3 0 0 1 0 5.8"/>
+              <path d="M18 14c2 .7 3 2.2 3 4.5"/>
             </svg>
+
           </div>
 
-          <p class="mt-3 text-[24px] font-extrabold text-[#007d7c]">
+          <!-- Valeur provenant des statistiques Django -->
+          <p class="mt-[13px] text-[26px] font-bold leading-none text-white">
             {{ citoyensActifs() }}
           </p>
 
-          <p class="text-[14px] text-[#4b5558]">
-            Citoyen actifs
+          <p class="mt-[9px] text-[15px] text-white">
+            Citoyens actifs
           </p>
+
         </article>
 
       </div>
+
     </section>
 
 
-    <!-- =========================================================
-         DERNIERS SCANS
-         ========================================================= -->
-    <section class="mt-7">
+    <!-- =====================================================
+         MES DERNIERS SCANS
+         ===================================================== -->
+    <section class="mt-[63px]">
 
       <div class="flex items-center justify-between">
-        <h2 class="text-[21px] font-bold">
+
+        <h2 class="text-[24px] font-bold leading-none tracking-[-0.025em] text-[#142337]">
           Mes derniers scans
         </h2>
 
         <button
           type="button"
           (click)="voirHistorique()"
-          class="text-[13px] font-bold text-[#007d7c]">
-          Voir tout ›
+          class="flex items-center text-[13px] font-bold text-[#087c72]"
+        >
+          Voir tout
+
+          <span class="ml-[3px] text-[19px] leading-none">
+            ›
+          </span>
         </button>
+
       </div>
 
 
-      <!-- Conteneur horizontal comme sur la maquette. -->
-      <div class="mt-3 flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
+      <!-- ===================================================
+           CARROUSEL DES VRAIS SCANS
+           =================================================== -->
+      <div class="scrollbar-hide mt-[17px] flex gap-[12px] overflow-x-auto pb-[4px]">
 
+        <!-- Chaque carte correspond à un scan récupéré
+             depuis GET /api/scans/historique/ -->
         <article
           *ngFor="let scan of derniersScans()"
-          class="w-[290px] flex-shrink-0 rounded-[17px] bg-white p-3
-                 shadow-[0_3px_12px_rgba(15,23,42,0.05)]">
+          class="w-[343px] flex-shrink-0 rounded-[21px] bg-white p-[16px] shadow-[0_2px_7px_rgba(15,23,42,0.06)]"
+        >
 
-          <!-- Zone image -->
-          <div class="relative h-[132px] overflow-hidden rounded-[15px] bg-[#dce9fb]">
+          <!-- Image réelle enregistrée par Django -->
+          <div class="relative h-[151px] w-full overflow-hidden rounded-[16px] bg-[#dce8fa]">
 
             <img
               *ngIf="scan.image"
               [src]="scan.image"
               [alt]="scan.nom"
-              class="h-full w-full object-cover" />
+              class="h-full w-full object-cover"
+            />
 
-            <span
-              class="absolute right-2 top-2 rounded-lg bg-[#52627a] px-2.5 py-1
-                     text-[12px] font-bold text-white">
+            <!-- Affiché uniquement si aucune image n'est disponible -->
+            <div
+              *ngIf="!scan.image"
+              class="flex h-full w-full items-center justify-center text-[#7d8b98]"
+            >
+              <svg
+                class="h-10 w-10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <circle cx="8.5" cy="9" r="1.5"/>
+                <path d="m21 15-4.5-4.5L7 20"/>
+              </svg>
+            </div>
+
+            <!-- Catégorie issue de l'analyse IA -->
+            <span class="absolute right-[8px] top-[8px] rounded-full bg-[#344154]/90 px-[12px] py-[5px] text-[11px] font-bold text-white">
               {{ scan.categorie }}
             </span>
+
           </div>
 
 
-          <h3 class="mt-3 truncate text-[14px] font-bold">
+          <!-- Objet détecté par l'IA -->
+          <h3 class="mt-[13px] truncate text-[18px] font-bold text-[#142337]">
             {{ scan.nom }}
           </h3>
 
-          <p class="text-[13px] text-[#596265]">
+
+          <!-- Date du scan provenant de Django -->
+          <p class="mt-[5px] text-[14px] text-[#596467]">
             {{ scan.date }}
           </p>
 
 
-          <div class="mt-3 flex items-center justify-between">
+          <!-- Conseil de tri associé au déchet -->
+          <div class="mt-[22px] flex items-center justify-between">
 
-            <span
-              class="rounded-full bg-[#9cf1df] px-3 py-1.5 text-[13px] font-bold text-[#006e6d]">
-              <span class="mr-1 inline-block h-2 w-2 rounded-full bg-[#0EA5A4]"></span>
-              {{ scan.destination }}
+            <span class="inline-flex max-w-[220px] items-center gap-[6px] truncate rounded-full bg-[#bff5ea] px-[12px] py-[6px] text-[12px] font-bold text-[#087c72]">
+
+              <span class="h-[6px] w-[6px] flex-shrink-0 rounded-full bg-[#087c72]"></span>
+
+              <span class="truncate">
+                {{ scan.destination }}
+              </span>
+
             </span>
 
+
+            <!-- Accès à l'historique -->
             <button
               type="button"
               (click)="voirHistorique()"
-              class="flex h-9 w-9 items-center justify-center rounded-full bg-[#e4eefc] text-[#415163]"
-              aria-label="Voir le scan">
+              aria-label="Voir le scan"
+              class="flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-full bg-[#e4eefc] text-[#42576e]"
+            >
 
               <svg
-                class="h-5 w-5"
-                fill="none"
+                class="h-[21px] w-[21px]"
                 viewBox="0 0 24 24"
+                fill="none"
                 stroke="currentColor"
-                stroke-width="2">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M5 12h13m-5-5l5 5-5 5" />
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h13"/>
+                <path d="m13 6 6 6-6 6"/>
               </svg>
+
             </button>
+
           </div>
+
         </article>
 
-      </div>
-    </section>
 
+        <!-- =================================================
+             AUCUN SCAN
+             ================================================== -->
+        <div
+          *ngIf="derniersScans().length === 0"
+          class="w-full flex-shrink-0 rounded-[21px] bg-white p-7 text-center shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
+        >
 
-    <!-- =========================================================
-         CONSEIL DU JOUR
-         ========================================================= -->
-    <section
-      class="mt-6 rounded-[20px] bg-[#c9dfdf] p-4">
-
-      <div class="flex gap-2.5">
-
-        <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#9af1e1] text-[#007d7c]">
-          <svg
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="1.8">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 18h6M10 22h4M8 14.5A6 6 0 1116 14.5c-.8.7-1.2 1.5-1.2 2.5h-5.6c0-1-.4-1.8-1.2-2.5z" />
-          </svg>
-        </div>
-
-        <div class="min-w-0 flex-1">
-
-          <div class="flex items-center justify-between gap-2">
-            <p class="text-[13px] font-extrabold uppercase tracking-wide text-[#007d7c]">
-              Conseil du jour
-            </p>
-
-            <span class="whitespace-nowrap text-[12px] font-bold text-[#4b5558]">
-              Astuce Dakar Propre
-            </span>
-          </div>
-
-          <p class="mt-2 text-[15px] font-medium leading-[1.4]">
-            {{ conseil() }}
+          <p class="text-[14px] font-semibold text-[#465153]">
+            Aucun scan pour le moment.
           </p>
 
           <button
             type="button"
-            (click)="voirConseils()"
-            class="mt-3 text-[13px] font-bold text-[#007d7c]">
-            Découvrir d'autres conseils →
+            (click)="scanner()"
+            class="mt-3 rounded-full bg-[#0EA5A4] px-5 py-2.5 text-[12px] font-bold text-white"
+          >
+            Scanner un déchet
           </button>
+
         </div>
 
       </div>
+
     </section>
 
 
-    <!-- =========================================================
-         POINTS DE COLLECTE PROCHES
-         ========================================================= -->
-    <section class="mt-7">
+    <!-- =====================================================
+         CONSEIL DU JOUR
+         ===================================================== -->
+    <section class="mt-[39px]">
 
-      <div class="flex items-start justify-between gap-2.5">
+      <article class="rounded-[29px] bg-[#c8e5e4] px-[21px] py-[21px]">
 
-        <h2 class="max-w-[270px] text-[21px] font-bold leading-tight">
+        <div class="flex items-start gap-[14px]">
+
+          <!-- Icône conseil -->
+          <div class="flex h-[54px] w-[54px] flex-shrink-0 items-center justify-center rounded-[18px] bg-[#a5eee5] text-[#087c72]">
+
+            <svg
+              class="h-[27px] w-[27px]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 18h6"/>
+              <path d="M10 21h4"/>
+              <path d="M8.5 14.5A6 6 0 1 1 15.5 14.5c-.8.7-1.3 1.5-1.5 2.5h-4c-.2-1-.7-1.8-1.5-2.5Z"/>
+            </svg>
+
+          </div>
+
+
+          <!-- Conseil récupéré depuis l'API -->
+          <div class="min-w-0 flex-1">
+
+            <div class="flex items-center justify-between gap-2">
+
+              <p class="text-[14px] font-bold tracking-[0.05em] text-[#087c72]">
+                CONSEIL DU JOUR
+              </p>
+
+              <span class="whitespace-nowrap text-[11px] font-bold text-[#536064]">
+                Astuce Dakar Propre
+              </span>
+
+            </div>
+
+            <p class="mt-[7px] text-[17px] font-medium leading-[1.35] text-[#142337]">
+              {{ conseil() }}
+            </p>
+
+            <button
+              type="button"
+              (click)="voirConseils()"
+              class="mt-[10px] text-[14px] font-bold text-[#087c72]"
+            >
+              Découvrir d'autres conseils
+
+              <span class="ml-1 text-[19px]">
+                →
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         POINTS DE COLLECTE RÉELS
+         ===================================================== -->
+    <section class="mt-[37px]">
+
+      <div class="flex items-start justify-between gap-4">
+
+        <h2 class="max-w-[310px] text-[24px] font-bold leading-[1.2] tracking-[-0.025em] text-[#142337]">
           Points de collecte proches de vous
         </h2>
 
-        <span class="pt-1 text-right text-[13px] font-bold leading-tight text-[#007d7c]">
-          Dakar<br />Centre
+        <!-- Zone géographique actuelle -->
+        <span class="pt-[3px] text-right text-[13px] font-bold leading-[1.3] text-[#087c72]">
+          Dakar<br>
+          Centre
         </span>
+
       </div>
 
 
-      <div class="mt-4 space-y-2">
+      <!-- ===================================================
+           LISTE DES POINTS RÉCUPÉRÉS DEPUIS L'API
+           =================================================== -->
+      <div class="mt-[27px] space-y-[8px]">
 
-        <button
+        <article
           *ngFor="let point of pointsProches(); let i = index"
-          type="button"
           (click)="ouvrirPoint(i)"
-          class="flex min-h-[68px] w-full items-center gap-2.5 rounded-[17px] bg-white px-4 py-3 text-left
-                 shadow-[0_3px_12px_rgba(15,23,42,0.04)]">
+          class="flex h-[80px] cursor-pointer items-center gap-[12px] rounded-[20px] bg-white px-[15px] shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
+        >
 
           <!-- Icône du point -->
-          <span
-            class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[15px] text-[#007d7c]"
+          <div
+            class="flex h-[48px] w-[48px] flex-shrink-0 items-center justify-center rounded-[15px]"
             [class.bg-[#e5eeee]]="point.type === 'point'"
-            [class.bg-[#b8f3e7]]="point.type === 'recyclage'">
+            [class.text-[#087c72]]="point.type === 'point'"
+            [class.bg-[#c7f5ee]]="point.type === 'recyclage'"
+            [class.text-[#087c72]]="point.type === 'recyclage'"
+          >
 
-            <!-- Icône avion / itinéraire : identique à la maquette -->
+            <!-- Icône localisation -->
             <svg
               *ngIf="point.type === 'point'"
-              class="h-5 w-5"
-              fill="none"
+              class="h-[24px] w-[24px]"
               viewBox="0 0 24 24"
+              fill="none"
               stroke="currentColor"
               stroke-width="1.8"
               stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M21 3L3 10.5l7.2 2.3L12.5 20 21 3z" />
-              <path d="M10.2 12.8L21 3" />
+              stroke-linejoin="round"
+            >
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+              <path d="m8 12 2 2 5-5"/>
             </svg>
 
-            <!-- Icône recyclage : même symbole que dans la maquette -->
+            <!-- Icône recyclage -->
             <svg
               *ngIf="point.type === 'recyclage'"
-              class="h-5 w-5"
-              fill="none"
+              class="h-[24px] w-[24px]"
               viewBox="0 0 24 24"
+              fill="none"
               stroke="currentColor"
               stroke-width="1.8"
               stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M7.2 6.2L9.1 3l2.1 3.7" />
-              <path d="M9.1 3L5.8 3.1A2.5 2.5 0 003.7 4.4L2.5 6.5" />
-              <path d="M2.5 6.5l3.8.1-1.8 3.2" />
-              <path d="M5.1 10.1l2.8 4.8a3.2 3.2 0 002.8 1.6h2.5" />
-              <path d="M16.8 17.8l-1.9 3.2-2.1-3.7" />
-              <path d="M14.9 21l3.3-.1a2.5 2.5 0 002.1-1.3l1.2-2.1" />
-              <path d="M21.5 17.5l-3.8-.1 1.8-3.2" />
-              <path d="M18.9 13.9l-2.8-4.8a3.2 3.2 0 00-2.8-1.6h-2.5" />
+              stroke-linejoin="round"
+            >
+              <path d="m7 19-3-3 3-3"/>
+              <path d="M4 16h11a4 4 0 0 0 4-4V9"/>
+              <path d="m17 5 3 3-3 3"/>
+              <path d="M20 8H9a4 4 0 0 0-4 4v3"/>
             </svg>
 
-          </span>
+          </div>
 
 
-          <span class="min-w-0 flex-1">
-            <span class="block truncate text-[14px] font-bold">
+          <!-- Informations du point -->
+          <div class="min-w-0 flex-1">
+
+            <h3 class="truncate text-[14px] font-bold text-[#142337]">
               {{ point.nom }}
-            </span>
+            </h3>
 
-            <span class="block truncate text-[13px] text-[#596265]">
+            <p class="mt-[4px] truncate text-[13px] text-[#536064]">
               Distance : {{ point.distance }} • {{ point.info }}
-            </span>
-          </span>
+            </p>
+
+          </div>
 
 
+          <!-- Bouton itinéraire -->
           <span
-            class="flex-shrink-0 rounded-full bg-[#9cf1df] px-3 py-2 text-[13px] font-bold text-[#006e6d]">
+            class="flex h-[38px] flex-shrink-0 items-center justify-center rounded-full px-[14px] text-[12px] font-bold"
+            [class.bg-[#a5f0e3]]="point.type === 'point'"
+            [class.text-[#087c72]]="point.type === 'point'"
+            [class.bg-[#dce8fa]]="point.type === 'recyclage'"
+            [class.text-[#46536a]]="point.type === 'recyclage'"
+          >
             Itinéraire
           </span>
-        </button>
+
+        </article>
+
+
+        <!-- =================================================
+             AUCUN POINT DISPONIBLE
+             ================================================== -->
+        <div
+          *ngIf="pointsProches().length === 0"
+          class="rounded-[20px] bg-white px-[20px] py-[25px] text-center shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
+        >
+          <p class="text-[14px] font-semibold text-[#465153]">
+            Aucun point de collecte disponible pour le moment.
+          </p>
+        </div>
 
       </div>
 
 
-      <!-- Bouton vers tous les points -->
+      <!-- ===================================================
+           BOUTON CARTE
+           =================================================== -->
       <button
         type="button"
         (click)="voirPoints()"
-        class="mt-5 flex h-[48px] w-full items-center justify-center gap-2 rounded-full
-               bg-[#dfebfc] text-[14px] font-bold text-[#007d7c]">
+        class="mt-[91px] flex h-[54px] w-full items-center justify-center gap-2 rounded-[19px] bg-[#dfeafb] text-[15px] font-bold text-[#087c72]"
+      >
 
         <svg
-          class="h-5 w-5"
-          fill="none"
+          class="h-[22px] w-[22px]"
           viewBox="0 0 24 24"
+          fill="none"
           stroke="currentColor"
-          stroke-width="1.8">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5 6.5l7-3 7 3v11l-7 3-7-3v-11zM12 3.5v14M5 6.5l7 3 7-3" />
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/>
+          <path d="M9 3v15"/>
+          <path d="M15 6v15"/>
         </svg>
 
-        Voir tous les points sur la carte
+        <span>
+          Voir tous les points sur la carte
+        </span>
+
       </button>
 
     </section>
@@ -470,10 +647,12 @@
   </main>
 
 
-  <!-- =========================================================
-       NAVIGATION DU BAS
-       Ton composant existant contient le scanner central.
-       ========================================================= -->
+  <!-- =======================================================
+       NAVIGATION BASSE PARTAGÉE
+       Le composant gère automatiquement :
+       - citoyen connecté
+       - citoyen non connecté
+       ======================================================= -->
   <app-barre-navigations></app-barre-navigations>
 
 </div>

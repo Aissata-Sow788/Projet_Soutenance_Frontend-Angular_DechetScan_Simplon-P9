@@ -82,10 +82,7 @@ export class DetailPointCollecte implements OnInit, AfterViewInit {
       this.chargement.set(false);
 
       // Recherche l'adresse à partir des coordonnées GPS.
-      this.geocodingService.obtenirAdresse(
-        point.latitude,
-        point.longitude
-      ).subscribe(adr => {
+      this.geocodingService.obtenirAdresse(point.latitude, point.longitude).subscribe(adr => {
         this.adresse.set(adr);
       });
 
@@ -104,14 +101,8 @@ export class DetailPointCollecte implements OnInit, AfterViewInit {
         // Exclut le point actuellement affiché.
         .filter(p => p.idPoint !== pointActuel.idPoint)
         // Calcule la distance de chaque point.
-        .map(p => ({
-          ...p,
-          distanceKm: this.pointCollecteService.calculerDistanceKm(
-            pointActuel.latitude,
-            pointActuel.longitude,
-            p.latitude,
-            p.longitude
-          )
+        .map(p => ({...p, distanceKm: this.pointCollecteService.calculerDistanceKm(
+            pointActuel.latitude, pointActuel.longitude, p.latitude, p.longitude)
         }))
         // Classe les points du plus proche au plus loin.
         .sort((a, b) => a.distanceKm - b.distanceKm)
@@ -130,10 +121,7 @@ export class DetailPointCollecte implements OnInit, AfterViewInit {
     this.map = L.map(this.carteRef.nativeElement, {
       zoomControl: false,
       attributionControl: false
-    }).setView(
-      [point.latitude, point.longitude],
-      15
-    );
+    }).setView([point.latitude, point.longitude],15);
 
     // Ajoute le fond de carte OpenStreetMap.
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

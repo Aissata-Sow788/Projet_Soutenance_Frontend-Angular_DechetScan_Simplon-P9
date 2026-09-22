@@ -41,6 +41,7 @@
 
     <!-- Bouton ajout -->
     <button
+      [routerLink]="['/admin/ajouter-point-collecte']" routerLinkActive="router-link-active"
       type="button"
       class="mt-10 flex h-[42px] items-center gap-2 rounded-xl bg-[#0EA5A4] px-5 text-[12px] font-extrabold text-white shadow-[0_6px_18px_rgba(14,165,164,0.25)] transition hover:bg-[#0B9695]"
     >
@@ -117,7 +118,7 @@
       (click)="changerQuartier('Plateau')"
       [class.bg-[#0EA5A4]]="filtreQuartier() === 'Plateau'"
       [class.text-white]="filtreQuartier() === 'Plateau'"
-      class="h-[30px] rounded-full bg-[#EEF4FF] px-4 text-[10px] font-extrabold text-slate-600"
+      class="h-[30px] rounded-full bg-[#0EA5A4] px-4 text-[10px] font-extrabold text-slate-600"
     >
       Plateau
     </button>
@@ -129,7 +130,7 @@
       (click)="changerQuartier('Almadies')"
       [class.bg-[#0EA5A4]]="filtreQuartier() === 'Almadies'"
       [class.text-white]="filtreQuartier() === 'Almadies'"
-      class="h-[30px] rounded-full bg-[#EEF4FF] px-4 text-[10px] font-extrabold text-slate-600"
+      class="h-[30px] rounded-full bg-[#0EA5A4] px-4 text-[10px] font-extrabold text-slate-600"
     >
       Almadies
     </button>
@@ -141,7 +142,7 @@
       (click)="changerQuartier('Grand Dakar')"
       [class.bg-[#0EA5A4]]="filtreQuartier() === 'Grand Dakar'"
       [class.text-white]="filtreQuartier() === 'Grand Dakar'"
-      class="h-[30px] rounded-full bg-[#EEF4FF] px-4 text-[10px] font-extrabold text-slate-600"
+      class="h-[30px] rounded-full bg-[#0EA5A4] px-4 text-[10px] font-extrabold text-slate-600"
     >
       Grand Dakar
     </button>

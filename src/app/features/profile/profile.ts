@@ -64,7 +64,7 @@ export class Profile implements OnInit {
 
   // Retourne vers la page d'accueil.
   retour(): void {
-    this.router.navigate(['/accueil']);
+    this.router.navigate(['/home-citoyen']);
   }
 
   // Construit les initiales de l'utilisateur.

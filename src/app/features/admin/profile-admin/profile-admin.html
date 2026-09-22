@@ -1,0 +1,550 @@
+<!-- ============================================================
+     PAGE PROFIL ADMINISTRATEUR
+
+     Le Sidebar et le Header sont déjà fournis par le layout admin.
+     Cette page contient uniquement le contenu central du profil.
+     ============================================================ -->
+
+<section class="min-h-full bg-[#f6f8fd] px-10 pb-10 pt-8">
+
+  <!-- ==========================================================
+       EN-TÊTE DE LA PAGE
+       Correspond au titre visible sur la maquette.
+       ========================================================== -->
+
+  <div class="mb-8">
+
+    <!-- Petit badge de section -->
+    <div
+      class="mb-2 inline-flex items-center gap-2 rounded-full bg-[#e9f5f8] px-3 py-1.5"
+    >
+
+      <span
+        class="h-[6px] w-[6px] rounded-full bg-[#079c98]"
+      ></span>
+
+      <span
+        class="text-[10px] font-bold uppercase tracking-[0.08em] text-[#42505d]"
+      >
+        Paramètres du compte
+      </span>
+
+    </div>
+
+
+    <!-- Titre principal -->
+    <h1
+      class="text-[32px] font-bold leading-tight tracking-[-1px] text-[#142238]"
+    >
+      Mon profil
+    </h1>
+
+
+    <!-- Description -->
+    <p class="mt-1.5 text-[14px] text-[#5d6774]">
+      Gérez vos informations personnelles et les paramètres d'accès de votre compte administrateur.
+    </p>
+
+  </div>
+
+
+  <!-- ==========================================================
+       CHARGEMENT
+       ========================================================== -->
+
+  @if (chargement()) {
+
+    <div
+      class="flex min-h-[300px] items-center justify-center rounded-[22px] bg-white"
+    >
+
+      <div class="text-center">
+
+        <!-- Cercle de chargement -->
+        <div
+          class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-[3px] border-[#dceeed] border-t-[#0ea5a4]"
+        ></div>
+
+        <p class="text-[13px] text-[#687381]">
+          Chargement du profil...
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- ==========================================================
+       ERREUR
+       ========================================================== -->
+
+  @if (!chargement() && erreur()) {
+
+    <div
+      class="rounded-[20px] border border-red-100 bg-red-50 px-6 py-5"
+    >
+
+      <p class="text-[13px] font-medium text-red-600">
+        {{ erreur() }}
+      </p>
+
+
+      <!-- Permet de relancer la récupération du profil -->
+      <button
+        type="button"
+        (click)="chargerProfil()"
+        class="mt-3 rounded-[10px] bg-[#0ea5a4] px-4 py-2 text-[12px] font-bold text-white"
+      >
+        Réessayer
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ==========================================================
+       GRANDE CARTE DU PROFIL
+       Toute la page de profil est regroupée dans UNE SEULE carte.
+       ========================================================== -->
+
+  @if (!chargement() && !erreur() && utilisateur()) {
+
+    <div
+      class="rounded-[22px] bg-white px-12 pb-8 pt-10 shadow-[0_2px_14px_rgba(20,35,60,0.035)]"
+    >
+
+      <!-- ========================================================
+           IDENTITÉ ADMINISTRATEUR
+           ======================================================== -->
+
+      <div class="flex items-center gap-5">
+
+        <!-- Avatar -->
+        <div
+          class="flex h-[82px] w-[82px] shrink-0 items-center justify-center rounded-full border-[4px] border-[#edf6fb] bg-[#cfe7f5] text-[25px] font-bold text-[#087e83]"
+        >
+          {{ initiales }}
+        </div>
+
+
+        <!-- Informations principales -->
+        <div>
+
+          <!-- Nom complet -->
+          <div class="flex items-center gap-2.5">
+
+            <h2
+              class="text-[23px] font-bold tracking-[-0.5px] text-[#142238]"
+            >
+              {{ nomComplet }}
+            </h2>
+
+
+            <!-- Badge compte actif -->
+            <span
+              class="flex items-center gap-1 rounded-full bg-[#d8f5ef] px-2.5 py-1 text-[10px] font-bold text-[#079c98]"
+            >
+
+              <span
+                class="h-[6px] w-[6px] rounded-full bg-[#0eaa91]"
+              ></span>
+
+              Actif
+
+            </span>
+
+          </div>
+
+
+          <!-- Rôle + email -->
+          <div class="mt-2 flex items-center gap-2.5">
+
+            <!-- Badge administrateur -->
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-[#e7f1f2] px-3 py-1 text-[11px] font-medium text-[#087c82]"
+            >
+
+              <!-- Petite icône bouclier -->
+              <span class="text-[12px]">
+
+              </span>
+
+              {{ role }}
+
+            </span>
+
+
+            <!-- Séparateur -->
+            <span class="text-[#a4adb6]">
+              •
+            </span>
+
+
+            <!-- Email -->
+            <span
+              class="flex items-center gap-1.5 text-[12px] text-[#4c5864]"
+            >
+
+              <span class="text-[14px]">
+
+              </span>
+
+              {{ utilisateur()?.email || 'Non renseigné' }}
+
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================================================
+           INFORMATIONS PERSONNELLES
+           ======================================================== -->
+
+      <div class="mt-14">
+
+        <!-- Titre de section -->
+        <div class="mb-5 flex items-center gap-2">
+
+          <!-- Icône informations -->
+          <span
+            class="text-[18px] font-bold text-[#079c98]"
+          >
+            
+          </span>
+
+          <h3
+            class="text-[18px] font-bold text-[#142238]"
+          >
+            Informations personnelles
+          </h3>
+
+        </div>
+
+
+        <!-- Description -->
+        <p
+          class="-mt-3 mb-6 text-[12px] text-[#5d6774]"
+        >
+          Vos coordonnées administratives enregistrées sur la plateforme DechetScan.
+        </p>
+
+
+        <!-- Grille des informations -->
+        <div class="grid grid-cols-2 gap-x-6 gap-y-5">
+
+
+          <!-- ====================================================
+               NOM COMPLET
+               ==================================================== -->
+
+          <div>
+
+            <div class="mb-2 flex items-center justify-between">
+
+              <label
+                class="text-[11px] font-bold text-[#1d2a3c]"
+              >
+                Nom complet
+              </label>
+
+            </div>
+
+
+            <div
+              class="flex h-[43px] items-center gap-3 rounded-[10px] bg-[#f0f5fd] px-4"
+            >
+
+              <!-- Icône utilisateur -->
+              <span
+                class="text-[17px] text-[#3c4b5a]"
+              >
+                ♙
+              </span>
+
+              <span
+                class="text-[13px] font-medium text-[#263448]"
+              >
+                {{ nomComplet }}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- ====================================================
+               EMAIL
+               ==================================================== -->
+
+          <div>
+
+            <label
+              class="mb-2 block text-[11px] font-bold text-[#1d2a3c]"
+            >
+              Adresse email officielle
+            </label>
+
+
+            <div
+              class="flex h-[43px] items-center gap-3 rounded-[10px] bg-[#f0f5fd] px-4"
+            >
+
+              <!-- Icône email -->
+              <span
+                class="text-[17px] text-[#3c4b5a]"
+              >
+                ✉
+              </span>
+
+              <span
+                class="truncate text-[13px] font-medium text-[#263448]"
+              >
+                {{ utilisateur()?.email || 'Non renseigné' }}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- ====================================================
+               TÉLÉPHONE
+               ==================================================== -->
+
+          <div>
+
+            <label
+              class="mb-2 block text-[11px] font-bold text-[#1d2a3c]"
+            >
+              Numéro de téléphone mobile
+            </label>
+
+
+            <div
+              class="flex h-[43px] items-center gap-3 rounded-[10px] bg-[#f0f5fd] px-4"
+            >
+
+              <!-- Icône téléphone -->
+              <span
+                class="text-[17px] text-[#3c4b5a]"
+              >
+                ♡
+              </span>
+
+              <span
+                class="text-[13px] font-medium text-[#263448]"
+              >
+                {{ utilisateur()?.telephone || 'Non renseigné' }}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- ====================================================
+               RÔLE
+               ==================================================== -->
+
+          <div>
+
+            <div class="mb-2 flex items-center justify-between">
+
+              <label
+                class="text-[11px] font-bold text-[#1d2a3c]"
+              >
+                Rôle au sein du système
+              </label>
+
+
+              <!-- Mention de la maquette -->
+              <span
+                class="text-[9px] font-bold text-[#59636d]"
+              >
+                Attribution centrale
+              </span>
+
+            </div>
+
+
+            <div
+              class="flex h-[43px] items-center gap-3 rounded-[10px] bg-[#f0f5fd] px-4"
+            >
+
+              <!-- Icône rôle -->
+              <span
+                class="text-[17px] text-[#3c4b5a]"
+              >
+                ◉
+              </span>
+
+              <span
+                class="text-[13px] font-medium text-[#3f4b57]"
+              >
+                Administrateur Principal (Super Admin)
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================================================
+           SÉCURITÉ DU COMPTE
+           ======================================================== -->
+
+      <div class="mt-14">
+
+        <!-- Titre -->
+        <div class="mb-1 flex items-center gap-2">
+
+          <span
+            class="text-[18px] text-[#079c98]"
+          >
+            ♧
+          </span>
+
+          <h3
+            class="text-[18px] font-bold text-[#142238]"
+          >
+            Sécurité du compte
+          </h3>
+
+        </div>
+
+
+        <!-- Description -->
+        <p
+          class="mb-5 text-[12px] text-[#5d6774]"
+        >
+          Contrôlez l'accès et vos identifiants d'authentification sur le réseau DechetScan.
+        </p>
+
+
+        <!-- Bloc mot de passe -->
+        <div
+          class="flex min-h-[78px] items-center justify-between rounded-[12px] bg-[#f0f5fd] px-6 py-4"
+        >
+
+          <!-- Informations mot de passe -->
+          <div>
+
+            <p
+              class="text-[13px] font-bold text-[#142238]"
+            >
+              Mot de passe actuel
+            </p>
+
+
+            <div class="mt-1.5 flex items-center gap-4">
+
+              <!-- Masquage du mot de passe -->
+              <span
+                class="text-[14px] tracking-[4px] text-[#142238]"
+              >
+                ••••••••••••
+              </span>
+
+
+              <!-- Dernière modification -->
+              <span
+                class="text-[11px] text-[#5d6774]"
+              >
+                Modifié il y a 3 mois
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- Bouton modification -->
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-[20px] bg-white px-5 py-2.5 text-[11px] font-bold text-[#263448] shadow-[0_1px_4px_rgba(20,35,60,0.04)] transition hover:bg-[#f8fafc]"
+          >
+
+            <span
+              class="text-[14px] text-[#079c98]"
+            >
+              ⚿
+            </span>
+
+            Modifier le mot de passe
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================================================
+           PIED DE CARTE
+           ======================================================== -->
+
+      <div
+        class="mt-14 flex items-center justify-between border-t border-[#edf0f5] pt-5"
+      >
+
+        <!-- Dernière synchronisation -->
+        <p
+          class="text-[11px] text-[#59636d]"
+        >
+          Dernière synchronisation du compte :
+
+          <span
+            class="font-bold text-[#263448]"
+          >
+            Aujourd'hui à 11:42
+          </span>
+        </p>
+
+
+        <!-- Actions -->
+        <div class="flex items-center gap-7">
+
+          <!-- Annuler -->
+          <button
+            type="button"
+            (click)="retourDashboard()"
+            class="text-[12px] font-bold text-[#3d4854] transition hover:text-[#142238]"
+          >
+            Annuler
+          </button>
+
+
+          <!-- Enregistrer -->
+          <button
+            type="button"
+            class="flex h-[43px] min-w-[275px] items-center justify-center gap-2 rounded-[11px] bg-[#0ea5a4] px-6 text-[13px] font-bold text-white shadow-[0_3px_8px_rgba(14,165,164,0.16)] transition hover:bg-[#0c9695]"
+          >
+
+            <span class="text-[15px]">
+              ✓
+            </span>
+
+            Enregistrer les modifications
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</section>

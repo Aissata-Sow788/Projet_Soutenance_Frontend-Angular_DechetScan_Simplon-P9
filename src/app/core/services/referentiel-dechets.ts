@@ -1,45 +1,113 @@
-// Importe Injectable pour rendre le service disponible dans toute l'application.
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-// Importe delay pour un petit temps de réponse réseau.
-import { delay } from 'rxjs/operators';
-import { TypeDechet } from '../../shared/models/type-dechet.model';
-// HttpClient pour communiquer avec Django.
-import { HttpClient } from '@angular/common/http'
+/**
+ * Représente le conseil associé à un type de déchet.
+ */
+export interface ConseilTri {
+  idConseil: number;
+  consigne: string;
+  idTypeDechet: number;
+}
 
+/**
+ * Représente un type de déchet.
+ */
+export interface TypeDechet {
+  idTypeDechet: number;
+  nom: string;
+  description: string;
+  conseil?: ConseilTri;
+}
 
 @Injectable({
-  // Rend le service disponible dans toute l'application.
   providedIn: 'root'
 })
-export class ReferentielDechetsService {
+export class ReferentielService {
 
-  private readonly baseUrl = 'http://127.0.0.1:8000/api';
+  private readonly http = inject(HttpClient);
 
-  // Permet d'effectuer les requêtes HTTP vers Django.
-  private readonly httpurl = inject(HttpClient);
+  // IMPORTANT :
+  // Le "/" à la fin est obligatoire pour éviter :
+  // /apitypes/ ou /apiconseils/
+  private readonly apiUrl = 'http://127.0.0.1:8000/api/';
 
-  // Retourne la liste des types de déchets.
-  // Plus tard, cette méthode pourra utiliser HttpClient avec Django.
+  /**
+   * Récupère tous les types de déchets.
+   */
   listerTypes(): Observable<TypeDechet[]> {
-
-    // Retourne les données mockées avec un délai simulé.
-    return this.httpurl.get<TypeDechet[]>(`${this.baseUrl}/types/`);
+    return this.http.get<TypeDechet[]>(
+      `${this.apiUrl}types/`
+    );
   }
 
-  // Retourne un type de déchet précis grâce à son identifiant.
-  obtenirType(idType: number): Observable<TypeDechet> {
-    // Django attend l'identifiant directement dans l'URL :
-    // GET /api/types/1/, GET /api/types/2/, etc.
-    return this.httpurl.get<TypeDechet>(`${this.baseUrl}/types/${idType}/`);
+  /**
+   * Crée un nouveau type de déchet.
+   */
+  creerTypeDechet(donnees: {
+    nom: string;
+    description: string;
+  }): Observable<TypeDechet> {
+    return this.http.post<TypeDechet>(
+      `${this.apiUrl}types/`,
+      donnees
+    );
   }
 
-    // Supprime un type de déchet.
-  supprimerType(idType: number): Observable<void> {
-
-    // Appelle DELETE /api/types/{id}/.
-    return this.httpurl.delete<void>(`${this.baseUrl}/types/${idType}/`);
+  /**
+   * Modifie un type de déchet existant.
+   */
+  modifierTypeDechet(
+    idTypeDechet: number,
+    donnees: {
+      nom: string;
+      description: string;
+    }
+  ): Observable<TypeDechet> {
+    return this.http.patch<TypeDechet>(
+      `${this.apiUrl}types/${idTypeDechet}/`,
+      donnees
+    );
   }
 
+    /**
+   * Supprime un type de déchet existant.
+   *
+   * Exemple :
+   * DELETE http://127.0.0.1:8000/api/types/1/
+   */
+  supprimerType(idTypeDechet: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}types/${idTypeDechet}/`
+    );
+  }
+
+  /**
+   * Crée un nouveau conseil de tri.
+   */
+  creerConseil(donnees: {
+    consigne: string;
+    idTypeDechet: number;
+  }): Observable<ConseilTri> {
+    return this.http.post<ConseilTri>(
+      `${this.apiUrl}conseils/`,
+      donnees
+    );
+  }
+
+  /**
+   * Modifie un conseil de tri existant.
+   */
+  modifierConseil(
+    idConseil: number,
+    consigne: string
+  ): Observable<ConseilTri> {
+    return this.http.patch<ConseilTri>(
+      `${this.apiUrl}conseils/${idConseil}/`,
+      {
+        consigne
+      }
+    );
+  }
 }

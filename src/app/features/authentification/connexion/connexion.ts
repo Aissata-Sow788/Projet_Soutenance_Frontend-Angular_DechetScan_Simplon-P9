@@ -12,16 +12,16 @@ import { Auth } from '../../../core/services/auth';
 })
 export class Connexion {
 
-  // Formulaire de connexion
+  // Formulaire de connexion.
   loginForm: FormGroup;
 
-  // Afficher ou cacher le mot de passe
+  // Contrôle l'affichage ou le masquage du mot de passe.
   afficherMotDePasse = signal(false);
 
-  // État de chargement
+  // Indique qu'une connexion est actuellement en cours.
   chargement = signal(false);
 
-  // Message d'erreur
+  // Contient l'erreur retournée par le backend.
   erreurServeur = signal<string | null>(null);
 
   constructor(
@@ -30,91 +30,133 @@ export class Connexion {
     private router: Router
   ) {
 
-    // Création du formulaire et de ses validations
+    // Création du formulaire avec les validations.
     this.loginForm = this.fb.group({
-      identifiant: ['', [Validators.required]],
-      motDePasse: ['', [Validators.required]]
+
+      // L'utilisateur peut saisir un e-mail ou un numéro de téléphone.
+      // Le champ est obligatoire.
+      identifiant: [
+        '',
+        [
+          Validators.required,
+
+          // Autorise :
+          // - une adresse e-mail classique
+          // - un numéro sénégalais commençant par 70, 75, 76, 77 ou 78
+          Validators.pattern(
+            /^(?:[^\s@]+@[^\s@]+\.[^\s@]+|(?:\+221\s?)?(?:70|75|76|77|78)(?:[\s.-]?\d{2}){3})$/
+          )
+        ]
+      ],
+
+      // Le mot de passe est obligatoire et doit contenir
+      // au minimum 8 caractères.
+      motDePasse: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(128)
+        ]
+      ]
     });
   }
 
-  // Afficher ou cacher le mot de passe
+
+  // Affiche ou masque le mot de passe.
   toggleMotDePasse(): void {
-    this.afficherMotDePasse.update(v => !v);
+    this.afficherMotDePasse.update(valeur => !valeur);
   }
 
-  // Vérifie si un champ est valide et a été touché
+
+  // Vérifie si un champ est valide après avoir été touché.
   champValide(nomChamp: string): boolean {
     const champ = this.loginForm.get(nomChamp);
+
     return !!champ && champ.valid && champ.touched;
   }
 
-// Soumission du formulaire de connexion.
-onSubmit(): void {
 
-  // Affiche les informations dans la console pour le débogage.
-  console.log('BOUTON CLIQUÉ');
-  console.log('Formulaire:', this.loginForm.value);
-  console.log('Valide:', this.loginForm.valid);
+  // Vérifie si un champ est invalide après interaction.
+  champInvalide(nomChamp: string): boolean {
+    const champ = this.loginForm.get(nomChamp);
 
-  // Vérifie si le formulaire est invalide.
-  if (this.loginForm.invalid) {
-
-    // Affiche les erreurs de validation des champs.
-    this.loginForm.markAllAsTouched();
-
-    // Arrête la méthode.
-    return;
+    return !!champ && champ.invalid && champ.touched;
   }
 
-  // Active l'indicateur de chargement.
-  this.chargement.set(true);
 
-  // Supprime l'ancien message d'erreur.
-  this.erreurServeur.set(null);
-// Récupère les valeurs saisies dans le formulaire.
-const { identifiant, motDePasse } = this.loginForm.value;
+  // Soumet le formulaire de connexion.
+  onSubmit(): void {
 
-// Construit le payload attendu par le serializer Django.
-const payload = {
-  identifiant: identifiant,
-  password: motDePasse
-};
+    // Affiche les informations dans la console
+    // pendant les tests du formulaire.
+    console.log('BOUTON CLIQUÉ');
+    console.log('Formulaire :', this.loginForm.value);
+    console.log('Valide :', this.loginForm.valid);
 
-// Envoie les identifiants au backend.
-this.authService.login(payload).subscribe({
+    // Si le formulaire est invalide,
+    // on affiche toutes les erreurs.
+    if (this.loginForm.invalid) {
 
-  // Exécuté lorsque la connexion est réussie.
-  next: (response) => {
+      // Marque tous les champs comme touchés
+      // afin de faire apparaître leurs messages d'erreur.
+      this.loginForm.markAllAsTouched();
 
-    // Affiche la réponse JWT dans la console pour vérifier.
-    console.log('Connexion réussie :', response);
+      return;
+    }
 
-    // Arrête l'indicateur de chargement.
-    this.chargement.set(false);
+    // Active l'indicateur de chargement.
+    this.chargement.set(true);
 
-    // Redirige vers la page d'accueil.
-    this.router.navigate(['/']);
-  },
+    // Supprime une ancienne erreur serveur.
+    this.erreurServeur.set(null);
 
-  // Exécuté lorsque Django retourne une erreur.
-  error: (err) => {
+    // Récupère les valeurs saisies.
+    const identifiant = this.loginForm.value.identifiant?.trim();
+    const motDePasse = this.loginForm.value.motDePasse;
 
-    // Affiche le statut HTTP.
-    console.error('Status HTTP :', err.status);
+    // Construit le payload attendu par Django.
+    const payload = {
+      identifiant: identifiant,
+      password: motDePasse
+    };
 
-    // Affiche exactement la réponse envoyée par Django.
-    console.error('Réponse Django :', err.error);
+    // Envoie les identifiants au backend.
+    this.authService.login(payload).subscribe({
 
-    // Arrête l'indicateur de chargement.
-    this.chargement.set(false);
+      // Exécuté lorsque Django accepte la connexion.
+      next: (response) => {
 
-    // Affiche le message retourné par Django.
-    this.erreurServeur.set(
-      err.error?.detail ||
-      err.error?.non_field_errors?.[0] ||
-      'Identifiant ou mot de passe incorrect.'
-    );
+        console.log('Connexion réussie :', response);
+
+        // Désactive le chargement.
+        this.chargement.set(false);
+
+        // Redirige l'utilisateur connecté
+        // vers l'accueil citoyen connecté.
+        this.router.navigate(['/home-citoyen']);
+      },
+
+      // Exécuté lorsque Django refuse la connexion.
+      error: (err) => {
+
+        console.error('Status HTTP :', err.status);
+       // Affiche précisément le contenu retourné par Django.
+        console.error(
+          'Réponse Django :',
+          JSON.stringify(err.error, null, 2)
+        );
+
+        // Désactive le chargement.
+        this.chargement.set(false);
+
+        // Affiche le message retourné par Django.
+        this.erreurServeur.set(
+          err.error?.detail ||
+          err.error?.non_field_errors?.[0] ||
+          'Identifiant ou mot de passe incorrect.'
+        );
+      }
+    });
   }
-});
-}
 }

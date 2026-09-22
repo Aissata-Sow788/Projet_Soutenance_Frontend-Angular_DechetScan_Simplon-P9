@@ -1,81 +1,109 @@
-<div class="min-h-screen bg-[#f3f4f4] pb-24">
+<!-- Conteneur principal de la page -->
+<div class="min-h-screen bg-[#F3F4F4] text-[#172536] pb-20">
 
-  <!-- =====================================================
+  <!-- =========================================
        HEADER
-       ===================================================== -->
+       ========================================= -->
   <header
-    class="h-[86px] flex items-center justify-between
-           bg-[#f8f9fd] px-6"
+    class="h-[125px] sm:h-[150px] lg:h-[175px]
+           bg-[#F8F9FF]
+           flex items-start justify-between
+           px-5 sm:px-7 lg:px-10
+           pt-5"
   >
 
     <!-- Logo -->
     <img
       src="assets/logo1-dechetscan.png"
       alt="DechetScan"
-      class="h-10 w-auto object-contain"
+      class="w-[145px] sm:w-[180px] lg:w-[210px] h-auto"
     />
 
-    <!-- Icône notification -->
+    <!-- Cloche -->
     <button
       type="button"
       aria-label="Notifications"
-      class="flex h-9 w-9 items-center justify-center text-[#374151]"
+      class="relative mt-2
+             w-10 h-10
+             flex items-center justify-center
+             text-[#4C5759]"
     >
+
       <svg
-        class="h-6 w-6"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         stroke-width="1.8"
         stroke-linecap="round"
         stroke-linejoin="round"
+        class="w-6 h-6"
       >
-        <path
-          d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
-        />
-        <path d="M10 21h4" />
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+        <path d="M10 21h4"></path>
       </svg>
+
+      <!-- Indicateur de notification non lue -->
+      @if (nombreNonLues() > 0) {
+        <span
+          class="absolute top-1 right-1
+                 w-2 h-2
+                 rounded-full
+                 bg-[#0EA5A4]"
+        ></span>
+      }
+
     </button>
 
   </header>
 
 
-  <!-- =====================================================
-       CONTENU PRINCIPAL
-       ===================================================== -->
-  <main class="px-5 pt-5">
+  <!-- =========================================
+       CONTENU
+       ========================================= -->
+  <main
+    class="max-w-[700px]
+           mx-auto
+           px-4 sm:px-5
+           pt-3 sm:pt-5
+           pb-6"
+  >
 
-    <!-- ===================================================
-         FILTRES
-         =================================================== -->
-    <div class="flex items-center gap-2">
+    <!-- =========================================
+         ONGLES
+         ========================================= -->
+    <div class="flex gap-2.5 mb-7">
 
       <!-- Toutes -->
       <button
         type="button"
-        (click)="changerFiltre('toutes')"
-        class="rounded-full px-5 py-2
-               text-sm font-bold
-               transition"
-        [class.bg-[#0EA5A4]]="filtre() === 'toutes'"
-        [class.text-white]="filtre() === 'toutes'"
-        [class.bg-white]="filtre() !== 'toutes'"
-        [class.text-[#4B5563]]="filtre() !== 'toutes'"
+        (click)="changerOnglet('toutes')"
+        class="h-10 sm:h-11
+               px-5 sm:px-6
+               rounded-full
+               font-semibold
+               text-sm sm:text-base"
+        [class.bg-[#0EA5A4]]="ongletActif() === 'toutes'"
+        [class.text-white]="ongletActif() === 'toutes'"
+        [class.bg-white]="ongletActif() !== 'toutes'"
+        [class.text-[#4C5558]]="ongletActif() !== 'toutes'"
       >
         Toutes ({{ notifications().length }})
       </button>
 
+
       <!-- Collectes -->
       <button
         type="button"
-        (click)="changerFiltre('collectes')"
-        class="rounded-full px-5 py-2
-               text-sm font-semibold
-               transition"
-        [class.bg-[#0EA5A4]]="filtre() === 'collectes'"
-        [class.text-white]="filtre() === 'collectes'"
-        [class.bg-white]="filtre() !== 'collectes'"
-        [class.text-[#4B5563]]="filtre() !== 'collectes'"
+        (click)="changerOnglet('collectes')"
+        class="h-10 sm:h-11
+               px-5 sm:px-6
+               rounded-full
+               font-semibold
+               text-sm sm:text-base"
+        [class.bg-[#0EA5A4]]="ongletActif() === 'collectes'"
+        [class.text-white]="ongletActif() === 'collectes'"
+        [class.bg-white]="ongletActif() !== 'collectes'"
+        [class.text-[#4C5558]]="ongletActif() !== 'collectes'"
       >
         Collectes
       </button>
@@ -83,53 +111,66 @@
     </div>
 
 
-    <!-- ===================================================
-         TITRE + BOUTON TOUT MARQUER
-         =================================================== -->
-    <div class="mt-6 flex items-start justify-between gap-3">
+    <!-- =========================================
+         TITRE
+         ========================================= -->
+    <section
+      class="flex items-center gap-2.5
+             mb-6"
+    >
+
+      <!-- Retour -->
+      <button
+        type="button"
+        (click)="retour()"
+        aria-label="Retour"
+        class="shrink-0
+               w-12 h-12
+               rounded-full
+               bg-white
+               flex items-center justify-center
+               shadow-[0_2px_6px_rgba(0,0,0,0.05)]"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-6 h-6"
+        >
+          <path d="M19 12H5"></path>
+          <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+
+      </button>
+
 
       <!-- Titre -->
-      <div class="flex items-start gap-3">
+      <div class="flex-1">
 
-        <!-- Bouton retour -->
-        <button
-          type="button"
-          class="flex h-11 w-11 flex-shrink-0
-                 items-center justify-center
-                 rounded-full bg-white
-                 shadow-sm"
-          aria-label="Retour"
+        <h1
+          class="m-0
+                 text-[25px] sm:text-[28px]
+                 leading-tight
+                 font-bold
+                 text-[#142337]"
         >
-          <svg
-            class="h-6 w-6 text-[#172536]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M19 12H5" />
-            <path d="M11 6l-6 6 6 6" />
-          </svg>
-        </button>
+          Notifications
+        </h1>
 
-        <div>
-          <h1
-            class="text-[27px] leading-[1.1]
-                   font-bold text-[#172536]"
-          >
-            Notifications
-          </h1>
-
-          <p
-            class="mt-1 max-w-[180px]
-                   text-[15px] leading-5
-                   font-medium text-[#4B5563]"
-          >
-            Restez informé de votre impact vert
-          </p>
-        </div>
+        <p
+          class="mt-1
+                 text-[13px] sm:text-[15px]
+                 leading-tight
+                 text-[#586263]"
+        >
+          Restez informé de votre impact
+          <br />
+          vert
+        </p>
 
       </div>
 
@@ -137,249 +178,280 @@
       <!-- Tout marquer comme lu -->
       <button
         type="button"
-        (click)="marquerToutesCommeLues()"
-        class="flex min-h-[62px] w-[128px]
-               flex-shrink-0 items-center justify-center
-               gap-2 rounded-full
-               bg-white px-3
-               text-center
-               text-[14px] font-bold
-               leading-5 text-[#087C78]
-               shadow-sm"
+        (click)="toutMarquerCommeLu()"
+        class="shrink-0
+               w-12 h-12 sm:w-auto sm:min-w-[145px]
+               rounded-full
+               bg-white
+               px-3 sm:px-4
+               flex items-center justify-center
+               gap-2
+               text-[#087C78]
+               shadow-[0_2px_6px_rgba(0,0,0,0.05)]
+               font-bold
+               text-xs sm:text-sm"
       >
 
-        <!-- Icône double coche -->
         <svg
-          class="h-6 w-6 flex-shrink-0"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
+          stroke-width="1.8"
           stroke-linecap="round"
           stroke-linejoin="round"
+          class="w-5 h-5"
         >
-          <path d="M3 12l4 4L17 6" />
-          <path d="M8 12l4 4L22 6" />
+          <path d="M4 12l4 4L16 8"></path>
+          <path d="M9 12l4 4L21 8"></path>
         </svg>
 
-        <span>
-          Tout marquer<br />
+        <span class="hidden sm:block text-center leading-tight">
+          Tout marquer
+          <br />
           comme lu
         </span>
 
       </button>
 
-    </div>
-
-
-    <!-- ===================================================
-         LISTE DES NOTIFICATIONS
-         =================================================== -->
-    <section class="mt-5 space-y-4">
-
-      <article
-        *ngFor="let notification of notifications()"
-        class="rounded-[20px] bg-white
-               px-5 py-5
-               shadow-[0_3px_8px_rgba(15,23,42,0.08)]"
-      >
-
-        <!-- Ligne supérieure -->
-        <div class="flex items-start gap-3">
-
-          <!-- Icône conseil -->
-          <div
-            class="flex h-[58px] w-[58px]
-                   flex-shrink-0 items-center justify-center
-                   rounded-full bg-[#C4F7EF]"
-          >
-
-            <svg
-              class="h-8 w-8 text-[#008B86]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <!-- Ampoule -->
-              <path
-                d="M9 18h6"
-              />
-
-              <path
-                d="M10 22h4"
-              />
-
-              <path
-                d="M8.5 14.5A6 6 0 1 1 15.5 14.5
-                   C14.6 15.2 14 16.1 14 17H10
-                   c0-.9-.6-1.8-1.5-2.5Z"
-              />
-
-            </svg>
-
-          </div>
-
-
-          <!-- Titre + date -->
-          <div class="min-w-0 flex-1">
-
-            <div class="flex items-center gap-2">
-
-              <h2
-                class="text-[22px] leading-7
-                       font-bold text-[#172536]"
-              >
-                {{ notification.titre }}
-              </h2>
-
-              <!-- Point indiquant une notification non lue -->
-              <span
-                *ngIf="!notification.lue"
-                class="h-3 w-3 flex-shrink-0
-                       rounded-full bg-[#0EA5A4]"
-              ></span>
-
-            </div>
-
-            <p
-              class="mt-0.5 text-[14px]
-                     font-semibold text-[#4B5563]"
-            >
-              {{ notification.date }}
-            </p>
-
-          </div>
-
-
-          <!-- Badge Astuce éco -->
-          <span
-            class="hidden sm:flex
-                   items-center gap-1.5
-                   rounded-full
-                   bg-[#D4F8F2]
-                   px-3 py-2
-                   text-[13px] font-bold
-                   text-[#087C78]"
-          >
-
-            <!-- Icône ampoule -->
-            <svg
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M9 18h6M10 22h4"
-              />
-              <path
-                d="M8.5 14.5a6 6 0 1 1 7 0
-                   C14.6 15.2 14 16.1 14 17h-4
-                   c0-.9-.6-1.8-1.5-2.5Z"
-              />
-            </svg>
-
-            Astuce éco
-
-          </span>
-
-        </div>
-
-
-        <!-- Badge Astuce éco sur petit écran -->
-        <div class="mt-2 sm:hidden">
-
-          <span
-            class="inline-flex items-center gap-1.5
-                   rounded-full
-                   bg-[#D4F8F2]
-                   px-3 py-1.5
-                   text-[12px] font-bold
-                   text-[#087C78]"
-          >
-
-            <svg
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M9 18h6M10 22h4" />
-              <path
-                d="M8.5 14.5a6 6 0 1 1 7 0
-                   C14.6 15.2 14 16.1 14 17h-4
-                   c0-.9-.6-1.8-1.5-2.5Z"
-              />
-            </svg>
-
-            Astuce éco
-
-          </span>
-
-        </div>
-
-
-        <!-- Message -->
-        <p
-          class="mt-4 ml-[71px]
-                 text-[17px] leading-[1.5]
-                 text-[#4B5563]"
-        >
-          {{ notification.message }}
-        </p>
-
-
-        <!-- Conseil -->
-        <div
-          class="mt-4 ml-[71px]
-                 flex items-center gap-2
-                 text-[15px] font-bold
-                 text-[#087C78]"
-        >
-
-          <!-- Icône goutte d'eau -->
-          <svg
-            class="h-5 w-5 flex-shrink-0"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path
-              d="M12 3
-                 C12 3 5 10 5 15
-                 a7 7 0 0 0 14 0
-                 c0-5-7-12-7-12Z"
-            />
-          </svg>
-
-          <span>
-            {{ notification.conseil }}
-          </span>
-
-        </div>
-
-      </article>
-
     </section>
+
+
+    <!-- =========================================
+         CHARGEMENT
+         ========================================= -->
+    @if (chargement()) {
+
+      <div
+        class="py-16
+               text-center
+               text-sm
+               text-[#586263]"
+      >
+        Chargement des notifications...
+      </div>
+
+    }
+
+
+    <!-- =========================================
+         ERREUR
+         ========================================= -->
+    @else if (erreur()) {
+
+      <div
+        class="py-16
+               text-center
+               text-sm
+               text-red-600"
+      >
+        {{ erreur() }}
+      </div>
+
+    }
+
+
+    <!-- =========================================
+         LISTE
+         ========================================= -->
+    @else {
+
+      @if (notificationsFiltrees().length > 0) {
+
+        <div class="flex flex-col gap-4">
+
+          @for (
+            notification of notificationsFiltrees();
+            track notification.idNotification
+          ) {
+
+            <!-- Carte -->
+            <article
+              (click)="marquerCommeLue(notification)"
+              class="w-full
+                     bg-white
+                     rounded-[18px]
+                     p-4
+                     flex gap-3
+                     cursor-pointer
+                     shadow-[0_3px_10px_rgba(0,0,0,0.06)]"
+            >
+
+              <!-- Icône -->
+              <div
+                class="shrink-0
+                       w-12 h-12
+                       rounded-full
+                       bg-[#C9F5EF]
+                       text-[#087C78]
+                       flex items-center justify-center"
+              >
+
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="w-6 h-6"
+                >
+                  <path d="M9 18h6"></path>
+                  <path d="M10 22h4"></path>
+                  <path d="M8.2 14.5a7 7 0 1 1 7.6 0"></path>
+                </svg>
+
+              </div>
+
+
+              <!-- Contenu -->
+              <div class="flex-1 min-w-0">
+
+                <!-- Titre + badge -->
+                <div
+                  class="flex
+                         flex-wrap
+                         items-center
+                         justify-between
+                         gap-2"
+                >
+
+                  <div class="flex items-center gap-1.5">
+
+                    <h2
+                      class="m-0
+                             text-[17px] sm:text-[19px]
+                             leading-tight
+                             font-bold
+                             text-[#142337]"
+                    >
+                      {{ notification.titre }}
+                    </h2>
+
+                    <!-- Point non lu -->
+                    @if (!notification.lu) {
+                      <span
+                        class="w-2.5 h-2.5
+                               shrink-0
+                               rounded-full
+                               bg-[#0EA5A4]"
+                      ></span>
+                    }
+
+                  </div>
+
+
+                  <!-- Badge -->
+                  <span
+                    class="inline-flex
+                           items-center
+                           gap-1
+                           px-2.5 py-1
+                           rounded-full
+                           bg-[#CEF7F0]
+                           text-[#087C78]
+                           text-[10px] sm:text-xs
+                           font-bold"
+                  >
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="w-3.5 h-3.5"
+                    >
+                      <path d="M9 18h6"></path>
+                      <path d="M10 22h4"></path>
+                      <path d="M8.2 14.5a7 7 0 1 1 7.6 0"></path>
+                    </svg>
+
+                    Astuce éco
+
+                  </span>
+
+                </div>
+
+
+                <!-- Date -->
+                <p
+                  class="mt-1 mb-3
+                         text-xs
+                         font-semibold
+                         text-[#586263]"
+                >
+                  {{ afficherDate(notification.dateEnvoi) }}
+                </p>
+
+
+                <!-- Message API -->
+                <p
+                  class="m-0
+                         text-[14px] sm:text-[16px]
+                         leading-[1.45]
+                         text-[#586263]"
+                >
+                  {{ notification.message }}
+                </p>
+
+
+                <!-- Conseil -->
+                <div
+                  class="mt-3
+                         flex items-center gap-1.5
+                         text-[#087C78]
+                         text-xs sm:text-sm
+                         font-bold"
+                >
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="w-4 h-4"
+                  >
+                    <path
+                      d="M12 3s7 7.2 7 12a7 7 0 0 1-14 0c0-4.8 7-12 7-12z"
+                    ></path>
+                  </svg>
+
+                  Économisez l'eau de rinçage
+
+                </div>
+
+              </div>
+
+            </article>
+
+          }
+
+        </div>
+
+      }
+
+      @else {
+
+        <div
+          class="py-16
+                 text-center
+                 text-sm
+                 text-[#586263]"
+        >
+          Aucune notification pour le moment.
+        </div>
+
+      }
+
+    }
 
   </main>
 
 
-  <!-- =====================================================
-       NAVIGATION BASSE
-       ===================================================== -->
+  <!-- Navigation basse -->
   <app-barre-navigations></app-barre-navigations>
 
 </div>

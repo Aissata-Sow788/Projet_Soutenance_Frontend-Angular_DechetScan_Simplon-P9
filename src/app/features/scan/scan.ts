@@ -1,11 +1,11 @@
 import { Component, ElementRef, ViewChild, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ScanService } from '../../core/services/scan';
 import { ScanDechet as ScanDechetModel } from '../../shared/models/scan.model';
 
 @Component({
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   selector: 'app-scan',
   styleUrl: './scan.css',
   templateUrl: './scan.html',
@@ -70,9 +70,18 @@ envoyerAuScan(): void {
 
   this.scanService.envoyerImage(fichier).subscribe({
     next: (resultat) => {
+      console.log('Résultat du scan :', resultat);
+
       this.analyseEnCours.set(false);
-      this.scanService.dernierResultat.set(resultat); // stocke le résultat pour la page /resultat
-      this.router.navigate(['/analyse-ia']); // redirige vers la fiche déchet
+
+      // On conserve toujours le résultat en mémoire pour
+      // que la navigation soit immédiate.
+      this.scanService.dernierResultat.set(resultat);
+
+      // On transmet l'identifiant du scan dans l'URL.
+      // Ainsi, même après un rafraîchissement, AnalyseIA
+      // pourra récupérer les données depuis Django.
+      this.router.navigate(['/analyse-ia'], {queryParams: {idScan: resultat.idScan}});
     },
     error: (err) => {
       this.analyseEnCours.set(false);

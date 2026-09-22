@@ -1,0 +1,787 @@
+<div class="min-h-screen bg-[#f7f8fc]">
+
+  <!-- ============================================================
+       ZONE PRINCIPALE
+       Le Sidebar et le Header sont déjà fournis par ton layout admin.
+       ============================================================ -->
+
+  <main class="mx-auto w-full max-w-[1120px] px-6 pb-12 pt-8">
+
+    <!-- ============================================================
+         EN-TÊTE DE LA PAGE
+         ============================================================ -->
+
+    <div class="mb-8">
+
+      <!-- Retour -->
+      <button
+        type="button"
+        (click)="retourScans()"
+        class="mb-3 flex items-center gap-2 text-[13px] font-medium text-[#0ea5a4] transition hover:text-[#087f7d]"
+      >
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path
+            d="M19 12H5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+
+          <path
+            d="M11 6L5 12L11 18"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        Retour aux scans
+      </button>
+
+
+      <!-- Ligne supérieure -->
+      <div class="mb-2 flex items-center gap-3">
+
+        <span class="h-1 w-1 rounded-full bg-[#aeb7c2]"></span>
+
+        <span
+          class="text-[10px] font-bold uppercase tracking-[0.08em] text-[#69727d]"
+        >
+          Inspection à détail
+        </span>
+
+      </div>
+
+
+      <!-- Titre -->
+      <h1
+        class="text-[28px] font-bold leading-tight tracking-[-0.8px] text-[#122238]"
+      >
+        Détail du scan
+      </h1>
+
+
+      <!-- Informations scan -->
+      @if (scan(); as scanActuel) {
+
+        <div
+          class="mt-2 flex flex-wrap items-center gap-3 text-[12px] text-[#56616d]"
+        >
+
+          <span class="font-bold text-[#15243a]">
+            Scan ID #SC-{{ scanActuel.idScan }}
+          </span>
+
+          <span class="h-1 w-1 rounded-full bg-[#aeb7c2]"></span>
+
+          <span class="flex items-center gap-1.5">
+
+            <svg
+              class="h-4 w-4 text-[#0ea5a4]"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <rect
+                x="4"
+                y="5"
+                width="16"
+                height="15"
+                rx="2"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+
+              <path
+                d="M8 3V7M16 3V7M4 10H20"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+
+            Enregistré le
+            {{ dateScan() }}
+            à
+            {{ heureScan() }}
+            (Dakar, UTC+0)
+
+          </span>
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- ============================================================
+         CHARGEMENT
+         ============================================================ -->
+
+    @if (chargement()) {
+
+      <div class="flex min-h-[400px] items-center justify-center">
+
+        <div class="flex flex-col items-center gap-3">
+
+          <div
+            class="h-8 w-8 animate-spin rounded-full border-2 border-[#d5eeee] border-t-[#0ea5a4]"
+          ></div>
+
+          <p class="text-sm text-[#6b7580]">
+            Chargement du scan...
+          </p>
+
+        </div>
+
+      </div>
+
+    }
+
+
+    <!-- ============================================================
+         ERREUR
+         ============================================================ -->
+
+    @if (!chargement() && erreur()) {
+
+      <div
+        class="rounded-[20px] border border-red-100 bg-red-50 px-6 py-5 text-sm text-red-600"
+      >
+        {{ erreur() }}
+      </div>
+
+    }
+
+
+    <!-- ============================================================
+         CONTENU
+         ============================================================ -->
+
+    @if (!chargement() && !erreur() && scan(); as scanActuel) {
+
+      <div class="grid grid-cols-[minmax(0,1fr)_330px] items-start gap-7">
+
+
+        <!-- ========================================================
+             COLONNE GAUCHE
+             ======================================================== -->
+
+        <div class="space-y-7">
+
+
+          <!-- ======================================================
+               CARTE ANALYSE IA
+               ====================================================== -->
+
+          <section
+            class="rounded-[24px] bg-white p-7 shadow-[0_3px_10px_rgba(15,23,42,0.08)]"
+          >
+
+            <!-- En-tête -->
+            <div class="mb-6 flex items-center justify-between">
+
+              <div class="flex items-center gap-3">
+
+                <div
+                  class="flex h-9 w-9 items-center justify-center rounded-full bg-[#dff8f5] text-[#0ea5a4]"
+                >
+                  <svg
+                    class="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M4 12C6.5 7 9 5 12 5C15 5 17.5 7 20 12C17.5 17 15 19 12 19C9 19 6.5 17 4 12Z"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+                  </svg>
+                </div>
+
+                <h2
+                  class="text-[21px] font-bold text-[#14243a]"
+                >
+                  Résultat de l'analyse IA
+                </h2>
+
+              </div>
+
+
+              <!-- Catégorie -->
+              <span
+                class="rounded-full bg-[#bff5e9] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.04em] text-[#087d72]"
+              >
+                {{ categoriePrincipale() }}
+              </span>
+
+            </div>
+
+
+            <!-- ====================================================
+                 IMAGE DU SCAN
+                 ==================================================== -->
+
+            <div
+              class="relative flex min-h-[315px] items-center justify-center overflow-hidden rounded-[18px] bg-[#edf3fc] p-4"
+            >
+
+              <!-- Cadre supérieur gauche -->
+              <span
+                class="absolute left-4 top-4 h-5 w-5 border-l-2 border-t-2 border-[#0bb8b5]"
+              ></span>
+
+              <!-- Cadre supérieur droit -->
+              <span
+                class="absolute right-4 top-4 h-5 w-5 border-r-2 border-t-2 border-[#0bb8b5]"
+              ></span>
+
+              <!-- Cadre inférieur gauche -->
+              <span
+                class="absolute bottom-4 left-4 h-5 w-5 border-b-2 border-l-2 border-[#0bb8b5]"
+              ></span>
+
+              <!-- Cadre inférieur droit -->
+              <span
+                class="absolute bottom-4 right-4 h-5 w-5 border-b-2 border-r-2 border-[#0bb8b5]"
+              ></span>
+
+
+              <!-- Photo envoyée au backend -->
+              <div class="relative max-h-[285px] overflow-hidden">
+
+                <img
+                  [src]="imageScan()"
+                  alt="Photo du déchet analysé"
+                  class="block max-h-[285px] max-w-full object-contain"
+                >
+
+                <!-- Zone de détection visuelle -->
+                <div
+                  class="pointer-events-none absolute inset-[12%_22%_10%_22%] rounded-[12px] border border-dashed border-[#19c4c2]/70"
+                ></div>
+
+                <!-- Label détection -->
+                <div
+                  class="absolute left-1/2 top-2 -translate-x-1/2 rounded-md bg-[#344052] px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white"
+                >
+                   DETECTION IA
+                </div>
+
+
+
+              </div>
+
+            </div>
+
+
+            <!-- ====================================================
+                 CLASSIFICATION
+                 ==================================================== -->
+
+            <div class="mt-6">
+
+              <p
+                class="text-[10px] font-bold uppercase tracking-[0.12em] text-[#64707c]"
+              >
+                Classification principale
+              </p>
+
+              <h3
+                class="mt-1 text-[25px] font-bold tracking-[-0.5px] text-[#14243a]"
+              >
+                {{ objetPrincipal() }}
+              </h3>
+
+            </div>
+
+
+            <!-- ====================================================
+                 DATE + STATUT
+                 ==================================================== -->
+
+            <div
+              class="mt-5 grid grid-cols-2 gap-6 rounded-[17px] bg-[#f6f9fd] px-4 py-4"
+            >
+
+              <div>
+
+                <p
+                  class="text-[9px] font-bold uppercase tracking-[0.08em] text-[#687480]"
+                >
+                  Date & heure
+                </p>
+
+                <p
+                  class="mt-1 text-[13px] font-bold text-[#17263a]"
+                >
+                  {{ dateScan() }}
+                </p>
+
+                <p class="text-[12px] text-[#596571]">
+                  {{ heureScan() }} GMT
+                </p>
+
+              </div>
+
+
+              <div>
+
+                <p
+                  class="text-[9px] font-bold uppercase tracking-[0.08em] text-[#687480]"
+                >
+                  Statut
+                </p>
+
+                <p
+                  class="mt-1 flex items-center gap-1 text-[13px] font-bold text-[#00877d]"
+                >
+                  <span class="h-1.5 w-1.5 rounded-full bg-[#0a9e91]"></span>
+                  Terminée
+                </p>
+
+                <p class="text-[12px] text-[#596571]">
+                  ID Validé
+                </p>
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- ======================================================
+               CONSEIL DE TRI
+               ====================================================== -->
+
+          <section
+            class="rounded-[24px] bg-white p-7 shadow-[0_3px_10px_rgba(15,23,42,0.08)]"
+          >
+
+            <!-- En-tête conseil -->
+            <div class="flex items-center gap-3">
+
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#c8f7ef] text-[#078b80]"
+              >
+
+                <svg
+                  class="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M8 4L5 9H9L7 13H12"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+
+                  <path
+                    d="M16 4L19 9H15L17 13H12"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+
+              </div>
+
+
+              <div>
+
+                <h2
+                  class="text-[20px] font-bold text-[#14243a]"
+                >
+                  Conseil de tri délivré
+                </h2>
+
+                <p class="text-[11px] text-[#65717d]">
+                  Directives automatiques transmises au citoyen sur smartphone
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- Conseil -->
+            <div
+              class="mt-5 rounded-[17px] bg-[#f1f7ff] px-5 py-5"
+            >
+
+              <div class="flex gap-4">
+
+                <!-- Validation -->
+                <div
+                  class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0eabb0] text-white"
+                >
+
+                  <svg
+                    class="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M5 12L10 17L19 7"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+
+                </div>
+
+
+                <div class="min-w-0">
+
+                  <p
+                    class="text-[15px] font-semibold leading-[1.55] text-[#17263a]"
+                  >
+                    « {{ conseilTri() }} »
+                  </p>
+
+
+                  <!-- Type de déchet -->
+                  <div class="mt-4">
+
+                    <span
+                      class="inline-flex items-center gap-2 rounded-full bg-[#dcecff] px-3 py-1.5 text-[10px] font-bold text-[#526a80]"
+                    >
+                      <span
+                        class="h-2.5 w-2.5 rounded-full bg-[#f5c400]"
+                      ></span>
+
+                      {{ categoriePrincipale() }}
+                    </span>
+
+                  </div>
+
+
+                  <!-- Point de collecte -->
+                  <div
+                    class="mt-3 flex items-center gap-2 text-[11px] font-semibold text-[#087d75]"
+                  >
+
+                    <svg
+                      class="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M20 10C20 15 12 21 12 21C12 21 4 15 4 10C4 5.6 7.6 2 12 2C16.4 2 20 5.6 20 10Z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+
+                      <circle
+                        cx="12"
+                        cy="10"
+                        r="2.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+
+                    </svg>
+
+                    Point de collecte recommandé
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!-- ========================================================
+             COLONNE DROITE — CITOYEN
+             ======================================================== -->
+
+        <aside
+          class="rounded-[24px] bg-white p-7 shadow-[0_3px_10px_rgba(15,23,42,0.08)]"
+        >
+
+          <!-- Titre -->
+          <div class="flex items-center justify-between">
+
+            <div class="flex items-center gap-3">
+
+              <div
+                class="text-[#0ea5a4]"
+              >
+
+                <svg
+                  class="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+
+                  <circle
+                    cx="12"
+                    cy="10"
+                    r="2.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+
+                  <path
+                    d="M8 17C9 14.5 15 14.5 16 17"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                </svg>
+
+              </div>
+
+              <h2
+                class="text-[21px] font-bold text-[#14243a]"
+              >
+                Citoyen
+              </h2>
+
+            </div>
+
+
+            <span
+              class="rounded-full bg-[#dce9ff] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.04em] text-[#50637c]"
+            >
+              Compte vérifié
+            </span>
+
+          </div>
+
+
+          <!-- Informations citoyen -->
+          <div
+            class="mt-5 rounded-[17px] bg-[#f2f6fc] p-4"
+          >
+
+            <div class="flex items-center gap-3">
+
+              <!-- Avatar -->
+              <div
+                class="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[14px] bg-[#0eabb0] text-[16px] font-bold text-white"
+              >
+
+                {{
+                  (scanActuel.citoyen?.prenom?.charAt(0) ?? '') +
+                  (scanActuel.citoyen?.nom?.charAt(0) ?? '')
+                }}
+
+                <span
+                  class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white bg-[#1ac4b7]"
+                ></span>
+
+              </div>
+
+
+              <!-- Nom -->
+              <div class="min-w-0">
+
+                <p
+                  class="truncate text-[15px] font-bold text-[#16263b]"
+                >
+                  {{ scanActuel.citoyen?.prenom }}
+                  {{ scanActuel.citoyen?.nom }}
+                </p>
+
+                <p
+                  class="truncate text-[11px] text-[#536171]"
+                >
+                  {{ scanActuel.citoyen?.email }}
+                </p>
+
+                <p
+                  class="mt-1 text-[10px] font-bold text-[#07877d]"
+                >
+                  Membre Éco-Sentinelle
+                </p>
+
+                <p
+                  class="text-[10px] font-semibold text-[#07877d]"
+                >
+                  Dakar
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Nombre de scans -->
+          <div
+            class="mt-5 flex items-center justify-between rounded-[13px] bg-[#f7f9fc] px-3 py-3"
+          >
+
+            <div class="flex items-center gap-2">
+
+              <svg
+                class="h-5 w-5 text-[#0ea5a4]"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <rect
+                  x="5"
+                  y="5"
+                  width="14"
+                  height="14"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M8 9H16M8 12H16M8 15H13"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+              </svg>
+
+              <span
+                class="text-[12px] text-[#53606d]"
+              >
+                Nombre de scans réalisés
+              </span>
+
+            </div>
+
+            <strong
+              class="text-[15px] text-[#16263b]"
+            >
+              {{ nombreScans() }}
+            </strong>
+
+          </div>
+
+
+          <!-- Dernier scan -->
+          <div
+            class="mt-3 flex items-center justify-between rounded-[13px] bg-[#f7f9fc] px-3 py-3"
+          >
+
+            <div class="flex items-center gap-2">
+
+              <svg
+                class="h-5 w-5 text-[#0ea5a4]"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="8"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M12 7V12L15 14"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+              </svg>
+
+              <span
+                class="text-[12px] text-[#53606d]"
+              >
+                Dernier scan
+              </span>
+
+            </div>
+
+            <strong
+              class="text-[11px] text-[#16263b]"
+            >
+              Aujourd'hui
+              ({{ heureScan() }})
+            </strong>
+
+          </div>
+
+
+          <!-- Profil -->
+          <button
+            type="button"
+            class="mt-5 flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#edf4ff] py-3 text-[12px] font-bold text-[#16263b] transition hover:bg-[#e2edff]"
+          >
+            Voir le profil citoyen
+
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M14 5H19V10"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+
+              <path
+                d="M19 5L11 13"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+
+              <path
+                d="M19 14V18C19 19.1 18.1 20 17 20H6C4.9 20 4 19.1 4 18V7C4 5.9 4.9 5 6 5H10"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+
+            </svg>
+
+          </button>
+
+        </aside>
+
+      </div>
+
+    }
+
+  </main>
+
+</div>

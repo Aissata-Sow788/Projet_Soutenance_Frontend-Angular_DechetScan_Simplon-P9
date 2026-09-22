@@ -59,8 +59,8 @@
 
     <!-- Bouton d'ajout. -->
     <button
+    [routerLink]="['/admin/referentiel-dechets']" routerLinkActive="router-link-active"
       type="button"
-      (click)="ajouterType()"
       class="flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-[11px] bg-[#0aa6a4] px-5 text-[12px] font-semibold text-white shadow-[0_4px_10px_rgba(10,166,164,0.16)] transition hover:bg-[#07938f]"
     >
 
@@ -375,7 +375,7 @@
           <!-- Bouton modifier. -->
           <button
             type="button"
-            (click)="modifier(type)"
+            (click)="modifierType(type)"
             class="text-[#3e4a4c] transition hover:text-[#008f8a]"
             aria-label="Modifier"
           >

@@ -14,5 +14,5 @@ export interface TypeDechet {
   description: string;
 
   // Conseil de tri associé au type.
-  conseil: ConseilTri | null;
+  conseil?: ConseilTri;
 }

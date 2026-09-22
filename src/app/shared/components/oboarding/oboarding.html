@@ -1,0 +1,628 @@
+<div
+  class="relative min-h-screen w-full overflow-hidden bg-[#00100f] text-white"
+  style="font-family: Inter, ui-sans-serif, system-ui, sans-serif;"
+>
+
+  <!-- =========================================================
+       FOND COMMUN
+       ========================================================= -->
+
+  <div
+    class="absolute inset-0 bg-cover bg-center"
+    style="background-image: url('/assets/bg-jungle.png');"
+  ></div>
+
+  <!-- Assombrissement du fond -->
+  <div class="absolute inset-0 bg-[#00110f]/65"></div>
+
+
+  <!-- =========================================================
+       SPLASH SCREEN
+       ========================================================= -->
+
+  @if (slideActif() === 0) {
+
+    <section
+      class="relative z-10 flex min-h-screen items-center justify-center"
+    >
+
+      <!-- Logo animé -->
+      <img
+        src="/assets/logo-dechetscan.png"
+        alt="DechetScan"
+        class="logo-anime w-[38%] max-w-[240px] object-contain"
+      />
+
+    </section>
+
+  }
+
+
+  <!-- =========================================================
+       SLIDE 1 — SCANNER VOS DÉCHETS
+       ========================================================= -->
+
+  @if (slideActif() === 1) {
+
+    <section
+      class="relative z-10 mx-auto flex min-h-screen w-full max-w-[720px] flex-col overflow-hidden px-[7%] pt-[5%] pb-5"
+    >
+
+      <!-- Titre et description -->
+      <div class="relative z-20">
+
+        <h1
+          class="max-w-[430px] text-[clamp(27px,4vw,43px)] font-bold leading-[1.05] tracking-[-1px]"
+        >
+          Scannez<br>
+          vos déchets
+        </h1>
+
+        <p
+          class="mt-4 max-w-[500px] text-[clamp(14px,2vw,19px)] font-normal leading-[1.45] text-[#d5dfe0]"
+        >
+          Prenez une photo d'un déchet et laissez notre
+          IA l'identifier instantanément.
+        </p>
+
+      </div>
+
+
+      <!-- Téléphone de démonstration -->
+      <div
+        class="relative mt-[3%] flex flex-1 items-center justify-center"
+      >
+
+        <img
+          src="/assets/phone.png"
+          alt="Scanner un déchet"
+          class="h-auto w-[43%] max-w-[330px] object-contain drop-shadow-[0_12px_30px_rgba(0,0,0,0.5)]"
+        >
+
+      </div>
+
+
+      <!-- Navigation inférieure -->
+      <div class="flex items-center justify-between">
+
+        <!-- Indicateurs -->
+        <div class="flex items-center gap-2">
+
+          <button
+            type="button"
+            aria-label="Écran 1"
+            (click)="allerAuSlide(1)"
+            class="h-[8px] w-[8px] rounded-full bg-[#0e655e]"
+          ></button>
+
+          <button
+            type="button"
+            aria-label="Écran 2"
+            (click)="allerAuSlide(2)"
+            class="h-[8px] w-[8px] rounded-full bg-[#27d6c7]"
+          ></button>
+
+          <button
+            type="button"
+            aria-label="Écran 3"
+            (click)="allerAuSlide(3)"
+            class="h-[8px] w-[8px] rounded-full bg-[#0e655e]"
+          ></button>
+
+          <span
+            class="h-[8px] w-[8px] rounded-full bg-[#0e655e]"
+          ></span>
+
+        </div>
+
+
+        <!-- Bouton suivant -->
+        <button
+          type="button"
+          (click)="suivant()"
+          aria-label="Écran suivant"
+          class="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#12aeb3] shadow-[0_6px_20px_rgba(18,174,179,0.25)] transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+
+          <svg
+            class="h-7 w-7"
+            viewBox="0 0 48 48"
+            fill="none"
+          >
+
+            <path
+              d="M9 24H37"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M27 14L37 24L27 34"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+    </section>
+
+  }
+
+
+  <!-- =========================================================
+       SLIDE 2 — UNE PLANÈTE PLUS PROPRE
+       ========================================================= -->
+
+  @if (slideActif() === 2) {
+
+    <section
+      class="relative z-10 mx-auto flex min-h-screen w-full max-w-[720px] flex-col overflow-hidden px-[7%] pt-[4%] pb-5"
+    >
+
+      <!-- Logo -->
+      <div class="flex items-center justify-center">
+
+        <img
+          src="/assets/logo-dechetscan.png"
+          alt="DechetScan"
+          class="w-[32%] max-w-[230px] object-contain"
+        >
+
+      </div>
+
+
+      <!-- Slogan -->
+      <div class="mt-1 text-center">
+
+        <p
+          class="text-[clamp(15px,2vw,20px)] font-medium"
+        >
+          Scan.
+          <span class="text-[#1bd0c3]">Trie.</span>
+          <span class="text-[#1bd0c3]">Agis.</span>
+        </p>
+
+      </div>
+
+
+      <!-- Petite feuille décorative -->
+      <div
+        class="absolute right-[12%] top-[20%] rotate-[25deg]"
+      >
+
+        <svg
+          width="38"
+          height="38"
+          viewBox="0 0 55 55"
+          fill="none"
+        >
+
+          <path
+            d="M12 39C13 22 25 10 44 8C42 26 31 40 12 39Z"
+            fill="#2BC58B"
+          />
+
+          <path
+            d="M13 39C22 31 29 24 39 14"
+            stroke="#00100F"
+            stroke-width="2"
+          />
+
+        </svg>
+
+      </div>
+
+
+      <!-- Bouteilles -->
+      <div
+        class="mt-[3%] flex flex-1 items-center justify-center"
+      >
+
+        <img
+          src="/assets/image.png"
+          alt="Bouteilles en plastique"
+          class="w-[68%] max-w-[500px] object-contain"
+        >
+
+      </div>
+
+
+      <!-- Texte inférieur -->
+      <div class="relative z-10 pb-2">
+
+        <!-- Petite décoration -->
+        <div class="mb-3">
+
+          <svg
+            width="35"
+            height="35"
+            viewBox="0 0 52 52"
+            fill="none"
+          >
+
+            <path
+              d="M9 39C19 36 25 26 24 12C14 16 8 25 9 39Z"
+              fill="#31c7a3"
+            />
+
+            <path
+              d="M22 39C32 36 38 26 37 12C28 16 22 25 22 39Z"
+              fill="#31c7a3"
+            />
+
+          </svg>
+
+        </div>
+
+
+        <!-- Titre -->
+        <h2
+          class="max-w-[500px] text-[clamp(29px,4vw,45px)] font-bold leading-[1.05] tracking-[-1px]"
+        >
+          Agissons<br>
+          pour une planète<br>
+          plus propre
+        </h2>
+
+
+        <!-- Description -->
+        <p
+          class="mt-4 max-w-[500px] text-[clamp(14px,2vw,19px)] leading-[1.45] text-[#d5dfe0]"
+        >
+          DechetScan vous aide à identifier vos
+          déchets et à adopter les bons gestes de
+          tri.
+        </p>
+
+      </div>
+
+
+      <!-- Navigation -->
+      <div class="mt-5 flex items-center justify-between">
+
+        <!-- Indicateurs -->
+        <div class="flex items-center gap-2">
+
+          <span
+            class="h-[8px] w-[28px] rounded-full bg-[#18c7b7]"
+          ></span>
+
+          <span
+            class="h-[8px] w-[8px] rounded-full bg-[#555c5d]"
+          ></span>
+
+          <span
+            class="h-[8px] w-[8px] rounded-full bg-[#555c5d]"
+          ></span>
+
+          <span
+            class="h-[8px] w-[8px] rounded-full bg-[#555c5d]"
+          ></span>
+
+        </div>
+
+
+        <!-- Bouton suivant -->
+        <button
+          type="button"
+          (click)="suivant()"
+          aria-label="Écran suivant"
+          class="flex h-[56px] w-[56px] items-center justify-center rounded-full border-2 border-[#73e6dc] bg-[#11aeb3] shadow-[0_6px_20px_rgba(18,174,179,0.25)] transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+
+          <svg
+            class="h-7 w-7"
+            viewBox="0 0 48 48"
+            fill="none"
+          >
+
+            <path
+              d="M9 24H37"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M27 14L37 24L27 34"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+    </section>
+
+  }
+
+
+  <!-- =========================================================
+       SLIDE 3 — TROUVEZ LE BON GESTE DE TRI
+       ========================================================= -->
+
+  @if (slideActif() === 3) {
+
+    <section
+      class="relative z-10 mx-auto flex min-h-screen w-full max-w-[720px] flex-col overflow-hidden px-[7%] pt-[5%] pb-5"
+    >
+
+      <!-- Petit espace supérieur -->
+      <div class="h-[2%]"></div>
+
+
+      <!-- Titre et description -->
+      <div>
+
+        <h2
+          class="max-w-[500px] text-[clamp(29px,4vw,45px)] font-bold leading-[1.05] tracking-[-1px]"
+        >
+          Trouvez le bon<br>
+          geste de tri
+        </h2>
+
+        <p
+          class="mt-4 max-w-[500px] text-[clamp(14px,2vw,19px)] leading-[1.45] text-[#d5dfe0]"
+        >
+          Recevez des conseils adaptés et trouvez les
+          points de collecte les plus proches.
+        </p>
+
+      </div>
+
+
+      <!-- =====================================================
+           CARTES
+           ===================================================== -->
+
+      <div
+        class="mt-[4%] grid grid-cols-2 gap-3"
+      >
+
+        <!-- Carte recyclage -->
+        <div
+          class="flex aspect-square items-center justify-center rounded-[24px] border border-white/25 bg-[#1a3231]/75 backdrop-blur-md"
+        >
+
+          <svg
+            class="h-[52px] w-[52px] text-[#24d6c5]"
+            viewBox="0 0 64 64"
+            fill="none"
+          >
+
+            <path
+              d="M25 10L16 25L22 36"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M16 25H31"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M42 17L51 31L44 42"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M51 31H36"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M37 48L22 49L14 37"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M22 49L29 36"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+          </svg>
+
+        </div>
+
+
+        <!-- Carte poubelle -->
+        <div
+          class="flex aspect-square items-center justify-center rounded-[24px] border border-white/25 bg-[#1a3231]/75 backdrop-blur-md"
+        >
+
+          <svg
+            class="h-[50px] w-[50px] text-[#24d6c5]"
+            viewBox="0 0 64 64"
+            fill="none"
+          >
+
+            <path
+              d="M17 20H47L44 53H20L17 20Z"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M13 20H51"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M25 20V13H39V20"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linejoin="round"
+            />
+
+            <path
+              d="M32 30V44"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M26 36L32 30L38 36"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+          </svg>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           GRANDE CARTE CENTRALE
+           ===================================================== -->
+
+      <div
+        class="mt-3 flex h-[125px] items-center justify-center rounded-[24px] border border-white/25 bg-[#1a3231]/75 backdrop-blur-md"
+      >
+
+        <svg
+          class="h-[65px] w-[65px] text-[#24d6c5]"
+          viewBox="0 0 80 80"
+          fill="none"
+        >
+
+          <circle
+            cx="40"
+            cy="40"
+            r="13"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+
+          <circle
+            cx="40"
+            cy="40"
+            r="28"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-dasharray="6 7"
+          />
+
+          <path
+            d="M40 4V14M40 66V76M4 40H14M66 40H76"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+          />
+
+          <path
+            d="M14 14L21 21M59 59L66 66M66 14L59 21M21 59L14 66"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+          />
+
+        </svg>
+
+      </div>
+
+
+      <!-- =====================================================
+           NAVIGATION INFÉRIEURE
+           ===================================================== -->
+
+      <div
+        class="mt-auto flex items-center justify-between pt-5"
+      >
+
+        <!-- Indicateurs -->
+        <div class="flex items-center gap-2">
+
+          <span
+            class="h-[8px] w-[8px] rounded-full bg-[#555c5d]"
+          ></span>
+
+          <span
+            class="h-[8px] w-[8px] rounded-full bg-[#555c5d]"
+          ></span>
+
+          <span
+            class="h-[8px] w-[28px] rounded-full bg-[#18c7b7]"
+          ></span>
+
+          <span
+            class="h-[8px] w-[8px] rounded-full bg-[#555c5d]"
+          ></span>
+
+        </div>
+
+
+        <!-- Bouton continuer -->
+        <button
+          type="button"
+          (click)="suivant()"
+          aria-label="Continuer"
+          class="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[#11aeb3] shadow-[0_6px_20px_rgba(18,174,179,0.25)] transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+
+          <svg
+            class="h-7 w-7"
+            viewBox="0 0 48 48"
+            fill="none"
+          >
+
+            <path
+              d="M9 24H37"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M27 14L37 24L27 34"
+              stroke="white"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+    </section>
+
+  }
+
+</div>

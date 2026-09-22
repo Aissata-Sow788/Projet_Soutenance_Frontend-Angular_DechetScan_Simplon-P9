@@ -27,4 +27,24 @@ export class UtilisateursService {
       `${this.apiUrl}/utilisateurs/`
     );
   }
+
+/**
+ * Désactive le compte d'un utilisateur.
+ *
+ * Appelle l'action Django `toggle_active` pour modifier
+ * le statut du compte.
+ */
+desactiverUtilisateur(id: number): Observable<{ message: string; is_active: boolean }> {
+  return this.httpurl.patch<{ message: string; is_active: boolean }>(
+    `${this.apiUrl}/utilisateurs/${id}/toggle_active/`,
+    {}
+  );
+}
+
+supprimerUtilisateur(id: number): Observable<{ message: string }> {
+  // Appelle l'API Django pour supprimer définitivement le compte.
+  return this.httpurl.delete<{ message: string }>(
+    `${this.apiUrl}/utilisateurs/${id}/supprimer/`
+  );
+}
 }

@@ -1,0 +1,23 @@
+/* ============================================================
+   PROFILE ADMIN
+   Les principales dimensions et couleurs sont gérées avec
+   Tailwind dans le fichier HTML.
+   ============================================================ */
+
+/*
+ * Empêche certains éléments très longs, notamment les adresses
+ * e-mail, de provoquer un débordement horizontal.
+ */
+:host {
+  display: block;
+  width: 100%;
+}
+
+
+/*
+ * Permet à la page de rester correctement dimensionnée
+ * dans le layout administrateur.
+ */
+section {
+  box-sizing: border-box;
+}

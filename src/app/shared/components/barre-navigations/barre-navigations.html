@@ -1,4 +1,3 @@
-
 <!-- =====================================================
      NAVIGATION BASSE — COMPACTE
 ====================================================== -->
@@ -10,10 +9,12 @@
     class="relative mx-auto flex h-[68px] w-full max-w-[1200px] items-end justify-around px-2 pb-2"
   >
 
-    <!-- ACCUEIL -->
+    <!-- =================================================
+         ACCUEIL
+    ================================================== -->
     <button
-    routerLink="/"
       type="button"
+      (click)="allerAccueil()"
       class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#007d78]"
     >
       <svg
@@ -36,10 +37,12 @@
     </button>
 
 
-    <!-- HISTORIQUE -->
+    <!-- =================================================
+         HISTORIQUE
+    ================================================== -->
     <button
-    routerLink="/historique"
       type="button"
+      (click)="allerHistorique()"
       class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
     >
       <svg
@@ -62,10 +65,12 @@
     </button>
 
 
-    <!-- SCANNER CENTRAL -->
+    <!-- =================================================
+         SCANNER CENTRAL
+    ================================================== -->
     <button
-    routerLink="/scan"
       type="button"
+      (click)="allerScanner()"
       class="relative flex w-1/5 flex-col items-center text-[#414b4e]"
     >
 
@@ -80,7 +85,7 @@
           class="flex h-[70px] w-[70px] items-center justify-center rounded-full bg-[#0eaaa9]"
         >
 
-          <!-- QR -->
+          <!-- Icône QR / Scanner -->
           <svg
             class="h-[32px] w-[32px] text-white"
             viewBox="0 0 32 32"
@@ -105,10 +110,9 @@
           </svg>
 
         </div>
-
       </div>
 
-      <!-- espace du bouton central -->
+      <!-- Espace réservé au bouton central -->
       <div class="h-[36px]"></div>
 
       <span class="text-[12px] font-bold">
@@ -118,10 +122,12 @@
     </button>
 
 
-    <!-- POINTS -->
+    <!-- =================================================
+         POINTS DE COLLECTE
+    ================================================== -->
     <button
-    routerLink="/points-collecte"
       type="button"
+      (click)="allerPoints()"
       class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
     >
       <svg
@@ -142,10 +148,12 @@
     </button>
 
 
-    <!-- PROFIL -->
+    <!-- =================================================
+         PROFIL
+    ================================================== -->
     <button
-    routerLink="/profile"
       type="button"
+      (click)="allerProfil()"
       class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
     >
       <svg
@@ -169,4 +177,3 @@
 
   </div>
 </nav>
-

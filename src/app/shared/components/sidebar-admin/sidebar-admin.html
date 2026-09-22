@@ -70,7 +70,7 @@
 
     <!-- Utilisateurs -->
     <a
-      routerLink="/utilisateurs"
+      routerLink="/admin/utilisateurs"
       routerLinkActive="bg-[#11AAA9] text-white"
       class="group flex h-[40px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
     >
@@ -151,7 +151,7 @@
 
     <!-- Scans -->
     <a
-      routerLink="/admin/scans"
+      routerLink="/admin/tous-scans"
       routerLinkActive="bg-[#11AAA9] text-white"
       class="group flex h-[40px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
     >
@@ -209,6 +209,7 @@
 
       <!-- Bouton de déconnexion -->
       <button
+      (click)="deconnecter()"
         type="button"
         class="text-slate-600 transition hover:text-[#087C78]"
         aria-label="Se déconnecter"

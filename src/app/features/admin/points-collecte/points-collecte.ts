@@ -6,10 +6,11 @@ import { PointCollecteService } from '../../../core/services/point-collecte';
 import { PointCollecte } from '../../../shared/models/point-collecte.model';
 // Importe Leaflet pour afficher la carte.
 import * as L from 'leaflet';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   selector: 'app-points-collecte',
   styleUrl: './points-collecte.css',
   templateUrl: './points-collecte.html',
@@ -59,9 +60,7 @@ export class PointsCollecte implements OnInit {
         );
 
       // Vérifie le filtre géographique.
-      const correspondQuartier =
-        quartier === 'Tous' ||
-        this.determinerQuartier(point) === quartier;
+      const correspondQuartier = quartier === 'Tous' || this.determinerQuartier(point) === quartier;
 
       // Le point doit respecter les deux conditions.
       return correspondRecherche && correspondQuartier;

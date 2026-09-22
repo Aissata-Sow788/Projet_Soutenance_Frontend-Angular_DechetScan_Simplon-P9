@@ -1,0 +1,737 @@
+<!-- Conteneur principal de la page -->
+<div class="min-h-screen bg-[#f6f8fd]">
+
+  <main class="px-6 py-7 lg:px-10">
+
+    <div class="mx-auto max-w-[1100px]">
+
+      <!-- ====================================================== -->
+      <!-- EN-TÊTE DE PAGE                                       -->
+      <!-- ====================================================== -->
+
+      <div class="mb-6 flex items-center justify-between gap-4">
+
+        <button
+          type="button"
+          (click)="retourPointsCollecte()"
+          class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-[12px] font-semibold text-[#334155] shadow-sm transition hover:bg-[#f0fdfa]"
+        >
+          <svg
+            class="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M19 12H5"/>
+            <path d="M12 19l-7-7 7-7"/>
+          </svg>
+
+          Retour aux points de collecte
+        </button>
+
+        <div class="hidden items-center gap-2 text-[11px] font-semibold text-[#475569] sm:flex">
+          <span class="h-2 w-2 rounded-full bg-[#0ea5a4]"></span>
+          Validation SIG Dakar • Zone Métropolitaine
+        </div>
+
+      </div>
+
+
+      <!-- Titre -->
+      <div class="mb-7">
+
+        <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-[#c8f5ed] px-3 py-1 text-[10px] font-bold text-[#007d78]">
+          <span class="h-1.5 w-1.5 rounded-full bg-[#0ea5a4]"></span>
+          Nouveau point
+        </div>
+
+        <h1 class="text-[29px] font-bold tracking-[-0.8px] text-[#102238]">
+          Ajouter un point de collecte
+        </h1>
+
+        <p class="mt-1 text-[13px] text-[#5d6978]">
+          Ajoutez un nouveau point de collecte accessible aux citoyens et optimisez les circuits de ramassage urbain.
+        </p>
+
+      </div>
+
+
+      <!-- ====================================================== -->
+      <!-- FORMULAIRE                                             -->
+      <!-- ====================================================== -->
+
+      <form
+        [formGroup]="formulaire"
+        (ngSubmit)="enregistrer()"
+        class="overflow-hidden rounded-[20px] bg-white shadow-[0_4px_18px_rgba(16,34,56,0.07)]"
+      >
+
+        <div class="px-8 py-8 sm:px-10">
+
+
+          <!-- ================================================== -->
+          <!-- 01 — INFORMATIONS GÉNÉRALES                       -->
+          <!-- ================================================== -->
+
+          <section>
+
+            <div class="mb-7 flex items-start gap-3">
+
+              <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-[#e2f3ff] text-[10px] font-bold text-[#007d78]">
+                01
+              </div>
+
+              <div>
+                <h2 class="text-[17px] font-semibold text-[#102238]">
+                  Informations générales
+                </h2>
+
+                <p class="text-[11px] text-[#667383]">
+                  Identification municipale et adresse physique du site
+                </p>
+              </div>
+
+            </div>
+
+
+            <!-- Nom -->
+            <div class="mb-6">
+
+              <label
+                for="nom"
+                class="mb-2 block text-[11px] font-bold text-[#26384c]"
+              >
+                Nom du point de collecte
+                <span class="text-[#0ea5a4]">*</span>
+              </label>
+
+              <div class="flex h-[48px] items-center rounded-[11px] bg-[#edf3fc] px-4">
+
+                <svg
+                  class="mr-3 h-5 w-5 shrink-0 text-[#718096]"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path d="M4 5h16v14H4z"/>
+                  <path d="M8 9h8"/>
+                  <path d="M8 13h5"/>
+                </svg>
+
+                <input
+                  id="nom"
+                  type="text"
+                  formControlName="nom"
+                  placeholder="Exemple : Point de collecte Kermel - Plateau"
+                  class="w-full bg-transparent text-[13px] text-[#26384c] outline-none placeholder:text-[#7c8998]"
+                />
+
+              </div>
+
+            </div>
+
+
+            <!-- Ville / adresse -->
+            <div>
+
+              <label
+                for="ville"
+                class="mb-2 block text-[11px] font-bold text-[#26384c]"
+              >
+                Ville du point de collecte
+                <span class="text-[#0ea5a4]">*</span>
+              </label>
+
+              <div class="flex h-[48px] items-center rounded-[11px] bg-[#edf3fc] px-4">
+
+                <svg
+                  class="mr-3 h-5 w-5 shrink-0 text-[#718096]"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11z"/>
+                  <circle cx="12" cy="10" r="2.5"/>
+                </svg>
+
+                <input
+                  id="ville"
+                  type="text"
+                  formControlName="ville"
+                  placeholder="Exemple : Rue de Thiong angle Marché Kermel, Dakar-Plateau"
+                  class="w-full bg-transparent text-[13px] text-[#26384c] outline-none placeholder:text-[#7c8998]"
+                />
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <div class="my-9 h-px bg-[#edf0f5]"></div>
+
+
+          <!-- ================================================== -->
+          <!-- 02 — GÉOLOCALISATION                              -->
+          <!-- ================================================== -->
+
+          <section>
+
+            <div class="mb-6 flex items-start justify-between gap-4">
+
+              <div class="flex items-start gap-3">
+
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-[#e2f3ff] text-[10px] font-bold text-[#007d78]">
+                  02
+                </div>
+
+                <div>
+                  <h2 class="text-[17px] font-semibold text-[#102238]">
+                    Géolocalisation & Cartographie
+                  </h2>
+
+                  <p class="text-[11px] text-[#667383]">
+                    Positionnement satellitaire précis pour le guidage citoyen
+                  </p>
+                </div>
+
+              </div>
+
+
+              <!-- Position actuelle -->
+              <button
+                type="button"
+                (click)="utiliserPositionActuelle()"
+                class="hidden items-center gap-2 rounded-[9px] bg-[#edf5ff] px-3 py-2 text-[10px] font-bold text-[#007d78] sm:flex"
+              >
+
+                <svg
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v3"/>
+                  <path d="M12 19v3"/>
+                  <path d="M2 12h3"/>
+                  <path d="M19 12h3"/>
+                </svg>
+
+                Position actuelle
+
+              </button>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+              <!-- Latitude -->
+              <div>
+
+                <div class="mb-2 flex items-center justify-between">
+
+                  <label
+                    for="latitude"
+                    class="text-[11px] font-bold text-[#26384c]"
+                  >
+                    Latitude (WGS84)
+                  </label>
+
+                  <span class="text-[9px] font-bold text-[#007d78]">
+                    Degrés décimaux
+                  </span>
+
+                </div>
+
+                <div class="flex h-[48px] items-center rounded-[11px] bg-[#edf3fc] px-4">
+
+                  <svg
+                    class="mr-3 h-5 w-5 text-[#718096]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <circle cx="12" cy="12" r="8"/>
+                    <path d="M12 8l3 3-4 4-3-3z"/>
+                  </svg>
+
+                  <input
+                    id="latitude"
+                    type="number"
+                    step="0.000001"
+                    formControlName="latitude"
+                    class="w-full bg-transparent text-[13px] text-[#26384c] outline-none"
+                  />
+
+                </div>
+
+              </div>
+
+
+              <!-- Longitude -->
+              <div>
+
+                <div class="mb-2 flex items-center justify-between">
+
+                  <label
+                    for="longitude"
+                    class="text-[11px] font-bold text-[#26384c]"
+                  >
+                    Longitude (WGS84)
+                  </label>
+
+                  <span class="text-[9px] font-bold text-[#007d78]">
+                    Degrés décimaux
+                  </span>
+
+                </div>
+
+                <div class="flex h-[48px] items-center rounded-[11px] bg-[#edf3fc] px-4">
+
+                  <svg
+                    class="mr-3 h-5 w-5 text-[#718096]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <path d="M4 12l16-7-7 16-2-7z"/>
+                    <path d="M11 14l-7-2"/>
+                  </svg>
+
+                  <input
+                    id="longitude"
+                    type="number"
+                    step="0.000001"
+                    formControlName="longitude"
+                    class="w-full bg-transparent text-[13px] text-[#26384c] outline-none"
+                  />
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- Erreur géolocalisation -->
+            @if (erreurGeolocalisation()) {
+              <p class="mt-3 text-[11px] font-medium text-red-500">
+                {{ erreurGeolocalisation() }}
+              </p>
+            }
+
+          </section>
+
+
+          <div class="my-9 h-px bg-[#edf0f5]"></div>
+
+
+          <!-- ================================================== -->
+          <!-- 03 — DÉCHETS ACCEPTÉS                             -->
+          <!-- ================================================== -->
+
+          <section>
+
+            <div class="mb-6 flex items-start justify-between gap-4">
+
+              <div class="flex items-start gap-3">
+
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-[#e2f3ff] text-[10px] font-bold text-[#007d78]">
+                  03
+                </div>
+
+                <div>
+                  <h2 class="text-[17px] font-semibold text-[#102238]">
+                    Déchets acceptés
+                  </h2>
+
+                  <p class="text-[11px] text-[#667383]">
+                    Sélectionnez une ou plusieurs catégories autorisées pour ce point de tri sélectif
+                  </p>
+                </div>
+
+              </div>
+
+
+              <button
+                type="button"
+                (click)="toutSelectionner()"
+                class="text-[10px] font-bold text-[#007d78] underline"
+              >
+                Tout sélectionner
+              </button>
+
+            </div>
+
+
+            <!-- Chargement -->
+            @if (chargementDechets()) {
+
+              <div class="rounded-[14px] bg-[#edf3fc] px-4 py-5 text-center text-[12px] text-[#718096]">
+                Chargement du référentiel des déchets...
+              </div>
+
+            } @else {
+
+              <!-- Types récupérés depuis Django -->
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
+                @for (type of typesDechets(); track type.idTypeDechet) {
+
+                  <button
+                    type="button"
+                    (click)="basculerDechet(type.idTypeDechet)"
+                    class="relative flex min-h-[82px] items-center gap-3 rounded-[14px] border-2 p-3 text-left transition"
+                    [ngClass]="
+                      estDechetSelectionne(type.idTypeDechet)
+                        ? 'border-[#0ea5a4] bg-[#e8faf6]'
+                        : 'border-transparent bg-[#edf3fc]'
+                    "
+                  >
+
+                    <!-- Icône générique -->
+                    <div
+                      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-white"
+                    >
+                      <svg
+                        class="h-5 w-5 text-[#007d78]"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      >
+                        <path d="M5 4h14v16H5z"/>
+                        <path d="M8 8h8"/>
+                        <path d="M8 12h8"/>
+                        <path d="M8 16h5"/>
+                      </svg>
+                    </div>
+
+
+                    <div class="min-w-0 flex-1">
+
+                      <p class="truncate text-[13px] font-bold text-[#102238]">
+                        {{ type.nom }}
+                      </p>
+
+                      <p class="mt-0.5 line-clamp-2 text-[10px] leading-[1.35] text-[#5d6978]">
+                        {{ type.description || 'Catégorie de déchets' }}
+                      </p>
+
+                    </div>
+
+
+                    <!-- Indicateur sélectionné -->
+                    <div
+                      class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                      [ngClass]="
+                        estDechetSelectionne(type.idTypeDechet)
+                          ? 'bg-[#0ea5a4] text-white'
+                          : 'bg-[#dce8f8] text-transparent'
+                      "
+                    >
+                      <svg
+                        class="h-3 w-3"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <path d="M5 12l4 4L19 6"/>
+                      </svg>
+                    </div>
+
+                  </button>
+
+                }
+
+              </div>
+
+            }
+
+          </section>
+
+
+          <div class="my-9 h-px bg-[#edf0f5]"></div>
+
+
+          <!-- ================================================== -->
+          <!-- 04 — STATUT OPÉRATIONNEL                          -->
+          <!-- ================================================== -->
+
+          <section>
+
+            <div class="mb-6 flex items-start gap-3">
+
+              <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px] bg-[#e2f3ff] text-[10px] font-bold text-[#007d78]">
+                04
+              </div>
+
+              <div>
+                <h2 class="text-[17px] font-semibold text-[#102238]">
+                  Statut opérationnel
+                </h2>
+
+                <p class="text-[11px] text-[#667383]">
+                  Définir l'état initial pour l'affichage citoyen et les flux de ramassage
+                </p>
+              </div>
+
+            </div>
+
+
+            <!-- Statuts -->
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+              <!-- Actif -->
+              <label
+                class="cursor-pointer rounded-[14px] border-2 border-[#0ea5a4] bg-[#e8faf6] p-4"
+              >
+
+                <div class="flex items-start gap-3">
+
+                  <input
+                    type="radio"
+                    formControlName="statut"
+                    value="actif"
+                    class="mt-1 h-4 w-4 accent-[#0ea5a4]"
+                  />
+
+                  <div>
+
+                    <div class="flex items-center gap-2">
+
+                      <span class="text-[13px] font-bold text-[#102238]">
+                        Actif & Opérationnel
+                      </span>
+
+                      <span class="rounded-full bg-[#c8f5ed] px-2 py-0.5 text-[9px] font-bold text-[#007d78]">
+                        En ligne
+                      </span>
+
+                    </div>
+
+                    <p class="mt-1 text-[10px] leading-[1.45] text-[#5d6978]">
+                      Visible immédiatement sur l'application mobile citoyenne.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </label>
+
+
+              <!-- Inactif -->
+              <label
+                class="cursor-pointer rounded-[14px] bg-[#edf3fc] p-4"
+              >
+
+                <div class="flex items-start gap-3">
+
+                  <input
+                    type="radio"
+                    formControlName="statut"
+                    value="inactif"
+                    class="mt-1 h-4 w-4 accent-[#0ea5a4]"
+                  />
+
+                  <div>
+
+                    <span class="text-[13px] font-bold text-[#475569]">
+                      Inactif / En maintenance
+                    </span>
+
+                    <p class="mt-1 text-[10px] leading-[1.45] text-[#718096]">
+                      Le point ne sera pas proposé comme point actif.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </label>
+
+            </div>
+
+
+            <!-- Horaires obligatoires du modèle Django -->
+            <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+              <div>
+
+                <label
+                  for="heureOuverture"
+                  class="mb-2 block text-[11px] font-bold text-[#26384c]"
+                >
+                  Heure d'ouverture
+                  <span class="text-[#0ea5a4]">*</span>
+                </label>
+
+                <input
+                  id="heureOuverture"
+                  type="time"
+                  formControlName="heureOuverture"
+                  class="h-[46px] w-full rounded-[11px] bg-[#edf3fc] px-4 text-[13px] text-[#26384c] outline-none focus:ring-2 focus:ring-[#0ea5a4]/20"
+                />
+
+              </div>
+
+
+              <div>
+
+                <label
+                  for="heureFermeture"
+                  class="mb-2 block text-[11px] font-bold text-[#26384c]"
+                >
+                  Heure de fermeture
+                  <span class="text-[#0ea5a4]">*</span>
+                </label>
+
+                <input
+                  id="heureFermeture"
+                  type="time"
+                  formControlName="heureFermeture"
+                  class="h-[46px] w-full rounded-[11px] bg-[#edf3fc] px-4 text-[13px] text-[#26384c] outline-none focus:ring-2 focus:ring-[#0ea5a4]/20"
+                />
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- Erreur API -->
+          @if (erreur()) {
+
+            <div class="mt-7 flex items-start gap-3 rounded-[12px] border border-red-100 bg-red-50 px-4 py-3">
+
+              <svg
+                class="mt-0.5 h-5 w-5 shrink-0 text-red-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 8v5"/>
+                <path d="M12 16h.01"/>
+              </svg>
+
+              <p class="text-[11px] font-medium leading-[1.5] text-red-600">
+                {{ erreur() }}
+              </p>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- ====================================================== -->
+        <!-- PIED DU FORMULAIRE                                    -->
+        <!-- ====================================================== -->
+
+        <div class="flex flex-col gap-4 border-t border-[#edf0f5] px-8 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+
+          <div class="flex items-center gap-2 text-[11px] text-[#5d6978]">
+
+            <svg
+              class="h-4 w-4 text-[#007d78]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 11v5"/>
+              <path d="M12 8h.01"/>
+            </svg>
+
+            Tous les champs avec astérisque
+            <span class="font-bold text-[#0ea5a4]">*</span>
+            sont requis.
+
+          </div>
+
+
+          <div class="flex items-center justify-end gap-3">
+
+            <!-- Annuler -->
+            <button
+              type="button"
+              (click)="annuler()"
+              class="rounded-[12px] bg-[#e8f0ff] px-5 py-3 text-[12px] font-bold text-[#26384c] transition hover:bg-[#dce8fa]"
+            >
+              Annuler
+            </button>
+
+
+            <!-- Enregistrer -->
+            <button
+              type="submit"
+              [disabled]="enregistrementEnCours()"
+              class="inline-flex items-center gap-2 rounded-[12px] bg-[#0ea5a4] px-5 py-3 text-[12px] font-bold text-white shadow-[0_5px_14px_rgba(14,165,164,0.22)] transition hover:bg-[#0b9493] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+
+              @if (enregistrementEnCours()) {
+
+                <svg
+                  class="h-4 w-4 animate-spin"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    class="opacity-30"
+                  />
+
+                  <path d="M21 12a9 9 0 0 0-9-9"/>
+                </svg>
+
+                Enregistrement...
+
+              } @else {
+
+                <svg
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 5v14"/>
+                  <path d="M5 12h14"/>
+                </svg>
+
+                Enregistrer le point de collecte
+              }
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+</div>

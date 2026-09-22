@@ -1,17 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
-
+import { BarreNavigations } from '../../shared/components/barre-navigations/barre-navigations';
 import { AccueilService } from '../../core/services/accueil.service';
-import {
-  StatistiquesAccueil,
-  SolutionAccueil,
-  DefiAccueil
-} from '../../shared/models/accueil.model';
+import {StatistiquesAccueil, SolutionAccueil, DefiAccueil} from '../../shared/models/accueil.model';
 
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, BarreNavigations],
   selector: 'app-accueil',
   styleUrl: './accueil.css',
   templateUrl: './accueil.html',
