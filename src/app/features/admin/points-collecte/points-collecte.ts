@@ -7,6 +7,7 @@ import { PointCollecte } from '../../../shared/models/point-collecte.model';
 // Importe Leaflet pour afficher la carte.
 import * as L from 'leaflet';
 import { RouterLink } from '@angular/router';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -166,22 +167,37 @@ export class PointsCollecte implements OnInit {
   }
 
 
-  // Fonction appelée par le bouton modifier.
-  modifierPoint(point: PointCollecte): void {
+async supprimerPoint(point: PointCollecte): Promise<void> {
 
-    // Pour l'instant, affiche le point sélectionné dans la console.
-    // Cette fonction pourra être reliée plus tard à un formulaire admin.
-    console.log('Modifier le point :', point);
+  const resultat = await Swal.fire({
+    title: 'Supprimer le point ?',
+    text: `Voulez-vous vraiment supprimer « ${point.nom} » ?`,
+    icon: 'warning',
+
+    showCancelButton: true,
+
+    confirmButtonText: 'Oui, supprimer',
+    cancelButtonText: 'Annuler',
+
+    confirmButtonColor: '#0eaaa9',
+    cancelButtonColor: '#94A3B8',
+
+    reverseButtons: true
+  });
+
+  // L'utilisateur a annulé.
+  if (!resultat.isConfirmed) {
+    return;
   }
 
+  // Pour le moment : suppression confirmée.
+  console.log('Suppression confirmée :', point);
 
-  // Fonction appelée par le bouton supprimer.
-  supprimerPoint(point: PointCollecte): void {
+  // Ici nous ajouterons ensuite l'appel à l'API Django.
+}
 
-    // Pour l'instant, cette fonction est uniquement préparée.
-    // La suppression sera ajoutée lorsque le backend existera.
-    console.log('Supprimer le point :', point);
-  }
+
+
 
 
   // Initialise la carte Leaflet.

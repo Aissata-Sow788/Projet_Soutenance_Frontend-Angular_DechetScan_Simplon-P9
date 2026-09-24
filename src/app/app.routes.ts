@@ -6,6 +6,13 @@ export const routes: Routes = [
 
     // Écran de démarrage, affiché en premier
 
+      // Redirige automatiquement l'URL racine "/" vers l'écran d'onboarding.
+  {
+    path: '',
+    redirectTo: 'onboarding',
+    pathMatch: 'full'
+  },
+
   // Slides de présentation de l'app
   {
     path: 'onboarding',
@@ -100,12 +107,12 @@ export const routes: Routes = [
         .then(m => m.Profile)
   },
 
-  {
-    path: 'points-collecte',
-    loadComponent: () =>
-      import('./features/points-collecte/points-collecte')
-    .then(m => m.PointsCollecte)
-  },
+  // {
+  //   path: 'points-collecte',
+  //   loadComponent: () =>
+  //     import('./features/points-collecte/points-collecte')
+  //   .then(m => m.PointsCollecte)
+  // },
 
 
 
@@ -146,7 +153,7 @@ export const routes: Routes = [
             },
 
             {
-             
+
               path: 'tous-scans',
 
               // Page qui affiche tous les scans.
@@ -182,7 +189,7 @@ export const routes: Routes = [
 
               // Page des points de collecte.
       {
-        path: 'points-collecte',
+        path: 'admin-collecte',
         loadComponent: () =>
           import('./features/admin/points-collecte/points-collecte')
             .then(m => m.PointsCollecte)

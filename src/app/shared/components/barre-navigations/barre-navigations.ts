@@ -8,47 +8,51 @@ import { Router } from '@angular/router';
   styleUrl: './barre-navigations.css',
   templateUrl: './barre-navigations.html',
 })
-
-
 export class BarreNavigations {
 
-  // Permet de naviguer vers les différentes pages de l'application.
   private router = inject(Router);
 
-  /**
-   * Vérifie simplement si un token de connexion existe.
-   *
-   * Le token est enregistré dans localStorage après une connexion réussie.
-   */
   get utilisateurConnecte(): boolean {
     return !!localStorage.getItem('dechetscan_token');
   }
 
   /**
-   * Gestion du bouton Accueil.
-   *
-   * - Utilisateur connecté → accueil citoyen
-   * - Utilisateur non connecté → accueil public
+   * Vérifie si une route est actuellement active.
+   */
+  estActif(route: string): boolean {
+    return this.router.url === route;
+  }
+
+  /**
+   * Accueil est actif pour les deux interfaces citoyen :
+   * - accueil public
+   * - accueil citoyen connecté
+   */
+  estAccueilActif(): boolean {
+    return this.router.url === '/accueil' ||
+           this.router.url === '/home-citoyen';
+  }
+
+  /**
+   * Accueil dynamique selon la connexion.
    */
   allerAccueil(): void {
     if (this.utilisateurConnecte) {
       this.router.navigate(['/home-citoyen']);
     } else {
-      this.router.navigate(['/']);
+      this.router.navigate(['/accueil']);
     }
   }
 
   /**
-   * Le scanner reste accessible aux utilisateurs connectés
-   * comme aux utilisateurs non connectés.
+   * Scanner accessible à tous.
    */
   allerScanner(): void {
     this.router.navigate(['/scan']);
   }
 
   /**
-   * Les utilisateurs non connectés doivent se connecter
-   * avant d'accéder à leur historique.
+   * Historique réservé aux utilisateurs connectés.
    */
   allerHistorique(): void {
     if (this.utilisateurConnecte) {
@@ -59,14 +63,14 @@ export class BarreNavigations {
   }
 
   /**
-   * Les points de collecte sont accessibles à tout le monde.
+   * Points de collecte accessibles à tous.
    */
   allerPoints(): void {
     this.router.navigate(['/points-collecte']);
   }
 
   /**
-   * Le profil nécessite une connexion.
+   * Profil réservé aux utilisateurs connectés.
    */
   allerProfil(): void {
     if (this.utilisateurConnecte) {

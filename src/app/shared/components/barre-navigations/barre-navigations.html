@@ -2,11 +2,11 @@
      NAVIGATION BASSE — COMPACTE
 ====================================================== -->
 <nav
-  class="fixed bottom-0 left-0 z-50 w-full bg-white"
+  class="fixed bottom-0 left-0 right-0 z-50 w-full bg-white"
   style="box-shadow: 0 -5px 20px rgba(20, 40, 60, 0.10);"
 >
   <div
-    class="relative mx-auto flex h-[68px] w-full max-w-[1200px] items-end justify-around px-2 pb-2"
+    class="relative mx-auto flex h-[68px] w-full max-w-[1200px] items-end justify-around px-2"
   >
 
     <!-- =================================================
@@ -15,7 +15,9 @@
     <button
       type="button"
       (click)="allerAccueil()"
-      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#007d78]"
+      [class.text-[#007d78]]="estAccueilActif()"
+      [class.text-[#414b4e]]="!estAccueilActif()"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5"
     >
       <svg
         class="h-[24px] w-[24px]"
@@ -43,7 +45,9 @@
     <button
       type="button"
       (click)="allerHistorique()"
-      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
+      [class.text-[#007d78]]="estActif('/historique')"
+      [class.text-[#414b4e]]="!estActif('/historique')"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5"
     >
       <svg
         class="h-[25px] w-[25px]"
@@ -71,7 +75,9 @@
     <button
       type="button"
       (click)="allerScanner()"
-      class="relative flex w-1/5 flex-col items-center text-[#414b4e]"
+      [class.text-[#007d78]]="estActif('/scan')"
+      [class.text-[#414b4e]]="!estActif('/scan')"
+      class="relative flex w-1/5 flex-col items-center"
     >
 
       <!-- Cercle extérieur -->
@@ -128,7 +134,9 @@
     <button
       type="button"
       (click)="allerPoints()"
-      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
+      [class.text-[#007d78]]="estActif('/points-collecte')"
+      [class.text-[#414b4e]]="!estActif('/points-collecte')"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5"
     >
       <svg
         class="h-[25px] w-[25px]"
@@ -154,7 +162,9 @@
     <button
       type="button"
       (click)="allerProfil()"
-      class="flex w-1/5 flex-col items-center justify-end gap-0.5 text-[#414b4e]"
+      [class.text-[#007d78]]="estActif('/profile')"
+      [class.text-[#414b4e]]="!estActif('/profile')"
+      class="flex w-1/5 flex-col items-center justify-end gap-0.5"
     >
       <svg
         class="h-[25px] w-[25px]"

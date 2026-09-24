@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
+import { RouterLink } from '@angular/router';
 import { BarreNavigations } from '../../shared/components/barre-navigations/barre-navigations';
 import { ScanService } from '../../core/services/scan';
 import { ScanDechet } from '../../shared/models/scan.model';
@@ -37,7 +37,7 @@ interface PointProche {
 
 
 @Component({
-  imports: [CommonModule, BarreNavigations],
+  imports: [CommonModule, BarreNavigations, RouterLink],
   selector: 'app-home-citoyen',
   styleUrl: './home-citoyen.css',
   templateUrl: './home-citoyen.html',

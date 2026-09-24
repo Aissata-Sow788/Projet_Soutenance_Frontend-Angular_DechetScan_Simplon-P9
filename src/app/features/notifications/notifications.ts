@@ -7,8 +7,6 @@ import { NotificationsService } from '../../core/services/notification';
 import { Notification } from '../../shared/models/notification.model';
 
 
-
-
 @Component({
   imports: [CommonModule, BarreNavigations],
   selector: 'app-notifications',

@@ -2,7 +2,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
+import { RouterLink } from '@angular/router';
 // Importe le service et le modèle des points de collecte.
 import { PointCollecteService } from '../../core/services/point-collecte';
 import { PointCollecte } from '../../shared/models/point-collecte.model';
@@ -14,7 +14,7 @@ interface PointAvecDistance extends PointCollecte {
   icone: 'recyclage' | 'poubelle' | 'ecran' | 'maison';
 }
 @Component({
-  imports: [CommonModule, BarreNavigations], // Modules utilisés dans le HTML.
+  imports: [CommonModule, BarreNavigations, RouterLink], // Modules utilisés dans le HTML.
   selector: 'app-points-collecte', // Nom du composant.
   styleUrl: './points-collecte.css', // Fichier CSS.
   templateUrl: './points-collecte.html', // Fichier HTML.

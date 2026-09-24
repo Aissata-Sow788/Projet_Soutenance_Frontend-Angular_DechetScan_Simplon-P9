@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BarreNavigations } from '../../shared/components/barre-navigations/barre-navigations';
 import { ScanService } from '../../core/services/scan';
 import { ScanDechet } from '../../shared/models/scan.model';
+import { RouterLink } from '@angular/router';
 
 // Format utilisé uniquement pour préparer les données avant leur affichage dans le HTML.
 interface ScanHistorique {
@@ -15,224 +16,353 @@ interface ScanHistorique {
   heure: string;
   destination: string;
   icone: 'recyclage' | 'bac' | 'carton' | 'compost';
+
+  // Date ISO originale provenant de Django.
+  // Elle permet de faire correctement les filtres semaine/mois.
+  dateOriginale: string;
 }
 
 @Component({
-  imports: [CommonModule, BarreNavigations],
+  imports: [CommonModule, BarreNavigations, RouterLink],
   selector: 'app-historique',
   styleUrl: './historique.css',
   templateUrl: './historique.html',
 })
 export class Historique implements OnInit {
 
-  // Injecte le Router pour permettre la navigation vers d'autres pages.
+  // Permet de naviguer vers le scanner.
   private router = inject(Router);
 
-  // Injecte le service qui permet de récupérer l'historique des scans depuis l'API.
+  // Service permettant de récupérer les scans depuis l'API Django.
   private scanService = inject(ScanService);
 
-
-  // Contient le texte saisi par l'utilisateur dans la barre de recherche.
+  // Texte saisi dans la barre de recherche.
   recherche = signal('');
 
-
-  // Contient le filtre actuellement sélectionné.
-  // Par défaut, seuls les scans de la semaine sont sélectionnés.
+  // Filtre de période sélectionné.
   filtreActif = signal<'semaine' | 'mois' | 'tout'>('semaine');
 
-
-  // Indique si les données sont actuellement en cours de chargement.
+  // Indique si les données sont en cours de chargement.
   chargement = signal(true);
 
-
-  // Contient le message à afficher lorsqu'une erreur se produit.
-  // null signifie qu'aucune erreur n'est présente.
+  // Contient le message d'erreur éventuel.
   erreur = signal<string | null>(null);
 
-
-  // Contient la liste des scans préparés pour être affichés dans le template.
+  // Liste des scans récupérés depuis l'API et préparés pour l'affichage.
   scans = signal<ScanHistorique[]>([]);
 
 
-  // Filtre automatiquement les scans lorsque le texte de recherche change.
-  // Le calcul est également relancé lorsque la liste des scans est modifiée.
+  /**
+   * Retourne les scans correspondant aux filtres sélectionnés.
+   *
+   * Les filtres appliqués sont :
+   * - période : semaine / mois / tout ;
+   * - recherche : objet / catégorie / destination.
+   */
   scansFiltres = computed(() => {
 
-    // Récupère le texte recherché, supprime les espaces inutiles
-    // et convertit le texte en minuscules pour faciliter la comparaison.
-    const texte = this.recherche().trim().toLowerCase();
+    // Copie de la liste complète afin de pouvoir appliquer les filtres.
+    let resultat = [...this.scans()];
 
-    // Si aucun texte n'est saisi, retourne directement tous les scans.
-    if (!texte) {
-      return this.scans();
+    // ---------------------------------------------------------
+    // FILTRE PAR PÉRIODE
+    // ---------------------------------------------------------
+
+    const aujourdHui = new Date();
+
+    if (this.filtreActif() !== 'tout') {
+
+      // Date à partir de laquelle les scans doivent être conservés.
+      const dateLimite = new Date(aujourdHui);
+
+      if (this.filtreActif() === 'semaine') {
+
+        // Conserve les scans des 7 derniers jours.
+        dateLimite.setDate(
+          aujourdHui.getDate() - 7
+        );
+
+      } else if (this.filtreActif() === 'mois') {
+
+        // Conserve les scans du dernier mois.
+        dateLimite.setMonth(
+          aujourdHui.getMonth() - 1
+        );
+      }
+
+      // Compare la vraie date ISO reçue de Django.
+      resultat = resultat.filter((scan) => {
+
+        const dateScan = new Date(scan.dateOriginale);
+
+        return dateScan >= dateLimite;
+      });
     }
 
-    // Retourne uniquement les scans correspondant à la recherche.
-    return this.scans().filter(scan => scan.objet.toLowerCase().includes(texte) || scan.categorie.toLowerCase().includes(texte) ||scan.destination.toLowerCase().includes(texte));
+    // ---------------------------------------------------------
+    // FILTRE PAR RECHERCHE
+    // ---------------------------------------------------------
+
+    const texte = this.recherche()
+      .trim()
+      .toLowerCase();
+
+    // Si une recherche est saisie, on filtre les résultats.
+    if (texte) {
+
+      resultat = resultat.filter((scan) => {
+
+        return (
+          scan.objet.toLowerCase().includes(texte) ||
+          scan.categorie.toLowerCase().includes(texte) ||
+          scan.destination.toLowerCase().includes(texte)
+        );
+      });
+    }
+
+    return resultat;
   });
 
 
-  // Méthode exécutée automatiquement lors du chargement du composant.
+  // Méthode appelée automatiquement lors du chargement du composant.
   ngOnInit(): void {
 
-    // Lance la récupération de l'historique depuis l'API.
+    // Lance la récupération de l'historique depuis Django.
     this.chargerHistorique();
   }
 
 
-  // Récupère l'historique réel des scans depuis le backend.
+  /**
+   * Récupère l'historique réel des scans depuis l'API Django.
+   */
   private chargerHistorique(): void {
 
-    // Active l'état de chargement avant de lancer la requête.
+    // Active l'indicateur de chargement.
     this.chargement.set(true);
 
     // Supprime une éventuelle ancienne erreur.
     this.erreur.set(null);
 
-    // Appelle l'API via le service des scans.
+    // Appelle l'API historique.
     this.scanService.historique().subscribe({
 
-      // Exécuté lorsque l'API retourne correctement les données.
+      // Cette fonction est exécutée lorsque l'API renvoie les données.
       next: (scans) => {
 
-        console.log('Données reçues depuis l API :', scans);
-        // Transforme chaque scan reçu du backend dans le format
-        // attendu par l'interface graphique.
-        this.scans.set(
-          scans.map(scan => this.convertirEnHistorique(scan))
+        console.log(
+          'Données reçues depuis l API :',
+          scans
         );
 
-        // Arrête l'indicateur de chargement.
-        this.chargement.set(false);
+        // La requête ayant réussi, aucune erreur ne doit être affichée.
+        this.erreur.set(null);
+
+        try {
+
+          // Transforme chaque scan Django dans le format
+          // attendu par l'interface historique.
+          const historique = scans.map((scan) =>
+            this.convertirEnHistorique(scan)
+          );
+
+          // Enregistre les scans dans le signal.
+          this.scans.set(historique);
+
+        } catch (error) {
+
+          // Permet de détecter une éventuelle incompatibilité
+          // entre la réponse Django et le modèle Angular.
+          console.error(
+            'Erreur lors de la transformation des scans :',
+            error
+          );
+
+          this.erreur.set(
+            'Les données reçues ne peuvent pas être affichées.'
+          );
+
+        } finally {
+
+          // Termine toujours le chargement.
+          this.chargement.set(false);
+        }
       },
 
-
-      // Exécuté lorsqu'une erreur se produit pendant l'appel API.
+      // Cette fonction n'est exécutée que si la requête finale échoue.
       error: (err) => {
 
-        // Stocke le message de l'erreur pour pouvoir l'afficher dans le HTML.
-        this.erreur.set(
-          err.message ?? 'Erreur lors du chargement de l\'historique.'
+        console.error(
+          'Erreur lors de la récupération de l historique :',
+          err
         );
 
-        // Arrête l'indicateur de chargement même en cas d'erreur.
+        this.erreur.set(
+          'Impossible de charger votre historique.'
+        );
+
         this.chargement.set(false);
       }
     });
   }
 
 
-/**
- * Transforme les détections IA en informations
- * utilisables par l'écran historique.
- */
-private convertirEnHistorique(scan: ScanDechet): ScanHistorique {
+  /**
+   * Transforme un scan reçu de Django en données
+   * directement utilisables par le HTML.
+   */
+  private convertirEnHistorique(
+    scan: ScanDechet
+  ): ScanHistorique {
 
-  // Récupère toutes les détections réalisées par l'IA.
-  const detections = scan.analyseIA?.detections ?? [];
+    // Récupère les détections réalisées par l'IA.
+    //
+    // Si analyseIA est null, on utilise un tableau vide.
+    const detections =
+      scan.analyseIA?.detections ?? [];
 
-  // Première détection utilisée comme information principale
-  // pour la ligne de l'historique.
-  const premiereDetection = detections[0];
+    // Utilise la première détection comme information principale.
+    const premiereDetection = detections[0];
 
-  const type = premiereDetection?.idTypeDechet;
+    // Récupère le type de déchet associé à la détection.
+    const type = premiereDetection?.idTypeDechet;
 
-  const [date, heure] = this.formaterDateHeure(scan.dateScan);
+    // Transforme la date ISO en date et heure d'affichage.
+    const [date, heure] =
+      this.formaterDateHeure(scan.dateScan);
 
-  return {
-    id: scan.idScan,
+    return {
 
-    image: scan.photoUrl.startsWith('http')
-      ? scan.photoUrl
-      : `http://127.0.0.1:8000${scan.photoUrl}`,
+      // Identifiant du scan.
+      id: scan.idScan,
 
-    // Exemple : Plastique.
-    categorie: type?.nom ?? 'Non identifié',
+      // Django renvoie actuellement des chemins relatifs
+      // comme /media/scans/plastique.jpg.
+      //
+      // On ajoute donc l'adresse du backend Django.
+      image: scan.photoUrl.startsWith('http')
+        ? scan.photoUrl
+        : `http://127.0.0.1:8000${scan.photoUrl}`,
 
-    // Exemple : Bouteille.
-    objet: premiereDetection?.objet ?? 'Analyse en cours',
+      // Nom du type de déchet.
+      categorie:
+        type?.nom ?? 'Non identifié',
 
-    date,
-    heure,
+      // Objet détecté par l'IA.
+      objet:
+        premiereDetection?.objet ?? 'Analyse en cours',
 
-    // Conseil provenant du référentiel Django.
-    destination:
-      type?.conseil?.consigne ?? 'Aucun conseil disponible',
+      // Date et heure préparées pour l'affichage.
+      date,
+      heure,
 
-    icone: this.determinerIcone(type?.nom)
-  };
-}
-  // Transforme une date ISO provenant de l'API
-  // en date et heure adaptées à l'affichage français.
-  private formaterDateHeure(dateIso: string): [string, string] {
+      // Conseil de tri provenant du référentiel Django.
+      destination:
+        type?.conseil?.consigne ??
+        'Aucun conseil disponible',
 
-    // Convertit la date reçue du backend en objet Date JavaScript.
+      // Icône déterminée selon le type de déchet.
+      icone:
+        this.determinerIcone(type?.nom),
+
+      // Conservation de la date originale pour les filtres.
+      dateOriginale: scan.dateScan
+    };
+  }
+
+
+  /**
+   * Transforme une date ISO provenant de Django
+   * en date et heure adaptées à l'affichage français.
+   */
+  private formaterDateHeure(
+    dateIso: string
+  ): [string, string] {
+
+    // Transforme la chaîne ISO en objet Date JavaScript.
     const d = new Date(dateIso);
 
-    // Formate la date selon le format français.
+    // Formate la date en français.
     const date = d.toLocaleDateString('fr-FR');
 
-    // Formate l'heure selon le format français.
-    const heure = d.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+    // Formate l'heure en français.
+    const heure = d.toLocaleTimeString(
+      'fr-FR',
+      {
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+    );
 
-    // Retourne la date et l'heure séparément.
     return [date, heure];
   }
 
 
-  // Détermine l'icône à afficher selon le nom du type de déchet.
-  // Le champ "icone" n'existe pas directement dans la base de données.
+  /**
+   * Détermine l'icône à afficher selon le type de déchet.
+   */
   private determinerIcone(
     nomType: string | undefined
   ): 'recyclage' | 'bac' | 'carton' | 'compost' {
 
     // Convertit le nom du type en minuscules.
-    // Si aucun nom n'est disponible, utilise une chaîne vide.
     const nom = nomType?.toLowerCase() ?? '';
 
-    // Les déchets en carton ou papier utilisent l'icône carton.
-    if (['carton', 'papier'].some(type => nom.includes(type))) {
+    // Papier et carton.
+    if (
+      ['carton', 'papier'].some(
+        type => nom.includes(type)
+      )
+    ) {
       return 'carton';
     }
 
-    // Les déchets organiques utilisent l'icône compost.
+    // Déchets organiques.
     if (nom.includes('organique')) {
       return 'compost';
     }
 
-    // Les déchets métalliques utilisent l'icône bac.
-    if (['métal', 'metal'].some(type => nom.includes(type))) {
+    // Déchets métalliques.
+    if (
+      ['métal', 'metal'].some(
+        type => nom.includes(type)
+      )
+    ) {
       return 'bac';
     }
 
-    // Icône utilisée par défaut pour les autres types de déchets.
+    // Icône par défaut.
     return 'recyclage';
   }
 
 
-  // Modifie le filtre sélectionné par l'utilisateur.
-  changerFiltre(filtre: 'semaine' | 'mois' | 'tout'): void {
+  /**
+   * Change le filtre de période.
+   */
+  changerFiltre(
+    filtre: 'semaine' | 'mois' | 'tout'
+  ): void {
 
-    // Met à jour le signal avec le nouveau filtre.
     this.filtreActif.set(filtre);
   }
 
 
-  // Récupère la valeur saisie dans la barre de recherche.
+  /**
+   * Récupère la valeur saisie dans la recherche.
+   */
   rechercher(event: Event): void {
 
-    // Transforme l'événement en HTMLInputElement,
-    // puis récupère la valeur saisie par l'utilisateur.
-    this.recherche.set(
-      (event.target as HTMLInputElement).value
-    );
+    const input =
+      event.target as HTMLInputElement;
+
+    this.recherche.set(input.value);
   }
 
 
-  // Ouvre la page du scanner.
+  /**
+   * Ouvre la page du scanner.
+   */
   ouvrirScanner(): void {
 
-    // Redirige l'utilisateur vers la route du scanner.
     this.router.navigate(['/scan']);
   }
 }
