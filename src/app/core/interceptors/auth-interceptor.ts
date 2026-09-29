@@ -36,19 +36,27 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     );
 
   /*
-   * Les GET du référentiel sont publics.
+   * Les GET du référentiel et les stats publiques sont publics.
    * Les POST, PATCH et DELETE restent protégés.
    */
   const estLectureReferentielPublique =
     req.method === 'GET' &&
     (
       req.url.includes('/api/types/') ||
-      req.url.includes('/api/conseils/')
+      req.url.includes('/api/conseils/') ||
+      req.url.includes('/api/stats/accueil/')
     );
+
+  // L'IPN PayDunya est appelé par PayDunya lui-même sans token JWT.
+  // Cette route doit être exclue de l'intercepteur d'authentification.
+  const estCallbackPayDunya =
+    req.url.includes('/api/ventes/paiement/ipn/') ||
+    req.url.includes('/api/paydunya/ipn/');
 
   const estRoutePublique =
     estRouteAuthentificationPublique ||
-    estLectureReferentielPublique;
+    estLectureReferentielPublique ||
+    estCallbackPayDunya;
 
   console.log('[AUTH]', req.method, req.url, '| Route publique :', estRoutePublique);
 

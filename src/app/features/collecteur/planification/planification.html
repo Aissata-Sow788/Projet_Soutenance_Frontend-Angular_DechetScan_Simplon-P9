@@ -1,0 +1,484 @@
+<!-- Page Planification des ramassages -->
+<div class="p-6 xl:p-8">
+
+  <!-- EN-TÊTE -->
+  <div class="mb-6 flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-[#142337]">Planification des ramassages</h1>
+      <p class="mt-1 text-sm text-slate-500">Gérez votre itinéraire et vos collectes prévues.</p>
+    </div>
+    <button
+      (click)="ouvrirModal()"
+      type="button"
+      class="flex shrink-0 items-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+    >
+      <span class="text-lg leading-none">+</span>
+      Planifier une collecte
+    </button>
+  </div>
+
+  <!-- FILTRES -->
+  <div class="mb-6 flex flex-wrap items-center gap-3">
+    <!-- Filtre date -->
+    <div>
+      <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Date</p>
+      <input
+        type="date"
+        [value]="filtreDate()"
+        (input)="filtreDate.set($any($event.target).value)"
+        class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+      />
+    </div>
+
+    <!-- Filtre statut -->
+    <div>
+      <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Statut</p>
+      <select
+        [value]="filtreStatut()"
+        (change)="filtreStatut.set($any($event.target).value)"
+        class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+      >
+        <option value="">Tous les statuts</option>
+        <option value="planifiee">Planifiée</option>
+        <option value="en_cours">En cours</option>
+        <option value="terminee">Terminée</option>
+        <option value="annulee">Annulée</option>
+      </select>
+    </div>
+
+    <!-- Filtre zone (statique) -->
+    <div>
+      <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Zone</p>
+      <select
+        class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+      >
+        <option>Dakar Plateau</option>
+        <option>Médina</option>
+        <option>Pikine</option>
+        <option>Guédiawaye</option>
+      </select>
+    </div>
+
+    <!-- Bouton Filtrer -->
+    <div class="mt-4">
+      <button
+        type="button"
+        class="rounded-xl bg-[#142337] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#0E172B]"
+      >
+        Filtrer
+      </button>
+    </div>
+  </div>
+
+  <!-- CHARGEMENT -->
+  @if (chargement()) {
+    <div class="py-16 text-center text-sm text-slate-400">Chargement...</div>
+  }
+
+  @else if (erreur()) {
+    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+  }
+
+  @else {
+
+    <!-- GRILLE PRINCIPALE : Calendrier + Résumé du jour -->
+    <div class="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
+
+      <!-- ─── CALENDRIER ─────────────────────────────────── -->
+      <div class="xl:col-span-2 rounded-2xl bg-white shadow-sm overflow-hidden">
+
+        <!-- En-tête calendrier -->
+        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+          <h2 class="font-bold text-[#142337]">Calendrier des collectes</h2>
+          <div class="flex items-center gap-3">
+            <button
+              (click)="moisPrecedent()"
+              type="button"
+              class="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </button>
+            <span class="text-sm font-bold text-[#142337] capitalize">{{ titreMois() }}</span>
+            <button
+              (click)="moisSuivant()"
+              type="button"
+              class="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Grille calendrier -->
+        <div class="p-4">
+
+          <!-- Noms des jours -->
+          <div class="mb-2 grid grid-cols-7 text-center">
+            @for (jour of joursSemaine; track jour) {
+              <div class="py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {{ jour }}
+              </div>
+            }
+          </div>
+
+          <!-- Jours -->
+          <div class="grid grid-cols-7 gap-1">
+            @for (jour of grille(); track jour.date.toISOString()) {
+              <div
+                class="min-h-[60px] rounded-lg p-1 text-xs"
+                [ngClass]="{
+                  'opacity-40': !jour.moisCourant,
+                  'ring-2 ring-[#0EA5A4] ring-offset-1': jour.jouActuel
+                }"
+              >
+                <!-- Numéro du jour -->
+                <div
+                  class="mb-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold"
+                  [ngClass]="jour.jouActuel
+                    ? 'bg-[#0EA5A4] text-white'
+                    : 'text-slate-600'"
+                >
+                  {{ jour.date.getDate() }}
+                </div>
+
+                <!-- Collectes du jour -->
+                @for (collecte of jour.collectes.slice(0, 3); track collecte.idCollecte) {
+                  <div
+                    class="mb-0.5 truncate rounded px-1 py-0.5 text-[9px] font-semibold leading-tight cursor-pointer"
+                    [ngClass]="couleurCollecteCalendrier(collecte)"
+                    (click)="voirCollecte(collecte.idCollecte)"
+                    [title]="etiquetteCalendrier(collecte)"
+                  >
+                    {{ etiquetteCalendrier(collecte) }}
+                  </div>
+                }
+                @if (jour.collectes.length > 3) {
+                  <div class="text-[9px] text-slate-400">+{{ jour.collectes.length - 3 }}</div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── RÉSUMÉ DU JOUR ─────────────────────────────── -->
+      <div class="space-y-4">
+
+        <!-- Carte résumé -->
+        <div class="rounded-2xl bg-white p-5 shadow-sm">
+          <h3 class="mb-4 font-bold text-[#142337]">Résumé du jour</h3>
+
+          <!-- Ramassages -->
+          <div class="mb-3 rounded-xl bg-slate-50 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">
+                  <svg class="h-4 w-4 text-blue-600" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+                    <path d="M16 8h4l3 3v5h-7V8z"></path>
+                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                  </svg>
+                </div>
+                <span class="text-sm font-semibold text-[#142337]">Ramassages</span>
+              </div>
+              <div class="text-right">
+                <span class="text-2xl font-black text-[#142337]">{{ nbRamassages() }}</span>
+                <span class="ml-2 text-sm font-bold text-blue-600">{{ pourcentageRamassages() }}%</span>
+              </div>
+            </div>
+            <!-- Barre de progression -->
+            <div class="h-2 rounded-full bg-slate-200">
+              <div class="h-full rounded-full bg-blue-500 transition-all"
+                   [style.width.%]="pourcentageRamassages()"></div>
+            </div>
+          </div>
+
+          <!-- Points de collecte -->
+          <div class="rounded-xl bg-slate-50 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                  <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                    <circle cx="12" cy="10" r="2.5"></circle>
+                  </svg>
+                </div>
+                <span class="text-sm font-semibold text-[#142337]">Points de collecte</span>
+              </div>
+              <div class="text-right">
+                <span class="text-2xl font-black text-[#142337]">{{ nbPointsCollecte() }}</span>
+                <span class="ml-2 text-sm font-bold text-[#0EA5A4]">{{ pourcentagePoints() }}%</span>
+              </div>
+            </div>
+            <div class="h-2 rounded-full bg-slate-200">
+              <div class="h-full rounded-full bg-[#0EA5A4] transition-all"
+                   [style.width.%]="pourcentagePoints()"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optimisation d'itinéraire -->
+        <div class="rounded-2xl bg-[#0E172B] p-5 text-white">
+          <h3 class="mb-2 font-bold">Optimisation d'itinéraire</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            L'IA a calculé l'itinéraire le plus efficace pour vos
+            {{ collectesAujourdhui().length }} collectes du jour.
+            Gain de temps estimé : 24 min.
+          </p>
+          <button
+            type="button"
+            class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M8 12l3 3 5-5"></path>
+            </svg>
+            Lancer l'itinéraire
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── TABLEAU DÉTAIL DES COLLECTES ──────────────────── -->
+    <div class="rounded-2xl bg-white shadow-sm">
+
+      <!-- En-tête -->
+      <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <h2 class="font-bold text-[#142337]">
+          Détails des collectes (Aujourd'hui)
+        </h2>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Exporter PDF
+          </button>
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Imprimer liste
+          </button>
+        </div>
+      </div>
+
+      @if (collectesFiltrees().length === 0) {
+        <div class="py-12 text-center text-sm text-slate-400">
+          Aucune collecte planifiée pour le moment.
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-100">
+                <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen / Point</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Adresse / Zone</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date & Heure</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (collecte of collectesPage(); track collecte.idCollecte) {
+                <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                  <!-- Citoyen ou Point -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                        [ngClass]="collecte.idPoint
+                          ? 'bg-[#C9F5EF] text-[#087C78]'
+                          : 'bg-slate-100 text-slate-600'"
+                      >
+                        {{ collecte.idPoint ? 'PC' : 'CT' }}
+                      </div>
+                      <div>
+                        <p class="font-semibold text-[#142337]">
+                          {{ collecte.nomPoint ?? ('Demande #' + (collecte.idDemande ?? '—')) }}
+                        </p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider"
+                           [ngClass]="collecte.idPoint ? 'text-[#0EA5A4]' : 'text-slate-400'">
+                          {{ collecte.idPoint ? 'Point de collecte' : 'Chez le citoyen' }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Zone -->
+                  <td class="px-4 py-4 text-slate-600">
+                    {{ collecte.nomPoint ?? 'Dakar' }}
+                  </td>
+
+                  <!-- Quantité -->
+                  <td class="px-4 py-4 text-slate-600">
+                    {{ collecte.quantiteRecuperee ? collecte.quantiteRecuperee + ' kg' : '—' }}
+                  </td>
+
+                  <!-- Date & Heure -->
+                  <td class="px-4 py-4">
+                    <p class="text-xs font-semibold text-[#142337]">
+                      {{ formaterDate(collecte.datePlanifiee) }}
+                    </p>
+                    <p class="text-xs font-bold text-[#0EA5A4]">
+                      {{ formaterHeure(collecte.datePlanifiee) }}
+                    </p>
+                  </td>
+
+                  <!-- Statut -->
+                  <td class="px-4 py-4">
+                    <span
+                      class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                      [ngClass]="classeStatut(collecte.statut)"
+                    >
+                      {{ libelleStatut(collecte.statut) }}
+                    </span>
+                  </td>
+
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
+          <p class="text-xs text-slate-400">
+            Affichage de 1 à {{ collectesFiltrees().length }} sur
+            {{ collectes().length }} collectes planifiées
+          </p>
+          <div class="flex items-center gap-1">
+            <button (click)="allerPage(pageCourante() - 1)"
+              [disabled]="pageCourante() === 1"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </button>
+            @for (page of pages(); track page) {
+              <button (click)="allerPage(page)" type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
+                [ngClass]="page === pageCourante()
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'border border-slate-200 text-slate-600 hover:bg-slate-50'">
+                {{ page }}
+              </button>
+            }
+            <button (click)="allerPage(pageCourante() + 1)"
+              [disabled]="pageCourante() === totalPages()"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
+
+    </div>
+
+  }
+
+</div>
+
+<!-- ─── MODAL PLANIFIER UNE COLLECTE ──────────────────────── -->
+@if (modalOuverte()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="font-bold text-[#142337]">Planifier une collecte</h2>
+        <button (click)="fermerModal()" type="button"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18"></path><path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      @if (erreurModal()) {
+        <div class="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">{{ erreurModal() }}</div>
+      }
+
+      <div class="space-y-4">
+
+        <!-- Date -->
+        <div>
+          <label class="mb-1.5 block text-sm font-bold text-[#142337]">Date planifiée *</label>
+          <input
+            type="date"
+            [value]="nouvelleDatePlanifiee()"
+            (input)="nouvelleDatePlanifiee.set($any($event.target).value)"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+          />
+        </div>
+
+        <!-- Heure -->
+        <div>
+          <label class="mb-1.5 block text-sm font-bold text-[#142337]">Heure de départ</label>
+          <input
+            type="time"
+            [value]="nouvelleHeure()"
+            (input)="nouvelleHeure.set($any($event.target).value)"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+          />
+        </div>
+
+        <!-- Demande associée (optionnel) -->
+        <div>
+          <label class="mb-1.5 block text-sm font-bold text-[#142337]">
+            Demande associée
+            <span class="font-normal text-slate-400">(optionnel)</span>
+          </label>
+          <select
+            (change)="nouvelIdDemande.set($any($event.target).value ? Number($any($event.target).value) : null)"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+          >
+            <option value="">Aucune demande spécifique</option>
+            @for (demande of demandes(); track demande.idDemande) {
+              <option [value]="demande.idDemande">
+                #{{ demande.idDemande }} — {{ demande.typeDechet?.nom }} ({{ demande.quartier }})
+              </option>
+            }
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Boutons -->
+      <div class="mt-6 flex gap-3">
+        <button
+          (click)="fermerModal()"
+          type="button"
+          class="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+        >
+          Annuler
+        </button>
+        <button
+          (click)="planifierCollecte()"
+          [disabled]="!nouvelleDatePlanifiee() || enCreation()"
+          type="button"
+          class="flex-1 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:opacity-50"
+        >
+          {{ enCreation() ? 'Planification...' : 'Planifier' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

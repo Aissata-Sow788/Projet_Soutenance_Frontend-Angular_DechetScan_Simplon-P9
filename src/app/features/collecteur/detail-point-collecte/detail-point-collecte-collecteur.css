@@ -1,0 +1,6 @@
+/* Styles spécifiques à la page détail point de collecte */
+.collecteur-detail-map {
+  width: 100%;
+  height: 320px;
+  z-index: 0;
+}

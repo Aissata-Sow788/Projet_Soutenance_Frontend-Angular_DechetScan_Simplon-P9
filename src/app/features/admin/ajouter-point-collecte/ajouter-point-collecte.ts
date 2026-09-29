@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { PointCollecteService } from '../../../core/services/point-collecte';
-import { TypeDechetPoint } from '../../../shared/models/point-collecte.model';
+import { PointCollecteCreation, TypeDechetPoint } from '../../../shared/models/point-collecte.model';
 
 @Component({
   imports: [CommonModule, ReactiveFormsModule],
@@ -20,6 +20,7 @@ export class AjouterPointCollecte implements OnInit {
 
   // Permet de naviguer après l'enregistrement.
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // Service chargé des appels API des points de collecte.
   private pointCollecteService = inject(PointCollecteService);
@@ -41,6 +42,9 @@ export class AjouterPointCollecte implements OnInit {
 
   // Message affiché après une erreur de géolocalisation.
   erreurGeolocalisation = signal<string | null>(null);
+  readonly estModification = signal(false);
+  private idPointExistant: number | null = null;
+  readonly estEspaceCollecteur = signal(false);
 
   // Formulaire correspondant aux champs du modèle Django.
   formulaire = this.formBuilder.nonNullable.group({
@@ -67,8 +71,43 @@ export class AjouterPointCollecte implements OnInit {
     heureFermeture: ['19:00', Validators.required]});
 
   ngOnInit(): void {
+    this.estEspaceCollecteur.set(this.router.url.startsWith('/collecteur/'));
+    const id = this.route.snapshot.queryParamMap.get('id');
+    if (id) {
+      const idPoint = Number(id);
+      if (Number.isInteger(idPoint) && idPoint > 0) {
+        this.idPointExistant = idPoint;
+        this.estModification.set(true);
+        this.chargerPointExistant(idPoint);
+      } else {
+        this.erreur.set('Identifiant de point de collecte invalide.');
+      }
+    }
+
     // Charge les vrais types de déchets depuis Django.
     this.chargerTypesDechets();
+  }
+
+  private chargerPointExistant(idPoint: number): void {
+    this.pointCollecteService.obtenirPoint(idPoint).subscribe({
+      next: point => {
+        this.formulaire.patchValue({
+          nom: point.nom,
+          ville: point.ville,
+          latitude: point.latitude,
+          longitude: point.longitude,
+          statut: point.statut,
+          heureOuverture: point.heureOuverture,
+          heureFermeture: point.heureFermeture,
+        });
+        this.dechetsSelectionnes.set(
+          point.dechetsAcceptes.map(dechet => dechet.idTypeDechet)
+        );
+      },
+      error: () => {
+        this.erreur.set('Impossible de charger les données du point à modifier.');
+      },
+    });
   }
 
   /**
@@ -189,7 +228,9 @@ export class AjouterPointCollecte implements OnInit {
    * Retourne vers la liste des points de collecte.
    */
   retourPointsCollecte(): void {
-    this.router.navigate(['/admin/points-collecte']);
+    this.router.navigate([
+      this.estEspaceCollecteur() ? '/collecteur/points-collecte' : '/admin/admin-collecte',
+    ]);
   }
 
   /**
@@ -236,7 +277,7 @@ export class AjouterPointCollecte implements OnInit {
 
     // Prépare exactement la structure attendue
     // par PointCollecteEcritureSerializer.
-    const donnees = {
+    const donnees: PointCollecteCreation = {
       nom: valeurs.nom.trim(),
       ville: valeurs.ville.trim(),
       latitude: Number(valeurs.latitude),
@@ -252,8 +293,11 @@ export class AjouterPointCollecte implements OnInit {
       donnees
     );
 
-    // Appel POST réel vers /api/points-collecte/.
-    this.pointCollecteService.creerPointCollecte(donnees).subscribe({
+    const requete = this.idPointExistant
+      ? this.pointCollecteService.modifierPointCollecte(this.idPointExistant, donnees)
+      : this.pointCollecteService.creerPointCollecte(donnees);
+
+    requete.subscribe({
 
       next: (point) => {
 

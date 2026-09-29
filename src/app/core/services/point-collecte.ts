@@ -48,6 +48,22 @@ export class PointCollecteService {
     );
   }
 
+  modifierPointCollecte(
+    idPoint: number,
+    donnees: PointCollecteCreation
+  ): Observable<PointCollecte> {
+    return this.http.patch<PointCollecte>(
+      `${this.baseUrl}points-collecte/${idPoint}/`,
+      donnees
+    );
+  }
+
+  supprimerPointCollecte(idPoint: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}points-collecte/${idPoint}/`
+    );
+  }
+
 // Calcule la distance à vol d'oiseau entre deux coordonnées GPS
 // grâce à la formule de Haversine.
 calculerDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {

@@ -89,7 +89,9 @@ export class ScanService {
     // Le nom doit correspondre au champ du serializer Django.
     formData.append('photoUrl', fichier);
 
-    // Django enregistre la photo puis lance l'analyse IA.
+    // Django enregistre la photo, lance l'analyse IA puis crée une notification
+    // persistante si l'utilisateur connecté a effectué le scan.
+    // Pour un visiteur anonyme, le remerciement est renvoyé dans la réponse.
     return this.http.post<ScanDechet>(
       `${this.baseUrl}scans/`,
       formData

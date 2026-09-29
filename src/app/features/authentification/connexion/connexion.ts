@@ -49,13 +49,14 @@ export class Connexion {
         ]
       ],
 
-      // Le mot de passe est obligatoire et doit contenir
-      // au minimum 8 caractères.
+      // Le mot de passe est obligatoire.
+      // minLength à 6 pour correspondre à la configuration Django
+      // (certains comptes ont été créés avec 6 ou 7 caractères).
       motDePasse: [
         '',
         [
           Validators.required,
-          Validators.minLength(8),
+          Validators.minLength(6),
           Validators.maxLength(128)
         ]
       ]

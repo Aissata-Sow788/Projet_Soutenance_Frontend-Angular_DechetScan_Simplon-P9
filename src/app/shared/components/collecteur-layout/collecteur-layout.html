@@ -1,0 +1,25 @@
+<!--
+  Layout global de l'espace collecteur.
+  Structure identique au layout admin :
+  - Sidebar fixe à gauche (220px)
+  - Header fixe en haut (60px)
+  - Contenu principal décalé
+-->
+<div class="min-h-screen bg-[#F5F7FC]">
+
+  <!-- Sidebar collecteur réutilisable sur toutes les pages -->
+  <app-sidebar-collecteur></app-sidebar-collecteur>
+
+  <!-- Header collecteur réutilisable sur toutes les pages -->
+  <app-header-collecteur></app-header-collecteur>
+
+  <!--
+    Zone de contenu : chaque page collecteur s'affiche ici.
+    pt-[60px] pour ne pas se cacher sous le header fixe.
+    lg:ml-[220px] pour ne pas se cacher sous le sidebar.
+  -->
+  <main class="min-h-screen pt-[60px] lg:ml-[220px]">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

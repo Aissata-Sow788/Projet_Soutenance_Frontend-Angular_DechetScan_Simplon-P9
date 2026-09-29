@@ -1,0 +1,413 @@
+<!-- Page Paiements — le collecteur règle les citoyens vendeurs -->
+<div class="p-6 xl:p-8">
+
+  <!-- ─── EN-TÊTE ──────────────────────────────────────────── -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-[#142337]">Paiements</h1>
+    <p class="mt-1 text-sm text-slate-500">
+      Réglez les citoyens pour les déchets qu'ils vous ont vendus.
+    </p>
+  </div>
+
+  <!-- ─── MESSAGE RETOUR PAYDUNYA ──────────────────────────── -->
+  @if (message()) {
+    <div
+      class="mb-5 flex items-center gap-2 rounded-xl border border-[#BDEBE0] bg-[#EFFBF5] px-4 py-3 text-sm text-[#196B61]"
+    >
+      {{ message() }}
+      @if (paiementEnVerification()) {
+        <span class="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-[#0EA5A4] border-t-transparent"></span>
+      }
+    </div>
+  }
+
+  @if (erreur()) {
+    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ erreur() }}
+    </div>
+  }
+
+  <!-- ─── CHARGEMENT ────────────────────────────────────────── -->
+  @if (chargement()) {
+    <div class="flex items-center justify-center py-20">
+      <div class="flex items-center gap-2 text-sm text-slate-400">
+        <span class="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+        Chargement des paiements...
+      </div>
+    </div>
+  }
+
+  @else {
+
+    <!-- ─── CARTES STATISTIQUES ───────────────────────────── -->
+    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+      <!-- À payer -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          À payer
+        </p>
+        <p class="mt-2 text-3xl font-black text-[#142337]">
+          {{ nbAPayer() }}
+          <span class="text-base font-normal text-slate-400">ventes</span>
+        </p>
+        <p class="mt-1 text-sm font-semibold text-orange-500">
+          {{ montantAPayer() | number:'1.0-0' }} FCFA en attente
+        </p>
+      </div>
+
+      <!-- Déjà payé -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          Déjà payé
+        </p>
+        <p class="mt-2 text-3xl font-black text-[#142337]">
+          {{ montantPaye() | number:'1.0-0' }}
+          <span class="text-base font-normal text-slate-400">FCFA</span>
+        </p>
+        <p class="mt-1 text-sm font-semibold text-green-600">
+          Citoyens réglés
+        </p>
+      </div>
+
+      <!-- Total ventes -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          Total ventes
+        </p>
+        <p class="mt-2 text-3xl font-black text-[#142337]">
+          {{ ventes().length }}
+        </p>
+        <p class="mt-1 text-sm text-slate-400">transactions</p>
+      </div>
+
+    </div>
+
+    <!-- ─── ONGLETS ────────────────────────────────────────── -->
+    <div class="mb-5 flex gap-1 border-b border-slate-200">
+
+      <button
+        type="button"
+        (click)="changerOnglet('a_payer')"
+        class="px-4 py-2.5 text-sm font-semibold transition"
+        [ngClass]="onglet() === 'a_payer'
+          ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
+          : 'text-slate-500 hover:text-[#142337]'"
+      >
+        À payer
+        @if (nbAPayer() > 0) {
+          <span class="ml-1.5 rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-bold text-orange-600">
+            {{ nbAPayer() }}
+          </span>
+        }
+      </button>
+
+      <button
+        type="button"
+        (click)="changerOnglet('payees')"
+        class="px-4 py-2.5 text-sm font-semibold transition"
+        [ngClass]="onglet() === 'payees'
+          ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
+          : 'text-slate-500 hover:text-[#142337]'"
+      >
+        Payées
+      </button>
+
+      <button
+        type="button"
+        (click)="changerOnglet('tout')"
+        class="px-4 py-2.5 text-sm font-semibold transition"
+        [ngClass]="onglet() === 'tout'
+          ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
+          : 'text-slate-500 hover:text-[#142337]'"
+      >
+        Tout
+      </button>
+
+    </div>
+
+    <!-- ─── TABLEAU ───────────────────────────────────────── -->
+    <div class="rounded-2xl bg-white shadow-sm">
+
+      @if (ventesFiltrees().length === 0) {
+        <div class="py-16 text-center text-sm text-slate-400">
+          @if (onglet() === 'a_payer') {
+            Aucune vente en attente de paiement.
+          } @else {
+            Aucune vente dans cet onglet.
+          }
+        </div>
+      } @else {
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-100">
+                <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Déchet</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Montant</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (vente of ventesFiltrees(); track vente.idVente) {
+                <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                  <!-- Citoyen : avatar + nom -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#C9F5EF] text-xs font-bold text-[#087C78]">
+                        {{ initiales(vente) }}
+                      </div>
+                      <div class="min-w-0">
+                        <p class="truncate text-sm font-semibold text-[#142337]">
+                          {{ nomCitoyen(vente) }}
+                        </p>
+                        <p class="truncate text-xs text-slate-400">
+                          {{ vente.emailUtilisateur ?? '—' }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Type de déchet -->
+                  <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
+                      <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                        <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round">
+                          <path d="M3 7l3 9h12l3-9H3z"></path>
+                        </svg>
+                      </div>
+                      <span class="font-medium text-[#142337]">
+                        {{ vente.typeDechet?.nom ?? '—' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Quantité -->
+                  <td class="px-4 py-4 text-slate-600">
+                    {{ vente.quantite }} kg
+                  </td>
+
+                  <!-- Montant en gras -->
+                  <td class="px-4 py-4">
+                    <span class="font-bold text-[#142337]">
+                      {{ vente.prixPaye | number:'1.0-0' }} FCFA
+                    </span>
+                  </td>
+
+                  <!-- Badge statut -->
+                  <td class="px-4 py-4">
+                    <span
+                      class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold"
+                      [ngClass]="classeStatut(vente.statutPaiement)"
+                    >
+                      {{ libelleStatut(vente.statutPaiement) }}
+                    </span>
+                  </td>
+
+                  <!-- Date -->
+                  <td class="px-4 py-4 text-xs text-slate-500">
+                    {{ formaterDate(vente.dateVente) }}
+                  </td>
+
+                  <!-- Bouton Payer (visible uniquement si en_attente) -->
+                  <td class="px-4 py-4">
+                    @if (vente.statutPaiement === 'en_attente') {
+                      <button
+                        type="button"
+                        (click)="ouvrirPaiement(vente)"
+                        class="rounded-lg bg-[#0EA5A4] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#087C78] whitespace-nowrap"
+                      >
+                        Payer →
+                      </button>
+                    } @else {
+                      <span class="text-xs text-slate-300">—</span>
+                    }
+                  </td>
+
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+      }
+    </div>
+
+  }
+
+</div>
+
+
+<!-- ============================================================
+     MODAL — CHOIX DE L'OPÉRATEUR DE PAIEMENT
+     Ouvert quand le collecteur clique sur "Payer →"
+     ============================================================ -->
+@if (modalOuvert() && venteSelectionnee()) {
+  <div
+    class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/55 sm:items-center sm:p-5"
+    (click)="fermerModal()"
+  >
+    <section
+      class="max-h-[94vh] w-full overflow-y-auto rounded-t-[28px] bg-white px-6 pb-8 pt-7 shadow-2xl sm:max-w-[540px] sm:rounded-[28px] sm:px-10 sm:pb-10 sm:pt-9"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Poignée mobile -->
+      <div class="mx-auto mb-5 h-1 w-12 rounded-full bg-slate-200 sm:hidden"></div>
+
+      <!-- En-tête modal -->
+      <div class="flex items-start gap-3">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E8F8F6] text-[#07978C]">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <path d="M2 10h20"></path>
+          </svg>
+        </span>
+        <div class="flex-1">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-[#0EA5A4]">
+            Paiement sécurisé PayDunya
+          </p>
+          <h2 class="mt-1 text-xl font-extrabold leading-tight text-[#17283D]">
+            Régler ce citoyen
+          </h2>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
+          (click)="fermerModal()"
+          aria-label="Fermer"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M4.3 4.3a1 1 0 0 1 1.4 0l4.3 4.3 4.3-4.3a1 1 0 1 1 1.4 1.4l-4.3 4.3 4.3 4.3a1 1 0 0 1-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 0 1-1.4-1.4L8.6 10 4.3 5.7a1 1 0 0 1 0-1.4Z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Récapitulatif de la vente -->
+      <div class="mt-5 rounded-2xl border border-slate-100 bg-[#F7F9FA] px-5 py-4">
+        <div class="grid grid-cols-2 gap-3 text-sm">
+
+          <div>
+            <p class="text-[10px] font-bold uppercase text-slate-400">Citoyen</p>
+            <p class="mt-0.5 font-semibold text-[#142337]">
+              {{ nomCitoyen(venteSelectionnee()!) }}
+            </p>
+          </div>
+
+          <div>
+            <p class="text-[10px] font-bold uppercase text-slate-400">Déchet</p>
+            <p class="mt-0.5 font-semibold text-[#142337]">
+              {{ venteSelectionnee()!.typeDechet?.nom ?? '—' }}
+              — {{ venteSelectionnee()!.quantite }} kg
+            </p>
+          </div>
+
+          <div class="col-span-2 border-t border-slate-200 pt-3">
+            <p class="text-[10px] font-bold uppercase text-slate-400">
+              Montant à payer
+            </p>
+            <p class="mt-0.5 text-2xl font-black text-[#0EA5A4]">
+              {{ venteSelectionnee()!.prixPaye | number:'1.0-0' }} FCFA
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Erreur paiement -->
+      @if (erreurPaiement()) {
+        <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {{ erreurPaiement() }}
+        </div>
+      }
+
+      <!-- Choix opérateur -->
+      <p class="mt-5 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+        Choisissez l'opérateur de paiement
+      </p>
+
+      <div class="space-y-3">
+        @for (op of operateurs; track op.code) {
+          <button
+            type="button"
+            (click)="choisirOperateur(op.code)"
+            class="flex w-full items-center gap-4 rounded-2xl border-2 px-4 py-4 text-left transition"
+            [ngClass]="operateurSelectionne() === op.code
+              ? 'border-[#0EA5A4] bg-[#F7FCFB]'
+              : 'border-slate-100 bg-white hover:border-slate-300'"
+          >
+            <!-- Logo de l'opérateur -->
+            <img
+              [src]="op.code === 'wave'
+                ? 'assets/payment-operators/wave-logo.png'
+                : 'assets/payment-operators/orange-money-logo.png'"
+              [alt]="op.label"
+              class="h-12 w-28 shrink-0 rounded-lg"
+              [ngClass]="op.code === 'wave'
+                ? 'bg-[#00BFFF] object-contain'
+                : 'bg-white object-cover'"
+            />
+
+            <span class="flex-1 min-w-0">
+              <span class="block text-base font-bold text-[#17283D]">
+                {{ op.label }}
+              </span>
+              <span class="mt-0.5 block text-xs text-slate-400">
+                {{ op.description }}
+              </span>
+            </span>
+
+            <!-- Radio visuel -->
+            <span
+              class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2"
+              [ngClass]="operateurSelectionne() === op.code
+                ? 'border-[#0EA5A4]'
+                : 'border-slate-300'"
+            >
+              @if (operateurSelectionne() === op.code) {
+                <span class="h-3.5 w-3.5 rounded-full bg-[#0EA5A4]"></span>
+              }
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- Bouton confirmer le paiement -->
+      <button
+        type="button"
+        class="mt-6 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-5 text-base font-bold text-white shadow-md transition hover:bg-[#0B9291] disabled:cursor-wait disabled:opacity-60"
+        [disabled]="chargementPaiement()"
+        (click)="continuerVersPaiement()"
+      >
+        @if (chargementPaiement()) {
+          <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+          Création du paiement...
+        } @else {
+          Confirmer et payer → {{ venteSelectionnee()!.prixPaye | number:'1.0-0' }} FCFA
+        }
+      </button>
+
+      <!-- Annuler -->
+      <button
+        type="button"
+        class="mt-4 w-full py-2 text-sm font-medium text-slate-500 hover:text-[#17283D]"
+        (click)="fermerModal()"
+      >
+        Annuler
+      </button>
+
+      <!-- Note sécurité -->
+      <p class="mt-4 text-center text-[11px] text-slate-400">
+        Paiement chiffré et traité par PayDunya
+      </p>
+
+    </section>
+  </div>
+}

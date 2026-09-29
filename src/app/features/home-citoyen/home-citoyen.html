@@ -3,7 +3,7 @@
      Les données affichées proviennent des services Angular
      et des API Django.
 ========================================================= -->
-<div class="min-h-screen bg-[#f3f4f3] pb-[106px] text-[#142337]">
+<div class="citizen-responsive citizen-dashboard min-h-screen bg-[#f3f4f3] pb-[106px] text-[#142337]">
 
   <!-- =======================================================
        HEADER
@@ -44,7 +44,7 @@
   <!-- =======================================================
        CONTENU PRINCIPAL
        ======================================================= -->
-  <main class="px-[21px] pt-[14px]">
+  <main class="citizen-content px-[21px] pt-[14px]">
 
     <!-- =====================================================
          BADGES
@@ -164,6 +164,87 @@
       <span class="text-[18px] font-bold">
         Voir mon historique
       </span>
+
+    </button>
+
+
+    <!-- Action directe vers le formulaire de ramassage citoyen. -->
+    <button
+      type="button"
+      (click)="demanderRamassage()"
+      class="mt-[10px] flex h-[56px] w-full items-center justify-center gap-[11px] rounded-[21px] border border-[#8bd8d0] bg-white text-[#087c72] shadow-[0_3px_10px_rgba(15,23,42,0.04)]"
+    >
+      <svg
+        class="h-[24px] w-[24px]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M2 7h12v10H2z"/>
+        <path d="M14 10h4l4 4v3h-8z"/>
+        <circle cx="6" cy="18" r="2"/>
+        <circle cx="18" cy="18" r="2"/>
+        <path d="M7 4a5 5 0 0 1 8 2M15 3v3h-3"/>
+      </svg>
+
+      <span class="text-[16px] font-bold">
+        Demander un ramassage
+      </span>
+    </button>
+
+
+    <!-- =====================================================
+         BOUTON VENDRE MES DÉCHETS
+         Action secondaire — mêmes marges que Scanner un déchet.
+         Fond blanc, bordure 2px turquoise, icône recyclage+FCFA.
+         ===================================================== -->
+    <button
+      type="button"
+      (click)="vendreDechets()"
+      class="mt-[10px] flex h-[56px] w-full items-center justify-center gap-[11px] rounded-[21px] border-2 border-[#0EA5A4] bg-white text-[#087c72] shadow-[0_3px_10px_rgba(14,165,164,0.10)]"
+    >
+
+      <!-- Icône sac + symbole monétaire (valorisation déchets) -->
+      <svg
+        class="h-[24px] w-[24px] shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <!-- Sac/bourse -->
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <!-- Symbole monnaie / valeur -->
+        <path d="M12 11v6"/>
+        <path d="M9.5 13.5c0-1.1.9-2 2.5-2s2.5.9 2.5 2-.9 1.5-2.5 1.5-2.5.9-2.5 2 .9 2 2.5 2 2.5-.9 2.5-2"/>
+      </svg>
+
+      <span class="text-[16px] font-bold">
+        Vendre mes déchets
+      </span>
+
+      <!-- Flèche indicateur d'action -->
+      <svg
+        class="h-[18px] w-[18px] shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M5 12h14"/>
+        <path d="m13 6 6 6-6 6"/>
+      </svg>
 
     </button>
 
@@ -644,6 +725,52 @@
       </button>
 
     </section>
+
+
+    <!-- Invitation compacte à rejoindre le réseau professionnel. -->
+    <button
+      type="button"
+      routerLink="/devenir-collecteur"
+      class="mt-[24px] flex w-full items-start gap-[14px] rounded-[21px] border border-[#b8e4df] bg-white p-[16px] text-left shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
+    >
+      <span class="flex h-[48px] w-[48px] flex-shrink-0 items-center justify-center rounded-[15px] bg-[#c7f5ee] text-[#087c72]">
+        <svg
+          class="h-[25px] w-[25px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M2 7h12v10H2z"/>
+          <path d="M14 10h4l4 4v3h-8z"/>
+          <circle cx="6" cy="18" r="2"/>
+          <circle cx="18" cy="18" r="2"/>
+          <path d="M7 4a5 5 0 0 1 8 2M15 3v3h-3"/>
+        </svg>
+      </span>
+
+      <span class="min-w-0 flex-1">
+        <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span class="text-[18px] font-bold leading-tight text-[#142337]">
+            Devenir collecteur
+          </span>
+          <span class="rounded-full bg-[#e5f1ef] px-[9px] py-[3px] text-[10px] font-semibold text-[#087c72]">
+            Espace professionnel
+          </span>
+        </span>
+
+        <span class="mt-[5px] block text-[13px] leading-[1.45] text-[#536064]">
+          Rejoignez le réseau DechetScan et recevez des demandes de collecte près de chez vous.
+        </span>
+
+        <span class="mt-[9px] block text-[13px] font-bold text-[#087c72]">
+          Devenir collecteur →
+        </span>
+      </span>
+    </button>
 
   </main>
 

@@ -103,6 +103,21 @@ export class Profile implements OnInit {
     this.router.navigate(['/profil/modifier']);
   }
 
+  /** Ouvre la liste des demandes de collecte du citoyen connecté. */
+  voirDemandes(): void {
+    this.router.navigate(['/mes-demandes']);
+  }
+
+  /** Ouvre l'historique réel des scans déjà présent dans l'application. */
+  voirHistoriqueScans(): void {
+    this.router.navigate(['/historique']);
+  }
+
+  /** Ouvre la boîte de notifications existante. */
+  voirNotifications(): void {
+    this.router.navigate(['/notification']);
+  }
+
   // Déconnecte l'utilisateur.
   deconnecter(): void {
 

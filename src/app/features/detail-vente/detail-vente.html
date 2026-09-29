@@ -1,0 +1,265 @@
+<!-- Page Détail de la vente — citoyen mobile -->
+<div class="citizen-responsive citizen-detail min-h-screen bg-[#F3F4F4] pb-10">
+
+  <!-- ─── HEADER ──────────────────────────────────────────── -->
+  <header class="flex h-14 items-center bg-white px-4 shadow-sm">
+    <button
+      type="button"
+      (click)="retour()"
+      aria-label="Retour"
+      class="flex h-9 w-9 items-center justify-center rounded-full bg-[#F3F4F4] text-[#142337]"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5"></path>
+        <path d="M12 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+    <h1 class="ml-3 text-[17px] font-bold text-[#142337]">Détail de la vente</h1>
+  </header>
+
+  <!-- ─── CHARGEMENT ───────────────────────────────────────── -->
+  @if (chargement()) {
+    <div class="flex items-center justify-center py-20">
+      <span class="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+    </div>
+  }
+
+  @else if (erreur()) {
+    <div class="mx-4 mt-6 rounded-2xl bg-red-50 p-4 text-sm text-red-600">
+      {{ erreur() }}
+    </div>
+  }
+
+  @else if (vente()) {
+
+    <main class="citizen-content mx-4 mt-5 space-y-4">
+
+      <!-- ─── CARTE TYPE DE DÉCHET + STATUT ──────────────── -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+
+        <div class="flex items-start gap-4">
+
+          <!-- Icône type de déchet -->
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E0F9F7]">
+            <svg class="h-6 w-6 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="m7 19-3-3 3-3"></path>
+              <path d="M4 16h11a4 4 0 0 0 4-4V9"></path>
+              <path d="m17 5 3 3-3 3"></path>
+              <path d="M20 8H9a4 4 0 0 0-4 4v3"></path>
+            </svg>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <!-- Badge statut paiement -->
+            <span
+              class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-bold"
+              [ngClass]="classeBadge(vente()!.statutPaiement)"
+            >
+              <span class="h-2 w-2 rounded-full bg-current opacity-70"></span>
+              {{ libellePaiement(vente()!.statutPaiement) }}
+            </span>
+
+            <!-- Nom du type de déchet -->
+            <p class="mt-2 text-[22px] font-black text-[#142337]">
+              {{ vente()!.typeDechet?.nom ?? 'Déchet' }}
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Quantité + Montant côte à côte -->
+        <div class="mt-5 grid grid-cols-2 gap-3">
+
+          <div class="rounded-xl bg-[#F3F4F4] px-4 py-3">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              QUANTITÉ
+            </p>
+            <p class="mt-1 text-[20px] font-black text-[#142337]">
+              {{ vente()!.quantite }} kg
+            </p>
+          </div>
+
+          <div class="rounded-xl bg-[#E0F9F7] px-4 py-3">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-[#087C78]">
+              MONTANT
+            </p>
+            <p class="mt-1 text-[20px] font-black text-[#0EA5A4]">
+              {{ vente()!.prixPaye | number:'1.0-0' }} FCFA
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ─── INFORMATIONS DE LA VENTE ───────────────────── -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+
+        <p class="mb-4 text-[11px] font-bold uppercase tracking-widest text-[#142337]">
+          INFORMATIONS DE LA VENTE
+        </p>
+
+        <!-- Tableau des infos -->
+        <div class="space-y-3">
+
+          <!-- Date -->
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] text-slate-500">Date de la vente</span>
+            <span class="text-[14px] font-bold text-[#142337]">
+              {{ formaterDateLongue(vente()!.dateVente) }}
+            </span>
+          </div>
+
+          <div class="h-px bg-slate-100"></div>
+
+          <!-- Type déchet -->
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] text-slate-500">Type de déchet</span>
+            <span class="text-[14px] font-bold text-[#142337]">
+              {{ vente()!.typeDechet?.nom ?? '—' }}
+            </span>
+          </div>
+
+          <div class="h-px bg-slate-100"></div>
+
+          <!-- Quantité -->
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] text-slate-500">Quantité</span>
+            <span class="text-[14px] font-bold text-[#142337]">
+              {{ vente()!.quantite }} kg
+            </span>
+          </div>
+
+          <div class="h-px bg-slate-100"></div>
+
+          <!-- Prix unitaire calculé -->
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] text-slate-500">Prix unitaire</span>
+            <span class="text-[14px] font-bold text-[#142337]">
+              {{ prixUnitaire() | number:'1.0-0' }} FCFA/kg
+            </span>
+          </div>
+
+          <div class="h-px bg-slate-100"></div>
+
+          <!-- Montant brut -->
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] text-slate-500">Montant brut</span>
+            <span class="text-[14px] font-bold text-[#142337]">
+              {{ vente()!.prixPaye | number:'1.0-0' }} FCFA
+            </span>
+          </div>
+
+          <div class="h-px bg-slate-100"></div>
+
+          <!-- Commission (0 pour l'instant) -->
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] text-slate-500">Commission</span>
+            <span class="text-[14px] font-bold text-[#142337]">0 FCFA</span>
+          </div>
+
+          <div class="h-px bg-slate-200"></div>
+
+          <!-- Montant net reçu -->
+          <div class="flex items-center justify-between">
+            <span class="text-[15px] font-bold text-[#142337]">Montant net reçu</span>
+            <span class="text-[18px] font-black text-[#0EA5A4]">
+              {{ vente()!.prixPaye | number:'1.0-0' }} FCFA
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ─── COLLECTEUR ──────────────────────────────────── -->
+      @if (vente()!.nomCollecteur || vente()!.idCollecteur) {
+        <div class="rounded-2xl bg-white p-5 shadow-sm">
+
+          <p class="mb-4 text-[11px] font-bold uppercase tracking-widest text-[#142337]">
+            COLLECTEUR
+          </p>
+
+          <div class="flex items-center gap-3">
+
+            <!-- Avatar initiales -->
+            <div
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#0EA5A4] text-sm font-black text-white"
+            >
+              {{ initialesCollecteur(vente()!.nomCollecteur) }}
+            </div>
+
+            <!-- Nom + badge -->
+            <div class="flex-1 min-w-0">
+              <p class="text-[16px] font-bold text-[#142337] truncate">
+                {{ vente()!.nomCollecteur ?? 'Collecteur' }}
+              </p>
+              <p class="text-xs text-slate-400">Collecteur certifié</p>
+            </div>
+
+            <!-- Boutons contact -->
+            <div class="flex gap-2 shrink-0">
+
+              <!-- Téléphone -->
+              <button
+                type="button"
+                (click)="appelerCollecteur()"
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-[#E0F9F7] text-[#0EA5A4]"
+                aria-label="Appeler"
+              >
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1A19.5 19.5 0 0 1 5 13.2 19.8 19.8 0 0 1 2.1 4.6 2 2 0 0 1 4 2.4h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.45 2.1l-1.3 1.3a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45 12.8 12.8 0 0 0 2.8.7A2 2 0 0 1 22 16.9z"></path>
+                </svg>
+              </button>
+
+              <!-- Message -->
+              <button
+                type="button"
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-[#E0F9F7] text-[#0EA5A4]"
+                aria-label="Message"
+              >
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      }
+
+      <!-- ─── MÉTHODE DE PAIEMENT ─────────────────────────── -->
+      @if (vente()!.methodePaiement) {
+        <div class="rounded-2xl bg-white p-5 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] text-slate-500">Méthode de paiement</span>
+            <span class="text-[14px] font-bold text-[#142337]">
+              {{ vente()!.methodePaiement }}
+            </span>
+          </div>
+          @if (vente()!.referencePaiement) {
+            <div class="mt-3 flex items-center justify-between">
+              <span class="text-[14px] text-slate-500">Référence</span>
+              <span class="text-[12px] font-mono font-semibold text-slate-400">
+                {{ vente()!.referencePaiement }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+
+    </main>
+
+  }
+
+</div>

@@ -1,0 +1,72 @@
+<!--
+  Header commun à toutes les pages de l'espace collecteur.
+  Positionné à droite du sidebar sur desktop.
+  Affiche le nom du collecteur, son statut et les notifications.
+-->
+<header
+  class="fixed right-0 top-0 z-30 flex h-[60px] items-center justify-between border-b border-slate-100 bg-white px-4 lg:left-[220px] xl:px-6"
+>
+
+  <!-- ========================================================= -->
+  <!-- TITRE DE LA PAGE (slot dynamique) -->
+  <!-- ========================================================= -->
+
+  <div class="hidden lg:block">
+    <h1 class="text-[15px] font-bold text-[#142337]">
+      Dashboard collecteur
+    </h1>
+  </div>
+
+
+  <!-- ========================================================= -->
+  <!-- ACTIONS À DROITE -->
+  <!-- ========================================================= -->
+
+  <div class="ml-auto flex items-center gap-3">
+
+    <!-- Notifications -->
+    <button
+      type="button"
+      (click)="ouvrirNotifications()"
+      class="relative flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-50 hover:text-[#087C78]"
+      aria-label="Notifications"
+    >
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+        <path d="M10 21h4"></path>
+      </svg>
+      <!-- Indicateur de nouvelle notification -->
+      <span class="absolute right-1.5 top-1.5 h-1 w-1 rounded-full bg-[#0EA5A4]"></span>
+    </button>
+
+    <!-- Infos collecteur -->
+    <div class="hidden items-center gap-2 sm:flex">
+      <div class="text-right leading-tight">
+        <p class="text-[11px] font-bold text-[#142337]">{{ nomAffiche() }}</p>
+        <p class="text-[9px] font-semibold uppercase tracking-wide text-[#087C78]">
+          Collecteur Agréé
+        </p>
+      </div>
+
+      <!-- Avatar collecteur -->
+      <button
+        routerLink="/collecteur/profil"
+        type="button"
+        class="flex h-9 w-9 items-center justify-center rounded-full bg-[#0EA5A4] text-white font-bold text-sm"
+        aria-label="Profil collecteur"
+      >
+        {{ initiales() }}
+      </button>
+
+      <!-- Flèche dropdown (décorative pour l'instant) -->
+      <svg class="h-3.5 w-3.5 text-slate-400" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9l6 6 6-6"></path>
+      </svg>
+
+    </div>
+
+  </div>
+
+</header>

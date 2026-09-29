@@ -162,10 +162,14 @@ export class PointsCollecte implements OnInit {
   // Ouvre le détail du point.
   ouvrirDetail(point: PointCollecte): void {
 
-    // Navigue vers la page détail citoyenne existante.
-    this.router.navigate(['/points-collecte', point.idPoint]);
+    this.router.navigate(['/admin/points-collecte', point.idPoint]);
   }
 
+  modifierPoint(point: PointCollecte): void {
+    this.router.navigate(['/admin/ajouter-point-collecte'], {
+      queryParams: { id: point.idPoint },
+    });
+  }
 
 async supprimerPoint(point: PointCollecte): Promise<void> {
 
@@ -190,10 +194,30 @@ async supprimerPoint(point: PointCollecte): Promise<void> {
     return;
   }
 
-  // Pour le moment : suppression confirmée.
-  console.log('Suppression confirmée :', point);
-
-  // Ici nous ajouterons ensuite l'appel à l'API Django.
+  this.pointCollecteService.supprimerPointCollecte(point.idPoint).subscribe({
+    next: () => {
+      this.points.update(points => points.filter(
+        element => element.idPoint !== point.idPoint
+      ));
+      this.carte?.remove();
+      this.carte = null;
+      setTimeout(() => this.initialiserCarte(), 100);
+      void Swal.fire({
+        title: 'Point supprimé',
+        text: 'Le point de collecte a bien été supprimé.',
+        icon: 'success',
+        confirmButtonColor: '#0eaaa9',
+      });
+    },
+    error: () => {
+      void Swal.fire({
+        title: 'Suppression impossible',
+        text: 'Le point de collecte n’a pas pu être supprimé. Veuillez réessayer.',
+        icon: 'error',
+        confirmButtonColor: '#0eaaa9',
+      });
+    },
+  });
 }
 
 

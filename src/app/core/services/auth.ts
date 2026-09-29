@@ -5,7 +5,14 @@ import { Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 // Importe tous les modèles utilisés par le service Auth.
-import {Utilisateur, LoginPayload, LoginResponse, RegisterPayload, RegisterResponse} from '../../shared/models/utilisateur.model';
+import {
+  Utilisateur,
+  LoginPayload,
+  LoginResponse,
+  RegisterPayload,
+  RegisterResponse,
+} from '../../shared/models/utilisateur.model';
+import { ChangementMotDePasse } from '../../shared/models/collecteur.model';
 
 @Injectable({
   // Rend le service disponible dans toute l'application.
@@ -95,6 +102,32 @@ export class Auth {
       );
   }
 
+  /**
+   * Enregistre le profil côté Django, puis synchronise le cache local.
+   */
+  mettreAJourProfil(
+    informations: Pick<
+      Utilisateur,
+      'first_name' | 'last_name' | 'email' | 'telephone' | 'ville'
+    >
+  ): Observable<Utilisateur> {
+    return this.httpurl.patch<Utilisateur>(
+      `${this.apiUrl}/me/`,
+      informations
+    ).pipe(
+      tap((utilisateur) => this.stockerUtilisateur(utilisateur))
+    );
+  }
+
+  changerMotDePasse(
+    donnees: ChangementMotDePasse
+  ): Observable<{ detail: string }> {
+    return this.httpurl.post<{ detail: string }>(
+      `${this.apiUrl}/me/password/`,
+      donnees
+    );
+  }
+
 
   // ============================================================
   // DÉCONNEXION
@@ -124,6 +157,15 @@ export class Auth {
 
     // Transforme le JSON en objet utilisateur.
     return raw ? JSON.parse(raw) : null;
+  }
+
+  mettreAJourUtilisateur(
+    informations: Pick<Utilisateur, 'first_name' | 'last_name' | 'email' | 'telephone' | 'ville'>
+  ): void {
+    const utilisateur = this.getCurrentUser();
+    if (utilisateur) {
+      this.stockerUtilisateur({ ...utilisateur, ...informations });
+    }
   }
 
 

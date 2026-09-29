@@ -1,0 +1,32 @@
+/* Carte Leaflet de l'espace collecteur. */
+#carte-collecteur-points {
+  z-index: 1;
+}
+
+#carte-collecteur-points .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.marqueur-point-collecteur {
+  background: transparent !important;
+  border: none !important;
+}
+
+#carte-collecteur-points .leaflet-popup-content {
+  margin: 10px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#carte-collecteur-points .leaflet-control-zoom {
+  border: none;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+
+#carte-collecteur-points .leaflet-control-zoom a {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  font-size: 15px;
+}

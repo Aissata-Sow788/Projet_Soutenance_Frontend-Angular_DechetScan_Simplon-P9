@@ -21,14 +21,18 @@ export interface ScanDechet {
   // URL de la photo.
   photoUrl: string;
 
-  // Utilisateur ayant effectué le scan.
-  idUtilisateur: number;
+  // Identifiant du citoyen, null si le scan est anonyme.
+  idUtilisateur: number | null;
 
  // Informations du citoyen ou null pour un anonyme.
   citoyen: CitoyenScan | null;
 
   // L'analyse peut être absente dans certains cas.
   analyseIA?: AnalyseIA;
+
+  // Message immédiat renvoyé par Django après une analyse réussie.
+  // Ce champ n'est pas présent dans les réponses de lecture de l'historique.
+  messageRemerciement?: string;
 }
 
 export interface DetectionAdmin {

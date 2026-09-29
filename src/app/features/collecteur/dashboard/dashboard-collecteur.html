@@ -1,0 +1,320 @@
+<!-- Page principale du dashboard collecteur -->
+<div class="p-6 xl:p-8">
+
+  <!-- =========================================================
+       CHARGEMENT
+       ========================================================= -->
+  @if (chargement()) {
+    <div class="flex items-center justify-center py-20">
+      <p class="text-sm text-slate-500">Chargement du dashboard...</p>
+    </div>
+  }
+
+  <!-- =========================================================
+       ERREUR
+       ========================================================= -->
+  @else if (erreur()) {
+    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">
+      {{ erreur() }}
+    </div>
+  }
+
+  <!-- =========================================================
+       CONTENU PRINCIPAL
+       ========================================================= -->
+  @else {
+
+    <!-- EN-TÊTE : Bonjour + bouton Nouvelle collecte -->
+    <div class="mb-6 flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[#142337]">
+          Bonjour, Moussa Diop
+        </h1>
+        <p class="mt-1 text-sm text-slate-500">
+          Voici un aperçu de votre activité et des opportunités de collecte.
+        </p>
+      </div>
+
+      <button
+        (click)="nouvelleCollecte()"
+        type="button"
+        class="flex shrink-0 items-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+      >
+        <span class="text-lg leading-none">+</span>
+        Nouvelle collecte
+      </button>
+    </div>
+
+    <!-- =========================================================
+         CARTES STATISTIQUES
+         ========================================================= -->
+    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+      <!-- Nouvelles demandes -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Nouvelles demandes
+            </p>
+            <p class="mt-2 text-4xl font-black text-[#142337]">
+              {{ nombreNouvellesDemandes() | number: '2.0' }}
+            </p>
+          </div>
+          <!-- Icône camion -->
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+            <svg class="h-5 w-5 text-slate-500" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+              <path d="M16 8h4l3 3v5h-7V8z"></path>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collectes à venir -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Collectes à venir
+            </p>
+            <p class="mt-2 text-4xl font-black text-[#142337]">
+              {{ collectesAVenir() | number: '2.0' }}
+            </p>
+          </div>
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+            <svg class="h-5 w-5 text-slate-500" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+              <path d="M16 8h4l3 3v5h-7V8z"></path>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collectes terminées -->
+      <div class="rounded-2xl bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Collectes terminées
+            </p>
+            <p class="mt-2 text-4xl font-black text-[#142337]">
+              {{ collectesTerminees() }}
+            </p>
+          </div>
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+            <svg class="h-5 w-5 text-slate-500" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M9 12l2 2 4-4"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================================
+         TABLEAU + CARTE PROCHAINE COLLECTE
+         ========================================================= -->
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+
+      <!-- TABLEAU DES DEMANDES RÉCENTES (2 colonnes sur 3) -->
+      <div class="xl:col-span-2">
+        <div class="rounded-2xl bg-white shadow-sm">
+
+          <!-- En-tête tableau -->
+          <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+            <h2 class="font-bold text-[#142337]">Demandes récentes</h2>
+            <button
+              (click)="voirToutesDemandes()"
+              type="button"
+              class="text-sm font-semibold text-[#0EA5A4] hover:underline"
+            >
+              Voir tout
+            </button>
+          </div>
+
+          <!-- Tableau -->
+          @if (demandesRecentes().length === 0) {
+            <div class="py-10 text-center text-sm text-slate-400">
+              Aucune demande disponible pour le moment.
+            </div>
+          } @else {
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-slate-100">
+                    <th class="px-6 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Type de déchet</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Localisation</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+                    <th class="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (demande of demandesRecentes(); track demande.idDemande) {
+                    <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                      <!-- Type déchet -->
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                          <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                            <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M3 7l3 9h12l3-9H3z"></path>
+                              <path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                          </div>
+                          <span class="font-semibold text-[#142337]">
+                            {{ demande.typeDechet?.nom ?? 'Inconnu' }}
+                          </span>
+                        </div>
+                      </td>
+
+                      <!-- Quantité -->
+                      <td class="px-4 py-4 text-slate-600">
+                        {{ demande.quantite }} kg
+                      </td>
+
+                      <!-- Localisation -->
+                      <td class="px-4 py-4 text-slate-600">
+                        {{ demande.quartier || '—' }}
+                      </td>
+
+                      <!-- Date -->
+                      <td class="px-4 py-4 text-slate-500 text-xs">
+                        {{ formaterDate(demande.dateDemande) }}
+                      </td>
+
+                      <!-- Statut -->
+                      <td class="px-4 py-4">
+                        <span
+                          class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                          [ngClass]="classeStatut(demande.statut)"
+                        >
+                          {{ libelleStatut(demande.statut) }}
+                        </span>
+                      </td>
+
+                      <!-- Action -->
+                      <td class="px-4 py-4">
+                        <button
+                          (click)="voirDemande(demande.idDemande)"
+                          type="button"
+                          class="text-sm font-semibold text-[#0EA5A4] hover:underline"
+                        >
+                          Voir →
+                        </button>
+                      </td>
+
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+        </div>
+      </div>
+
+      <!-- COLONNE DROITE : Prochaine collecte + Objectif -->
+      <div class="space-y-4">
+
+        <!-- Prochaine collecte -->
+        @if (prochaineCollecte()) {
+          <div class="rounded-2xl bg-[#0E172B] p-5 text-white">
+
+            <p class="mb-3 text-[10px] font-bold uppercase tracking-widest text-[#0EA5A4]">
+              🔒 Prochaine collecte
+            </p>
+
+            <h3 class="text-lg font-black">
+              {{ prochaineCollecte()!.nomCollecteur || 'Collecte planifiée' }}
+            </h3>
+
+            <span class="mt-1 inline-block rounded-full bg-[#1E3A5F] px-2.5 py-0.5 text-xs text-slate-300">
+              {{ prochaineCollecte()!.quantiteRecuperee ?? '—' }} kg estimés
+            </span>
+
+            <div class="mt-4 space-y-2">
+
+              <!-- Localisation -->
+              <div class="flex items-start gap-2 text-sm text-slate-300">
+                <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                  <circle cx="12" cy="10" r="2.5"></circle>
+                </svg>
+                <div>
+                  <p class="text-[10px] font-bold uppercase text-slate-400">Localisation</p>
+                  <p>{{ prochaineCollecte()!.nomPoint || 'À domicile' }}</p>
+                </div>
+              </div>
+
+              <!-- Date & heure -->
+              <div class="flex items-start gap-2 text-sm text-slate-300">
+                <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                  <path d="M16 2v4"></path>
+                  <path d="M8 2v4"></path>
+                  <path d="M3 10h18"></path>
+                </svg>
+                <div>
+                  <p class="text-[10px] font-bold uppercase text-slate-400">Date & Heure</p>
+                  <p>{{ formaterDateHeure(prochaineCollecte()!.datePlanifiee) }}</p>
+                </div>
+              </div>
+
+            </div>
+
+            <button
+              [routerLink]="['/collecteur/mes-collectes']"
+              type="button"
+              class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+            >
+              Voir les détails →
+            </button>
+
+          </div>
+        } @else {
+          <div class="rounded-2xl bg-[#0E172B] p-5 text-center">
+            <p class="text-sm text-slate-400">Aucune collecte planifiée</p>
+          </div>
+        }
+
+        <!-- Objectif mensuel -->
+        <div class="rounded-2xl bg-white p-5 shadow-sm">
+          <div class="mb-3 flex items-center justify-between">
+            <p class="font-bold text-[#142337]">Objectif Mensuel</p>
+            <span class="text-sm font-black text-[#0EA5A4]">{{ objectifMensuel() }}%</span>
+          </div>
+
+          <!-- Barre de progression -->
+          <div class="h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div
+              class="h-full rounded-full bg-[#0EA5A4] transition-all duration-500"
+              [style.width.%]="objectifMensuel()"
+            ></div>
+          </div>
+
+          <p class="mt-2 text-xs text-slate-400">
+            Encore {{ kgRestants() }} kg pour atteindre votre bonus de performance territoriale.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

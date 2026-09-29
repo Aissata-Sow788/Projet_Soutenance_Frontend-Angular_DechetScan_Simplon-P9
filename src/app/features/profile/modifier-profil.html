@@ -1,0 +1,103 @@
+<!-- Formulaire d'édition du profil, prérempli avec les valeurs de l'API. -->
+<main class="citizen-responsive citizen-form min-h-screen bg-[#F5F7FC] px-4 pb-10">
+  <!-- Navigation vers l'écran du profil. -->
+  <header class="relative flex items-center justify-center py-5">
+    <button
+      type="button"
+      (click)="retour()"
+      aria-label="Retour au profil"
+      class="absolute left-0 flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#172536] shadow-sm"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <h1 class="text-xl font-bold text-[#172536]">Modifier mon profil</h1>
+  </header>
+
+  <!-- Pendant le chargement, ne pas présenter des champs vides modifiables. -->
+  @if (chargement()) {
+    <div class="flex justify-center py-16" role="status" aria-label="Chargement du profil">
+      <span class="h-7 w-7 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+    </div>
+  } @else {
+    <form #profilForm="ngForm" (ngSubmit)="enregistrer()" class="space-y-4 rounded-3xl bg-white p-5 shadow-sm">
+      <p class="text-sm leading-6 text-slate-500">
+        Modifiez vos coordonnées. Les changements sont enregistrés sur votre compte.
+      </p>
+
+      <!-- Les champs requis et le format de l'adresse sont contrôlés par Angular. -->
+      <label class="block text-sm font-semibold text-[#172536]">
+        Prénom
+        <input
+          name="first_name"
+          [(ngModel)]="formulaire.first_name"
+          required
+          maxlength="150"
+          autocomplete="given-name"
+          class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 font-normal outline-none focus:border-[#0EA5A4]"
+        />
+      </label>
+      <label class="block text-sm font-semibold text-[#172536]">
+        Nom
+        <input
+          name="last_name"
+          [(ngModel)]="formulaire.last_name"
+          required
+          maxlength="150"
+          autocomplete="family-name"
+          class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 font-normal outline-none focus:border-[#0EA5A4]"
+        />
+      </label>
+      <label class="block text-sm font-semibold text-[#172536]">
+        Adresse e-mail
+        <input
+          name="email"
+          [(ngModel)]="formulaire.email"
+          type="email"
+          required
+          autocomplete="email"
+          class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 font-normal outline-none focus:border-[#0EA5A4]"
+        />
+      </label>
+      <label class="block text-sm font-semibold text-[#172536]">
+        Téléphone
+        <input
+          name="telephone"
+          [(ngModel)]="formulaire.telephone"
+          type="tel"
+          autocomplete="tel"
+          class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 font-normal outline-none focus:border-[#0EA5A4]"
+        />
+      </label>
+      <label class="block text-sm font-semibold text-[#172536]">
+        Ville
+        <input
+          name="ville"
+          [(ngModel)]="formulaire.ville"
+          maxlength="100"
+          autocomplete="address-level2"
+          class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 font-normal outline-none focus:border-[#0EA5A4]"
+        />
+      </label>
+
+      <!-- Les erreurs DRF (email/téléphone déjà utilisés, validation...) restent visibles. -->
+      @if (erreur()) {
+        <p class="rounded-xl bg-red-50 p-3 text-sm text-red-700" role="alert">{{ erreur() }}</p>
+      }
+      @if (succes()) {
+        <div class="space-y-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700" role="status">
+          <p>{{ succes() }}</p>
+          <button type="button" (click)="retour()" class="font-bold underline">Retourner à mon profil</button>
+        </div>
+      }
+
+      <!-- Le bouton ne soumet pas un formulaire incomplet ou déjà en cours d'envoi. -->
+      <button
+        type="submit"
+        [disabled]="profilForm.invalid || enregistrement()"
+        class="w-full rounded-xl bg-[#0EA5A4] py-3.5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {{ enregistrement() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
+      </button>
+    </form>
+  }
+</main>

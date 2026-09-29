@@ -1,0 +1,418 @@
+@if (demandeCreee(); as demande) {
+  <div class="citizen-responsive citizen-detail min-h-screen bg-[#F7F8FA] px-5 pb-10 text-[#102033] sm:px-8">
+    <header class="mx-auto flex max-w-2xl items-center justify-between pt-5">
+      <button
+        (click)="retour()"
+        type="button"
+        aria-label="Retour à l’accueil"
+        class="flex h-14 w-14 items-center justify-center rounded-full bg-white text-[#102033] shadow-sm transition hover:bg-slate-50"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19V5"></path>
+          <path d="m5 12 7-7 7 7"></path>
+        </svg>
+      </button>
+      <img
+        src="assets/logo1-dechetscan.png"
+        alt="DechetScan"
+        class="h-14 w-36 object-contain"
+      />
+      <span class="h-14 w-14" aria-hidden="true"></span>
+    </header>
+
+    <main class="citizen-content mx-auto max-w-2xl pt-10 text-center sm:pt-16">
+      <div class="mx-auto flex h-32 w-32 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50">
+        <svg class="h-16 w-16 text-emerald-600" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m5 12 5 5L20 7"></path>
+        </svg>
+      </div>
+
+      <h1 class="mt-10 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+        Demande envoyée avec succès !
+      </h1>
+      <p class="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-[#718080] sm:text-xl">
+        Votre demande de ramassage a bien été enregistrée. Nous recherchons actuellement un collecteur disponible dans votre zone.
+      </p>
+
+      <section class="mt-10 flex items-center justify-between gap-4 rounded-3xl border border-slate-100 bg-white px-6 py-5 text-left shadow-sm sm:px-8">
+        <h2 class="text-base font-semibold uppercase leading-relaxed tracking-wide text-[#718080] sm:text-lg">
+          Référence de la demande
+        </h2>
+        <p class="text-xl font-extrabold text-[#0EA5A4] sm:text-2xl">
+          {{ referenceDemande(demande.idDemande) }}
+        </p>
+      </section>
+
+      <section class="mt-5 rounded-3xl border border-slate-100 bg-white p-6 text-left shadow-sm sm:p-8">
+        <h2 class="mb-5 text-2xl font-extrabold">Résumé de la demande</h2>
+        <dl class="divide-y divide-slate-100">
+          <div class="flex items-center justify-between gap-4 py-4">
+            <dt class="text-base text-[#718080] sm:text-lg">Type de déchet</dt>
+            <dd class="text-right font-bold">{{ demande.typeDechet?.nom ?? 'Non précisé' }}</dd>
+          </div>
+          <div class="flex items-center justify-between gap-4 py-4">
+            <dt class="text-base text-[#718080] sm:text-lg">Quantité</dt>
+            <dd class="text-right font-bold">{{ demande.quantite }} kg</dd>
+          </div>
+          <div class="flex items-center justify-between gap-4 py-4">
+            <dt class="text-base text-[#718080] sm:text-lg">Adresse</dt>
+            <dd class="max-w-[60%] text-right font-bold">{{ demande.quartier || adresseDetectee() || 'Non précisée' }}</dd>
+          </div>
+          <div class="flex items-center justify-between gap-4 py-4">
+            <dt class="text-base text-[#718080] sm:text-lg">Date souhaitée</dt>
+            <dd class="text-right font-bold">{{ formaterDateSouhaitee(demande.dateSouhaitee) }}</dd>
+          </div>
+          <div class="flex items-center justify-between gap-4 pt-4">
+            <dt class="text-base text-[#718080] sm:text-lg">Heure souhaitée</dt>
+            <dd class="text-right font-bold">{{ formaterHeureSouhaitee(demande.dateSouhaitee) }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="mt-5 rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-left">
+        <h2 class="flex items-center gap-3 text-lg font-bold text-orange-700">
+          <span class="h-3 w-3 shrink-0 rounded-full bg-orange-500"></span>
+          En attente d'un collecteur
+        </h2>
+        <p class="mt-3 text-base leading-relaxed text-orange-800">
+          Votre demande sera attribuée à un collecteur disponible dans votre zone.
+        </p>
+      </section>
+
+      <div class="mt-8 grid gap-3">
+        <button
+          (click)="suivreDemande()"
+          type="button"
+          class="w-full rounded-2xl bg-[#0EA5A4] px-6 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-[#087C78]"
+        >
+          Suivre ma demande
+        </button>
+        <button
+          (click)="retour()"
+          type="button"
+          class="w-full rounded-2xl border border-slate-200 bg-white px-6 py-4 text-lg font-bold text-[#102033] transition hover:bg-slate-50"
+        >
+          Retour à l’accueil
+        </button>
+      </div>
+    </main>
+  </div>
+} @else {
+<!-- Page Demander un ramassage (citoyen) -->
+<div class="citizen-responsive citizen-form min-h-screen bg-[#F3F4F4] pb-10">
+
+  <!-- =========================================================
+       HEADER
+       ========================================================= -->
+  <header class="flex h-14 items-center gap-3 bg-white px-4 shadow-sm">
+    <button
+      (click)="retour()"
+      type="button"
+      aria-label="Retour"
+      class="flex h-9 w-9 items-center justify-center rounded-full text-[#142337] hover:bg-slate-100"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5"></path>
+        <path d="M12 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+    <h1 class="text-[17px] font-bold text-[#142337]">Demander un ramassage</h1>
+  </header>
+
+  <main class="citizen-content mx-auto max-w-lg px-4 pt-6 space-y-4">
+
+    <!-- Erreur globale -->
+    @if (erreur()) {
+      <div class="rounded-xl bg-red-50 p-3 text-sm text-red-600">{{ erreur() }}</div>
+    }
+
+    <!-- ─── LOCALISATION AUTOMATIQUE ─────────────────────────── -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm font-bold text-[#142337]">Votre adresse de ramassage</p>
+
+        @if (geoStatut() !== 'chargement') {
+          <button
+            type="button"
+            (click)="demanderGeolocalisation()"
+            class="text-xs font-semibold text-[#0EA5A4] hover:underline"
+          >
+            {{ geoStatut() === 'obtenu' ? 'Actualiser ma position' : 'Réessayer' }}
+          </button>
+        }
+      </div>
+
+      <!-- ── État : chargement de la position ── -->
+      @if (geoStatut() === 'chargement') {
+        <div class="flex items-center gap-3 rounded-xl bg-[#F0FDFA] p-4">
+          <svg class="h-5 w-5 animate-spin text-[#0EA5A4]" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" class="opacity-25" stroke="currentColor" stroke-width="3"></circle>
+            <path d="M21 12a9 9 0 0 1-9 9" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+          </svg>
+          <div>
+            <p class="text-sm font-semibold text-[#087C78]">Détection de votre position...</p>
+            <p class="text-xs text-slate-400">Autorisez la géolocalisation dans la popup de votre navigateur.</p>
+          </div>
+        </div>
+      }
+
+      <!-- ── État : position obtenue → affiche l'adresse ── -->
+      @if (geoStatut() === 'obtenu') {
+        <div class="rounded-xl bg-[#F0FDFA] p-4">
+          <div class="flex items-start gap-3">
+            <!-- Icône pin -->
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0EA5A4]">
+              <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                <circle cx="12" cy="10" r="2.5"></circle>
+              </svg>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <!-- Adresse lisible obtenue par reverse geocoding -->
+              @if (adresseDetectee()) {
+                <p class="text-sm font-semibold text-[#142337] leading-snug">
+                  {{ adresseDetectee() }}
+                </p>
+              } @else {
+                <p class="text-sm text-slate-400">Adresse en cours de chargement...</p>
+              }
+
+              <!-- Badge GPS + coordonnées -->
+              <div class="mt-1.5 flex items-center gap-2">
+                <span class="flex items-center gap-1 rounded-full bg-[#C9F5EF] px-2 py-0.5 text-[10px] font-bold text-[#087C78]">
+                  <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2"></path><path d="M12 20v2"></path>
+                    <path d="M2 12h2"></path><path d="M20 12h2"></path>
+                  </svg>
+                  Position GPS
+                </span>
+                <span class="text-[10px] text-slate-400">
+                  {{ latitude()?.toFixed(6) }}, {{ longitude()?.toFixed(6) }}
+                  @if (precisionPosition() !== null) {
+                    · précision ±{{ precisionPosition() | number:'1.0-0' }} m
+                  }
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Option : corriger l'adresse manuellement -->
+        <div class="mt-3">
+          <label class="mb-1.5 block text-xs font-semibold text-slate-500">
+            Préciser votre quartier
+            <span class="font-normal text-slate-400">(optionnel — si l'adresse détectée est inexacte)</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Ex: Médina, Plateau, Pikine..."
+            [value]="quartierManuel()"
+            (input)="quartierManuel.set($any($event.target).value)"
+            class="w-full rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-2.5 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+          />
+        </div>
+      }
+
+      <!-- ── État : refus de géolocalisation ── -->
+      @if (geoStatut() === 'refuse') {
+        <div class="rounded-xl border border-orange-200 bg-orange-50 p-4">
+          <div class="flex items-start gap-2 mb-3">
+            <svg class="mt-0.5 h-5 w-5 shrink-0 text-orange-500" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div>
+              <p class="text-sm font-semibold text-orange-700">Position GPS indisponible</p>
+              <p class="text-xs text-orange-600">{{ geoErreur() }}</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ── État : non supporté ── -->
+      @if (geoStatut() === 'non_supporte') {
+        <div class="rounded-xl bg-slate-50 p-4">
+          <p class="text-xs text-slate-600">{{ geoErreur() }}</p>
+          <p class="mt-1 text-xs text-slate-500">Une position GPS est nécessaire pour envoyer la demande de ramassage.</p>
+        </div>
+      }
+
+    </div>
+
+    <!-- ─── TYPE DE DÉCHET ─────────────────────────────────────── -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <label class="mb-2 block text-sm font-bold text-[#142337]">
+        Type de déchet <span class="text-[#0EA5A4]">*</span>
+      </label>
+      @if (chargementTypes()) {
+        <p class="text-sm text-slate-400">Chargement...</p>
+      } @else {
+        <select
+          (change)="onTypeDechetChange($event)"
+          class="w-full appearance-none rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        >
+          <option value="">Sélectionner un type de déchet</option>
+          @for (type of typesDechets(); track type.idTypeDechet) {
+            <option [value]="type.idTypeDechet">{{ type.nom }}</option>
+          }
+        </select>
+      }
+    </div>
+
+    <!-- ─── QUANTITÉ ───────────────────────────────────────────── -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <label class="mb-2 block text-sm font-bold text-[#142337]">
+        Quantité estimée <span class="text-[#0EA5A4]">*</span>
+      </label>
+      <div class="relative">
+        <input
+          type="number"
+          placeholder="0.0"
+          min="0"
+          step="0.5"
+          (input)="onQuantiteChange($event)"
+          class="w-full rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 pr-12 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+        />
+        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">kg</span>
+      </div>
+    </div>
+
+    <!-- ─── DATE ET HEURE SOUHAITÉES ───────────────────────────── -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <label class="mb-2 block text-sm font-bold text-[#142337]">
+        Date et heure souhaitées
+        <span class="font-normal text-slate-400">(optionnel)</span>
+      </label>
+      <div class="grid grid-cols-2 gap-3">
+        <input
+          type="date"
+          [value]="dateSouhaitee()"
+          (input)="dateSouhaitee.set($any($event.target).value)"
+          class="rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        />
+        <input
+          type="time"
+          [value]="heureSouhaitee()"
+          (input)="heureSouhaitee.set($any($event.target).value)"
+          class="rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <!-- ─── INFORMATIONS COMPLÉMENTAIRES ──────────────────────── -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <label class="mb-2 block text-sm font-bold text-[#142337]">
+        Informations complémentaires
+        <span class="font-normal text-slate-400">(accès, étage, code...)</span>
+      </label>
+      <textarea
+        rows="2"
+        placeholder="Ex: 2ème étage, sonner à la porte bleue..."
+        [value]="informationsComplementaires()"
+        (input)="informationsComplementaires.set($any($event.target).value)"
+        class="w-full resize-none rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+      ></textarea>
+    </div>
+
+    <!-- ─── PROPOSER UN PRIX (optionnel) ──────────────────────── -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+
+      <!-- Toggle -->
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <p class="text-sm font-bold text-[#142337]">Je veux vendre mes déchets</p>
+          <p class="text-xs text-slate-400">Proposez un prix — un collecteur vous répondra</p>
+        </div>
+        <button
+          type="button"
+          (click)="afficherPrix.set(!afficherPrix())"
+          class="relative h-6 w-11 rounded-full transition-colors"
+          [ngClass]="afficherPrix() ? 'bg-[#0EA5A4]' : 'bg-slate-300'"
+        >
+          <span
+            class="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform"
+            [ngClass]="afficherPrix() ? 'translate-x-5' : 'translate-x-0.5'"
+          ></span>
+        </button>
+      </div>
+
+      @if (afficherPrix()) {
+        <div class="mb-3">
+          <label class="mb-1.5 block text-xs font-semibold text-slate-500">
+            Prix proposé par kg (FCFA)
+          </label>
+          <input
+            type="number"
+            placeholder="ex: 600"
+            min="0"
+            (input)="onPrixChange($event)"
+            class="w-full rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+          />
+        </div>
+
+        @if (montantEstime() !== null) {
+          <div class="rounded-xl border border-[#C9F5EF] bg-[#F0FDFA] p-4">
+            <p class="mb-2 text-xs font-bold text-[#087C78]">Estimation</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-slate-600">{{ quantite() }} kg × {{ prixPropose() }} FCFA/kg</span>
+              <span class="text-xl font-black text-[#0EA5A4]">≈ {{ montantEstime() | number }} FCFA</span>
+            </div>
+            <p class="mt-1.5 text-[10px] text-slate-400">
+              Montant confirmé après pesée effective par le collecteur.
+            </p>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- ─── NOTE ───────────────────────────────────────────────── -->
+    <div class="flex items-start gap-2 rounded-xl bg-blue-50 p-3">
+      <svg class="mt-0.5 h-4 w-4 shrink-0 text-blue-500" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 16v-4"></path>
+        <path d="M12 8h.01"></path>
+      </svg>
+      <p class="text-xs text-blue-600">
+        Vous recevrez une notification dès qu'un collecteur accepte votre demande.
+        La position fournie par votre appareil n'est visible que par le collecteur assigné.
+      </p>
+    </div>
+
+    <!-- ─── BOUTON ENVOYER ─────────────────────────────────────── -->
+    <button
+      (click)="envoyerDemande()"
+      [disabled]="!formulaireValide() || enEnvoi()"
+      type="button"
+      class="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#0EA5A4] py-4 text-base font-bold text-white shadow-lg transition hover:bg-[#087C78] disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      @if (enEnvoi()) {
+        <svg class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" class="opacity-25" stroke="currentColor" stroke-width="3"></circle>
+          <path d="M21 12a9 9 0 0 1-9 9" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+        </svg>
+        Envoi en cours...
+      } @else {
+        Envoyer ma demande
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 2L11 13"></path>
+          <path d="M22 2L15 22 11 13 2 9l20-7z"></path>
+        </svg>
+      }
+    </button>
+
+  </main>
+</div>
+}

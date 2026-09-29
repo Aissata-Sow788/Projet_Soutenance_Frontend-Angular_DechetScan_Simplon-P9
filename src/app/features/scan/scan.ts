@@ -27,6 +27,11 @@ export class Scan implements OnInit, OnDestroy {
   erreur = signal<string | null>(null);
   cameraActive = signal(false);                    // true dès que le flux vidéo tourne
 
+  // Message de remerciement affiché pour TOUS les citoyens (connectés ou non).
+  // Il vient directement de la réponse de POST /api/scans/, pas de la table
+  // Notification (qui, elle, exige un compte utilisateur pour exister).
+  messageSucces = signal<string | null>(null);
+
   // 'environment' = caméra arrière, 'user' = caméra avant
   modeCamera = signal<'environment' | 'user'>('environment');
 
@@ -126,6 +131,7 @@ export class Scan implements OnInit, OnDestroy {
     this.photoApercu.set(null);
     this.fichierSelectionne.set(null);
     this.erreur.set(null);
+    this.messageSucces.set(null);
   }
 
   // Envoie la photo au service (backend) pour analyse IA
@@ -135,6 +141,7 @@ export class Scan implements OnInit, OnDestroy {
 
     this.analyseEnCours.set(true);
     this.erreur.set(null);
+    this.messageSucces.set(null);
 
     this.scanService.envoyerImage(fichier).subscribe({
       next: (resultat) => {
@@ -144,10 +151,21 @@ export class Scan implements OnInit, OnDestroy {
         // que la navigation soit immédiate.
         this.scanService.dernierResultat.set(resultat);
 
-        // On transmet l'identifiant du scan dans l'URL.
-        // Ainsi, même après un rafraîchissement, AnalyseIA
-        // pourra récupérer les données depuis Django.
-        this.router.navigate(['/analyse-ia'], { queryParams: { idScan: resultat.idScan } });
+        // Affiche le message de remerciement pour tous les citoyens.
+        // Django enregistre aussi ce message dans les notifications du compte
+        // lorsque le scan a été effectué par un utilisateur connecté.
+        if (resultat.messageRemerciement) {
+          this.messageSucces.set(resultat.messageRemerciement);
+        }
+
+        // Laisse le message visible un court instant avant de naviguer,
+        // pour que le citoyen ait le temps de le voir.
+        setTimeout(() => {
+          // On transmet l'identifiant du scan dans l'URL.
+          // Ainsi, même après un rafraîchissement, AnalyseIA
+          // pourra récupérer les données depuis Django.
+          this.router.navigate(['/analyse-ia'], { queryParams: { idScan: resultat.idScan } });
+        }, 900);
       },
       error: (err) => {
         this.analyseEnCours.set(false);

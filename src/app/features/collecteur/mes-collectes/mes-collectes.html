@@ -1,0 +1,225 @@
+<!-- Page Mes collectes -->
+<div class="p-6 xl:p-8">
+
+  <!-- EN-TÊTE -->
+  <div class="mb-6 flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-[#142337]">Mes collectes</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        Suivez vos collectes planifiées et réalisées.
+      </p>
+    </div>
+    <button
+      (click)="planifier()"
+      type="button"
+      class="flex shrink-0 items-center gap-2 rounded-xl border border-[#0EA5A4] px-4 py-2.5 text-sm font-bold text-[#0EA5A4] transition hover:bg-[#F0FDFA]"
+    >
+      + Planifier
+    </button>
+  </div>
+
+  <!-- ONGLETS -->
+  <div class="mb-6 flex gap-1 border-b border-slate-200">
+
+    <button
+      (click)="changerOnglet('a_venir')"
+      type="button"
+      class="px-4 py-2.5 text-sm font-semibold transition"
+      [ngClass]="onglet() === 'a_venir'
+        ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
+        : 'text-slate-500 hover:text-[#142337]'"
+    >
+      À venir
+    </button>
+
+    <button
+      (click)="changerOnglet('en_cours')"
+      type="button"
+      class="px-4 py-2.5 text-sm font-semibold transition"
+      [ngClass]="onglet() === 'en_cours'
+        ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
+        : 'text-slate-500 hover:text-[#142337]'"
+    >
+      En cours
+    </button>
+
+    <button
+      (click)="changerOnglet('terminees')"
+      type="button"
+      class="px-4 py-2.5 text-sm font-semibold transition"
+      [ngClass]="onglet() === 'terminees'
+        ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
+        : 'text-slate-500 hover:text-[#142337]'"
+    >
+      Terminées
+    </button>
+
+  </div>
+
+  <!-- CHARGEMENT -->
+  @if (chargement()) {
+    <div class="py-16 text-center text-sm text-slate-400">Chargement...</div>
+  }
+
+  <!-- ERREUR -->
+  @else if (erreur()) {
+    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+  }
+
+  <!-- TABLEAU -->
+  @else {
+    <div class="rounded-2xl bg-white shadow-sm">
+
+      @if (collectesFiltrees().length === 0) {
+        <div class="py-16 text-center text-sm text-slate-400">
+          Aucune collecte dans cet onglet.
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-100">
+                <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Déchet</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Zone</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Heure</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (collecte of collectesPage(); track collecte.idCollecte) {
+                <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                  <!-- Déchet (via point ou demande) -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                        <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M3 7l3 9h12l3-9H3z"></path>
+                        </svg>
+                      </div>
+                      <span class="font-semibold text-[#142337]">
+                        {{ collecte.nomDechet ?? '—' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Quantité récupérée -->
+                  <td class="px-4 py-4 text-slate-600">
+                    {{
+                      (collecte.quantite ?? collecte.quantiteRecuperee) != null
+                        ? (collecte.quantite ?? collecte.quantiteRecuperee) + ' kg'
+                        : '—'
+                    }}
+                  </td>
+
+                  <!-- Citoyen (via demande liée) -->
+                  <td class="px-4 py-4">
+                    @if (collecte.idDemande) {
+                      <div class="flex items-center gap-2">
+                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-600">
+                          {{ initiales(nomCompletCitoyen(collecte)) }}
+                        </div>
+                        <span class="text-slate-600">
+                          {{ nomCompletCitoyen(collecte) }}
+                        </span>
+                      </div>
+                    } @else {
+                      <span class="text-slate-400">—</span>
+                    }
+                  </td>
+
+                  <!-- Zone -->
+                  <td class="px-4 py-4 text-slate-600">
+                    {{ collecte.zone ?? '—' }}
+                  </td>
+
+                  <!-- Date -->
+                  <td class="px-4 py-4 text-slate-600 text-xs">
+                    {{ formaterDate(collecte.datePlanifiee) }}
+                  </td>
+
+                  <!-- Heure -->
+                  <td class="px-4 py-4 text-slate-600 text-xs">
+                    {{ formaterHeure(collecte.datePlanifiee) }}
+                  </td>
+
+                  <!-- Statut -->
+                  <td class="px-4 py-4">
+                    <span
+                      class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                      [ngClass]="classeStatut(collecte.statut)"
+                    >
+                      {{ libelleStatut(collecte.statut) }}
+                    </span>
+                  </td>
+
+                  <!-- Action -->
+                  <td class="px-4 py-4">
+                    <button
+                      (click)="voirCollecte(collecte.idCollecte)"
+                      type="button"
+                      class="text-sm font-semibold text-[#0EA5A4] hover:underline whitespace-nowrap"
+                    >
+                      Voir les détails
+                    </button>
+                  </td>
+
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
+          <p class="text-xs text-slate-400">
+            Affichage de {{ rangeAffichee().debut }} à {{ rangeAffichee().fin }} sur
+            {{ collectesFiltrees().length }} collectes
+            {{ onglet() === 'a_venir' ? 'planifiées' : onglet() === 'en_cours' ? 'en cours' : 'réalisées' }}
+          </p>
+          <div class="flex items-center gap-1">
+            <button
+              (click)="allerPage(pageCourante() - 1)"
+              [disabled]="pageCourante() === 1"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </button>
+            @for (page of pages(); track page) {
+              <button
+                (click)="allerPage(page)"
+                type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
+                [ngClass]="page === pageCourante()
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'border border-slate-200 text-slate-600 hover:bg-slate-50'"
+              >
+                {{ page }}
+              </button>
+            }
+            <button
+              (click)="allerPage(pageCourante() + 1)"
+              [disabled]="pageCourante() === totalPages()"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      }
+    </div>
+  }
+
+</div>

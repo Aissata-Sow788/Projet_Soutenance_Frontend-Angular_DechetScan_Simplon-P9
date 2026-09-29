@@ -1,4 +1,4 @@
-<div class="min-h-screen w-full overflow-hidden bg-[#6c8197] text-white">
+<div class="citizen-responsive citizen-scanner min-h-screen w-full overflow-hidden bg-[#6c8197] text-white">
 
   <!-- HEADER -->
   <header class="flex h-[60px] items-center bg-[#f8f9fd] px-[14px] text-[#172536]">
@@ -62,6 +62,13 @@
     @if (erreur()) {
       <div class="mx-auto mt-[14px] max-w-[280px] rounded-[14px] bg-red-500/20 px-4 py-2.5 text-center text-[12px] text-red-100">
         {{ erreur() }}
+      </div>
+    }
+
+    <!-- MESSAGE DE REMERCIEMENT après un scan réussi, connecté ou non -->
+    @if (messageSucces()) {
+      <div class="mx-auto mt-[14px] max-w-[280px] rounded-[14px] bg-[#11aaa9]/25 px-4 py-2.5 text-center text-[12px] text-[#d9fff9]">
+        {{ messageSucces() }}
       </div>
     }
 

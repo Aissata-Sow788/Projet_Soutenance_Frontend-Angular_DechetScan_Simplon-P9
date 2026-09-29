@@ -171,7 +171,7 @@ const payload: RegisterPayload = {
       // Inscription réussie
       next: () => {
         this.chargement = false;
-        this.router.navigate(['/accueil']);
+        this.router.navigate(['/connexion']);
       },
 
       // Erreur lors de l'inscription

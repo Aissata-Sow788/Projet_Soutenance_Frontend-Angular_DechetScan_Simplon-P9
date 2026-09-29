@@ -1,7 +1,10 @@
-// Données affichées dans les statistiques
+// Données affichées dans les statistiques de l'accueil.
+// Alimentées par l'endpoint /api/dashboard/statistiques/.
 export interface StatistiquesAccueil {
-  scans: string;
-  citoyens: string;
+  // Nombre total de scans réalisés (nombre brut).
+  scans: number;
+  // Nombre total d'utilisateurs enregistrés (nombre brut).
+  citoyens: number;
 }
 
 // Données d'une solution

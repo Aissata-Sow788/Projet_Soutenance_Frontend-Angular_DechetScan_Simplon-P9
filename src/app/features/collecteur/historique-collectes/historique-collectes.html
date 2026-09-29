@@ -1,0 +1,199 @@
+<!-- Page historique des collectes -->
+<div class="p-6 xl:p-8">
+
+  <!-- EN-TÊTE -->
+  <div class="mb-6 flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-[#142337]">Historique des collectes</h1>
+      <p class="mt-1 text-sm text-slate-500">Consultez vos collectes réalisées.</p>
+    </div>
+    <!-- Badge total -->
+    <div class="shrink-0 rounded-xl bg-[#C9F5EF] px-4 py-2">
+      <span class="text-sm font-black text-[#087C78]">
+        {{ totalTerminees() }} collectes réalisées
+      </span>
+    </div>
+  </div>
+
+  <!-- BARRE FILTRES -->
+  <div class="mb-6 flex flex-wrap items-center gap-3">
+
+    <!-- Recherche -->
+    <div class="relative flex-1 min-w-[200px]">
+      <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      <input
+        type="text"
+        placeholder="Rechercher une collecte..."
+        (input)="onRecherche($event)"
+        class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+      />
+    </div>
+
+    <!-- Filtre période -->
+    <select
+      (change)="onFiltrePeriode($event)"
+      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+    >
+      <option value="tout">Période: Tout</option>
+      <option value="semaine">Cette semaine</option>
+      <option value="mois">Ce mois</option>
+      <option value="trimestre">Ce trimestre</option>
+    </select>
+
+    <!-- Filtre type déchet -->
+    <select
+      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+    >
+      <option value="">Type de déchet: Tout</option>
+      <option value="plastique">Plastique</option>
+      <option value="metal">Métal</option>
+      <option value="carton">Carton</option>
+      <option value="verre">Verre</option>
+    </select>
+
+  </div>
+
+  <!-- CHARGEMENT -->
+  @if (chargement()) {
+    <div class="py-16 text-center text-sm text-slate-400">Chargement de l'historique...</div>
+  }
+
+  <!-- ERREUR -->
+  @else if (erreur()) {
+    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+  }
+
+  <!-- TABLEAU -->
+  @else {
+    <div class="rounded-2xl bg-white shadow-sm">
+
+      @if (collectesFiltrees().length === 0) {
+        <div class="py-16 text-center text-sm text-slate-400">
+          Aucune collecte terminée trouvée.
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-100">
+                <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Déchet</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Zone</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (collecte of collectesPage(); track collecte.idCollecte) {
+                <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                  <!-- Date de réalisation -->
+                  <td class="px-6 py-4 font-medium text-[#142337]">
+                    {{ formaterDate(collecte.dateRealisation ?? collecte.datePlanifiee) }}
+                  </td>
+
+                  <!-- Déchet -->
+                  <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
+                      <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                        <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M3 7l3 9h12l3-9H3z"></path>
+                        </svg>
+                      </div>
+                      <span class="font-medium text-[#142337]">
+                        {{ collecte.nomPoint ?? 'Ramassage' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Quantité -->
+                  <td class="px-4 py-4 text-slate-600">
+                    {{ collecte.quantiteRecuperee ? collecte.quantiteRecuperee + ' kg' : '—' }}
+                  </td>
+
+                  <!-- Citoyen (via demande) -->
+                  <td class="px-4 py-4">
+                    @if (collecte.idDemande) {
+                      <div class="flex items-center gap-2">
+                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-[#EEF4FF] text-[10px] font-bold text-[#087C78]">
+                          {{ initiales(collecte.nomCollecteur) }}
+                        </div>
+                        <span class="text-slate-600">Demande #{{ collecte.idDemande }}</span>
+                      </div>
+                    } @else {
+                      <span class="text-slate-400">—</span>
+                    }
+                  </td>
+
+                  <!-- Zone -->
+                  <td class="px-4 py-4 text-slate-600">
+                    {{ collecte.nomPoint ?? '—' }}
+                  </td>
+
+                  <!-- Statut terminée -->
+                  <td class="px-4 py-4">
+                    <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-[10px] font-bold text-green-700">
+                      Terminée
+                    </span>
+                  </td>
+
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
+          <p class="text-xs text-slate-400">
+            Affichage de 1 à {{ collectesFiltrees().length }} sur
+            {{ totalTerminees() }} collectes réalisées
+          </p>
+          <div class="flex items-center gap-1">
+            <button
+              (click)="allerPage(pageCourante() - 1)"
+              [disabled]="pageCourante() === 1"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </button>
+            @for (page of pages(); track page) {
+              <button
+                (click)="allerPage(page)"
+                type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
+                [ngClass]="page === pageCourante()
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'border border-slate-200 text-slate-600 hover:bg-slate-50'"
+              >
+                {{ page }}
+              </button>
+            }
+            <button
+              (click)="allerPage(pageCourante() + 1)"
+              [disabled]="pageCourante() === totalPages()"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

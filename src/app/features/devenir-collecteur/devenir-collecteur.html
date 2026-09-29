@@ -1,0 +1,217 @@
+<!-- Fond clair et espace inférieur pour garder la page respirante sur mobile. -->
+<div class="citizen-responsive citizen-form min-h-screen bg-[#f8fafb] text-[#102033]">
+
+  <!-- En-tête fixe visuellement proche de la maquette : retour, titre et notifications. -->
+  <header class="flex h-[64px] items-center justify-between border-b border-slate-200 bg-white px-4 sm:h-[76px] sm:px-8">
+    <button
+      type="button"
+      (click)="retour()"
+      aria-label="Retour à mon espace"
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#102033] transition hover:bg-slate-100"
+    >
+      <!-- Flèche de retour vers l'espace citoyen. -->
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5"></path>
+        <path d="m12 19-7-7 7-7"></path>
+      </svg>
+    </button>
+
+    <!-- Le titre reste centré, quelle que soit la largeur des boutons latéraux. -->
+    <h1 class="mx-2 flex-1 text-center text-lg font-extrabold tracking-tight sm:text-2xl">
+      Devenir collecteur
+    </h1>
+
+    <button
+      type="button"
+      (click)="ouvrirNotifications()"
+      aria-label="Ouvrir les notifications"
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#6f7d7d] transition hover:bg-slate-100"
+    >
+      <!-- Icône de cloche identique à celle de la maquette. -->
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+        <path d="M10 21h4"></path>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Contenu central avec largeur contrôlée sur ordinateur et marges sur téléphone. -->
+  <!-- Marges et espacements réduits pour éviter une page trop haute sur téléphone. -->
+  <main class="mx-auto max-w-[600px] px-4 pb-7 pt-5 sm:px-8 sm:pb-10 sm:pt-9">
+
+    <!-- Illustration héroïque : photo locale d'un camion de collecte, cadrée dans une carte. -->
+    <div class="overflow-hidden rounded-[24px] bg-[#d8eeee] shadow-sm sm:rounded-[32px]">
+      <img
+        src="assets/camion-sonaged.jpg"
+        alt="Camion de collecte des déchets en intervention"
+        class="h-[170px] w-full object-cover object-center sm:h-[280px]"
+      />
+    </div>
+
+    <!-- Introduction qui explique la mission proposée au futur collecteur. -->
+    <section class="mt-6 text-center sm:mt-9">
+      <h2 class="mx-auto max-w-[520px] text-[26px] font-extrabold leading-tight tracking-tight sm:text-[34px]">
+        Rejoignez le réseau DechetScan
+      </h2>
+      <p class="mx-auto mt-3 max-w-[500px] text-[16px] leading-relaxed text-[#718080] sm:mt-4 sm:text-[19px]">
+        Devenez collecteur et participez à la collecte des déchets dans votre zone d'intervention.
+      </p>
+    </section>
+
+    <!-- Encadré informatif sur les fonctionnalités disponibles après inscription. -->
+    <aside class="mt-6 flex items-start gap-4 rounded-[20px] border border-[#c7f5e7] bg-[#eef6ff] p-4 sm:mt-7 sm:gap-5 sm:p-5">
+      <span class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[17px] bg-[#91eee0] text-[#069b9a]">
+        <!-- Petit camion pour illustrer la réception des demandes de collecte. -->
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7h11v10H3z"></path>
+          <path d="M14 10h4l3 3v4h-7z"></path>
+          <circle cx="7.5" cy="18" r="1.8"></circle>
+          <circle cx="17.5" cy="18" r="1.8"></circle>
+          <path d="M6 10h5M6 13h3"></path>
+        </svg>
+      </span>
+      <p class="text-[14px] leading-relaxed text-[#3e4e51] sm:text-[16px]">
+        Après votre inscription, vous pourrez recevoir et gérer les demandes de collecte correspondant à votre zone d'intervention.
+      </p>
+    </aside>
+
+    <!-- Formulaire conservant la validation Angular et l'envoi existant à l'API Django. -->
+    @if (demandeEnvoyee()) {
+      <!-- Confirmation affichée uniquement après la création réussie du profil côté backend. -->
+      <section class="mt-7 rounded-[20px] border border-emerald-100 bg-white p-5 text-center shadow-sm">
+        <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#91eee0] text-[#078f8e]">
+          <!-- Coche de confirmation. -->
+          <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m5 12 4 4L19 6"></path>
+          </svg>
+        </span>
+        <h2 class="mt-4 text-xl font-bold">Votre demande est envoyée</h2>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+          Votre profil collecteur est en attente de validation. Vous serez informé dès que votre demande aura été examinée.
+        </p>
+        <button
+          type="button"
+          (click)="retour()"
+          class="mt-5 min-h-[52px] w-full rounded-2xl bg-[#0ea5a4] px-5 text-base font-bold text-white transition hover:bg-[#0b9291]"
+        >
+          Retour à mon espace
+        </button>
+      </section>
+    } @else {
+      <form
+        [formGroup]="formulaire"
+        (ngSubmit)="soumettre()"
+        class="mt-7 space-y-6 sm:mt-9 sm:space-y-7"
+      >
+        <!-- Affiche les erreurs renvoyées par Django ou liées à la session. -->
+        @if (erreur()) {
+          <div role="alert" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-relaxed text-red-700">
+            {{ erreur() }}
+          </div>
+        }
+
+        <!-- Nom d'entreprise : facultatif dans le modèle Django, comme l'indique le texte d'aide. -->
+        <div>
+          <label for="nomEntreprise" class="mb-2 flex items-center gap-2.5 text-base font-bold sm:text-lg">
+            <svg class="h-5 w-5 shrink-0 text-[#718080]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2c-4.2 0-7.5 2.1-7.5 4.8V21h15v-2.2c0-2.7-3.3-4.8-7.5-4.8Z"></path>
+            </svg>
+            Nom de l'entreprise
+            <span class="text-xs font-normal text-slate-500">(facultatif)</span>
+          </label>
+          <input
+            id="nomEntreprise"
+            type="text"
+            formControlName="nomEntreprise"
+            maxlength="150"
+            autocomplete="organization"
+            placeholder="Exemple : Eco Collecte Sénégal"
+            class="h-[58px] w-full rounded-[16px] border border-slate-200 bg-white px-4 text-base text-[#142337] outline-none transition placeholder:text-slate-400 focus:border-[#82d8cf] focus:ring-2 focus:ring-[#c9f6ee] sm:h-[64px] sm:px-5 sm:text-lg"
+          />
+          @if (formulaire.controls.nomEntreprise.invalid && formulaire.controls.nomEntreprise.touched) {
+            <p class="mt-1.5 text-xs text-red-600">Le nom de l'entreprise ne doit pas dépasser 150 caractères.</p>
+          }
+        </div>
+
+        <!-- Téléphone professionnel : contrôle le format sénégalais avant l'appel API. -->
+        <div>
+          <label for="telephoneProfessionnel" class="mb-2 flex items-center gap-2.5 text-base font-bold sm:text-lg">
+            <svg class="h-5 w-5 shrink-0 text-[#718080]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M6.6 2.8 9 2.3l2 4.8-2.1 1.6a15.1 15.1 0 0 0 6.4 6.4l1.6-2.1 4.8 2-.5 2.4a3 3 0 0 1-3.2 2.4A17.5 17.5 0 0 1 4.2 6a3 3 0 0 1 2.4-3.2Z"></path>
+            </svg>
+            Téléphone professionnel
+          </label>
+          <input
+            id="telephoneProfessionnel"
+            type="tel"
+            formControlName="telephoneProfessionnel"
+            maxlength="20"
+            autocomplete="tel"
+            placeholder="+221 77 000 00 00"
+            class="h-[58px] w-full rounded-[16px] border border-slate-200 bg-white px-4 text-base text-[#142337] outline-none transition placeholder:text-slate-400 focus:border-[#82d8cf] focus:ring-2 focus:ring-[#c9f6ee] sm:h-[64px] sm:px-5 sm:text-lg"
+            [class.border-red-300]="formulaire.controls.telephoneProfessionnel.invalid && formulaire.controls.telephoneProfessionnel.touched"
+          />
+          @if (formulaire.controls.telephoneProfessionnel.invalid && formulaire.controls.telephoneProfessionnel.touched) {
+            <p class="mt-1.5 text-xs text-red-600">
+              Saisissez un numéro sénégalais valide, par exemple +221 77 000 00 00.
+            </p>
+          }
+        </div>
+
+        <!-- Zone d'intervention : champ obligatoire utilisé par les demandes de collecte. -->
+        <div>
+          <label for="zoneIntervention" class="mb-2 flex items-center gap-2.5 text-base font-bold sm:text-lg">
+            <svg class="h-5 w-5 shrink-0 text-[#718080]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"></path>
+            </svg>
+            Zone d'intervention
+          </label>
+          <input
+            id="zoneIntervention"
+            type="text"
+            formControlName="zoneIntervention"
+            maxlength="150"
+            autocomplete="address-level2"
+            placeholder="Exemple : Dakar, Pikine, Guédiawaye"
+            class="h-[58px] w-full rounded-[16px] border border-slate-200 bg-white px-4 text-base text-[#142337] outline-none transition placeholder:text-slate-400 focus:border-[#82d8cf] focus:ring-2 focus:ring-[#c9f6ee] sm:h-[64px] sm:px-5 sm:text-lg"
+            [class.border-red-300]="formulaire.controls.zoneIntervention.invalid && formulaire.controls.zoneIntervention.touched"
+          />
+          @if (formulaire.controls.zoneIntervention.invalid && formulaire.controls.zoneIntervention.touched) {
+            <p class="mt-1.5 text-xs text-red-600">Indiquez au moins une zone où vous pouvez intervenir.</p>
+          }
+        </div>
+
+        <!-- Le bouton désactivé évite l'envoi multiple pendant la requête réseau. -->
+        <button
+          type="submit"
+          [disabled]="chargement()"
+          class="flex min-h-[58px] w-full items-center justify-center gap-3 rounded-[18px] bg-[#0ea5a4] px-5 text-base font-bold text-white shadow-[0_8px_18px_rgba(14,165,164,0.20)] transition hover:bg-[#0b9291] disabled:cursor-wait disabled:opacity-70 sm:mt-8 sm:min-h-[66px] sm:text-lg"
+        >
+          @if (chargement()) {
+            <!-- Indicateur visuel pendant l'envoi du formulaire à Django. -->
+            <svg class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" class="opacity-30"></circle>
+              <path d="M21 12a9 9 0 0 1-9 9" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+            </svg>
+            Envoi en cours...
+          } @else {
+            Devenir collecteur
+            <span aria-hidden="true">›</span>
+          }
+        </button>
+      </form>
+    }
+
+    <!-- Marque de bas de page dans le style discret de la maquette. -->
+    <footer class="mt-8 flex items-center justify-center gap-2.5 text-slate-400">
+      <svg class="h-6 w-6" viewBox="0 0 32 24" fill="currentColor" aria-hidden="true">
+        <path d="M2 8h5l2-6 6 6h2l6-6 2 6h5l-3 13H5L2 8Zm7 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"></path>
+      </svg>
+      <span class="text-base font-extrabold tracking-[0.12em]">DECHETSCAN</span>
+    </footer>
+  </main>
+</div>

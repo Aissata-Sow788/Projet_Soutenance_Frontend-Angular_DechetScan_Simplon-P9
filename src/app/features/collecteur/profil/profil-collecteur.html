@@ -1,0 +1,264 @@
+<main class="min-h-[calc(100vh-60px)] bg-[#F7F9FB] px-5 py-7 sm:px-8 lg:px-7 xl:px-8">
+  <div class="mx-auto max-w-[1200px]">
+    <h1 class="mb-6 text-2xl font-bold text-[#17283D]">Mon profil</h1>
+
+    @if (chargement()) {
+      <div class="rounded-2xl border border-slate-100 bg-white p-10 text-center text-sm text-slate-500">
+        <span class="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4] align-middle"></span>
+        Chargement de votre profil...
+      </div>
+    } @else if (erreur() && !profil()) {
+      <section role="alert" class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-red-100 bg-white p-6 text-sm text-red-700">
+        <p>{{ erreur() }}</p>
+        <button
+          type="button"
+          (click)="chargerProfil()"
+          class="rounded-lg bg-[#0EA5A4] px-4 py-2 font-semibold text-white hover:bg-[#087C78]"
+        >
+          Réessayer
+        </button>
+      </section>
+    } @else if (profil(); as donneesProfil) {
+      <section class="mb-6 flex items-center gap-5 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <div class="flex h-[74px] w-[74px] shrink-0 items-center justify-center rounded-full border-[3px] border-[#0EA5A4] bg-[#F0FBFA] text-lg font-bold text-[#087C78]">
+          {{ initiales() }}
+        </div>
+        <div class="min-w-0">
+          <h2 class="truncate text-xl font-bold text-[#17283D]">
+            {{ donneesProfil.first_name }} {{ donneesProfil.last_name }}
+          </h2>
+          <p class="mt-1 flex items-center gap-2 text-sm text-slate-500">
+            <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+              <path d="m3 7 9 6 9-6"></path>
+            </svg>
+            <span class="truncate">{{ donneesProfil.email }}</span>
+          </p>
+          @if (donneesProfil.telephone) {
+            <p class="mt-1 flex items-center gap-2 text-sm text-slate-500">
+              <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.8 2.1Z"></path>
+              </svg>
+              <span>{{ donneesProfil.telephone }}</span>
+            </p>
+          }
+        </div>
+      </section>
+
+      @if (messageSucces()) {
+        <p role="status" class="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          {{ messageSucces() }}
+        </p>
+      }
+      @if (erreur()) {
+        <p role="alert" class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {{ erreur() }}
+        </p>
+      }
+
+      <form [formGroup]="formulaire" (ngSubmit)="enregistrerProfil()">
+        <div class="grid gap-5 lg:grid-cols-2">
+          <section class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
+            <h2 class="mb-6 flex items-center gap-2 text-base font-bold text-[#17283D]">
+              <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="3"></circle>
+                <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+              </svg>
+              Informations personnelles
+            </h2>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="block text-xs font-semibold text-slate-500">
+                Prénom
+                <input
+                  type="text"
+                  formControlName="first_name"
+                  autocomplete="given-name"
+                  class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-[#17283D] outline-none transition focus:border-[#0EA5A4] focus:bg-white"
+                />
+                @if (formulaire.controls.first_name.touched && formulaire.controls.first_name.invalid) {
+                  <span class="mt-1 block text-xs text-red-600">Le prénom est obligatoire.</span>
+                }
+              </label>
+              <label class="block text-xs font-semibold text-slate-500">
+                Nom
+                <input
+                  type="text"
+                  formControlName="last_name"
+                  autocomplete="family-name"
+                  class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-[#17283D] outline-none transition focus:border-[#0EA5A4] focus:bg-white"
+                />
+                @if (formulaire.controls.last_name.touched && formulaire.controls.last_name.invalid) {
+                  <span class="mt-1 block text-xs text-red-600">Le nom est obligatoire.</span>
+                }
+              </label>
+            </div>
+
+            <label class="mt-4 block text-xs font-semibold text-slate-500">
+              E-mail
+              <input
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-[#17283D] outline-none transition focus:border-[#0EA5A4] focus:bg-white"
+              />
+              @if (formulaire.controls.email.touched && formulaire.controls.email.invalid) {
+                <span class="mt-1 block text-xs text-red-600">Saisissez une adresse e-mail valide.</span>
+              }
+            </label>
+
+            <label class="mt-4 block text-xs font-semibold text-slate-500">
+              Téléphone
+              <input
+                type="tel"
+                formControlName="telephone"
+                autocomplete="tel"
+                class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-[#17283D] outline-none transition focus:border-[#0EA5A4] focus:bg-white"
+              />
+            </label>
+
+            <label class="mt-4 block text-xs font-semibold text-slate-500">
+              Ville
+              <input
+                type="text"
+                formControlName="ville"
+                autocomplete="address-level2"
+                class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-[#17283D] outline-none transition focus:border-[#0EA5A4] focus:bg-white"
+              />
+            </label>
+          </section>
+
+          <section class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
+            <h2 class="mb-6 flex items-center gap-2 text-base font-bold text-[#17283D]">
+              <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="7" width="18" height="14" rx="2"></rect>
+                <path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"></path>
+              </svg>
+              Informations professionnelles
+            </h2>
+
+            <label class="block text-xs font-semibold text-slate-500">
+              Nom de l’activité
+              <input
+                type="text"
+                formControlName="nomEntreprise"
+                autocomplete="organization"
+                class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-[#17283D] outline-none transition focus:border-[#0EA5A4] focus:bg-white"
+              />
+            </label>
+
+            <label class="mt-4 block text-xs font-semibold text-slate-500">
+              Zone d’intervention
+              <span class="relative mt-2 block">
+                <input
+                  type="text"
+                  [value]="donneesProfil.zoneIntervention"
+                  readonly
+                  class="h-11 w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-3 pr-10 text-sm font-normal text-slate-500"
+                />
+                <svg class="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                </svg>
+              </span>
+            </label>
+
+            <label class="mt-4 block text-xs font-semibold text-slate-500">
+              Téléphone professionnel
+              <input
+                type="tel"
+                formControlName="telephoneProfessionnel"
+                autocomplete="tel"
+                class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-[#17283D] outline-none transition focus:border-[#0EA5A4] focus:bg-white"
+              />
+            </label>
+
+            <a
+              routerLink="/collecteur/points-collecte"
+              class="mt-4 flex items-center justify-between rounded-xl bg-[#EEF5FF] px-4 py-3 transition hover:bg-[#E4EEFF]"
+            >
+              <span>
+                <span class="block text-[10px] font-bold uppercase tracking-wide text-blue-600">Points gérés</span>
+                <span class="mt-1 block text-xl font-extrabold text-[#17283D]">{{ donneesProfil.nombrePointsGeres }}</span>
+              </span>
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-blue-600">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                  <circle cx="12" cy="10" r="2"></circle>
+                </svg>
+              </span>
+            </a>
+          </section>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <button
+            type="submit"
+            [disabled]="enregistrement()"
+            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-6 py-3 text-sm font-bold text-white shadow-md shadow-teal-700/15 transition hover:bg-[#087C78] disabled:cursor-wait disabled:opacity-60"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m5 12 4 4L19 6"></path>
+            </svg>
+            {{ enregistrement() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </button>
+        </div>
+      </form>
+
+      <section class="mt-5 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+        <button
+          type="button"
+          (click)="basculerChangementMotDePasse()"
+          class="flex items-center gap-3 text-sm font-semibold text-red-600 hover:text-red-700"
+        >
+          <svg class="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"></path>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+          {{ changementMotDePasseOuvert() ? 'Annuler' : 'Modifier le mot de passe' }}
+        </button>
+
+        @if (changementMotDePasseOuvert()) {
+          <div class="mt-4 max-w-sm">
+            @if (erreurMotDePasse()) {
+              <p role="alert" class="mb-3 text-xs text-red-600">{{ erreurMotDePasse() }}</p>
+            }
+            @if (succesMotDePasse()) {
+              <p role="status" class="mb-3 text-xs text-emerald-700">{{ succesMotDePasse() }}</p>
+            }
+            <form [formGroup]="formulaireMotDePasse" (ngSubmit)="changerMotDePasse()" class="space-y-3">
+              <input
+                type="password"
+                formControlName="ancienMotDePasse"
+                autocomplete="current-password"
+                placeholder="Mot de passe actuel"
+                class="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#0EA5A4]"
+              />
+              <input
+                type="password"
+                formControlName="nouveauMotDePasse"
+                autocomplete="new-password"
+                placeholder="Nouveau mot de passe"
+                class="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#0EA5A4]"
+              />
+              <input
+                type="password"
+                formControlName="confirmationMotDePasse"
+                autocomplete="new-password"
+                placeholder="Confirmer le nouveau mot de passe"
+                class="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#0EA5A4]"
+              />
+              <button
+                type="submit"
+                [disabled]="enregistrementMotDePasse()"
+                class="rounded-lg bg-[#17283D] px-4 py-2 text-xs font-bold text-white hover:bg-slate-700 disabled:opacity-60"
+              >
+                {{ enregistrementMotDePasse() ? 'Modification...' : 'Enregistrer le mot de passe' }}
+              </button>
+            </form>
+          </div>
+        }
+      </section>
+    }
+  </div>
+</main>

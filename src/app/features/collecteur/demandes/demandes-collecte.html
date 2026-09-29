@@ -1,0 +1,246 @@
+<!-- Page liste des demandes de collecte -->
+<div class="p-6 xl:p-8">
+
+  <!-- EN-TÊTE -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-[#142337]">Demandes de collecte</h1>
+    <p class="mt-1 text-sm text-slate-500">
+      Consultez les demandes disponibles des citoyens.
+    </p>
+  </div>
+
+  <!-- BARRE FILTRES -->
+  <div class="mb-6 flex flex-wrap items-center gap-3">
+
+    <!-- Recherche -->
+    <div class="relative flex-1 min-w-[200px]">
+      <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      <input
+        type="text"
+        placeholder="Rechercher..."
+        (input)="onRecherche($event)"
+        class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+      />
+    </div>
+
+    <!-- Filtre type de déchet -->
+    <select
+      (change)="onFiltreZone($event)"
+      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+    >
+      <option value="">Type de déchet ↓</option>
+      <option value="plastique">Plastique</option>
+      <option value="métal">Métal</option>
+      <option value="carton">Carton</option>
+      <option value="verre">Verre</option>
+      <option value="organique">Organique</option>
+    </select>
+
+    <!-- Filtre zone -->
+    <select
+      (change)="onFiltreZone($event)"
+      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+    >
+      <option value="">Zone ↓</option>
+      <option value="dakar">Dakar</option>
+      <option value="pikine">Pikine</option>
+      <option value="guédiawaye">Guédiawaye</option>
+      <option value="médina">Médina</option>
+    </select>
+
+    <!-- Filtre statut -->
+    <select
+      (change)="onFiltreStatut($event)"
+      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+    >
+      <option value="">Statut ↓</option>
+      <option value="en_attente">En attente</option>
+      <option value="acceptee">Acceptée</option>
+      <option value="en_cours">En cours</option>
+      <option value="terminee">Terminée</option>
+      <option value="annulee">Refusée</option>
+    </select>
+
+    <!-- Trier par -->
+    <button
+      type="button"
+      class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-[#142337] hover:bg-slate-50"
+    >
+      <svg class="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 6h16"></path>
+        <path d="M4 12h10"></path>
+        <path d="M4 18h4"></path>
+      </svg>
+      Trier par
+    </button>
+
+  </div>
+
+  <!-- CHARGEMENT -->
+  @if (chargement()) {
+    <div class="py-16 text-center text-sm text-slate-400">
+      Chargement des demandes...
+    </div>
+  }
+
+  <!-- ERREUR -->
+  @else if (erreur()) {
+    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+  }
+
+  <!-- TABLEAU -->
+  @else {
+    <div class="rounded-2xl bg-white shadow-sm">
+
+      @if (demandesFiltrees().length === 0) {
+        <div class="py-16 text-center text-sm text-slate-400">
+          Aucune demande ne correspond aux filtres sélectionnés.
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-100">
+                <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Déchet</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Zone</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date souhaitée</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (demande of demandesPage(); track demande.idDemande) {
+                <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                  <!-- Citoyen -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <!-- Avatar initiales -->
+                      <div
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#C9F5EF] text-xs font-bold text-[#087C78]"
+                      >
+                        {{ initiales(demande.prenomUtilisateur, demande.nomUtilisateur) }}
+                      </div>
+                      <div>
+                        <p class="font-semibold text-[#142337]">
+                          {{ demande.prenomUtilisateur }} {{ demande.nomUtilisateur }}
+                        </p>
+                        <p class="text-xs text-slate-400">{{ demande.emailUtilisateur }}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Déchet -->
+                  <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
+                      <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EEF4FF]">
+                        <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M3 7l3 9h12l3-9H3z"></path>
+                        </svg>
+                      </div>
+                      <span class="font-medium text-[#142337]">
+                        {{ demande.typeDechet?.nom ?? '—' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Quantité -->
+                  <td class="px-4 py-4 text-slate-600">{{ demande.quantite }} kg</td>
+
+                  <!-- Zone -->
+                  <td class="px-4 py-4 text-slate-600">{{ demande.quartier || '—' }}</td>
+
+                  <!-- Date souhaitée -->
+                  <td class="px-4 py-4 text-slate-500 text-xs">
+                    {{ demande.dateSouhaitee ? formaterDate(demande.dateSouhaitee) : '—' }}
+                  </td>
+
+                  <!-- Statut -->
+                  <td class="px-4 py-4">
+                    <span
+                      class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                      [ngClass]="classeStatut(demande.statut)"
+                    >
+                      {{ libelleStatut(demande.statut) }}
+                    </span>
+                  </td>
+
+                  <!-- Action -->
+                  <td class="px-4 py-4">
+                    <button
+                      (click)="voirDemande(demande.idDemande)"
+                      type="button"
+                      class="text-sm font-semibold text-[#0EA5A4] hover:underline"
+                    >
+                      Voir →
+                    </button>
+                  </td>
+
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
+          <p class="text-xs text-slate-400">
+            Affichage de {{ (pageCourante() - 1) * 6 + 1 }} à
+            {{ Math.min(pageCourante() * 6, demandesFiltrees().length) }}
+            sur {{ demandesFiltrees().length }} demandes
+          </p>
+          <div class="flex items-center gap-1">
+            <!-- Précédent -->
+            <button
+              (click)="allerPage(pageCourante() - 1)"
+              [disabled]="pageCourante() === 1"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"></path>
+              </svg>
+            </button>
+
+            <!-- Numéros de page -->
+            @for (page of pages(); track page) {
+              <button
+                (click)="allerPage(page)"
+                type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
+                [ngClass]="page === pageCourante()
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'border border-slate-200 text-slate-600 hover:bg-slate-50'"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <!-- Suivant -->
+            <button
+              (click)="allerPage(pageCourante() + 1)"
+              [disabled]="pageCourante() === totalPages()"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      }
+    </div>
+  }
+
+</div>

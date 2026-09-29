@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 160" width="340" height="160">
+  <!-- Fond blanc -->
+  <rect width="340" height="160" fill="white"/>
+
+  <!-- Flèche noire (haut gauche → bas droite) -->
+  <g transform="translate(18, 30)">
+    <!-- Tige de la flèche noire -->
+    <rect x="18" y="18" width="52" height="52" rx="6" fill="#111"
+          transform="rotate(45 44 44)"/>
+    <!-- Pointe noire -->
+    <polygon points="62,8 86,8 86,32" fill="#111"/>
+    <!-- Cache blanc pour créer la flèche creuse -->
+    <rect x="24" y="24" width="40" height="40" rx="4" fill="white"
+          transform="rotate(45 44 44)"/>
+    <!-- Résultat : flèche noire diagonale haut-droite -->
+    <!-- On redessine proprement avec des polygones -->
+  </g>
+
+  <!-- FLÈCHE NOIRE vers haut-droite -->
+  <g>
+    <!-- Corps de la flèche noire -->
+    <polygon points="20,110 44,62 68,86 56,86 56,110" fill="#111"/>
+    <!-- Pointe -->
+    <polygon points="30,50 80,50 80,100" fill="#111"/>
+    <!-- Carré blanc au centre pour le creux -->
+    <rect x="44" y="64" width="28" height="28" fill="white" transform="rotate(45 58 78)"/>
+  </g>
+
+  <!-- On repart proprement avec des paths SVG pour les deux flèches -->
+  <!-- Effacer et redessiner -->
+  <rect width="340" height="160" fill="white"/>
+
+  <!-- FLÈCHE NOIRE : pointe vers haut-droite -->
+  <path d="M25,108 L25,62 L71,62 L71,76 L47,76 L82,111 L71,122 L36,87 L36,108 Z" fill="#111"/>
+
+  <!-- FLÈCHE ORANGE : pointe vers bas-gauche, légèrement décalée -->
+  <path d="M95,52 L95,98 L49,98 L49,84 L73,84 L38,49 L49,38 L84,73 L84,52 Z" fill="#FF6600"/>
+
+  <!-- Texte "Orange Money" -->
+  <text x="118" y="72" font-family="Arial, Helvetica, sans-serif"
+        font-size="28" font-weight="900" fill="#111" letter-spacing="0">Orange</text>
+  <text x="118" y="108" font-family="Arial, Helvetica, sans-serif"
+        font-size="28" font-weight="900" fill="#111" letter-spacing="0">Money</text>
+</svg>

@@ -268,11 +268,28 @@
                 ♙
               </span>
 
-              <span
-                class="text-[13px] font-medium text-[#263448]"
-              >
-                {{ nomComplet }}
-              </span>
+              @if (modificationActive()) {
+                <div class="grid w-full grid-cols-2 gap-2">
+                  <input
+                    [(ngModel)]="formulaireProfil.first_name"
+                    [ngModelOptions]="{ standalone: true }"
+                    aria-label="Prénom"
+                    autocomplete="given-name"
+                    class="min-w-0 rounded-lg border border-[#d7e1eb] bg-white px-2 py-2 text-[13px] font-medium text-[#263448] outline-none focus:border-[#0ea5a4]"
+                  />
+                  <input
+                    [(ngModel)]="formulaireProfil.last_name"
+                    [ngModelOptions]="{ standalone: true }"
+                    aria-label="Nom"
+                    autocomplete="family-name"
+                    class="min-w-0 rounded-lg border border-[#d7e1eb] bg-white px-2 py-2 text-[13px] font-medium text-[#263448] outline-none focus:border-[#0ea5a4]"
+                  />
+                </div>
+              } @else {
+                <span class="text-[13px] font-medium text-[#263448]">
+                  {{ nomComplet }}
+                </span>
+              }
 
             </div>
 
@@ -303,11 +320,21 @@
                 ✉
               </span>
 
-              <span
-                class="truncate text-[13px] font-medium text-[#263448]"
-              >
-                {{ utilisateur()?.email || 'Non renseigné' }}
-              </span>
+              @if (modificationActive()) {
+                <input
+                  [(ngModel)]="formulaireProfil.email"
+                  [ngModelOptions]="{ standalone: true }"
+                  type="email"
+                  required
+                  aria-label="Adresse email officielle"
+                  autocomplete="email"
+                  class="min-w-0 flex-1 rounded-lg border border-[#d7e1eb] bg-white px-2 py-2 text-[13px] font-medium text-[#263448] outline-none focus:border-[#0ea5a4]"
+                />
+              } @else {
+                <span class="truncate text-[13px] font-medium text-[#263448]">
+                  {{ utilisateur()?.email || 'Non renseigné' }}
+                </span>
+              }
 
             </div>
 
@@ -338,11 +365,20 @@
                 ♡
               </span>
 
-              <span
-                class="text-[13px] font-medium text-[#263448]"
-              >
-                {{ utilisateur()?.telephone || 'Non renseigné' }}
-              </span>
+              @if (modificationActive()) {
+                <input
+                  [(ngModel)]="formulaireProfil.telephone"
+                  [ngModelOptions]="{ standalone: true }"
+                  type="tel"
+                  aria-label="Numéro de téléphone mobile"
+                  autocomplete="tel"
+                  class="min-w-0 flex-1 rounded-lg border border-[#d7e1eb] bg-white px-2 py-2 text-[13px] font-medium text-[#263448] outline-none focus:border-[#0ea5a4]"
+                />
+              } @else {
+                <span class="text-[13px] font-medium text-[#263448]">
+                  {{ utilisateur()?.telephone || 'Non renseigné' }}
+                </span>
+              }
 
             </div>
 
@@ -472,6 +508,7 @@
           <!-- Bouton modification -->
           <button
             type="button"
+            (click)="basculerFormulaireMotDePasse()"
             class="flex items-center gap-2 rounded-[20px] bg-white px-5 py-2.5 text-[11px] font-bold text-[#263448] shadow-[0_1px_4px_rgba(20,35,60,0.04)] transition hover:bg-[#f8fafc]"
           >
 
@@ -481,11 +518,74 @@
               ⚿
             </span>
 
-            Modifier le mot de passe
+            {{ formulaireMotDePasseOuvert() ? 'Fermer' : 'Modifier le mot de passe' }}
 
           </button>
 
         </div>
+
+        <!-- Le formulaire utilise les champs attendus par l'API Django. -->
+        @if (formulaireMotDePasseOuvert()) {
+          <form
+            #motDePasseForm="ngForm"
+            (ngSubmit)="changerMotDePasse()"
+            class="mt-4 grid grid-cols-1 gap-3 rounded-[12px] border border-[#e2eaf1] bg-white p-5 md:grid-cols-2"
+          >
+            <label class="text-[11px] font-bold text-[#1d2a3c]">
+              Mot de passe actuel
+              <input
+                [(ngModel)]="formulaireMotDePasse.ancienMotDePasse"
+                name="ancienMotDePasse"
+                type="password"
+                required
+                autocomplete="current-password"
+                class="mt-1.5 h-11 w-full rounded-[10px] border border-[#d7e1eb] px-3 text-[13px] font-normal outline-none focus:border-[#0ea5a4]"
+              />
+            </label>
+            <span class="hidden md:block"></span>
+            <label class="text-[11px] font-bold text-[#1d2a3c]">
+              Nouveau mot de passe
+              <input
+                [(ngModel)]="formulaireMotDePasse.nouveauMotDePasse"
+                name="nouveauMotDePasse"
+                type="password"
+                required
+                autocomplete="new-password"
+                class="mt-1.5 h-11 w-full rounded-[10px] border border-[#d7e1eb] px-3 text-[13px] font-normal outline-none focus:border-[#0ea5a4]"
+              />
+            </label>
+            <label class="text-[11px] font-bold text-[#1d2a3c]">
+              Confirmer le nouveau mot de passe
+              <input
+                [(ngModel)]="formulaireMotDePasse.confirmationMotDePasse"
+                name="confirmationMotDePasse"
+                type="password"
+                required
+                autocomplete="new-password"
+                class="mt-1.5 h-11 w-full rounded-[10px] border border-[#d7e1eb] px-3 text-[13px] font-normal outline-none focus:border-[#0ea5a4]"
+              />
+            </label>
+
+            @if (erreurMotDePasse()) {
+              <p class="md:col-span-2 rounded-lg bg-red-50 p-3 text-[12px] text-red-700" role="alert">
+                {{ erreurMotDePasse() }}
+              </p>
+            }
+            @if (succesMotDePasse()) {
+              <p class="md:col-span-2 rounded-lg bg-emerald-50 p-3 text-[12px] text-emerald-700" role="status">
+                {{ succesMotDePasse() }}
+              </p>
+            }
+
+            <button
+              type="submit"
+              [disabled]="motDePasseForm.invalid || enregistrementMotDePasse()"
+              class="md:col-span-2 min-h-11 rounded-[10px] bg-[#0ea5a4] px-5 text-[12px] font-bold text-white transition hover:bg-[#0c9695] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {{ enregistrementMotDePasse() ? 'Modification en cours…' : 'Enregistrer le nouveau mot de passe' }}
+            </button>
+          </form>
+        }
 
       </div>
 
@@ -502,15 +602,19 @@
         <p
           class="text-[11px] text-[#59636d]"
         >
-          Dernière synchronisation du compte :
-
-          <span
-            class="font-bold text-[#263448]"
-          >
-            Aujourd'hui à 11:42
-          </span>
+          Les modifications sont enregistrées sur votre compte administrateur.
         </p>
 
+        @if (erreurProfil()) {
+          <p class="mr-auto rounded-lg bg-red-50 px-3 py-2 text-[12px] text-red-700" role="alert">
+            {{ erreurProfil() }}
+          </p>
+        }
+        @if (succesProfil()) {
+          <p class="mr-auto rounded-lg bg-emerald-50 px-3 py-2 text-[12px] text-emerald-700" role="status">
+            {{ succesProfil() }}
+          </p>
+        }
 
         <!-- Actions -->
         <div class="flex items-center gap-7">
@@ -521,13 +625,15 @@
             (click)="retourDashboard()"
             class="text-[12px] font-bold text-[#3d4854] transition hover:text-[#142238]"
           >
-            Annuler
+            {{ modificationActive() ? 'Annuler' : 'Retour au tableau de bord' }}
           </button>
 
 
           <!-- Enregistrer -->
           <button
             type="button"
+            (click)="modificationActive() ? enregistrerProfil() : activerModification()"
+            [disabled]="enregistrementProfil() || (modificationActive() && (!formulaireProfil.first_name.trim() || !formulaireProfil.last_name.trim() || !formulaireProfil.email.trim()))"
             class="flex h-[43px] min-w-[275px] items-center justify-center gap-2 rounded-[11px] bg-[#0ea5a4] px-6 text-[13px] font-bold text-white shadow-[0_3px_8px_rgba(14,165,164,0.16)] transition hover:bg-[#0c9695]"
           >
 
@@ -535,7 +641,11 @@
               ✓
             </span>
 
-            Enregistrer les modifications
+            @if (enregistrementProfil()) {
+              Enregistrement...
+            } @else {
+              {{ modificationActive() ? 'Enregistrer les modifications' : 'Modifier mon profil' }}
+            }
 
           </button>
 

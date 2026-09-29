@@ -1,340 +1,131 @@
-<div class="min-h-screen bg-[#F5F7FC] px-3 pb-6">
-
-  <!-- ================= HEADER ================= -->
-  <header class="relative flex items-center justify-center pt-6 pb-5">
-
-    <!-- Bouton retour -->
+<!-- Profil du citoyen : identité, raccourcis d'activité et gestion du compte. -->
+<main class="citizen-responsive citizen-profile min-h-screen bg-[#F5F7FC] px-4 pb-10">
+  <!-- En-tête mobile avec retour à l'accueil citoyen. -->
+  <header class="relative flex items-center justify-center py-5">
     <button
       type="button"
       (click)="retour()"
-      aria-label="Retour"
-      class="absolute left-0 flex h-9 w-9 items-center justify-center
-             rounded-full bg-white shadow-sm"
+      aria-label="Retour à l'accueil"
+      class="absolute left-0 flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#172536] shadow-sm"
     >
-      <svg
-        class="h-5 w-5 text-[#374151]"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M15 18l-6-6 6-6"/>
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m15 18-6-6 6-6"/>
       </svg>
     </button>
-
-    <h1 class="text-[22px] font-bold text-[#172536]">
-      Mon profil
-    </h1>
-
+    <h1 class="text-xl font-bold text-[#172536]">Mon profil</h1>
   </header>
 
-
-  <!-- ================= CARTE PROFIL ================= -->
-  <section
-    class="rounded-[22px] bg-white px-3 py-6
-           shadow-[0_2px_6px_rgba(15,23,42,0.05)]"
-  >
-
-    <!-- Avatar -->
-    <div class="flex flex-col items-center">
-
-      <div class="relative">
-
-        <!-- Initiales -->
-        <div
-          class="flex h-[120px] w-[120px] items-center justify-center
-                 rounded-full bg-[#12A6A8]
-                 text-[38px] font-semibold text-white
-                 shadow-sm"
-        >
-          {{ initiales() }}
-        </div>
-
-        <!-- Bouton caméra -->
-        <button
-          type="button"
-          aria-label="Modifier la photo"
-          class="absolute bottom-0 right-0
-                 flex h-10 w-10 items-center justify-center
-                 rounded-full bg-white shadow-md"
-        >
-          <svg
-            class="h-5 w-5 text-[#0EA5A4]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M4 7h4l2-2h4l2 2h4v12H4V7z"/>
-            <circle cx="12" cy="13" r="3.5"/>
-          </svg>
-        </button>
-
+  <!-- Affiche les états réseau plutôt qu'un profil incomplet. -->
+  @if (chargement()) {
+    <div class="flex justify-center py-16" role="status" aria-label="Chargement du profil">
+      <span class="h-7 w-7 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+    </div>
+  } @else if (erreur()) {
+    <div class="rounded-2xl bg-red-50 p-4 text-sm text-red-700" role="alert">
+      {{ erreur() }}
+    </div>
+  } @else if (utilisateur(); as user) {
+    <!-- Carte d'identité : les initiales remplacent la photo, non gérée par l'API. -->
+    <section class="rounded-3xl bg-white p-6 text-center shadow-sm">
+      <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#12A6A8] text-3xl font-bold text-white">
+        {{ initiales() }}
       </div>
-
-
-      <!-- Nom complet -->
-      <h2 class="mt-4 text-[24px] font-bold text-[#101D30]">
-        {{ nomComplet() }}
-      </h2>
-
-
-      <!-- Compte vérifié -->
-      <div
-        class="mt-2 flex items-center gap-1.5 rounded-full
-               bg-[#C8F7EE] px-3 py-1.5
-               text-[11px] font-bold tracking-wide
-               text-[#087C78]"
-      >
-
-        <!-- Icône vérification -->
-        <svg
-          class="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path
-            d="M12 2l2.1 2.1 3-.3.9 2.9 2.7 1.3-.8 2.9
-               1.6 2.5-1.6 2.5.8 2.9-2.7 1.3-.9 2.9-3-.3L12 22
-               l-2.1-2.1-3 .3-.9-2.9-2.7-1.3.8-2.9L2.5 11l1.6-2.5-.8-2.9
-               2.7-1.3.9-2.9 3 .3L12 2z"
-          />
-          <path
-            d="M8.5 12.2l2.2 2.2 4.8-5"
-            fill="none"
-            stroke="white"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+      <h2 class="mt-4 text-2xl font-bold text-[#101D30]">{{ nomComplet() }}</h2>
+      <p class="mt-1 text-sm text-slate-500">{{ user.ville || 'Ville non renseignée' }}</p>
+      <span class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#C8F7EE] px-3 py-1.5 text-[11px] font-bold tracking-wide text-[#087C78]">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2 14.2 4l3-.3.9 2.9 2.7 1.3-.8 2.9 1.6 2.5-1.6 2.5.8 2.9-2.7 1.3-.9 2.9-3-.3L12 22l-2.2-2-3 .3-.9-2.9-2.7-1.3.8-2.9L2.4 12 4 9.5l-.8-2.9 2.7-1.3.9-2.9 3 .3L12 2Z"/>
+          <path d="m8.5 12.2 2.2 2.2 4.8-5" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
+        COMPTE CITOYEN
+      </span>
 
-        COMPTE CITOYEN VÉRIFIÉ
-
-      </div>
-
-    </div>
-
-
-    <!-- ================= INFORMATIONS ================= -->
-
-    <div class="mt-6 space-y-2.5">
-
-      <!-- Prénom -->
-      <div
-        class="flex items-center gap-3 rounded-xl
-               bg-[#EEF3FF] px-3 py-3"
+      <!-- L'ouverture du formulaire mène à une modification persistée via Django. -->
+      <button
+        type="button"
+        (click)="modifierProfil()"
+        class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-3 text-sm font-bold text-white shadow-sm"
       >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 13.5-12.5Z"/>
+        </svg>
+        Modifier mon profil
+      </button>
+    </section>
 
-        <div
-          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
-                 rounded-full bg-white shadow-sm"
-        >
-          <svg
-            class="h-5 w-5 text-[#007F7B]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-          >
-            <circle cx="12" cy="8" r="3.5"/>
-            <path
-              stroke-linecap="round"
-              d="M5 20c.7-3.3 3.1-5 7-5s6.3 1.7 7 5"
-            />
-          </svg>
-        </div>
-
-        <div class="min-w-0">
-          <p class="text-[11px] text-[#4B5563]">
-            Prénom
-          </p>
-
-          <p class="truncate text-[18px] font-semibold text-[#101D30]">
-            {{ utilisateur()?.first_name }}
-          </p>
-        </div>
-
+    <!-- Raccourcis vers les activités citoyennes réellement disponibles. -->
+    <section class="mt-5">
+      <h2 class="mb-3 px-1 text-base font-bold text-[#172536]">Mes activités</h2>
+      <div class="overflow-hidden rounded-2xl bg-white shadow-sm">
+        <button type="button" (click)="voirDemandes()" class="flex w-full items-center gap-3 border-b border-slate-100 p-4 text-left">
+          <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#E5F8F6] text-[#0A918D]">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>
+            </svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-semibold text-[#172536]">Mes demandes de collecte</span>
+            <span class="mt-0.5 block text-xs text-slate-500">Consulter et suivre mes demandes</span>
+          </span>
+          <svg class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button type="button" (click)="voirHistoriqueScans()" class="flex w-full items-center gap-3 border-b border-slate-100 p-4 text-left">
+          <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#EEF3FF] text-[#4965A8]">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3"/><circle cx="12" cy="12" r="4"/>
+            </svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-semibold text-[#172536]">Historique des scans</span>
+            <span class="mt-0.5 block text-xs text-slate-500">Retrouver les déchets identifiés</span>
+          </span>
+          <svg class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button type="button" (click)="voirNotifications()" class="flex w-full items-center gap-3 p-4 text-left">
+          <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#FFF3E6] text-[#E58A2B]">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>
+            </svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-semibold text-[#172536]">Notifications</span>
+            <span class="mt-0.5 block text-xs text-slate-500">Messages et conseils de tri</span>
+          </span>
+          <svg class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
       </div>
+    </section>
 
-
-      <!-- Nom -->
-      <div
-        class="flex items-center gap-3 rounded-xl
-               bg-[#EEF3FF] px-3 py-3"
-      >
-
-        <div
-          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
-                 rounded-full bg-white shadow-sm"
-        >
-          <svg
-            class="h-5 w-5 text-[#007F7B]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="4" y="5" width="16" height="15" rx="2"/>
-            <path d="M9 5V3h6v2"/>
-            <circle cx="12" cy="11" r="2"/>
-            <path d="M8 17c.7-2 2-3 4-3s3.3 1 4 3"/>
-          </svg>
+    <!-- Coordonnées du compte, lues depuis le profil renvoyé par Django. -->
+    <section class="mt-5">
+      <h2 class="mb-3 px-1 text-base font-bold text-[#172536]">Mon compte</h2>
+      <div class="space-y-2 rounded-2xl bg-white p-4 shadow-sm">
+        <div class="flex items-center justify-between gap-3 py-2">
+          <span class="text-sm text-slate-500">Adresse e-mail</span>
+          <span class="truncate text-right text-sm font-semibold text-[#172536]">{{ user.email }}</span>
         </div>
-
-        <div>
-          <p class="text-[11px] text-[#4B5563]">
-            Nom
-          </p>
-
-          <p class="text-[18px] font-semibold text-[#101D30]">
-            {{ utilisateur()?.last_name }}
-          </p>
+        <div class="flex items-center justify-between gap-3 border-t border-slate-100 py-3">
+          <span class="text-sm text-slate-500">Téléphone</span>
+          <span class="text-right text-sm font-semibold text-[#172536]">{{ user.telephone || 'Non renseigné' }}</span>
         </div>
-
+        <div class="flex items-center justify-between gap-3 border-t border-slate-100 py-3">
+          <span class="text-sm text-slate-500">Ville</span>
+          <span class="text-right text-sm font-semibold text-[#172536]">{{ user.ville || 'Non renseignée' }}</span>
+        </div>
       </div>
+    </section>
+  }
 
-
-      <!-- Email -->
-      <div
-        class="flex items-center gap-3 rounded-xl
-               bg-[#EEF3FF] px-3 py-3"
-      >
-
-        <div
-          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
-                 rounded-full bg-white shadow-sm"
-        >
-          <svg
-            class="h-5 w-5 text-[#007F7B]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="3" y="5" width="18" height="14" rx="2"/>
-            <path d="M3 7l9 6 9-6"/>
-          </svg>
-        </div>
-
-        <div class="min-w-0">
-          <p class="text-[11px] text-[#4B5563]">
-            Adresse e-mail
-          </p>
-
-          <p class="truncate text-[17px] font-semibold text-[#101D30]">
-            {{ utilisateur()?.email }}
-          </p>
-        </div>
-
-      </div>
-
-
-      <!-- Téléphone -->
-      <div
-        class="flex items-center gap-3 rounded-xl
-               bg-[#EEF3FF] px-3 py-3"
-      >
-
-        <div
-          class="flex h-11 w-11 flex-shrink-0 items-center justify-center
-                 rounded-full bg-white shadow-sm"
-        >
-          <svg
-            class="h-5 w-5 text-[#007F7B]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-          >
-            <rect x="7" y="3" width="10" height="18" rx="2"/>
-            <path d="M10 18h4"/>
-          </svg>
-        </div>
-
-        <div>
-          <p class="text-[11px] text-[#4B5563]">
-            Téléphone
-          </p>
-
-          <p class="text-[17px] font-semibold text-[#101D30]">
-            {{ utilisateur()?.telephone }}
-          </p>
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- ================= MODIFIER ================= -->
-
-    <button
-      type="button"
-      (click)="modifierProfil()"
-      class="mt-5 flex w-full items-center justify-center gap-2
-             rounded-xl bg-[#0EA5A4]
-             py-3 text-[15px] font-bold text-white
-             shadow-[0_4px_12px_rgba(14,165,164,0.25)]"
-    >
-
-      <!-- Icône crayon -->
-      <svg
-        class="h-5 w-5"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M12 20h9"/>
-        <path
-          d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"
-        />
-      </svg>
-
-      Modifier mes informations
-
-    </button>
-
-  </section>
-
-
-  <!-- ================= DECONNEXION ================= -->
-
+  <!-- Déconnexion retire les tokens et le profil du stockage local. -->
   <button
     type="button"
     (click)="deconnecter()"
-    class="mt-4 flex w-full items-center justify-center gap-2
-           rounded-xl bg-[#EEF3FF]
-           py-3.5 text-[15px] font-semibold text-red-600"
+    class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3.5 text-sm font-semibold text-red-600 shadow-sm"
   >
-
-    <svg
-      class="h-5 w-5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M10 17l5-5-5-5"/>
-      <path d="M15 12H3"/>
-      <path d="M21 19V5a2 2 0 0 0-2-2h-6"/>
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-6"/>
     </svg>
-
     Se déconnecter
-
   </button>
-
-</div>
+</main>

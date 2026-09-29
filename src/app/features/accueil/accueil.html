@@ -1,5 +1,5 @@
 <!-- ============ HERO SECTION ============ -->
-<section class="relative overflow-hidden rounded-[28px] mx-4 mt-4 shadow-xl">
+<section class="citizen-public relative overflow-hidden rounded-[28px] mx-4 mt-4 shadow-xl">
 
   <!-- Image de fond -->
   <div
@@ -73,7 +73,7 @@
              hover:bg-[#0d9488]
              text-white font-semibold py-4 rounded-2xl
              flex items-center justify-center gap-2
-             mb-5 shadow-lg shadow-[#0EA5A4]/30 transition">
+             mb-3 shadow-lg shadow-[#0EA5A4]/30 transition">
 
       <!-- Icône scanner SVG -->
       <svg
@@ -106,19 +106,61 @@
 
     </button>
 
+    <!-- ============ BOUTON DEMANDER UN RAMASSAGE ============ -->
+    <!--
+      Bouton secondaire : fond blanc translucide + bordure turquoise.
+      Légèrement plus petit que "Scanner un déchet" pour garder
+      la hiérarchie visuelle. Donne l'impression d'avoir toujours
+      fait partie de l'interface.
+    -->
+    <button
+      type="button"
+      (click)="demanderRamassage()"
+      class="w-full
+             bg-white/10 backdrop-blur-sm
+             hover:bg-white/20
+             border border-[#0EA5A4]/70
+             text-[#5EEAD4] font-semibold py-3 rounded-2xl
+             flex items-center justify-center gap-2.5
+             mb-5 transition">
+
+      <!-- Icône camion de collecte -->
+      <svg
+        class="w-5 h-5 text-[#5EEAD4]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        viewBox="0 0 24 24">
+        <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+        <path d="M16 8h4l3 3v5h-7V8z"></path>
+        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+      </svg>
+
+      <span class="text-[15px] font-bold">
+        Demander un ramassage
+      </span>
+
+    </button>
+
   </div>
+
+  <!-- Boutons + résultat + stats partagent le même padding horizontal -->
+  <div class="px-5 pb-6">
 
   <!-- ============ RÉSULTAT DU SCAN ============ -->
 <div
   class="bg-black/40 backdrop-blur-md rounded-2xl
          p-3.5 flex items-center gap-3.5
-         border border-white/10 shadow-inner">
+         border border-white/10 shadow-inner mb-3">
 
   <!-- Image du déchet -->
   <div
-    class="w-12 h-12 rounded-xl bg-cover bg-center
+    class="w-5 h-12 rounded-xl bg-cover bg-center
            flex-shrink-0"
-    style="background-image: url('/assets/bottle-thumb.jpg');">
+    >
   </div>
 
   <!-- Icône validation -->
@@ -195,7 +237,7 @@
 </div>
 
 <!-- ============ STATISTIQUES ============ -->
-<div class="grid grid-cols-2 gap-3 mb-8">
+<div class="grid grid-cols-2 gap-3 mb-3">
 
   <!-- Statistique scans -->
   <div
@@ -237,7 +279,7 @@
     </div>
 
     <p class="text-white text-xl font-extrabold">
-      128k+
+      {{ statistiques() ? formaterNombre(statistiques()!.scans) : '—' }}
     </p>
 
     <p class="text-white/60 text-xs mt-1">
@@ -289,7 +331,7 @@
     </div>
 
     <p class="text-white text-xl font-extrabold">
-      15.2k
+      {{ statistiques() ? formaterNombre(statistiques()!.citoyens) : '—' }}
     </p>
 
     <p class="text-white/60 text-xs mt-1">
@@ -300,10 +342,13 @@
 
 </div>
 
+  <!-- Fermeture du wrapper px-5 pb-6 qui aligne les marges -->
+  </div>
+
 </section>
 
 <!-- ============ SOLUTIONS INTELLIGENTES ============ -->
-<section class="px-4 mt-8 pb-32">
+<section class="citizen-public-content px-4 mt-8 pb-32">
 
   <!-- En-tête -->
   <div class="flex items-start justify-between mb-5 px-1">
@@ -642,6 +687,83 @@
 
   </button>
 
+  <!-- ============ DEVENIR COLLECTEUR ============ -->
+  <button
+    type="button"
+    (click)="devenirCollecteur()"
+    class="w-full text-left bg-white rounded-[28px]
+           p-5 mt-3 mb-3
+           shadow-[0_2px_8px_rgba(15,23,42,0.04)]
+           border border-[#BFE8E4]">
+
+    <div class="flex items-start gap-4">
+
+      <div
+        class="shrink-0 w-16 h-16 rounded-[20px]
+               bg-[#D9F8F5]
+               flex items-center justify-center">
+
+        <svg
+          class="w-7 h-7 text-[#007C83]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24"
+          aria-hidden="true">
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 7h11v10H3zM14 10h4l3 3v4h-7z" />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17 10v3h4" />
+
+          <circle cx="7.5" cy="18" r="1.5" />
+          <circle cx="17.5" cy="18" r="1.5" />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8 4.5a5 5 0 014.4 2.6M12.4 4.5l.2 2.7-2.6-.4" />
+
+        </svg>
+      </div>
+
+      <div class="min-w-0 flex-1">
+
+        <div class="flex flex-wrap items-center gap-2">
+
+          <h3 class="text-[#0F172A] text-[23px] leading-tight font-semibold">
+            Devenir collecteur
+          </h3>
+
+          <span
+            class="text-[#0B7F83] bg-[#E5F1EF]
+                   rounded-full px-2 py-0.5
+                   text-[10px] font-medium">
+            Espace professionnel
+          </span>
+
+        </div>
+
+        <p class="text-[#475569] text-[16px] leading-[1.55] mt-1">
+          Rejoignez le réseau DechetScan et recevez des demandes de collecte
+          près de chez vous.
+        </p>
+
+        <span class="inline-block text-[#007C83] text-sm font-semibold mt-3">
+          Devenir collecteur →
+        </span>
+
+      </div>
+
+    </div>
+
+  </button>
+
 </section>
 
 
@@ -693,4 +815,205 @@
   <app-barre-navigations></app-barre-navigations>
 
 
+<!-- ============================================================
+     MODAL — CONNEXION REQUISE POUR LE RAMASSAGE
+     Affiché quand un utilisateur non connecté clique sur
+     "Demander un ramassage". Style cohérent avec l'app.
+     ============================================================ -->
+@if (modalRamassageVisible()) {
 
+  <!-- Fond sombre semi-transparent -->
+  <div
+    class="fixed inset-0 z-50 flex items-end justify-center
+           bg-[#0F172A]/60 backdrop-blur-[2px]"
+    (click)="fermerModal()"
+  >
+
+    <!-- Carte du modal — stoppe la propagation du clic -->
+    <div
+      class="w-full max-w-md mx-auto
+             bg-white rounded-t-[32px]
+             px-5 pt-6 pb-10
+             shadow-[0_-8px_40px_rgba(15,23,42,0.18)]
+             animate-slide-up"
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- Poignée de glissement -->
+      <div class="mx-auto mb-5 h-1 w-10 rounded-full bg-slate-200"></div>
+
+      <!-- Icône principale -->
+      <div
+        class="mx-auto mb-4
+               w-16 h-16 rounded-[20px]
+               bg-[#E5F9F7]
+               flex items-center justify-center"
+      >
+        <svg
+          class="w-8 h-8 text-[#0EA5A4]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          viewBox="0 0 24 24"
+        >
+          <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+          <path d="M16 8h4l3 3v5h-7V8z"></path>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+      </div>
+
+      <!-- Titre -->
+      <h2
+        class="text-center text-[#0F172A] text-[22px]
+               font-extrabold leading-tight mb-2"
+      >
+        Connectez-vous pour<br>demander un ramassage
+      </h2>
+
+      <!-- Description -->
+      <p
+        class="text-center text-[#64748B] text-[15px]
+               leading-relaxed mb-7 px-2"
+      >
+        Pour demander à un collecteur de venir récupérer
+        vos déchets, vous devez disposer d'un compte DechetScan.
+      </p>
+
+      <!-- Boutons d'action -->
+      <div class="space-y-3">
+
+        <!-- Se connecter -->
+        <button
+          type="button"
+          (click)="allerConnexion()"
+          class="w-full bg-[#0EA5A4] hover:bg-[#0d9488]
+                 text-white text-[15px] font-bold
+                 py-4 rounded-2xl
+                 shadow-lg shadow-[#0EA5A4]/25
+                 transition active:scale-[0.98]"
+        >
+          Se connecter
+        </button>
+
+        <!-- S'inscrire -->
+        <button
+          type="button"
+          (click)="allerInscription()"
+          class="w-full bg-white
+                 border-2 border-[#0EA5A4]
+                 text-[#0EA5A4] text-[15px] font-bold
+                 py-4 rounded-2xl
+                 transition active:scale-[0.98]
+                 hover:bg-[#F0FDFA]"
+        >
+          Créer un compte
+        </button>
+
+      </div>
+
+      <!-- Lien fermer -->
+      <button
+        type="button"
+        (click)="fermerModal()"
+        class="mt-4 w-full text-center
+               text-[#94A3B8] text-[13px] font-medium
+               hover:text-[#64748B] transition"
+      >
+        Plus tard
+      </button>
+
+    </div>
+  </div>
+}
+
+@if (modalCollecteurVisible()) {
+  <div
+    class="fixed inset-0 z-[60] flex items-end justify-center
+           bg-[#0F172A]/60 backdrop-blur-[2px]"
+    (click)="fermerModalCollecteur()">
+
+    <section
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-collecteur-title"
+      class="w-full max-w-md mx-auto
+             bg-white rounded-t-[32px]
+             px-5 pt-6 pb-10
+             shadow-[0_-8px_40px_rgba(15,23,42,0.18)]
+             animate-slide-up"
+      (click)="$event.stopPropagation()">
+
+      <div class="mx-auto mb-5 h-1 w-10 rounded-full bg-slate-200"></div>
+
+      <div
+        class="mx-auto mb-4 w-16 h-16 rounded-[20px]
+               bg-[#E5F9F7] flex items-center justify-center">
+
+        <svg
+          class="w-8 h-8 text-[#0EA5A4]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          viewBox="0 0 24 24"
+          aria-hidden="true">
+          <rect x="1" y="3" width="15" height="13" rx="2"></rect>
+          <path d="M16 8h4l3 3v5h-7V8z"></path>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+
+      </div>
+
+      <h2
+        id="modal-collecteur-title"
+        class="text-center text-[#0F172A] text-[22px]
+               font-extrabold leading-tight mb-2">
+        Créez votre compte pour devenir collecteur
+      </h2>
+
+      <p
+        class="text-center text-[#64748B] text-[15px]
+               leading-relaxed mb-7 px-2">
+        Rejoignez DechetScan en tant que collecteur et accédez à votre espace
+        professionnel.
+      </p>
+
+      <div class="space-y-3">
+
+        <button
+          type="button"
+          (click)="naviguerDepuisModalCollecteur('/connexion')"
+          class="w-full bg-[#0EA5A4] hover:bg-[#0d9488]
+                 text-white text-[15px] font-bold
+                 py-4 rounded-2xl shadow-lg
+                 shadow-[#0EA5A4]/25 transition">
+          Se connecter
+        </button>
+
+        <button
+          type="button"
+          (click)="naviguerDepuisModalCollecteur('/inscription')"
+          class="w-full bg-white border-2 border-[#0EA5A4]
+                 text-[#0EA5A4] text-[15px] font-bold
+                 py-4 rounded-2xl transition hover:bg-[#F0FDFA]">
+          S'inscrire
+        </button>
+
+      </div>
+
+      <button
+        type="button"
+        (click)="fermerModalCollecteur()"
+        class="mt-4 w-full text-center text-[#94A3B8]
+               text-[13px] font-medium hover:text-[#64748B]">
+        Fermer
+      </button>
+
+    </section>
+  </div>
+}

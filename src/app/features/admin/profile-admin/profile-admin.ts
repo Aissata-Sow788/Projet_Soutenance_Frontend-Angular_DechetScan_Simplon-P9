@@ -1,12 +1,21 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Auth } from '../../../core/services/auth';
 import { Utilisateur, Role } from '../../../shared/models/utilisateur.model';
+import { ChangementMotDePasse } from '../../../shared/models/collecteur.model';
+
+/** Coordonnées modifiables depuis le profil administrateur. */
+type ProfilAdministrateur = Pick<
+  Utilisateur,
+  'first_name' | 'last_name' | 'email' | 'telephone' | 'ville'
+>;
 
 @Component({
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   selector: 'app-profile-admin',
   styleUrl: './profile-admin.css',
   templateUrl: './profile-admin.html',
@@ -33,6 +42,31 @@ export class ProfileAdmin {
 
   // Contient le message d'erreur éventuel.
   erreur = signal<string | null>(null);
+
+  // Copie éditable des coordonnées, séparée des données réellement enregistrées.
+  formulaireProfil: ProfilAdministrateur = {
+    first_name: '',
+    last_name: '',
+    email: '',
+    telephone: '',
+    ville: '',
+  };
+
+  modificationActive = signal(false);
+  enregistrementProfil = signal(false);
+  erreurProfil = signal<string | null>(null);
+  succesProfil = signal<string | null>(null);
+
+  // État et champs du formulaire sécurisé de changement de mot de passe.
+  formulaireMotDePasse: ChangementMotDePasse = {
+    ancienMotDePasse: '',
+    nouveauMotDePasse: '',
+    confirmationMotDePasse: '',
+  };
+  formulaireMotDePasseOuvert = signal(false);
+  enregistrementMotDePasse = signal(false);
+  erreurMotDePasse = signal<string | null>(null);
+  succesMotDePasse = signal<string | null>(null);
 
 
   // ============================================================
@@ -67,6 +101,7 @@ export class ProfileAdmin {
 
         // Enregistre l'utilisateur dans le signal.
         this.utilisateur.set(utilisateur);
+        this.formulaireProfil = this.copierProfil(utilisateur);
 
         // Termine le chargement.
         this.chargement.set(false);
@@ -91,6 +126,125 @@ export class ProfileAdmin {
         this.chargement.set(false);
       }
     });
+  }
+
+  /** Prépare les champs modifiables à partir de la réponse Django. */
+  private copierProfil(utilisateur: Utilisateur): ProfilAdministrateur {
+    return {
+      first_name: utilisateur.first_name,
+      last_name: utilisateur.last_name,
+      email: utilisateur.email,
+      telephone: utilisateur.telephone ?? '',
+      ville: utilisateur.ville,
+    };
+  }
+
+  /** Active l'édition et repart des dernières données enregistrées. */
+  activerModification(): void {
+    const utilisateur = this.utilisateur();
+    if (!utilisateur) return;
+    this.formulaireProfil = this.copierProfil(utilisateur);
+    this.erreurProfil.set(null);
+    this.succesProfil.set(null);
+    this.modificationActive.set(true);
+  }
+
+  /** Annule les changements non enregistrés du formulaire de profil. */
+  annulerModification(): void {
+    const utilisateur = this.utilisateur();
+    if (utilisateur) this.formulaireProfil = this.copierProfil(utilisateur);
+    this.erreurProfil.set(null);
+    this.modificationActive.set(false);
+  }
+
+  /** Enregistre les coordonnées du compte administrateur auprès de Django. */
+  enregistrerProfil(): void {
+    this.erreurProfil.set(null);
+    this.succesProfil.set(null);
+    this.enregistrementProfil.set(true);
+
+    this.auth.mettreAJourProfil(this.formulaireProfil).subscribe({
+      next: (utilisateur) => {
+        this.utilisateur.set(utilisateur);
+        this.formulaireProfil = this.copierProfil(utilisateur);
+        this.modificationActive.set(false);
+        this.enregistrementProfil.set(false);
+        this.succesProfil.set('Vos informations ont été enregistrées.');
+      },
+      error: (erreur: HttpErrorResponse) => {
+        this.erreurProfil.set(this.lireErreurApi(erreur));
+        this.enregistrementProfil.set(false);
+      },
+    });
+  }
+
+  /** Affiche ou masque le formulaire de changement de mot de passe. */
+  basculerFormulaireMotDePasse(): void {
+    this.formulaireMotDePasseOuvert.update(ouvert => !ouvert);
+    this.formulaireMotDePasse = {
+      ancienMotDePasse: '',
+      nouveauMotDePasse: '',
+      confirmationMotDePasse: '',
+    };
+    this.erreurMotDePasse.set(null);
+    this.succesMotDePasse.set(null);
+  }
+
+  /** Valide les trois champs puis envoie le changement à l'endpoint Django protégé. */
+  changerMotDePasse(): void {
+    this.erreurMotDePasse.set(null);
+    this.succesMotDePasse.set(null);
+
+    if (
+      !this.formulaireMotDePasse.ancienMotDePasse ||
+      !this.formulaireMotDePasse.nouveauMotDePasse ||
+      !this.formulaireMotDePasse.confirmationMotDePasse
+    ) {
+      this.erreurMotDePasse.set('Veuillez remplir les trois champs du mot de passe.');
+      return;
+    }
+
+    if (
+      this.formulaireMotDePasse.nouveauMotDePasse !==
+      this.formulaireMotDePasse.confirmationMotDePasse
+    ) {
+      this.erreurMotDePasse.set('La confirmation ne correspond pas au nouveau mot de passe.');
+      return;
+    }
+
+    this.enregistrementMotDePasse.set(true);
+    this.auth.changerMotDePasse(this.formulaireMotDePasse).subscribe({
+      next: (reponse) => {
+        this.succesMotDePasse.set(reponse.detail);
+        this.formulaireMotDePasse = {
+          ancienMotDePasse: '',
+          nouveauMotDePasse: '',
+          confirmationMotDePasse: '',
+        };
+        this.enregistrementMotDePasse.set(false);
+      },
+      error: (erreur: HttpErrorResponse) => {
+        this.erreurMotDePasse.set(this.lireErreurApi(erreur));
+        this.enregistrementMotDePasse.set(false);
+      },
+    });
+  }
+
+  /** Extrait les messages utiles fournis par Django REST Framework. */
+  private lireErreurApi(erreur: HttpErrorResponse): string {
+    const details: unknown = erreur.error;
+    if (typeof details === 'string') return details;
+    if (typeof details === 'object' && details !== null) {
+      const messages = Object.values(details).flatMap(valeur => {
+        if (typeof valeur === 'string') return [valeur];
+        if (Array.isArray(valeur)) {
+          return valeur.filter((message): message is string => typeof message === 'string');
+        }
+        return [];
+      });
+      if (messages.length) return messages.join(' ');
+    }
+    return 'La requête a échoué. Vérifiez les informations saisies puis réessayez.';
   }
 
 
@@ -182,7 +336,12 @@ export class ProfileAdmin {
 
   retourDashboard(): void {
 
-    // Retourne au tableau de bord administrateur.
+    // En mode édition, Annuler restaure le profil au lieu de quitter la page.
+    if (this.modificationActive()) {
+      this.annulerModification();
+      return;
+    }
+
     this.router.navigate(['/admin']);
   }
 }

@@ -1,3 +1,315 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/* Améliorations d'affichage réservées aux interfaces citoyennes sur grand écran. */
+@media (min-width: 1024px) {
+  .citizen-responsive {
+    min-height: 100vh;
+    padding-bottom: 4rem !important;
+  }
+
+  .citizen-responsive > header {
+    padding-right: max(2rem, calc((100vw - 1320px) / 2));
+    padding-left: max(2rem, calc((100vw - 1320px) / 2));
+  }
+
+  /* Les pages conçues pour mobile utilisent l'espace desktop sans étirer les lignes. */
+  .citizen-responsive .citizen-content {
+    width: min(calc(100% - 5rem), 1180px);
+    max-width: 1180px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .citizen-responsive.citizen-form .citizen-content {
+    max-width: 900px;
+  }
+
+  .citizen-responsive.citizen-detail .citizen-content {
+    max-width: 1080px;
+  }
+
+  .citizen-responsive.citizen-auth .citizen-auth-content {
+    max-width: 520px;
+    padding: 2rem 2.5rem;
+    border-radius: 1.5rem;
+    background: #fff;
+    box-shadow: 0 18px 55px rgb(15 23 42 / 8%);
+  }
+
+  /* Sur ordinateur, la navigation devient un dock compact plutôt qu'une barre bord à bord. */
+  .citizen-responsive app-barre-navigations nav {
+    position: fixed;
+    right: auto;
+    bottom: 1.5rem;
+    left: 50%;
+    width: min(760px, calc(100vw - 4rem));
+    max-width: 760px;
+    transform: translateX(-50%);
+    overflow: visible;
+    border: 1px solid rgb(226 232 240 / 85%);
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 36px rgb(15 23 42 / 14%) !important;
+  }
+
+  /* Accueil citoyen : contenu centré, plus large et respirant. */
+  .citizen-dashboard > header {
+    min-height: 82px;
+    height: 82px;
+  }
+
+  .citizen-dashboard > main {
+    width: min(calc(100% - 6rem), 1280px);
+    margin-right: auto;
+    margin-left: auto;
+    padding: 2.25rem 0 7rem;
+  }
+
+  .citizen-dashboard > main > section:first-of-type {
+    max-width: 760px;
+  }
+
+  .citizen-responsive.citizen-list > header {
+    min-height: 76px;
+  }
+
+  .citizen-responsive.citizen-list .citizen-content {
+    padding-top: 2rem;
+  }
+
+  /* Les cartes des demandes et ventes forment une grille lisible en grand écran. */
+  .citizen-requests > section[aria-label='Liste de mes demandes'] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .citizen-sales-total,
+  .citizen-sales-list {
+    width: min(calc(100% - 5rem), 1180px);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .citizen-sales-total {
+    margin-top: 2rem;
+  }
+
+  .citizen-sales-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .citizen-sale-card {
+    min-height: 112px;
+    padding: 1.25rem;
+    border: 1px solid rgb(226 232 240 / 75%);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .citizen-sale-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgb(15 23 42 / 8%);
+  }
+
+  .citizen-points-content {
+    width: min(calc(100% - 5rem), 1180px);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-content: start;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .citizen-points-content > :not(.citizen-point-card) {
+    grid-column: 1 / -1;
+  }
+
+  .citizen-point-card {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid rgb(226 232 240 / 85%);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .citizen-point-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgb(15 23 42 / 8%);
+  }
+
+  .citizen-responsive.citizen-profile {
+    display: grid;
+    width: min(100% - 5rem, 1240px);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-content: start;
+    align-items: start;
+    gap: 1.5rem;
+    margin: 0 auto;
+    padding: 2rem 0 5rem;
+  }
+
+  .citizen-profile > header {
+    grid-column: 1 / -1;
+  }
+
+  .citizen-profile > section:first-of-type {
+    grid-row: span 2;
+    padding: 2.5rem;
+  }
+
+  .citizen-profile > section:nth-of-type(2),
+  .citizen-profile > section:nth-of-type(3) {
+    margin-top: 0;
+  }
+
+  .citizen-profile > button:last-child {
+    grid-column: 1 / -1;
+    width: min(100%, 420px);
+    justify-self: center;
+  }
+
+  .citizen-responsive.citizen-form > form {
+    width: min(calc(100% - 5rem), 850px);
+    margin: 1rem auto 0;
+    padding: 2rem;
+  }
+
+  .citizen-responsive.citizen-detail .citizen-content > section,
+  .citizen-responsive.citizen-detail .citizen-content > div {
+    padding: 2rem;
+  }
+
+  .citizen-responsive.citizen-analysis .citizen-content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 1.25rem;
+    max-width: 1180px;
+    padding-top: 2rem;
+  }
+
+  .citizen-responsive.citizen-analysis .citizen-content > section {
+    margin-top: 0;
+  }
+
+  .citizen-responsive.citizen-scanner > main {
+    width: min(100%, 1100px);
+    min-height: calc(100vh - 60px);
+    margin: 0 auto;
+    padding-bottom: 2rem;
+    background: linear-gradient(135deg, rgb(25 47 66 / 22%), transparent 55%);
+  }
+
+  .citizen-responsive.citizen-scanner > main > div[class*='max-w-[300px]'] {
+    width: min(44vw, 390px);
+    max-width: 390px;
+    height: min(58vh, 500px);
+    min-height: 380px;
+    border-radius: 2rem;
+  }
+
+  .citizen-responsive.citizen-map-detail .map-section {
+    height: min(70vh, 720px);
+  }
+
+  .citizen-responsive.citizen-public {
+    width: min(calc(100% - 5rem), 1280px);
+    margin: 2rem auto;
+  }
+
+  .citizen-public {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 1.5rem;
+    width: min(calc(100% - 5rem), 1280px);
+    min-height: 680px;
+    margin: 2rem auto;
+  }
+
+  .citizen-public > div.relative.z-10 {
+    grid-column: 1;
+    padding: 2rem 1rem 2rem 4rem;
+  }
+
+  .citizen-public > div.px-5.pb-6 {
+    grid-column: 2;
+    padding: 2rem 4rem 2rem 1rem;
+  }
+
+  .citizen-public h1 {
+    max-width: 900px;
+    margin-top: 1rem;
+    font-size: clamp(3rem, 5vw, 4.75rem);
+  }
+
+  .citizen-public h1 + p {
+    max-width: 760px;
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+
+  .citizen-public-content {
+    width: min(calc(100% - 5rem), 1180px);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 2rem auto 0;
+    padding: 0 0 8rem;
+  }
+
+  .citizen-public-content > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .citizen-public-content > button {
+    height: 100%;
+    margin-bottom: 0;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .citizen-public-content > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgb(15 23 42 / 10%);
+  }
+
+  body:has(.citizen-public) app-barre-navigations nav {
+    position: fixed;
+    right: auto;
+    bottom: 1.5rem;
+    left: 50%;
+    width: min(760px, calc(100vw - 4rem));
+    max-width: 760px;
+    transform: translateX(-50%);
+    overflow: visible;
+    border: 1px solid rgb(226 232 240 / 85%);
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 36px rgb(15 23 42 / 14%) !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  .citizen-responsive.citizen-profile {
+    width: min(100% - 8rem, 1320px);
+  }
+
+  .citizen-responsive.citizen-detail .citizen-content {
+    max-width: 1160px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citizen-point-card,
+  .citizen-sale-card {
+    transition: none;
+  }
+}

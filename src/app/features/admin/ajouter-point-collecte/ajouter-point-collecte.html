@@ -43,15 +43,17 @@
 
         <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-[#c8f5ed] px-3 py-1 text-[10px] font-bold text-[#007d78]">
           <span class="h-1.5 w-1.5 rounded-full bg-[#0ea5a4]"></span>
-          Nouveau point
+          {{ estModification() ? 'Modification' : 'Nouveau point' }}
         </div>
 
         <h1 class="text-[29px] font-bold tracking-[-0.8px] text-[#102238]">
-          Ajouter un point de collecte
+          {{ estModification() ? 'Modifier un point de collecte' : 'Ajouter un point de collecte' }}
         </h1>
 
         <p class="mt-1 text-[13px] text-[#5d6978]">
-          Ajoutez un nouveau point de collecte accessible aux citoyens et optimisez les circuits de ramassage urbain.
+          {{ estModification()
+            ? 'Mettez à jour les informations du point de collecte.'
+            : 'Ajoutez un nouveau point de collecte accessible aux citoyens et optimisez les circuits de ramassage urbain.' }}
         </p>
 
       </div>
@@ -719,7 +721,7 @@
                   <path d="M5 12h14"/>
                 </svg>
 
-                Enregistrer le point de collecte
+                {{ estModification() ? 'Enregistrer les modifications' : 'Enregistrer le point de collecte' }}
               }
 
             </button>

@@ -174,10 +174,7 @@ export class HomeCitoyen implements OnInit {
 
   /**
    * Charge les scans du citoyen depuis Django.
-   *
-   * L'API :
-   * GET /api/scans/historique/
-   *
+  
    * retourne uniquement les scans appartenant
    * à l'utilisateur connecté.
    */
@@ -423,6 +420,15 @@ export class HomeCitoyen implements OnInit {
     this.router.navigate(['/historique']);
   }
 
+  /** Ouvre le formulaire de demande de ramassage. */
+  demanderRamassage(): void {
+    this.router.navigate(['/demande-ramassage']);
+  }
+
+  /** Ouvre la page de vente de déchets. */
+  vendreDechets(): void {
+    this.router.navigate(['/vendre-dechets']);
+  }
 
   /**
    * Ouvre la liste des points de collecte.

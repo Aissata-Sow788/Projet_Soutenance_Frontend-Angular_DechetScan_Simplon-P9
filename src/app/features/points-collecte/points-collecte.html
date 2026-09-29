@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-slate-50 pb-24">
+<div class="citizen-responsive citizen-list citizen-points min-h-screen bg-slate-50 pb-24">
 
   <header class="flex items-center justify-between bg-[#f8f9fd] px-4 py-4">
     <img src="assets/logo1-dechetscan.png" alt="DechetScan" class="h-25 w-auto object-contain" />
@@ -11,7 +11,7 @@
     </button>
   </header>
 
-  <div class="px-4 mt-4 space-y-4">
+  <div class="citizen-content citizen-points-content px-4 mt-4 space-y-4">
 
     <div class="flex items-center justify-between">
       <span class="text-xs font-semibold bg-[#99F6E4]/50 text-[#0F172A] rounded-full px-3 py-1">
@@ -68,7 +68,7 @@
     }
 
     @for (point of pointsTries(); track point.idPoint) {
-      <div class="rounded-2xl bg-white p-4 shadow-sm">
+      <div class="citizen-point-card rounded-2xl bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <span class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
                 [style.background-color]="(point.icone === 'recyclage' || point.icone === 'ecran') ? '#99F6E4' : '#f1f5f9'"

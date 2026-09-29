@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, of, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import {
@@ -14,16 +13,14 @@ import {
 })
 export class AccueilService {
 
-  private readonly baseUrl = 'http://127.0.0.1:8000/api/';
-  private readonly httpurl = inject(HttpClient)
+  private readonly http = inject(HttpClient);
 
-  // Statistiques temporaires
-  private readonly statistiquesMock: StatistiquesAccueil = {
-    scans: '128k+',
-    citoyens: '15.2k'
-  };
+  // URL de l'endpoint public des statistiques de l'accueil.
+  // Accessible sans token JWT — données inoffensives.
+  private readonly urlStatsPublic =
+    'http://127.0.0.1:8000/api/stats/accueil/';
 
-  // Solutions affichées sur l'accueil
+  // Solutions affichées sur l'accueil (statiques).
   private readonly solutionsMock: SolutionAccueil[] = [
     {
       titre: 'Scan intelligent',
@@ -48,30 +45,36 @@ export class AccueilService {
     }
   ];
 
-  // Défi affiché sur l'accueil
+  // Défi affiché sur l'accueil (statique).
   private readonly defiMock: DefiAccueil = {
     titre: 'Défi Dakar Propre 2025',
     description: 'Rejoignez 840 volontaires ce samedi'
   };
 
-  // Récupère les statistiques
+  /**
+   * Récupère les statistiques réelles depuis l'endpoint PUBLIC Django.
+   * GET /api/stats/accueil/ — aucun token JWT requis.
+   * Accessible aux visiteurs non connectés sur la page d'accueil.
+   */
   getStatistiques(): Observable<StatistiquesAccueil> {
-    return of(this.statistiquesMock).pipe(
-      delay(300)
+    return this.http.get<{
+      nombreScans: number;
+      nombreUtilisateurs: number;
+    }>(this.urlStatsPublic).pipe(
+      map(data => ({
+        scans:    data.nombreScans,
+        citoyens: data.nombreUtilisateurs,
+      }))
     );
   }
 
-  // Récupère les solutions
+  // Récupère les solutions (statiques).
   getSolutions(): Observable<SolutionAccueil[]> {
-    return of(this.solutionsMock).pipe(
-      delay(300)
-    );
+    return of(this.solutionsMock);
   }
 
-  // Récupère le défi
+  // Récupère le défi (statique).
   getDefi(): Observable<DefiAccueil> {
-    return of(this.defiMock).pipe(
-      delay(300)
-    );
+    return of(this.defiMock);
   }
 }

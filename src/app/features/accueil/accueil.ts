@@ -1,13 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { BarreNavigations } from '../../shared/components/barre-navigations/barre-navigations';
 import { AccueilService } from '../../core/services/accueil.service';
 import {StatistiquesAccueil, SolutionAccueil, DefiAccueil} from '../../shared/models/accueil.model';
 
 
 @Component({
-  imports: [RouterLink, BarreNavigations],
+  imports: [RouterLink, BarreNavigations, CommonModule],
   selector: 'app-accueil',
   styleUrl: './accueil.css',
   templateUrl: './accueil.html',
@@ -111,6 +112,72 @@ export class Accueil {
   // Ouvre les points de collecte
   voirPoints(): void {
     this.router.navigate(['/points-collecte']);
+  }
+
+  /**
+   * Formate un nombre pour l'affichage dans les statistiques.
+   * Exemples : 1250 → "1.2k", 128000 → "128k+", 5 → "5"
+   */
+  formaterNombre(n: number): string {
+    if (n >= 1_000_000) {
+      return (n / 1_000_000).toFixed(1).replace('.0', '') + 'M+';
+    }
+    if (n >= 10_000) {
+      return Math.floor(n / 1000) + 'k+';
+    }
+    if (n >= 1_000) {
+      return (n / 1000).toFixed(1).replace('.0', '') + 'k';
+    }
+    return n.toString();
+  }
+
+  // ─── Modal "Demander un ramassage" ────────────────────────────
+
+  // Contrôle l'affichage du modal d'invitation à se connecter.
+  modalRamassageVisible = signal(false);
+
+  // Contrôle l'affichage de l'invitation à créer un compte collecteur.
+  modalCollecteurVisible = signal(false);
+
+  /**
+   * Déclenché quand le citoyen non connecté clique sur
+   * "Demander un ramassage". Affiche le modal de connexion.
+   */
+  demanderRamassage(): void {
+    this.modalRamassageVisible.set(true);
+  }
+
+  /** Ferme le modal. */
+  fermerModal(): void {
+    this.modalRamassageVisible.set(false);
+  }
+
+  /** Redirige vers la page de connexion depuis le modal. */
+  allerConnexion(): void {
+    this.modalRamassageVisible.set(false);
+    this.router.navigate(['/connexion']);
+  }
+
+  /** Redirige vers la page d'inscription depuis le modal. */
+  allerInscription(): void {
+    this.modalRamassageVisible.set(false);
+    this.router.navigate(['/inscription']);
+  }
+
+  /** Ouvre l'invitation à rejoindre le réseau des collecteurs. */
+  devenirCollecteur(): void {
+    this.modalCollecteurVisible.set(true);
+  }
+
+  /** Ferme l'invitation à devenir collecteur. */
+  fermerModalCollecteur(): void {
+    this.modalCollecteurVisible.set(false);
+  }
+
+  /** Ouvre la page de connexion ou d'inscription depuis l'invitation. */
+  naviguerDepuisModalCollecteur(destination: '/connexion' | '/inscription'): void {
+    this.modalCollecteurVisible.set(false);
+    this.router.navigate([destination]);
   }
 
 }

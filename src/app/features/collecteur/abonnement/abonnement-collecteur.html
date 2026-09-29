@@ -1,0 +1,504 @@
+<!-- Page Mon abonnement — deux vues selon statut actif/inactif -->
+<div class="min-h-[calc(100vh-60px)] bg-[#F7F9FB] px-5 py-7 sm:px-8 lg:px-10">
+  <div class="mx-auto max-w-[1100px]">
+
+    <!-- ─── TITRE ──────────────────────────────────────────────── -->
+    <h1 class="mb-6 text-2xl font-bold text-[#17283D]">Mon abonnement</h1>
+
+    <!-- ─── MESSAGES GLOBAUX ──────────────────────────────────── -->
+    @if (message()) {
+      <div class="mb-5 flex items-center gap-2 rounded-xl border border-[#BDEBE0] bg-[#EFFBF5] px-4 py-3 text-sm text-[#196B61]">
+        {{ message() }}
+        @if (paiementEnVerification()) {
+          <span class="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-[#0EA5A4] border-t-transparent"></span>
+        }
+      </div>
+    }
+
+    @if (erreur()) {
+      <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ erreur() }}
+      </div>
+    }
+
+    <!-- =========================================================
+         VUE A — ABONNEMENT ACTIF
+         ========================================================= -->
+    @if (statut()?.isActive && statut()?.abonnement) {
+
+      <!-- ─── ABONNEMENT ACTUEL ───────────────────────────────── -->
+      <section class="mb-8">
+        <h2 class="mb-4 text-lg font-semibold text-[#17283D]">Abonnement actuel</h2>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex flex-wrap items-start justify-between gap-6">
+
+            <!-- Infos plan -->
+            <div class="flex items-start gap-4">
+              <!-- Icône plan -->
+              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#E8F8F6] text-2xl">
+                {{ iconePlan(statut()!.abonnement!.plan) }}
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-xl font-bold text-[#17283D]">
+                    Plan {{ libellePlan(statut()!.abonnement!.plan) }}
+                  </h3>
+                  <span class="rounded-full bg-green-100 px-2.5 py-0.5 text-[11px] font-bold text-green-700">
+                    Actif
+                  </span>
+                </div>
+                <p class="mt-0.5 text-sm text-slate-400">Facturé mensuellement</p>
+
+                <!-- Dates -->
+                <div class="mt-4 flex flex-wrap gap-8">
+                  <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Date de début</p>
+                    <p class="mt-1 text-sm font-semibold text-[#17283D]">
+                      — <!-- dateDebut non expose dans le statut, visible dans historique -->
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Prochaine échéance</p>
+                    <p class="mt-1 text-sm font-semibold text-[#17283D]">
+                      {{ formaterDate(statut()!.abonnement!.dateFin) }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Prix + fonctionnalités -->
+            <div class="text-right">
+              <p class="text-3xl font-black text-[#17283D]">
+                {{ statut()!.abonnement!.montant | number:'1.0-0' }}
+                <span class="text-lg font-semibold text-slate-400">FCFA</span>
+                <span class="text-sm font-normal text-slate-400">/mois</span>
+              </p>
+
+              @if (offreActive(); as offre) {
+                <ul class="mt-3 space-y-1.5 text-right">
+                  @for (f of offre.fonctionnalites; track f) {
+                    <li class="flex items-center justify-end gap-2 text-sm text-slate-600">
+                      {{ f }}
+                      <svg class="h-4 w-4 shrink-0 text-[#0EA5A4]" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.1 7.1a1 1 0 0 1-1.4 0l-3-3a1 1 0 1 1 1.4-1.4l2.3 2.3 6.4-6.4a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"></path>
+                      </svg>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── NOS OFFRES (grille avec plan actuel mis en avant) ── -->
+      <section class="mb-8">
+        <h2 class="mb-4 text-lg font-semibold text-[#17283D]">Nos offres</h2>
+
+        @if (chargement()) {
+          <div class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
+            Chargement des formules...
+          </div>
+        } @else {
+          <div class="grid gap-5 lg:grid-cols-3">
+            @for (offre of offres(); track offre.code) {
+
+              @let estActuel = offre.code === statut()!.abonnement!.plan;
+
+              <article
+                class="relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition"
+                [ngClass]="estActuel
+                  ? 'border-[#0EA5A4] ring-1 ring-[#0EA5A4] shadow-md'
+                  : 'border-slate-200'"
+              >
+                <!-- Badge plan actuel -->
+                @if (estActuel) {
+                  <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#0EA5A4] px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-white">
+                    Plan actuel
+                  </span>
+                }
+
+                <div class="flex-1">
+                  <h3 class="text-base font-bold text-[#17283D]">{{ offre.label }}</h3>
+                  <p class="mt-1 min-h-10 text-xs leading-5 text-slate-400">{{ offre.description }}</p>
+                  <p class="mt-4 flex items-baseline gap-1">
+                    <span class="text-[26px] font-extrabold tracking-tight text-[#17283D]">
+                      {{ offre.montant | number:'1.0-0' }} FCFA
+                    </span>
+                    <span class="text-xs text-slate-400">/ mois</span>
+                  </p>
+                  <ul class="mt-4 space-y-2.5">
+                    @for (f of offre.fonctionnalites; track f) {
+                      <li class="flex items-start gap-2 text-xs text-slate-600">
+                        <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.1 7.1a1 1 0 0 1-1.4 0l-3-3a1 1 0 1 1 1.4-1.4l2.3 2.3 6.4-6.4a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"></path>
+                        </svg>
+                        {{ f }}
+                      </li>
+                    }
+                  </ul>
+                </div>
+
+                <!-- Bouton action -->
+                @if (estActuel) {
+                  <button
+                    type="button"
+                    disabled
+                    class="mt-6 h-10 w-full cursor-default rounded-lg bg-slate-100 text-xs font-semibold text-slate-400"
+                  >
+                    Plan actuel
+                  </button>
+                } @else if (offre.code === 'entreprise') {
+                  <button
+                    type="button"
+                    class="mt-6 h-10 w-full rounded-lg border border-[#17283D] bg-white text-xs font-bold text-[#17283D] transition hover:bg-slate-50"
+                  >
+                    Contacter l'équipe
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="mt-6 h-10 w-full rounded-lg border border-[#0EA5A4] bg-white text-xs font-bold text-[#0EA5A4] transition hover:bg-[#EFFBFA]"
+                    (click)="choisirOffre(offre.code); ouvrirChoixOperateur()"
+                  >
+                    Choisir cette offre
+                  </button>
+                }
+              </article>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- ─── HISTORIQUE DES PAIEMENTS ───────────────────────── -->
+      <section>
+        <h2 class="mb-4 text-lg font-semibold text-[#17283D]">Historique de l'abonnement</h2>
+
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          @if (historiqueAbonnements().length === 0) {
+            <div class="py-10 text-center text-sm text-slate-400">
+              Aucun paiement enregistré pour le moment.
+            </div>
+          } @else {
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-slate-100">
+                  <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+                  <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Plan</th>
+                  <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Montant</th>
+                  <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+                  <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Facture</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (abo of historiqueAbonnements(); track abo.idAbonnement) {
+                  <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50">
+
+                    <!-- Date -->
+                    <td class="px-6 py-4 font-medium text-[#17283D]">
+                      {{ formaterDate(abo.dateDebut) }}
+                    </td>
+
+                    <!-- Plan -->
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <span
+                          class="h-2.5 w-2.5 rounded-full"
+                          [ngClass]="{
+                            'bg-[#0EA5A4]': abo.statutPaiement === 'paye',
+                            'bg-orange-400': abo.statutPaiement === 'en_attente',
+                            'bg-slate-300': abo.statutPaiement !== 'paye' && abo.statutPaiement !== 'en_attente'
+                          }"
+                        ></span>
+                        <span class="font-semibold text-[#17283D]">{{ libellePlan(abo.plan) }}</span>
+                      </div>
+                    </td>
+
+                    <!-- Montant -->
+                    <td class="px-4 py-4 font-bold text-[#17283D]">
+                      {{ abo.montant | number:'1.0-0' }} FCFA
+                    </td>
+
+                    <!-- Statut -->
+                    <td class="px-4 py-4">
+                      <span
+                        class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold"
+                        [ngClass]="classeStatutPaiement(abo.statutPaiement)"
+                      >
+                        {{ libelleStatutPaiement(abo.statutPaiement) }}
+                      </span>
+                    </td>
+
+                    <!-- Facture -->
+                    <td class="px-4 py-4">
+                      @if (abo.statutPaiement === 'paye') {
+                        <button
+                          type="button"
+                          class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E8F8F6] text-[#0EA5A4] transition hover:bg-[#C9F5EF]"
+                          title="Télécharger la facture"
+                        >
+                          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                          </svg>
+                        </button>
+                      } @else {
+                        <span class="text-slate-300">—</span>
+                      }
+                    </td>
+
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+      </section>
+
+    }
+
+    <!-- =========================================================
+         VUE B — PAS D'ABONNEMENT ACTIF (page de souscription)
+         ========================================================= -->
+    @else if (statut() !== null) {
+
+      <div class="mb-6 flex items-start gap-3 rounded-xl border border-[#D9F2E3] bg-[#F0FBF4] p-4 text-sm text-slate-600">
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#D9F5EC] text-[#07978C]">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor">
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1 14.2-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4-7 7Z"></path>
+          </svg>
+        </span>
+        <p class="pt-1">
+          Votre profil collecteur est prêt. Choisissez une formule pour commencer votre activité sur DechetScan.
+        </p>
+      </div>
+
+      @if (chargement()) {
+        <div class="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
+          Chargement des formules...
+        </div>
+      } @else if (erreurChargementOffres()) {
+        <div class="rounded-xl border border-red-200 bg-white p-6 text-center shadow-sm">
+          <p class="text-sm text-red-700">{{ erreurChargementOffres() }}</p>
+          <button
+            type="button"
+            class="mt-4 rounded-lg bg-[#0EA5A4] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#0B9291]"
+            (click)="rechargerOffres()"
+          >
+            Réessayer
+          </button>
+        </div>
+      } @else {
+        <div class="grid gap-5 lg:grid-cols-3">
+          @for (offre of offres(); track offre.code) {
+            <article
+              class="relative flex min-h-[330px] flex-col rounded-2xl border bg-white p-5 shadow-sm transition"
+              [ngClass]="{
+                'border-[#0EA5A4] ring-1 ring-[#0EA5A4] shadow-md': offreSelectionnee() === offre.code,
+                'border-slate-200': offreSelectionnee() !== offre.code
+              }"
+            >
+              @if (offre.code === 'professionnel') {
+                <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#0EA5A4] px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-white">
+                  Recommandé
+                </span>
+              }
+              <div class="flex-1">
+                <h2 class="text-base font-bold text-[#17283D]">{{ offre.label }}</h2>
+                <p class="mt-1 min-h-10 text-xs leading-5 text-slate-400">{{ offre.description }}</p>
+                <p class="mt-4 flex items-baseline gap-1">
+                  <span class="text-[26px] font-extrabold tracking-tight text-[#17283D]">
+                    {{ offre.montant | number:'1.0-0' }} FCFA
+                  </span>
+                  <span class="text-xs text-slate-400">/ mois</span>
+                </p>
+                <ul class="mt-5 space-y-3">
+                  @for (f of offre.fonctionnalites; track f) {
+                    <li class="flex items-start gap-2 text-xs text-slate-600">
+                      <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.1 7.1a1 1 0 0 1-1.4 0l-3-3a1 1 0 1 1 1.4-1.4l2.3 2.3 6.4-6.4a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"></path>
+                      </svg>
+                      {{ f }}
+                    </li>
+                  }
+                </ul>
+              </div>
+              <button
+                type="button"
+                class="mt-6 h-10 w-full rounded-lg border text-xs font-bold transition"
+                [ngClass]="{
+                  'border-[#0EA5A4] bg-[#0EA5A4] text-white hover:bg-[#0B9291]': offreSelectionnee() === offre.code,
+                  'border-[#0EA5A4] bg-white text-[#0B9291] hover:bg-[#EFFBFA]': offreSelectionnee() !== offre.code
+                }"
+                (click)="choisirOffre(offre.code)"
+              >
+                {{ offreSelectionnee() === offre.code ? 'Offre sélectionnée' : 'Choisir cette offre' }}
+              </button>
+            </article>
+          }
+        </div>
+
+        <!-- Barre récap + bouton continuer -->
+        <section class="mt-8 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:flex sm:items-center sm:justify-between sm:gap-5 sm:px-5">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Accès collecteur</p>
+            <p class="mt-1 text-sm font-semibold text-[#17283D]">Valable 30 jours après confirmation</p>
+          </div>
+          <div class="mt-4 flex items-center justify-between gap-5 sm:mt-0">
+            <div class="text-right">
+              <p class="text-[10px] text-slate-400">Total à payer aujourd'hui</p>
+              <p class="text-xl font-extrabold text-[#17283D]">
+                {{ offreCourante()?.montant | number:'1.0-0' }} FCFA
+              </p>
+            </div>
+            <button
+              type="button"
+              class="min-h-11 rounded-lg bg-[#0EA5A4] px-5 text-sm font-bold text-white shadow-sm transition hover:bg-[#0B9291] disabled:cursor-not-allowed disabled:opacity-50"
+              [disabled]="!offreCourante() || paiementEnVerification()"
+              (click)="ouvrirChoixOperateur()"
+            >
+              Continuer
+            </button>
+          </div>
+        </section>
+
+        <p class="mt-4 text-center text-[11px] text-slate-400">
+          Paiement sécurisé par PayDunya. Le tableau de bord s'ouvrira après confirmation.
+        </p>
+      }
+    }
+
+  </div>
+</div>
+
+<!-- =========================================================
+     MODAL CHOIX OPÉRATEUR DE PAIEMENT
+     ========================================================= -->
+@if (modalOperateurOuvert()) {
+  <div
+    class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/55 sm:items-center sm:p-5"
+    (click)="fermerChoixOperateur()"
+  >
+    <section
+      class="max-h-[94vh] w-full overflow-y-auto rounded-t-[28px] bg-white px-6 pb-8 pt-7 shadow-2xl sm:max-w-[600px] sm:rounded-[28px] sm:px-10 sm:pb-10 sm:pt-9"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Poignée mobile -->
+      <div class="mx-auto mb-5 h-1 w-12 rounded-full bg-slate-200 sm:hidden"></div>
+
+      <!-- En-tête -->
+      <div class="flex items-start gap-3">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E8F8F6] text-[#07978C]">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            <path d="M12 14v3"></path>
+          </svg>
+        </span>
+        <div class="flex-1">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-[#0EA5A4]">Paiement sécurisé</p>
+          <h2 class="mt-1 text-2xl font-extrabold leading-tight text-[#17283D]">
+            Choisissez votre opérateur
+          </h2>
+        </div>
+        <button type="button" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
+          (click)="fermerChoixOperateur()">
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M4.3 4.3a1 1 0 0 1 1.4 0l4.3 4.3 4.3-4.3a1 1 0 1 1 1.4 1.4l-4.3 4.3 4.3 4.3a1 1 0 0 1-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 0 1-1.4-1.4L8.6 10 4.3 5.7a1 1 0 0 1 0-1.4Z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Récapitulatif offre -->
+      @if (offreCourante(); as offre) {
+        <div class="mt-6 flex items-center justify-between rounded-2xl border border-slate-100 bg-[#F7F9FA] px-5 py-4">
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-slate-500">Abonnement</p>
+            <p class="text-sm font-medium text-slate-500">Montant</p>
+          </div>
+          <div class="text-right space-y-1">
+            <p class="text-lg font-bold text-[#17283D]">{{ offre.label }}</p>
+            <p class="text-xl font-extrabold text-[#0EA5A4]">{{ offre.montant | number:'1.0-0' }} FCFA</p>
+          </div>
+        </div>
+      }
+
+      <!-- Erreur paiement -->
+      @if (erreurPaiement()) {
+        <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {{ erreurPaiement() }}
+        </div>
+      }
+
+      <!-- Liste opérateurs -->
+      <div class="mt-6 space-y-3">
+        @for (op of operateurs; track op.code) {
+          <!-- Chaque bouton garde la même disposition que le popup des paiements collecteur. -->
+          <button
+            type="button"
+            class="flex w-full items-center gap-4 rounded-2xl border-2 px-4 py-4 text-left transition"
+            [ngClass]="operateurSelectionne() === op.code
+              ? 'border-[#0EA5A4] bg-[#F7FCFB]'
+              : 'border-slate-100 bg-white hover:border-slate-300'"
+            (click)="choisirOperateur(op.code)"
+          >
+            <!-- Logo partagé : dimensions fixes pour aligner Wave et Orange Money. -->
+            <!-- Wave conserve son fond bleu ; le logo Orange garde un fond blanc. -->
+            <img
+              [src]="op.logo"
+              [alt]="op.label"
+              class="h-12 w-28 shrink-0 rounded-lg"
+              [ngClass]="op.code === 'wave'
+                ? 'bg-[#00BFFF] object-contain'
+                : 'bg-white object-cover'"
+            />
+            <span class="min-w-0 flex-1">
+              <span class="block text-base font-bold text-[#17283D]">{{ op.label }}</span>
+              <span class="mt-0.5 block text-xs text-slate-400">{{ op.description }}</span>
+            </span>
+            <!-- Indicateur radio qui montre l'opérateur actuellement sélectionné. -->
+            <span
+              class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2"
+              [ngClass]="operateurSelectionne() === op.code ? 'border-[#0EA5A4]' : 'border-slate-200'"
+            >
+              @if (operateurSelectionne() === op.code) {
+                <span class="h-3.5 w-3.5 rounded-full bg-[#0EA5A4]"></span>
+              }
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- Bouton payer -->
+      <button
+        type="button"
+        class="mt-6 flex min-h-[54px] w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-5 text-base font-bold text-white shadow-md transition hover:bg-[#0B9291] disabled:cursor-wait disabled:opacity-60"
+        [disabled]="chargementPaiement()"
+        (click)="continuerVersPaiement()"
+      >
+        @if (chargementPaiement()) {
+          <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+          Création de la facture...
+        } @else {
+          Continuer vers le paiement →
+        }
+      </button>
+
+      <button type="button"
+        class="mt-4 w-full py-2 text-base font-medium text-slate-500 hover:text-[#17283D]"
+        (click)="fermerChoixOperateur()">
+        Annuler
+      </button>
+
+      <p class="mt-4 text-center text-[11px] text-slate-400">
+        Paiement chiffré et traité par PayDunya
+      </p>
+    </section>
+  </div>
+}

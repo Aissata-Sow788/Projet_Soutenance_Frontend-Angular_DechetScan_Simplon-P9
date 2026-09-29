@@ -1,0 +1,220 @@
+<!-- Page détail d'une demande -->
+<div class="p-6 xl:p-8">
+
+  <!-- CHARGEMENT -->
+  @if (chargement()) {
+    <div class="py-16 text-center text-sm text-slate-400">
+      Chargement de la demande...
+    </div>
+  }
+  @else if (erreur() && !demande()) {
+    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+  }
+
+  <!-- CONTENU -->
+  @else if (demande()) {
+
+    @if (erreur()) {
+      <div class="mb-4 rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+    }
+
+    <!-- Navigation retour -->
+    <button
+      (click)="retour()"
+      type="button"
+      class="mb-4 flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-[#0EA5A4]"
+    >
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"></path>
+      </svg>
+      Retour aux demandes
+    </button>
+
+    <!-- Titre + badge statut -->
+    <div class="mb-6 flex items-center gap-3">
+      <h1 class="text-2xl font-bold text-[#142337]">Détail de la demande</h1>
+      <span
+        class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold"
+        [ngClass]="classeStatut(demande()!.statut)"
+      >
+        {{ libelleStatut(demande()!.statut) }}
+      </span>
+    </div>
+
+    <!-- GRILLE PRINCIPALE -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+      <!-- ─── COLONNE GAUCHE ─────────────────────────────────── -->
+
+      <!-- Informations sur le citoyen -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          Informations sur le citoyen
+        </p>
+        <div class="flex items-start gap-4">
+          <!-- Avatar -->
+          <div
+            class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#C9F5EF] text-lg font-black text-[#087C78]"
+          >
+            {{ initiales(demande()!.prenomUtilisateur, demande()!.nomUtilisateur) }}
+          </div>
+          <div>
+            <p class="text-lg font-bold text-[#142337]">
+              {{ demande()!.prenomUtilisateur }} {{ demande()!.nomUtilisateur }}
+            </p>
+            <p class="mt-0.5 text-sm text-slate-500">
+              {{ demande()!.telephoneUtilisateur ?? 'Téléphone non renseigné' }}
+            </p>
+            <p class="text-sm text-slate-500">
+              {{ demande()!.quartier }}, Sénégal
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informations de collecte -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+        <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          Informations de collecte
+        </p>
+        <div class="space-y-3">
+
+          <!-- Adresse / quartier -->
+          <div class="flex items-start gap-3">
+            <svg class="mt-0.5 h-5 w-5 shrink-0 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+              <circle cx="12" cy="10" r="2.5"></circle>
+            </svg>
+            <div>
+              <p class="text-[10px] font-bold uppercase text-slate-400">Adresse</p>
+              <p class="text-sm font-semibold text-[#142337]">
+                {{ demande()!.quartier || 'Quartier non renseigné' }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Date souhaitée -->
+          @if (demande()!.dateSouhaitee) {
+            <div class="flex items-start gap-3">
+              <svg class="mt-0.5 h-5 w-5 shrink-0 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <path d="M16 2v4"></path>
+                <path d="M8 2v4"></path>
+                <path d="M3 10h18"></path>
+              </svg>
+              <div class="flex gap-6">
+                <div>
+                  <p class="text-[10px] font-bold uppercase text-slate-400">Date souhaitée</p>
+                  <p class="text-sm font-semibold text-[#142337]">
+                    {{ formaterDate(demande()!.dateSouhaitee!) }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[10px] font-bold uppercase text-slate-400">Heure</p>
+                  <p class="text-sm font-semibold text-[#142337]">
+                    {{ formaterHeure(demande()!.dateSouhaitee!) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Distance (si GPS disponible) -->
+          @if (demande()!.latitude && demande()!.longitude) {
+            <div class="flex items-start gap-3">
+              <svg class="mt-0.5 h-5 w-5 shrink-0 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h18"></path>
+                <path d="M3 6l9-3 9 3"></path>
+                <path d="M3 18l9 3 9-3"></path>
+              </svg>
+              <div>
+                <p class="text-[10px] font-bold uppercase text-slate-400">Coordonnées GPS</p>
+                <p class="text-sm font-semibold text-[#142337]">
+                  {{ demande()!.latitude?.toFixed(4) }}, {{ demande()!.longitude?.toFixed(4) }}
+                </p>
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+
+      <!-- Déchets à récupérer -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm lg:col-span-2">
+        <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          Déchets à récupérer
+        </p>
+
+        <div class="flex items-center gap-3 mb-4">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#C9F5EF]">
+            <svg class="h-5 w-5 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7l3 9h12l3-9H3z"></path>
+              <path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </div>
+          <div>
+            <p class="font-bold text-[#142337]">{{ demande()!.typeDechet?.nom ?? 'Type inconnu' }}</p>
+            <p class="text-sm text-slate-500">Quantité : {{ demande()!.quantite }} kg</p>
+          </div>
+          @if (demande()!.prixPropose) {
+            <div class="ml-auto rounded-xl bg-[#F0FDF4] px-4 py-2 text-right">
+              <p class="text-[10px] font-bold uppercase text-slate-400">Prix proposé</p>
+              <p class="text-lg font-black text-green-700">
+                {{ demande()!.prixPropose | number }} FCFA
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- Conseil de tri si disponible -->
+        @if (demande()!.typeDechet?.conseil) {
+          <div class="rounded-xl bg-[#F0FDFA] p-3">
+            <p class="text-xs text-[#087C78]">
+              💡 {{ demande()!.typeDechet!.conseil!.consigne }}
+            </p>
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- Cette page permet uniquement d'accepter ou de refuser une demande disponible. -->
+    @if (statutNormalise() === 'en_attente') {
+      <div class="mt-6 flex items-center gap-4">
+        <button
+          (click)="accepterDemande()"
+          [disabled]="enTraitement()"
+          type="button"
+          class="flex items-center gap-2 rounded-xl bg-[#0EA5A4] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:opacity-60"
+        >
+          @if (enTraitement()) { Traitement... }
+          @else { Accepter la demande → }
+        </button>
+        <button
+          (click)="refuserDemande()"
+          [disabled]="enTraitement()"
+          type="button"
+          class="rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-60"
+        >
+          Refuser
+        </button>
+      </div>
+    }
+    @else if (statutNormalise() === 'acceptee' || statutNormalise() === 'en_cours') {
+      <a
+        [routerLink]="['/collecteur/collectes/demandes', demande()!.idDemande]"
+        class="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#0EA5A4] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#087C78]"
+      >
+        Ouvrir le détail de la collecte
+        <span aria-hidden="true">→</span>
+      </a>
+    }
+
+  }
+
+</div>

@@ -1,0 +1,303 @@
+<!-- Page Détail d'un point de collecte — espace collecteur -->
+<div class="p-6 xl:p-8">
+
+  <!-- CHARGEMENT -->
+  @if (chargement()) {
+    <div class="flex items-center justify-center py-20">
+      <div class="flex items-center gap-2 text-sm text-slate-400">
+        <span class="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+        Chargement...
+      </div>
+    </div>
+  }
+
+  @else if (erreur()) {
+    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+  }
+
+  @else if (point()) {
+
+    <!-- BREADCRUMB -->
+    <div class="mb-4 flex items-center gap-2 text-sm text-slate-400">
+      <button (click)="retour()" type="button" class="hover:text-[#0EA5A4] transition">
+        Points de collecte
+      </button>
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18l6-6-6-6"></path>
+      </svg>
+      <span class="text-[#142337] font-semibold">Détail du point</span>
+    </div>
+
+    <!-- EN-TÊTE : nom + boutons -->
+    <div class="mb-6 flex items-start justify-between gap-4">
+      <h1 class="text-2xl font-bold text-[#142337]">{{ point()!.nom }}</h1>
+      <div class="flex shrink-0 items-center gap-2">
+        @if (estGerant()) {
+          <button
+            (click)="modifierPoint()"
+            type="button"
+            class="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+            </svg>
+            Modifier
+          </button>
+          <button
+            (click)="supprimerPoint()"
+            type="button"
+            class="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-red-600"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7h16"></path>
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
+              <path d="M6 7l1 14h10l1-14"></path>
+              <path d="M9 7V4h6v3"></path>
+            </svg>
+            Supprimer
+          </button>
+        }
+        @if (!estAdministrateur) {
+          <button
+          (click)="planifierCollecte()"
+          type="button"
+          class="flex items-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <path d="M16 2v4"></path>
+            <path d="M8 2v4"></path>
+            <path d="M3 10h18"></path>
+          </svg>
+          Planifier une collecte
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- GRILLE PRINCIPALE : Infos + Carte -->
+    <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+      <!-- ─── INFORMATIONS GÉNÉRALES ────────────────────── -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+
+        <!-- Badge statut -->
+        <div class="mb-4 flex items-center justify-between">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Informations générales
+          </p>
+          @if (point()!.statut === 'actif') {
+            <span class="flex items-center gap-1.5 rounded-full bg-[#CFFAF0] px-3 py-1 text-xs font-bold text-[#087C78]">
+              <span class="h-2 w-2 rounded-full bg-[#0EA5A4]"></span>
+              Actif
+            </span>
+          } @else {
+            <span class="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">
+              <span class="h-2 w-2 rounded-full bg-slate-400"></span>
+              Inactif
+            </span>
+          }
+        </div>
+
+        <div class="space-y-4">
+
+          <!-- Adresse -->
+          <div class="flex items-start gap-3">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100">
+              <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                <circle cx="12" cy="10" r="2.5"></circle>
+              </svg>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase text-slate-400">Ville</p>
+              <p class="text-sm font-semibold text-[#142337]">{{ point()!.ville }}</p>
+            </div>
+          </div>
+
+          <!-- Horaires -->
+          <div class="flex items-start gap-3">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100">
+              <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 3"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase text-slate-400">Horaires</p>
+              <p class="text-sm font-semibold text-[#142337]">
+                Lun - Sam: {{ point()!.heureOuverture }} - {{ point()!.heureFermeture }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Contact / GPS -->
+          <div class="flex items-start gap-3">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100">
+              <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="8"></circle>
+                <path d="M12 8l3 3-4 4-3-3z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase text-slate-400">Coordonnées GPS</p>
+              <p class="text-sm font-semibold text-[#142337]">
+                {{ point()!.latitude | number:'1.6-6' }}, {{ point()!.longitude | number:'1.6-6' }}
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Déchets acceptés -->
+        <div class="mt-6">
+          <p class="mb-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Déchets acceptés
+          </p>
+          <div class="flex flex-wrap gap-2">
+            @for (dechet of point()!.dechetsAcceptes; track dechet.idTypeDechet) {
+              <span
+                class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+                [ngClass]="couleurDechet(dechet.nom)"
+              >
+                {{ dechet.nom }}
+              </span>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─── CARTE OSM ──────────────────────────────────── -->
+      <div class="rounded-2xl bg-white p-6 shadow-sm">
+
+        <div class="mb-4 flex items-center justify-between">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Localisation du point
+          </p>
+          <a
+            [href]="urlGoogleMaps()"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-1.5 text-xs font-semibold text-[#0EA5A4] hover:underline"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            Agrandir
+          </a>
+        </div>
+
+        <div
+          #carte
+          class="collecteur-detail-map overflow-hidden rounded-xl"
+          role="img"
+          [attr.aria-label]="'Carte de localisation de ' + point()!.nom"
+        ></div>
+
+      </div>
+
+    </div>
+
+    <!-- ─── COLLECTES RÉCENTES ──────────────────────────── -->
+    <div class="rounded-2xl bg-white shadow-sm">
+
+      <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <h2 class="font-bold text-[#142337]">Collectes récentes</h2>
+        @if (!estAdministrateur) {
+          <button
+            (click)="voirHistorique()"
+            type="button"
+            class="text-sm font-semibold text-[#0EA5A4] hover:underline"
+          >
+            Voir tout l'historique
+          </button>
+        }
+      </div>
+
+      @if (collectesRecentes().length === 0) {
+        <div class="py-10 text-center text-sm text-slate-400">
+          Aucune collecte enregistrée pour ce point.
+        </div>
+      } @else {
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-100">
+              <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
+              <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Type de déchet</th>
+              <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
+              <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+              <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (collecte of collectesRecentes(); track collecte.idCollecte) {
+              <tr class="border-b border-slate-50 hover:bg-slate-50">
+
+                <td class="px-6 py-4 text-[#142337] font-medium">
+                  {{ formaterDate(collecte.datePlanifiee) }}
+                </td>
+
+                <td class="px-4 py-4">
+                  <div class="flex items-center gap-2">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                      <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                           stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7l3 9h12l3-9H3z"></path>
+                      </svg>
+                    </div>
+                    <span class="text-slate-600">Déchets divers</span>
+                  </div>
+                </td>
+
+                <td class="px-4 py-4 text-slate-600">
+                  {{ collecte.quantiteRecuperee ? collecte.quantiteRecuperee + ' kg' : '—' }}
+                </td>
+
+                <td class="px-4 py-4">
+                  <span
+                    class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                    [ngClass]="classeStatut(collecte.statut)"
+                  >
+                    {{ libelleStatut(collecte.statut) }}
+                  </span>
+                </td>
+
+                <td class="px-4 py-4">
+                  <button
+                    type="button"
+                    class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50"
+                    title="Options"
+                  >
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="5" r="1"></circle>
+                      <circle cx="12" cy="12" r="1"></circle>
+                      <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                  </button>
+                </td>
+
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+
+    </div>
+
+  }
+
+</div>
