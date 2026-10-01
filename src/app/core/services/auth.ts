@@ -33,7 +33,7 @@ export class Auth {
   private readonly httpurl = inject(HttpClient);
 
   // URL de base des endpoints d'authentification.
-  private readonly apiUrl = 'http://127.0.0.1:8000/api/auth';
+  private readonly apiUrl = '/api/auth';
 
 
   // ============================================================

@@ -11,7 +11,7 @@ export class PrixDechetService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://127.0.0.1:8000/api/prix-dechets';
+  private readonly apiUrl = '/api/prix-dechets';
 
   /**
    * Récupère tous les tarifs d'achat des déchets.

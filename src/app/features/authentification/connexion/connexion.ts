@@ -1,7 +1,7 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 
 @Component({
@@ -10,7 +10,7 @@ import { Auth } from '../../../core/services/auth';
   styleUrl: './connexion.css',
   templateUrl: './connexion.html',
 })
-export class Connexion {
+export class Connexion implements OnInit {
 
   // Formulaire de connexion.
   loginForm: FormGroup;
@@ -24,10 +24,16 @@ export class Connexion {
   // Contient l'erreur retournée par le backend.
   erreurServeur = signal<string | null>(null);
 
+  // URL vers laquelle rediriger après connexion réussie.
+  // Renseignée automatiquement si l'intercepteur a redirigé ici
+  // après expiration des tokens.
+  private urlRedirection = '/home-citoyen';
+
   constructor(
     private fb: FormBuilder,
     private authService: Auth,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
 
     // Création du formulaire avec les validations.
@@ -64,6 +70,17 @@ export class Connexion {
   }
 
 
+  // Lit le paramètre "redirect" dans l'URL au démarrage.
+  // Exemple : /connexion?redirect=/historique
+  // → après connexion, l'utilisateur retourne sur /historique.
+  ngOnInit(): void {
+    const redirect = this.route.snapshot.queryParamMap.get('redirect');
+    if (redirect) {
+      this.urlRedirection = redirect;
+    }
+  }
+
+
   // Affiche ou masque le mot de passe.
   toggleMotDePasse(): void {
     this.afficherMotDePasse.update(valeur => !valeur);
@@ -89,20 +106,10 @@ export class Connexion {
   // Soumet le formulaire de connexion.
   onSubmit(): void {
 
-    // Affiche les informations dans la console
-    // pendant les tests du formulaire.
-    console.log('BOUTON CLIQUÉ');
-    console.log('Formulaire :', this.loginForm.value);
-    console.log('Valide :', this.loginForm.valid);
-
     // Si le formulaire est invalide,
     // on affiche toutes les erreurs.
     if (this.loginForm.invalid) {
-
-      // Marque tous les champs comme touchés
-      // afin de faire apparaître leurs messages d'erreur.
       this.loginForm.markAllAsTouched();
-
       return;
     }
 
@@ -126,27 +133,19 @@ export class Connexion {
     this.authService.login(payload).subscribe({
 
       // Exécuté lorsque Django accepte la connexion.
-      next: (response) => {
-
-        console.log('Connexion réussie :', response);
+      next: () => {
 
         // Désactive le chargement.
         this.chargement.set(false);
 
-        // Redirige l'utilisateur connecté
-        // vers l'accueil citoyen connecté.
-        this.router.navigate(['/home-citoyen']);
+        // Redirige vers l'URL d'origine si l'intercepteur
+        // avait sauvegardé une redirection (?redirect=...),
+        // sinon vers l'accueil citoyen par défaut.
+        void this.router.navigateByUrl(this.urlRedirection);
       },
 
       // Exécuté lorsque Django refuse la connexion.
       error: (err) => {
-
-        console.error('Status HTTP :', err.status);
-       // Affiche précisément le contenu retourné par Django.
-        console.error(
-          'Réponse Django :',
-          JSON.stringify(err.error, null, 2)
-        );
 
         // Désactive le chargement.
         this.chargement.set(false);

@@ -74,7 +74,10 @@ export class ScanService {
   private http = inject(HttpClient);
 
   // URL de base de l'API Django.
-  private readonly baseUrl = 'http://127.0.0.1:8000/api/';
+  // En développement local (ng serve) : http://127.0.0.1:8000/api/
+  // En Docker (via Nginx proxy)       : /api/
+  // Nginx redirige automatiquement /api/ → backend:8000
+  private readonly baseUrl = '/api/';
 
   // Conserve le dernier résultat d'un scan côté application citoyen.
   dernierResultat = signal<ScanDechet | null>(null);

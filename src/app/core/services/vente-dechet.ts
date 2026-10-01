@@ -16,10 +16,10 @@ export class VenteDechetService {
   private http = inject(HttpClient);
 
   // URL de base des endpoints ventes Django.
-  private readonly apiUrl = 'http://127.0.0.1:8000/api/ventes';
+  private readonly apiUrl = '/api/ventes';
 
   // URL de base des endpoints paiement vente PayDunya.
-  private readonly apiPaiementUrl = 'http://127.0.0.1:8000/api/ventes/paiement';
+  private readonly apiPaiementUrl = '/api/ventes/paiement';
 
   // ─────────────────────────────────────────────────────────────
   // CRUD VENTES

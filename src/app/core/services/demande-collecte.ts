@@ -12,7 +12,7 @@ export class DemandeCollecteService {
   private http = inject(HttpClient);
 
   // URL de base de l'API des demandes de collecte.
-  private readonly apiUrl = 'http://127.0.0.1:8000/api/demandes';
+  private readonly apiUrl = '/api/demandes';
 
   /**
    * Récupère les demandes de l'utilisateur connecté.

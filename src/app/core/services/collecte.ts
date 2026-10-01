@@ -12,7 +12,7 @@ export class CollecteService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://127.0.0.1:8000/api/collectes';
+  private readonly apiUrl = '/api/collectes';
 
   /**
    * Récupère les collectes.

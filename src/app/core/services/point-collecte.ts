@@ -8,7 +8,7 @@ import {PointCollecte, PointCollecteCreation, TypeDechetPoint} from '../../share
 export class PointCollecteService {
 
   private http = inject(HttpClient);
-  private readonly baseUrl = 'http://127.0.0.1:8000/api/';
+  private readonly baseUrl = '/api/';
 
   // Récupère tous les points de collecte
   listerPoints(): Observable<PointCollecte[]> {

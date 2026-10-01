@@ -41,7 +41,7 @@ export class DashboardService {
 
   // URL de base de l'API Django.
   private readonly baseUrl =
-    'http://127.0.0.1:8000/api/';
+    '/api/';
 
   // Client HTTP utilisé pour appeler Django.
   private readonly http = inject(HttpClient);

@@ -22,7 +22,7 @@ export class CollecteurService {
 
   private http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://127.0.0.1:8000/api';
+  private readonly apiUrl = '/api';
 
   // ─────────────────────────────────────────────
   // COLLECTEURS

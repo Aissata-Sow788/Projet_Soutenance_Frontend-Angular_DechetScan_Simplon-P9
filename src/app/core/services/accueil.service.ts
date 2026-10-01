@@ -18,7 +18,7 @@ export class AccueilService {
   // URL de l'endpoint public des statistiques de l'accueil.
   // Accessible sans token JWT — données inoffensives.
   private readonly urlStatsPublic =
-    'http://127.0.0.1:8000/api/stats/accueil/';
+    '/api/stats/accueil/';
 
   // Solutions affichées sur l'accueil (statiques).
   private readonly solutionsMock: SolutionAccueil[] = [

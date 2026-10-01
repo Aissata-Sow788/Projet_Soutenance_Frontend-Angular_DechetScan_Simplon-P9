@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {DashboardService, DashboardStatistiques} from '../../../core/services/dashboard';
 
@@ -11,7 +11,7 @@ import {DashboardService, DashboardStatistiques} from '../../../core/services/da
 })
 
 
-export class Dashboard {
+export class Dashboard implements OnInit {
 
   // ============================================================
   // SERVICE
@@ -82,13 +82,14 @@ export class Dashboard {
 
 
   // ============================================================
-  // CONSTRUCTEUR
+  // CYCLE DE VIE
   // ============================================================
 
-  constructor() {
-
-    // Charge automatiquement les statistiques
-    // lorsque la page Dashboard est ouverte.
+  // ngOnInit est appelé après que Angular a complètement initialisé
+  // le composant ET que la navigation est terminée.
+  // Contrairement au constructor(), il garantit que le token JWT
+  // est disponible dans le localStorage avant d'appeler l'API.
+  ngOnInit(): void {
     this.chargerStatistiques();
   }
 

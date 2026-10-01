@@ -1,0 +1,32 @@
+# =============================================================
+# .dockerignore — Frontend Angular
+# =============================================================
+# Exclut les fichiers lourds ou inutiles du build Docker.
+# Le plus important : node_modules/ (des centaines de MB)
+# est exclu car "npm ci" le réinstalle dans le conteneur.
+# =============================================================
+
+# Dépendances npm (réinstallées par npm ci dans le Dockerfile)
+node_modules/
+
+# Dossier de build (regénéré par ng build dans le Dockerfile)
+dist/
+
+# Cache Angular
+.angular/
+
+# Dossier Git
+.git/
+.gitignore
+
+# Fichier .env (vide de toute façon pour Angular)
+.env
+
+# Logs npm
+npm-debug.log*
+yarn-error.log*
+
+# Fichier Docker lui-même (inutile de le copier)
+Dockerfile
+.dockerignore
+# Note : nginx.conf doit rester inclus — il est copié dans l'image Nginx

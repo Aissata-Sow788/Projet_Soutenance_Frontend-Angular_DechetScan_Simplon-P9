@@ -31,7 +31,7 @@ export class ReferentielService {
   // IMPORTANT :
   // Le "/" à la fin est obligatoire pour éviter :
   // /apitypes/ ou /apiconseils/
-  private readonly apiUrl = 'http://127.0.0.1:8000/api/';
+  private readonly apiUrl = '/api/';
 
   /**
    * Récupère tous les types de déchets.

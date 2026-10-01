@@ -15,7 +15,7 @@ import { Utilisateur } from '../../shared/models/utilisateur.model';
 export class UtilisateursService {
 
   // URL de base de l'API utilisateurs Django.
-  private apiUrl = 'http://127.0.0.1:8000/api/auth';
+  private apiUrl = '/api/auth';
 
   // Injecte HttpClient dans le service.
   private readonly httpurl = inject(HttpClient)

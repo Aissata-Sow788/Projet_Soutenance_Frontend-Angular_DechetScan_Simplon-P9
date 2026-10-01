@@ -58,9 +58,10 @@ export class Inscription {
       // Téléphone obligatoire
       telephone: ['', [
         Validators.required,
-        // Accepte un numéro sénégalais à 9 chiffres,
-        // avec le préfixe +221 facultatif.
-        Validators.pattern(/^(?:\+221)?[0-9]{9}$/)
+        // Accepte un numéro sénégalais commençant par 70/75/76/77/78
+        // avec ou sans l'indicatif +221, dans tous les formats courants :
+        //   +221 77 076 69 09  |  77 000 00 00  |  770000000
+        Validators.pattern(/^(?:\+?221[\s.-]?)?(?:70|75|76|77|78)[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}$/)
       ]],
 
       // Ville obligatoire

@@ -15,7 +15,7 @@ export class NotificationsService {
 
   // URL de base de l'API des notifications.
   private readonly apiUrl =
-    'http://127.0.0.1:8000/api/notifications';
+    '/api/notifications';
 
   /**
    * Récupère les notifications de l'utilisateur connecté.

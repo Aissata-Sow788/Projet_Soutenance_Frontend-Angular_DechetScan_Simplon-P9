@@ -118,6 +118,11 @@ export class Profile implements OnInit {
     this.router.navigate(['/notification']);
   }
 
+  /** Ouvre la liste des ventes de déchets du citoyen connecté. */
+  voirVentes(): void {
+    this.router.navigate(['/mes-ventes']);
+  }
+
   // Déconnecte l'utilisateur.
   deconnecter(): void {
 

@@ -32,11 +32,16 @@ export class DevenirCollecteur {
     // Numéro professionnel obligatoire.
     // Le pattern accepte les numéros sénégalais commençant notamment par
     // 70, 75, 76, 77 ou 78, avec ou sans l'indicatif +221.
+    // Formats acceptés :
+    //   +221 77 076 69 09
+    //   +221 77 000 00 00
+    //   77 000 00 00
+    //   770000000
     telephoneProfessionnel: [
       '',
       [
         Validators.required,
-        Validators.pattern(/^(?:\+?221\s?)?(?:70|75|76|77|78)(?:[\s.-]?\d{2}){3}$/),
+        Validators.pattern(/^(?:\+?221[\s.-]?)?(?:70|75|76|77|78)[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}$/),
         Validators.maxLength(20),
       ],
     ],
