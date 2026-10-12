@@ -29,8 +29,8 @@ export class HeaderCollecteur {
     return `${utilisateur.first_name.charAt(0)}${utilisateur.last_name.charAt(0)}`.toUpperCase();
   }
 
-  // Navigue vers la page des notifications.
+  // Navigue vers la page des notifications du collecteur.
   ouvrirNotifications(): void {
-    this.router.navigate(['/notification']);
+    this.router.navigate(['/collecteur/notifications']);
   }
 }

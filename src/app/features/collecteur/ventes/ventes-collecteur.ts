@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { VenteDechetService } from '../../../core/services/vente-dechet';
 import { VenteDechet } from '../../../shared/models/vente-dechet.model';
@@ -41,8 +42,7 @@ export class VentesCollecteur implements OnInit {
   typesDechet = computed(() => [
     ...new Set(
       this.ventes()
-        .map(vente => vente.typeDechet?.nom)
-        .filter((nom): nom is string => Boolean(nom))
+        .flatMap(vente => this.nomsDechets(vente))
     ),
   ].sort((a, b) => a.localeCompare(b, 'fr')));
 
@@ -61,7 +61,7 @@ export class VentesCollecteur implements OnInit {
       res = res.filter(v =>
         this.nomCitoyen(v).toLowerCase().includes(texte) ||
         (v.emailUtilisateur ?? '').toLowerCase().includes(texte) ||
-        (v.typeDechet?.nom ?? '').toLowerCase().includes(texte) ||
+        this.nomDechets(v).toLowerCase().includes(texte) ||
         (v.referencePaiement ?? '').toLowerCase().includes(texte)
       );
     }
@@ -77,8 +77,9 @@ export class VentesCollecteur implements OnInit {
     if (this.filtreDechet()) {
       res = res.filter(
         v =>
-          (v.typeDechet?.nom ?? '').toLowerCase() ===
-          this.filtreDechet().toLowerCase()
+          this.nomsDechets(v).some(
+            nom => nom.toLowerCase() === this.filtreDechet().toLowerCase()
+          )
       );
     }
 
@@ -186,17 +187,24 @@ export class VentesCollecteur implements OnInit {
         this.chargement.set(false);
       },
 
-      error: (error: { status?: number }) => {
-        // Affiche un message spécifique si la session a expiré.
-        this.erreur.set(
-          error.status === 401
-            ? 'Votre session a expiré. Reconnectez-vous pour consulter les ventes.'
-            : 'Impossible de charger les ventes. Vérifiez votre connexion puis réessayez.'
-        );
+      error: (error: HttpErrorResponse) => {
+        // Explique si l'échec vient de la session ou d'un délai serveur.
+        this.erreur.set(this.messageErreurChargement(error));
 
         this.chargement.set(false);
       }
     });
+  }
+
+  /** Affiche une indication utile selon la réponse reçue de l'API. */
+  private messageErreurChargement(error: HttpErrorResponse): string {
+    if (error.status === 401 || error.status === 403) {
+      return 'Votre session a expiré ou votre compte n’a pas accès aux ventes. Reconnectez-vous puis réessayez.';
+    }
+    if (error.status === 504) {
+      return 'Le serveur met trop de temps à répondre. Les ventes n’ont pas été chargées ; réessayez dans quelques instants.';
+    }
+    return 'Impossible de charger les ventes. Vérifiez votre connexion puis réessayez.';
   }
 
   onRecherche(event: Event): void {
@@ -254,6 +262,21 @@ export class VentesCollecteur implements OnInit {
       vente.emailUtilisateur?.split('@')[0] ||
       'Compte supprimé'
     );
+  }
+
+  nomsDechets(vente: VenteDechet): string[] {
+    const noms = [...new Set(
+      vente.details
+        .map(detail => detail.typeDechet?.nom?.trim())
+        .filter((nom): nom is string => Boolean(nom))
+    )];
+
+    if (noms.length > 0) return noms;
+    return vente.typeDechet?.nom ? [vente.typeDechet.nom] : [];
+  }
+
+  nomDechets(vente: VenteDechet): string {
+    return this.nomsDechets(vente).join(', ') || '—';
   }
 
   initiales(vente: VenteDechet): string {

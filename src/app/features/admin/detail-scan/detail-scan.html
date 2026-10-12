@@ -1,787 +1,282 @@
-<div class="min-h-screen bg-[#f7f8fc]">
+<!--
+  Page Détail du scan — espace administrateur.
+  Le SidebarAdmin et le HeaderAdmin sont fournis par AdminLayout.
+  Interface fidèle à la maquette : photo gauche, détections droite,
+  conseil de tri, bannière carte, footer.
+-->
+<div class="min-h-[calc(100vh-72px)] bg-[#F3F4F4] px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
 
-  <!-- ============================================================
-       ZONE PRINCIPALE
-       Le Sidebar et le Header sont déjà fournis par ton layout admin.
-       ============================================================ -->
-
-  <main class="mx-auto w-full max-w-[1120px] px-6 pb-12 pt-8">
-
-    <!-- ============================================================
-         EN-TÊTE DE LA PAGE
-         ============================================================ -->
-
-    <div class="mb-8">
-
-      <!-- Retour -->
+  <!-- ── RETOUR + TITRE ─────────────────────────────────────── -->
+  <div class="mx-auto max-w-[1180px]">
+    <div class="mb-4">
       <button
         type="button"
         (click)="retourScans()"
-        class="mb-3 flex items-center gap-2 text-[13px] font-medium text-[#0ea5a4] transition hover:text-[#087f7d]"
+        class="mb-3 flex items-center gap-1.5 text-[12px] font-semibold text-[#0EA5A4] hover:underline"
       >
-        <svg
-          class="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <path
-            d="M19 12H5"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-
-          <path
-            d="M11 6L5 12L11 18"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"/>
+          <path d="M12 19l-7-7 7-7"/>
         </svg>
-
-        Retour aux scans
+        Retour à la liste des scans
       </button>
 
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <h1 class="text-[26px] font-black leading-tight text-[#122238] sm:text-[28px]">Détail du scan</h1>
 
-      <!-- Ligne supérieure -->
-      <div class="mb-2 flex items-center gap-3">
-
-        <span class="h-1 w-1 rounded-full bg-[#aeb7c2]"></span>
-
-        <span
-          class="text-[10px] font-bold uppercase tracking-[0.08em] text-[#69727d]"
-        >
-          Inspection à détail
-        </span>
-
-      </div>
-
-
-      <!-- Titre -->
-      <h1
-        class="text-[28px] font-bold leading-tight tracking-[-0.8px] text-[#122238]"
-      >
-        Détail du scan
-      </h1>
-
-
-      <!-- Informations scan -->
-      @if (scan(); as scanActuel) {
-
-        <div
-          class="mt-2 flex flex-wrap items-center gap-3 text-[12px] text-[#56616d]"
-        >
-
-          <span class="font-bold text-[#15243a]">
-            Scan ID #SC-{{ scanActuel.idScan }}
-          </span>
-
-          <span class="h-1 w-1 rounded-full bg-[#aeb7c2]"></span>
-
-          <span class="flex items-center gap-1.5">
-
-            <svg
-              class="h-4 w-4 text-[#0ea5a4]"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <rect
-                x="4"
-                y="5"
-                width="16"
-                height="15"
-                rx="2"
-                stroke="currentColor"
-                stroke-width="1.8"
-              />
-
-              <path
-                d="M8 3V7M16 3V7M4 10H20"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-              />
-            </svg>
-
-            Enregistré le
-            {{ dateScan() }}
-            à
-            {{ heureScan() }}
-            (Dakar, UTC+0)
-
-          </span>
-
+          @if (scan()) {
+            <div class="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-slate-500">
+              <span>Scan du {{ dateScan() }} — {{ heureScan() }}</span>
+              <span class="h-1.5 w-3 rounded-full bg-[#B8EEE8]" aria-hidden="true"></span>
+              <span class="text-[11px] text-slate-600">Analyse terminée</span>
+            </div>
+          }
         </div>
 
-      }
-
+        @if (scan()) {
+          <div class="shrink-0 rounded-xl border border-slate-200 bg-white px-5 py-2 text-center">
+            <p class="text-[25px] font-black leading-none text-[#122238]">{{ detections().length }}</p>
+            <p class="mt-1 text-[8px] font-bold uppercase tracking-wider text-slate-500">Déchets détectés</p>
+          </div>
+        }
+      </div>
     </div>
 
-
-    <!-- ============================================================
-         CHARGEMENT
-         ============================================================ -->
-
-    @if (chargement()) {
-
-      <div class="flex min-h-[400px] items-center justify-center">
-
-        <div class="flex flex-col items-center gap-3">
-
-          <div
-            class="h-8 w-8 animate-spin rounded-full border-2 border-[#d5eeee] border-t-[#0ea5a4]"
-          ></div>
-
-          <p class="text-sm text-[#6b7580]">
-            Chargement du scan...
-          </p>
-
-        </div>
-
-      </div>
-
-    }
-
-
-    <!-- ============================================================
-         ERREUR
-         ============================================================ -->
-
-    @if (!chargement() && erreur()) {
-
-      <div
-        class="rounded-[20px] border border-red-100 bg-red-50 px-6 py-5 text-sm text-red-600"
-      >
-        {{ erreur() }}
-      </div>
-
-    }
-
-
-    <!-- ============================================================
-         CONTENU
-         ============================================================ -->
-
-    @if (!chargement() && !erreur() && scan(); as scanActuel) {
-
-      <div class="grid grid-cols-[minmax(0,1fr)_330px] items-start gap-7">
-
-
-        <!-- ========================================================
-             COLONNE GAUCHE
-             ======================================================== -->
-
-        <div class="space-y-7">
-
-
-          <!-- ======================================================
-               CARTE ANALYSE IA
-               ====================================================== -->
-
-          <section
-            class="rounded-[24px] bg-white p-7 shadow-[0_3px_10px_rgba(15,23,42,0.08)]"
-          >
-
-            <!-- En-tête -->
-            <div class="mb-6 flex items-center justify-between">
-
-              <div class="flex items-center gap-3">
-
-                <div
-                  class="flex h-9 w-9 items-center justify-center rounded-full bg-[#dff8f5] text-[#0ea5a4]"
-                >
-                  <svg
-                    class="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M4 12C6.5 7 9 5 12 5C15 5 17.5 7 20 12C17.5 17 15 19 12 19C9 19 6.5 17 4 12Z"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                    />
-
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="3"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                    />
-                  </svg>
-                </div>
-
-                <h2
-                  class="text-[21px] font-bold text-[#14243a]"
-                >
-                  Résultat de l'analyse IA
-                </h2>
-
-              </div>
-
-
-              <!-- Catégorie -->
-              <span
-                class="rounded-full bg-[#bff5e9] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.04em] text-[#087d72]"
-              >
-                {{ categoriePrincipale() }}
-              </span>
-
-            </div>
-
-
-            <!-- ====================================================
-                 IMAGE DU SCAN
-                 ==================================================== -->
-
-            <div
-              class="relative flex min-h-[315px] items-center justify-center overflow-hidden rounded-[18px] bg-[#edf3fc] p-4"
-            >
-
-              <!-- Cadre supérieur gauche -->
-              <span
-                class="absolute left-4 top-4 h-5 w-5 border-l-2 border-t-2 border-[#0bb8b5]"
-              ></span>
-
-              <!-- Cadre supérieur droit -->
-              <span
-                class="absolute right-4 top-4 h-5 w-5 border-r-2 border-t-2 border-[#0bb8b5]"
-              ></span>
-
-              <!-- Cadre inférieur gauche -->
-              <span
-                class="absolute bottom-4 left-4 h-5 w-5 border-b-2 border-l-2 border-[#0bb8b5]"
-              ></span>
-
-              <!-- Cadre inférieur droit -->
-              <span
-                class="absolute bottom-4 right-4 h-5 w-5 border-b-2 border-r-2 border-[#0bb8b5]"
-              ></span>
-
-
-              <!-- Photo envoyée au backend -->
-              <div class="relative max-h-[285px] overflow-hidden">
-
-                <img
-                  [src]="imageScan()"
-                  alt="Photo du déchet analysé"
-                  class="block max-h-[285px] max-w-full object-contain"
-                >
-
-                <!-- Zone de détection visuelle -->
-                <div
-                  class="pointer-events-none absolute inset-[12%_22%_10%_22%] rounded-[12px] border border-dashed border-[#19c4c2]/70"
-                ></div>
-
-                <!-- Label détection -->
-                <div
-                  class="absolute left-1/2 top-2 -translate-x-1/2 rounded-md bg-[#344052] px-3 py-1 text-[9px] font-bold tracking-[0.06em] text-white"
-                >
-                   DETECTION IA
-                </div>
-
-
-
-              </div>
-
-            </div>
-
-
-            <!-- ====================================================
-                 CLASSIFICATION
-                 ==================================================== -->
-
-            <div class="mt-6">
-
-              <p
-                class="text-[10px] font-bold uppercase tracking-[0.12em] text-[#64707c]"
-              >
-                Classification principale
-              </p>
-
-              <h3
-                class="mt-1 text-[25px] font-bold tracking-[-0.5px] text-[#14243a]"
-              >
-                {{ objetPrincipal() }}
-              </h3>
-
-            </div>
-
-
-            <!-- ====================================================
-                 DATE + STATUT
-                 ==================================================== -->
-
-            <div
-              class="mt-5 grid grid-cols-2 gap-6 rounded-[17px] bg-[#f6f9fd] px-4 py-4"
-            >
-
-              <div>
-
-                <p
-                  class="text-[9px] font-bold uppercase tracking-[0.08em] text-[#687480]"
-                >
-                  Date & heure
-                </p>
-
-                <p
-                  class="mt-1 text-[13px] font-bold text-[#17263a]"
-                >
-                  {{ dateScan() }}
-                </p>
-
-                <p class="text-[12px] text-[#596571]">
-                  {{ heureScan() }} GMT
-                </p>
-
-              </div>
-
-
-              <div>
-
-                <p
-                  class="text-[9px] font-bold uppercase tracking-[0.08em] text-[#687480]"
-                >
-                  Statut
-                </p>
-
-                <p
-                  class="mt-1 flex items-center gap-1 text-[13px] font-bold text-[#00877d]"
-                >
-                  <span class="h-1.5 w-1.5 rounded-full bg-[#0a9e91]"></span>
-                  Terminée
-                </p>
-
-                <p class="text-[12px] text-[#596571]">
-                  ID Validé
-                </p>
-
-              </div>
-
-            </div>
-
-          </section>
-
-
-          <!-- ======================================================
-               CONSEIL DE TRI
-               ====================================================== -->
-
-          <section
-            class="rounded-[24px] bg-white p-7 shadow-[0_3px_10px_rgba(15,23,42,0.08)]"
-          >
-
-            <!-- En-tête conseil -->
-            <div class="flex items-center gap-3">
-
-              <div
-                class="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#c8f7ef] text-[#078b80]"
-              >
-
-                <svg
-                  class="h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M8 4L5 9H9L7 13H12"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-
-                  <path
-                    d="M16 4L19 9H15L17 13H12"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-
-              </div>
-
-
-              <div>
-
-                <h2
-                  class="text-[20px] font-bold text-[#14243a]"
-                >
-                  Conseil de tri délivré
-                </h2>
-
-                <p class="text-[11px] text-[#65717d]">
-                  Directives automatiques transmises au citoyen sur smartphone
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <!-- Conseil -->
-            <div
-              class="mt-5 rounded-[17px] bg-[#f1f7ff] px-5 py-5"
-            >
-
-              <div class="flex gap-4">
-
-                <!-- Validation -->
-                <div
-                  class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0eabb0] text-white"
-                >
-
-                  <svg
-                    class="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M5 12L10 17L19 7"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-
-                </div>
-
-
-                <div class="min-w-0">
-
-                  <p
-                    class="text-[15px] font-semibold leading-[1.55] text-[#17263a]"
-                  >
-                    « {{ conseilTri() }} »
-                  </p>
-
-
-                  <!-- Type de déchet -->
-                  <div class="mt-4">
-
-                    <span
-                      class="inline-flex items-center gap-2 rounded-full bg-[#dcecff] px-3 py-1.5 text-[10px] font-bold text-[#526a80]"
-                    >
-                      <span
-                        class="h-2.5 w-2.5 rounded-full bg-[#f5c400]"
-                      ></span>
-
-                      {{ categoriePrincipale() }}
-                    </span>
-
-                  </div>
-
-
-                  <!-- Point de collecte -->
-                  <div
-                    class="mt-3 flex items-center gap-2 text-[11px] font-semibold text-[#087d75]"
-                  >
-
-                    <svg
-                      class="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <path
-                        d="M20 10C20 15 12 21 12 21C12 21 4 15 4 10C4 5.6 7.6 2 12 2C16.4 2 20 5.6 20 10Z"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                      />
-
-                      <circle
-                        cx="12"
-                        cy="10"
-                        r="2.5"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                      />
-
-                    </svg>
-
-                    Point de collecte recommandé
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </section>
-
-        </div>
-
-
-        <!-- ========================================================
-             COLONNE DROITE — CITOYEN
-             ======================================================== -->
-
-        <aside
-          class="rounded-[24px] bg-white p-7 shadow-[0_3px_10px_rgba(15,23,42,0.08)]"
-        >
-
-          <!-- Titre -->
-          <div class="flex items-center justify-between">
-
-            <div class="flex items-center gap-3">
-
-              <div
-                class="text-[#0ea5a4]"
-              >
-
-                <svg
-                  class="h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <rect
-                    x="4"
-                    y="4"
-                    width="16"
-                    height="16"
-                    rx="2"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                  />
-
-                  <circle
-                    cx="12"
-                    cy="10"
-                    r="2.5"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                  />
-
-                  <path
-                    d="M8 17C9 14.5 15 14.5 16 17"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                  />
-                </svg>
-
-              </div>
-
-              <h2
-                class="text-[21px] font-bold text-[#14243a]"
-              >
-                Citoyen
-              </h2>
-
-            </div>
-
-
-            <span
-              class="rounded-full bg-[#dce9ff] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.04em] text-[#50637c]"
-            >
-              Compte vérifié
-            </span>
-
-          </div>
-
-
-          <!-- Informations citoyen -->
-          <div
-            class="mt-5 rounded-[17px] bg-[#f2f6fc] p-4"
-          >
-
-            <div class="flex items-center gap-3">
-
-              <!-- Avatar -->
-              <div
-                class="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[14px] bg-[#0eabb0] text-[16px] font-bold text-white"
-              >
-
-                {{
-                  (scanActuel.citoyen?.prenom?.charAt(0) ?? '') +
-                  (scanActuel.citoyen?.nom?.charAt(0) ?? '')
-                }}
-
-                <span
-                  class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white bg-[#1ac4b7]"
-                ></span>
-
-              </div>
-
-
-              <!-- Nom -->
-              <div class="min-w-0">
-
-                <p
-                  class="truncate text-[15px] font-bold text-[#16263b]"
-                >
-                  {{ scanActuel.citoyen?.prenom }}
-                  {{ scanActuel.citoyen?.nom }}
-                </p>
-
-                <p
-                  class="truncate text-[11px] text-[#536171]"
-                >
-                  {{ scanActuel.citoyen?.email }}
-                </p>
-
-                <p
-                  class="mt-1 text-[10px] font-bold text-[#07877d]"
-                >
-                  Membre Éco-Sentinelle
-                </p>
-
-                <p
-                  class="text-[10px] font-semibold text-[#07877d]"
-                >
-                  Dakar
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- Nombre de scans -->
-          <div
-            class="mt-5 flex items-center justify-between rounded-[13px] bg-[#f7f9fc] px-3 py-3"
-          >
-
-            <div class="flex items-center gap-2">
-
-              <svg
-                class="h-5 w-5 text-[#0ea5a4]"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <rect
-                  x="5"
-                  y="5"
-                  width="14"
-                  height="14"
-                  rx="2"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                />
-
-                <path
-                  d="M8 9H16M8 12H16M8 15H13"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                />
-
+  <!-- ── CHARGEMENT ─────────────────────────────────────────── -->
+  @if (chargement()) {
+    <div class="flex items-center justify-center py-24">
+      <span class="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+      <span class="ml-3 text-[14px] text-slate-400">Chargement du scan...</span>
+    </div>
+  }
+
+  @else if (erreur()) {
+    <div class="rounded-2xl border border-red-100 bg-red-50 p-6 text-[13px] text-red-600">
+      {{ erreur() }}
+    </div>
+  }
+
+  @else if (scan()) {
+
+    <!-- ── BADGE NOMBRE DE DÉCHETS + GRILLE ─────────────────── -->
+    <!-- ══════════════════════════════════════════════════════
+         GRILLE PRINCIPALE : photo (gauche) + détections (droite)
+         ══════════════════════════════════════════════════════ -->
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)] lg:gap-5">
+
+      <!-- ── COLONNE GAUCHE : photo + conseil ──────────────── -->
+      <div class="space-y-5">
+
+        <!-- Photo avec annotations IA -->
+        <div class="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white p-2">
+
+          @if (imageScan() && !imageEnErreur()) {
+            <img
+              [src]="imageScan()"
+              alt="Photo du déchet analysé"
+              class="max-h-[400px] min-h-[240px] w-full rounded-xl object-cover"
+              (error)="imageScanIndisponible()"
+            />
+          } @else {
+            <div class="flex h-[300px] items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+              <svg class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <circle cx="8.5" cy="9" r="1.5"/>
+                <path d="m21 15-5-5L7 20"/>
               </svg>
-
-              <span
-                class="text-[12px] text-[#53606d]"
-              >
-                Nombre de scans réalisés
-              </span>
-
             </div>
+          }
 
-            <strong
-              class="text-[15px] text-[#16263b]"
+          <!-- Annotations flottantes des détections -->
+          @for (detection of detections().slice(0, 3); track detection.idDetection; let i = $index) {
+            <div
+              class="absolute flex items-center gap-1.5 rounded-md border border-white/90 px-2 py-1 text-[9px] font-bold text-white shadow"
+              [ngClass]="[
+                i === 0 ? 'bg-[#0EA5A4]/90 left-3 top-3' :
+                i === 1 ? 'bg-orange-500/90 right-3 top-5' :
+                'bg-blue-500/90 bottom-14 left-4'
+              ]"
             >
-              {{ nombreScans() }}
-            </strong>
-
-          </div>
-
-
-          <!-- Dernier scan -->
-          <div
-            class="mt-3 flex items-center justify-between rounded-[13px] bg-[#f7f9fc] px-3 py-3"
-          >
-
-            <div class="flex items-center gap-2">
-
-              <svg
-                class="h-5 w-5 text-[#0ea5a4]"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="8"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                />
-
-                <path
-                  d="M12 7V12L15 14"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                />
-
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
               </svg>
-
-              <span
-                class="text-[12px] text-[#53606d]"
-              >
-                Dernier scan
-              </span>
-
+              {{ detection.objet }} ({{ formaterConfiance(detection.confiance) }})
             </div>
+          }
 
-            <strong
-              class="text-[11px] text-[#16263b]"
-            >
-              Aujourd'hui
-              ({{ heureScan() }})
-            </strong>
-
-          </div>
-
-
-          <!-- Profil -->
+          <!-- Bouton agrandir -->
           <button
             type="button"
-            class="mt-5 flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#edf4ff] py-3 text-[12px] font-bold text-[#16263b] transition hover:bg-[#e2edff]"
+            (click)="ouvrirImage()"
+            class="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm hover:bg-black/80"
           >
-            Voir le profil citoyen
-
-            <svg
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <path
-                d="M14 5H19V10"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-
-              <path
-                d="M19 5L11 13"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-              />
-
-              <path
-                d="M19 14V18C19 19.1 18.1 20 17 20H6C4.9 20 4 19.1 4 18V7C4 5.9 4.9 5 6 5H10"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-              />
-
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
             </svg>
-
+            Agrandir l'image
           </button>
+        </div>
 
-        </aside>
+        <!-- Conseil de tri -->
+        <div class="rounded-[17px] bg-[#C9E8E6] p-5">
+          <div class="flex items-start gap-3">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white">
+              <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6M10 21h4M8.5 14.5A6 6 0 1 1 15.5 14.5c-.8.7-1.3 1.5-1.5 2.5h-4c-.2-1-.7-1.8-1.5-2.5Z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-[12px] font-bold text-[#102D3E]">
+                Conseil de tri — {{ categoriePrincipale() }}
+              </h3>
+              <p class="mt-2 text-[11px] leading-relaxed text-[#253D4B]">
+                {{ conseilTri() }}
+              </p>
+              <button type="button"
+                class="mt-3 rounded-lg bg-[#0EA5A4] px-4 py-2 text-[10px] font-bold text-white hover:bg-[#087C78]">
+                Voir les conseils de tri
+              </button>
+            </div>
+          </div>
+        </div>
 
       </div>
 
-    }
+      <!-- ── COLONNE DROITE : objets identifiés + actions ────── -->
+      <div class="space-y-3">
 
-  </main>
+        <h2 class="text-[15px] font-bold text-[#122238]">Objets identifiés</h2>
 
+        <!-- Liste des détections -->
+        @if (detections().length === 0) {
+          <div class="rounded-2xl bg-white p-8 text-center shadow-sm">
+            <p class="text-[14px] text-slate-400">Aucun déchet identifié dans ce scan.</p>
+          </div>
+        }
+
+        @for (detection of detections(); track detection.idDetection) {
+          <div class="rounded-[15px] border border-slate-100 bg-white p-3.5">
+            <div class="flex items-start gap-3">
+
+              <!-- Icône -->
+              <div
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+                [ngClass]="iconeBg(detection.idTypeDechet?.nom)"
+              >
+                <svg class="h-5 w-5" [ngClass]="iconeColor(detection.idTypeDechet?.nom)"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 7h10l-.8 13H7.8L7 7Z"/>
+                  <path d="M5 7h14M9 7V4h6v3"/>
+                </svg>
+              </div>
+
+              <!-- Infos -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <h3 class="text-[12px] font-bold text-[#122238]">{{ detection.objet }}</h3>
+                  <span class="shrink-0 text-[10px] font-bold text-[#0EA5A4]">
+                    ×1
+                  </span>
+                </div>
+
+                <!-- Badges -->
+                <div class="mt-1.5 flex flex-wrap items-center gap-2">
+                  <span class="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                        [ngClass]="badgeClasse(detection.idTypeDechet?.nom)">
+                    CAT: {{ detection.idTypeDechet?.nom ?? 'Inconnu' }}
+                  </span>
+                  <span class="rounded-full bg-[#C9F1E9] px-2 py-0.5 text-[8px] font-bold text-[#087C78]">
+                    CONFIANCE: {{ formaterConfiance(detection.confiance) }}
+                  </span>
+                </div>
+
+                <!-- Destination -->
+                <div class="mt-2 flex items-center gap-1.5">
+                  <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 7h16l-1 13H5L4 7Z"/>
+                    <path d="M3 7h18M9 7V4h6v3"/>
+                  </svg>
+                  <p class="text-[11px] text-slate-500">
+                    Destination :
+                    <span class="font-bold text-[#0EA5A4]">
+                      {{ destinationLabel(detection.idTypeDechet?.nom) }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Boutons d'action -->
+        <div class="space-y-2 pt-1">
+          <button
+            type="button"
+            class="flex h-[42px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#0EA5A4] text-[11px] font-bold text-white hover:bg-[#087C78]"
+          >
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            Ajouter les déchets à mes paniers
+          </button>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button"
+              class="flex h-[36px] items-center justify-center gap-1.5 rounded-[10px] border border-slate-200 bg-white text-[9px] font-bold text-[#122238] hover:bg-slate-50"
+            >
+              <svg class="h-4 w-4 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+              </svg>
+              Voir mes paniers
+            </button>
+            <button type="button" (click)="retourScans()"
+              class="flex h-[36px] items-center justify-center gap-1.5 rounded-[10px] border border-slate-200 bg-white text-[9px] font-bold text-[#122238] hover:bg-slate-50"
+            >
+              <svg class="h-4 w-4 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                <circle cx="12" cy="10" r="2.5"/>
+              </svg>
+              Points de collecte
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── BANNIÈRE CARTE ─────────────────────────────────────── -->
+    <div class="mt-6 flex items-center justify-between gap-4 rounded-[14px] bg-[#DCE8FA] px-5 py-4">
+      <div class="flex items-center gap-4">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl">
+          <svg class="h-7 w-7 text-[#078B86]" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/>
+            <path d="M9 3v15M15 6v15"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-[12px] font-bold text-[#122238]">Prêt à déposer vos déchets ?</p>
+          <p class="text-[10px] text-[#087C78]">Trouvez le bac approprié le plus proche de votre position actuelle.</p>
+        </div>
+      </div>
+      <button type="button"
+        class="shrink-0 rounded-[9px] bg-[#0EA5A4] px-5 py-2 text-[10px] font-bold text-white hover:bg-[#087C78]">
+        Voir sur la carte
+      </button>
+  </div>
+}
 </div>

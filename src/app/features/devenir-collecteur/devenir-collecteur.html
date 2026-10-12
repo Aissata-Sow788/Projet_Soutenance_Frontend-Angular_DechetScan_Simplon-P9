@@ -151,13 +151,13 @@
             formControlName="telephoneProfessionnel"
             maxlength="20"
             autocomplete="tel"
-            placeholder="+221 77 000 00 00"
+            placeholder="+221 77 000 00 00 ou +221 33 827 00 47"
             class="h-[58px] w-full rounded-[16px] border border-slate-200 bg-white px-4 text-base text-[#142337] outline-none transition placeholder:text-slate-400 focus:border-[#82d8cf] focus:ring-2 focus:ring-[#c9f6ee] sm:h-[64px] sm:px-5 sm:text-lg"
             [class.border-red-300]="formulaire.controls.telephoneProfessionnel.invalid && formulaire.controls.telephoneProfessionnel.touched"
           />
           @if (formulaire.controls.telephoneProfessionnel.invalid && formulaire.controls.telephoneProfessionnel.touched) {
             <p class="mt-1.5 text-xs text-red-600">
-              Saisissez un numéro sénégalais valide, par exemple +221 77 000 00 00.
+              Saisissez un mobile (ex. +221 77 000 00 00) ou un fixe (ex. +221 33 827 00 47).
             </p>
           }
         </div>

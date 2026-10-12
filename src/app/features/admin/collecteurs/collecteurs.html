@@ -1,0 +1,529 @@
+<!--
+  Page Gestion des collecteurs — espace administrateur.
+  Interface fidèle à la maquette : tableau avec menu ⋮,
+  4 cartes stats, filtres inline, pagination numérotée.
+-->
+<section
+  class="min-h-[calc(100vh-60px)] bg-[#F5F7FC] px-8 py-6"
+  (click)="fermerMenu()"
+>
+
+  <!-- ── EN-TÊTE ──────────────────────────────────────────────── -->
+  <div class="mb-6 flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-[26px] font-bold text-[#17283D]">
+        Gestion des collecteurs
+      </h1>
+      <p class="mt-1 text-[13px] text-slate-500">
+        Gérez les inscriptions, les statuts et les informations des collecteurs.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="flex h-[42px] items-center gap-2 rounded-xl bg-[#0EA5A4] px-5 text-[13px] font-bold text-white shadow-sm transition hover:bg-[#0B9291]"
+    >
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      + Ajouter un collecteur
+    </button>
+  </div>
+
+  <!-- ── CARTES STATS ──────────────────────────────────────────── -->
+  <div class="mb-6 grid grid-cols-4 gap-4">
+
+    <!-- Total -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <div class="mb-2 flex items-center justify-between">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
+          <svg class="h-4 w-4 text-blue-500" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13" rx="2"/>
+            <path d="M16 8h4l3 3v5h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <span class="text-[11px] font-bold text-green-500">+12%</span>
+      </div>
+      <p class="text-[28px] font-black text-[#17283D]">{{ total() | number }}</p>
+      <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Total collecteurs</p>
+    </div>
+
+    <!-- Actifs -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <div class="mb-2 flex items-center justify-between">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-50">
+          <svg class="h-4 w-4 text-green-600" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="text-[11px] font-bold text-green-500">+4%</span>
+      </div>
+      <p class="text-[28px] font-black text-[#17283D]">{{ totalValides() | number }}</p>
+      <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Collecteurs actifs</p>
+    </div>
+
+    <!-- En attente -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <div class="mb-2 flex items-center justify-between">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50">
+          <svg class="h-4 w-4 text-orange-500" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 7v5l3 3"/>
+          </svg>
+        </div>
+        <span class="text-[10px] font-bold text-orange-400">24h avg</span>
+      </div>
+      <p class="text-[28px] font-black text-[#17283D]">{{ totalEnAttente() | number }}</p>
+      <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">En attente de validation</p>
+    </div>
+
+    <!-- Suspendus -->
+    <div class="rounded-2xl bg-white p-5 shadow-sm">
+      <div class="mb-2 flex items-center justify-between">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50">
+          <svg class="h-4 w-4 text-red-500" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M15 9l-6 6M9 9l6 6"/>
+          </svg>
+        </div>
+        <span class="text-[11px] font-bold text-red-500">-2%</span>
+      </div>
+      <p class="text-[28px] font-black text-[#17283D]">{{ totalRejetes() | number }}</p>
+      <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Collecteurs suspendus</p>
+    </div>
+
+  </div>
+
+  <!-- ── TABLEAU ───────────────────────────────────────────────── -->
+  <div class="overflow-hidden rounded-2xl bg-white shadow-sm">
+
+    <!-- Barre filtres -->
+    <div class="flex items-center gap-3 border-b border-slate-100 px-5 py-3">
+
+      <!-- Recherche -->
+      <div class="relative w-[260px]">
+        <svg class="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          placeholder="Nom, email ou zone..."
+          [value]="recherche()"
+          (input)="recherche.set($any($event.target).value); pageActuelle.set(1)"
+          class="h-[34px] w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 text-[12px] text-[#17283D] outline-none placeholder:text-slate-400 focus:border-[#0EA5A4]"
+        />
+      </div>
+
+      <!-- Statut -->
+      <select
+        [value]="filtreStatut()"
+        (change)="filtreStatut.set($any($event.target).value); pageActuelle.set(1)"
+        class="h-[34px] rounded-lg border border-slate-200 bg-white px-3 text-[12px] text-[#17283D] focus:border-[#0EA5A4] focus:outline-none"
+      >
+        <option value="tous">Statut: Tous</option>
+        <option value="valide">Actif</option>
+        <option value="en_attente">En attente</option>
+        <option value="rejete">Suspendu</option>
+      </select>
+
+      <!-- Zone -->
+      <input
+        type="text"
+        placeholder="Zone: Toutes"
+        [value]="filtreZone()"
+        (input)="filtreZone.set($any($event.target).value); pageActuelle.set(1)"
+        class="h-[34px] w-[140px] rounded-lg border border-slate-200 bg-white px-3 text-[12px] text-[#17283D] focus:border-[#0EA5A4] focus:outline-none placeholder:text-slate-400"
+      />
+
+      <!-- Réinitialiser -->
+      <button
+        type="button"
+        (click)="reinitialiserFiltres()"
+        class="text-[12px] font-semibold text-[#0EA5A4] hover:underline"
+      >
+        Réinitialiser
+      </button>
+
+      <!-- Compteur à droite -->
+      <span class="ml-auto text-[11px] text-slate-400">
+        {{ collecteursFiltres().length | number }} collecteurs trouvés
+      </span>
+    </div>
+
+    <!-- État chargement / erreur -->
+    @if (chargement()) {
+      <div class="flex items-center justify-center py-14">
+        <span class="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+        <span class="ml-3 text-[13px] text-slate-400">Chargement...</span>
+      </div>
+    }
+    @else if (erreur()) {
+      <div class="py-8 text-center text-[13px] text-red-500">{{ erreur() }}</div>
+    }
+    @else {
+
+      <!-- Tableau -->
+      <table class="w-full text-[13px]">
+        <thead>
+          <tr class="border-b border-slate-100">
+            <th class="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-slate-400">Collecteur</th>
+            <th class="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-slate-400">Contact</th>
+            <th class="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-slate-400">Zone d'intervention</th>
+            <th class="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+            <th class="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-slate-400">Date inscription</th>
+            <th class="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (collecteursAffiches().length === 0) {
+            <tr>
+              <td colspan="6" class="px-5 py-10 text-center text-[13px] text-slate-400">
+                Aucun collecteur trouvé.
+              </td>
+            </tr>
+          }
+          @for (c of collecteursAffiches(); track c.idCollecteur) {
+            <tr class="border-b border-slate-50 hover:bg-slate-50/60">
+
+              <!-- Collecteur : avatar rond avec photo/initiales + nom + ID -->
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <!-- Avatar circulaire -->
+                  <div class="relative h-9 w-9 shrink-0">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#C9F5EF] text-[12px] font-bold text-[#087C78] ring-2 ring-white">
+                      {{ initiales(c) }}
+                    </div>
+                    <!-- Point de statut en bas à droite -->
+                    <span
+                      class="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ring-1 ring-white"
+                      [ngClass]="{
+                        'bg-green-500': c.statutValidation === 'valide',
+                        'bg-orange-400': c.statutValidation === 'en_attente',
+                        'bg-red-400': c.statutValidation === 'rejete'
+                      }"
+                    ></span>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-[#17283D]">
+                      {{ c.prenomUtilisateur }} {{ c.nomUtilisateur }}
+                    </p>
+                    <p class="text-[10px] text-slate-400">
+                      ID: #CL-{{ c.idCollecteur.toString().padStart(4, '0') }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Contact -->
+              <td class="px-4 py-3.5">
+                <div class="flex items-center gap-1.5 text-[11px] text-slate-600">
+                  <svg class="h-3 w-3 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  {{ c.emailUtilisateur }}
+                </div>
+                @if (c.telephoneProfessionnel) {
+                  <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-600">
+                    <svg class="h-3 w-3 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1A19.5 19.5 0 0 1 5 13.2 19.8 19.8 0 0 1 2.1 4.6 2 2 0 0 1 4 2.4h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.45 2.1l-1.3 1.3a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45 12.8 12.8 0 0 0 2.8.7A2 2 0 0 1 22 16.9z"/>
+                    </svg>
+                    {{ c.telephoneProfessionnel }}
+                  </div>
+                }
+              </td>
+
+              <!-- Zone -->
+              <td class="px-4 py-3.5 text-[13px] text-slate-600">
+                {{ c.zoneIntervention || '—' }}
+              </td>
+
+              <!-- Statut badge compact -->
+              <td class="px-4 py-3.5">
+                <span
+                  class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold"
+                  [ngClass]="classeStatut(c.statutValidation)"
+                >
+                  <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                  {{ libelleStatut(c.statutValidation) }}
+                </span>
+              </td>
+
+              <!-- Date inscription sur 2 lignes -->
+              <td class="px-4 py-3.5">
+                <p class="text-[12px] text-[#17283D]">
+                  {{ formaterDate(c.dateInscription) }}
+                </p>
+                <p class="text-[10px] text-slate-400">
+                  {{ formaterHeure(c.dateInscription) }}
+                </p>
+              </td>
+
+              <!-- Actions ⋮ -->
+              <td class="px-4 py-3.5 text-center">
+                <div class="relative inline-block" (click)="$event.stopPropagation()">
+                  <button
+                    type="button"
+                    (click)="toggleMenu(c.idCollecteur, $event)"
+                    class="flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                  >
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="5" r="1"/>
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="12" cy="19" r="1"/>
+                    </svg>
+                  </button>
+
+                  <!-- Menu déroulant -->
+                  @if (menuOuvert() === c.idCollecteur) {
+                    <div class="absolute right-0 z-30 mt-1 w-40 rounded-xl border border-slate-100 bg-white py-1.5 shadow-xl">
+
+                      <!-- Voir profil -->
+                      <button
+                        type="button"
+                        (click)="voirDetail(c.idCollecteur)"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[12px] text-[#17283D] hover:bg-slate-50"
+                      >
+                        <svg class="h-3.5 w-3.5 text-slate-400" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+                          <circle cx="12" cy="12" r="2.5"/>
+                        </svg>
+                        Voir le profil
+                      </button>
+
+                      <!-- Valider / Rejeter si en_attente -->
+                      @if (c.statutValidation === 'en_attente') {
+                        <div class="mx-3 my-1 h-px bg-slate-100"></div>
+                        <button
+                          type="button"
+                          (click)="ouvrirPopupValidation(c)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[12px] font-semibold text-[#0EA5A4] hover:bg-[#F0FDFA]"
+                        >
+                          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none"
+                               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 12l2 2 4-4"/>
+                            <circle cx="12" cy="12" r="9"/>
+                          </svg>
+                          Valider / Rejeter
+                        </button>
+                      }
+
+                      <!-- Suspendre si valide -->
+                      @if (c.statutValidation === 'valide') {
+                        <div class="mx-3 my-1 h-px bg-slate-100"></div>
+                        <button
+                          type="button"
+                          (click)="changerStatutDirectement(c, 'rejete')"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[12px] text-red-500 hover:bg-red-50"
+                        >
+                          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none"
+                               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M15 9l-6 6M9 9l6 6"/>
+                          </svg>
+                          Suspendre
+                        </button>
+                      }
+
+                      <!-- Réactiver si rejeté -->
+                      @if (c.statutValidation === 'rejete') {
+                        <div class="mx-3 my-1 h-px bg-slate-100"></div>
+                        <button
+                          type="button"
+                          (click)="changerStatutDirectement(c, 'valide')"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[12px] text-green-600 hover:bg-green-50"
+                        >
+                          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none"
+                               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 12l2 2 4-4"/>
+                            <circle cx="12" cy="12" r="9"/>
+                          </svg>
+                          Réactiver
+                        </button>
+                      }
+
+                    </div>
+                  }
+                </div>
+              </td>
+
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between border-t border-slate-100 px-5 py-3.5">
+        <p class="text-[12px] text-slate-400">
+          Affichage de 1 à {{ Math.min(pageActuelle() * taillePage, collecteursFiltres().length) }}
+          sur {{ collecteursFiltres().length | number }} collecteurs
+        </p>
+
+        <div class="flex items-center gap-1">
+          <button
+            (click)="changerPage(pageActuelle() - 1)"
+            [disabled]="pageActuelle() === 1"
+            class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-30"
+          >
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          @for (p of pagesVisibles(); track $index) {
+            @if (p === '...') {
+              <span class="flex h-7 w-7 items-center justify-center text-[12px] text-slate-400">...</span>
+            } @else {
+              <button
+                type="button"
+                (click)="changerPage(+p)"
+                class="flex h-7 w-7 items-center justify-center rounded-lg text-[12px] font-semibold transition"
+                [ngClass]="pageActuelle() === +p
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'border border-slate-200 text-slate-600 hover:bg-slate-50'"
+              >
+                {{ p }}
+              </button>
+            }
+          }
+
+          <button
+            (click)="changerPage(pageActuelle() + 1)"
+            [disabled]="pageActuelle() === nombrePages()"
+            class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-30"
+          >
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    }
+  </div>
+
+</section>
+
+
+<!-- ── POPUP VALIDATION ─────────────────────────────────────────── -->
+@if (popupValidationOuverte() && collecteurSelectionne()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
+    (click)="fermerPopupValidation()"
+  >
+    <div
+      class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div class="mb-5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E8F8F6]">
+            <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <h2 class="text-[16px] font-bold text-[#17283D]">Valider la demande collecteur</h2>
+        </div>
+        <button type="button" (click)="fermerPopupValidation()"
+          class="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M4.3 4.3a1 1 0 0 1 1.4 0l4.3 4.3 4.3-4.3a1 1 0 1 1 1.4 1.4l-4.3 4.3 4.3 4.3a1 1 0 0 1-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 0 1-1.4-1.4L8.6 10 4.3 5.7a1 1 0 0 1 0-1.4Z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Infos collecteur -->
+      <div class="mb-5 rounded-xl bg-[#F7F9FA] p-4">
+        <div class="mb-3 flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#C9F5EF] text-[12px] font-bold text-[#087C78]">
+            {{ initiales(collecteurSelectionne()!) }}
+          </div>
+          <div>
+            <p class="text-[14px] font-bold text-[#17283D]">
+              {{ collecteurSelectionne()!.prenomUtilisateur }} {{ collecteurSelectionne()!.nomUtilisateur }}
+            </p>
+            <p class="text-[11px] text-slate-400">{{ collecteurSelectionne()!.emailUtilisateur }}</p>
+          </div>
+        </div>
+        <div class="space-y-1.5 text-[12px]">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Entreprise</span>
+            <span class="font-semibold text-[#17283D]">{{ collecteurSelectionne()!.nomEntreprise || 'Non renseignée' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Zone</span>
+            <span class="font-semibold text-[#17283D]">{{ collecteurSelectionne()!.zoneIntervention || 'Non renseignée' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Téléphone pro</span>
+            <span class="font-semibold text-[#17283D]">{{ collecteurSelectionne()!.telephoneProfessionnel || '—' }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Inscription</span>
+            <span class="font-semibold text-[#17283D]">{{ formaterDate(collecteurSelectionne()!.dateInscription) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boutons -->
+      <div class="flex gap-3">
+        <button
+          type="button"
+          [disabled]="enTraitement()"
+          (click)="changerStatutValidation('rejete')"
+          class="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-red-200 bg-red-50 py-2.5 text-[13px] font-bold text-red-600 transition hover:bg-red-100 disabled:opacity-50"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M15 9l-6 6M9 9l6 6"/>
+          </svg>
+          Rejeter
+        </button>
+        <button
+          type="button"
+          [disabled]="enTraitement()"
+          (click)="changerStatutValidation('valide')"
+          class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-2.5 text-[13px] font-bold text-white shadow-sm transition hover:bg-[#0B9291] disabled:opacity-50"
+        >
+          @if (enTraitement()) {
+            <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+            Traitement...
+          } @else {
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12l2 2 4-4"/>
+              <circle cx="12" cy="12" r="9"/>
+            </svg>
+            Valider
+          }
+        </button>
+      </div>
+
+      <button type="button" (click)="fermerPopupValidation()"
+        class="mt-3 w-full py-1.5 text-center text-[11px] text-slate-400 hover:text-slate-600">
+        Annuler
+      </button>
+    </div>
+  </div>
+}

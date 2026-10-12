@@ -4,6 +4,29 @@ import { Observable, tap } from 'rxjs';
 // HttpClient pour communiquer avec Django.
 import { HttpClient } from '@angular/common/http';
 
+let sessionStorageMigrated = false;
+
+function getStorage(): Storage {
+  try {
+    const storage = localStorage;
+
+    if (!sessionStorageMigrated) {
+      for (const key of ['dechetscan_token', 'dechetscan_refresh', 'dechetscan_user']) {
+        const sessionValue = sessionStorage.getItem(key);
+        if (storage.getItem(key) === null && sessionValue !== null) {
+          storage.setItem(key, sessionValue);
+        }
+        sessionStorage.removeItem(key);
+      }
+      sessionStorageMigrated = true;
+    }
+
+    return storage;
+  } catch {
+    return sessionStorage;
+  }
+}
+
 // Importe tous les modèles utilisés par le service Auth.
 import {
   Utilisateur,
@@ -61,7 +84,7 @@ export class Auth {
   refreshToken(): Observable<{ access: string; refresh: string }> {
 
     // Récupère le refresh token enregistré après la connexion.
-    const refresh = localStorage.getItem(this.REFRESH_KEY);
+    const refresh = getStorage().getItem(this.REFRESH_KEY);
 
     // Envoie le refresh token à Django.
     // Django vérifie sa validité et renvoie un nouvel access token.
@@ -69,8 +92,9 @@ export class Auth {
     ).pipe(
 
       // Enregistre automatiquement le nouvel access token.
-      tap((response) => {localStorage.setItem(this.TOKEN_KEY, response.access);
-        localStorage.setItem(this.REFRESH_KEY, response.refresh);
+      tap((response) => {
+        getStorage().setItem(this.TOKEN_KEY, response.access);
+        getStorage().setItem(this.REFRESH_KEY, response.refresh);
       })
     );
   }
@@ -135,14 +159,16 @@ export class Auth {
 
   logout(): void {
 
+    const storage = getStorage();
+
     // Supprime le token d'accès.
-    localStorage.removeItem(this.TOKEN_KEY);
+    storage.removeItem(this.TOKEN_KEY);
 
     // Supprime le token de renouvellement.
-    localStorage.removeItem(this.REFRESH_KEY);
+    storage.removeItem(this.REFRESH_KEY);
 
     // Supprime les informations utilisateur.
-    localStorage.removeItem(this.USER_KEY);
+    storage.removeItem(this.USER_KEY);
   }
 
 
@@ -153,7 +179,7 @@ export class Auth {
   getCurrentUser(): Utilisateur | null {
 
     // Récupère les données JSON du Local Storage.
-    const raw = localStorage.getItem(this.USER_KEY);
+    const raw = getStorage().getItem(this.USER_KEY);
 
     // Transforme le JSON en objet utilisateur.
     return raw ? JSON.parse(raw) : null;
@@ -176,7 +202,11 @@ export class Auth {
   getToken(): string | null {
 
     // Retourne le token d'accès enregistré.
-    return localStorage.getItem(this.TOKEN_KEY);
+    return getStorage().getItem(this.TOKEN_KEY);
+  }
+
+  getRefreshToken(): string | null {
+    return getStorage().getItem(this.REFRESH_KEY);
   }
 
 
@@ -194,11 +224,13 @@ export class Auth {
 
   private stocker(response: LoginResponse): void {
 
+    const storage = getStorage();
+
     // Enregistre le token d'accès.
-    localStorage.setItem(this.TOKEN_KEY, response.access);
+    storage.setItem(this.TOKEN_KEY, response.access);
 
     // Enregistre le refresh token.
-    localStorage.setItem(this.REFRESH_KEY,response.refresh);
+    storage.setItem(this.REFRESH_KEY,response.refresh);
   }
 
 
@@ -209,6 +241,6 @@ export class Auth {
   private stockerUtilisateur(utilisateur: Utilisateur): void {
 
     // Convertit l'utilisateur en JSON avant de le sauvegarder.
-    localStorage.setItem(this.USER_KEY, JSON.stringify(utilisateur));
+    getStorage().setItem(this.USER_KEY, JSON.stringify(utilisateur));
   }
 }

@@ -1,37 +1,55 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
+import { Auth } from '../services/auth';
+import { catchError, map, of } from 'rxjs';
 
 // Bloque l'accès si aucun utilisateur n'est connecté (peu importe le rôle)
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (_route, state: RouterStateSnapshot) => {
   const router = inject(Router);
+  const auth = inject(Auth);
 
-  const utilisateurBrut = localStorage.getItem('dechetscan_user');
+  try {
+    if (!auth.getToken()) {
+      return router.createUrlTree(['/connexion'], {
+        queryParams: { redirect: state.url },
+      });
+    }
 
-  if (!utilisateurBrut) {
-    router.navigate(['/connexion']);
-    return false;
+    if (auth.getCurrentUser()) {
+      return true;
+    }
+  } catch {
+    auth.logout();
+    return router.createUrlTree(['/connexion'], {
+      queryParams: { redirect: state.url },
+    });
   }
 
-  return true;
+  return auth.me().pipe(
+    map(() => true),
+    catchError(() => {
+      auth.logout();
+      return of(router.createUrlTree(['/connexion'], {
+        queryParams: { redirect: state.url },
+      }));
+    })
+  );
 };
 
-// Bloque l'accès si l'utilisateur n'est pas connecté avec le rôle admin
+// Bloque l'accès à l'espace admin sans session administrateur.
 export const adminGuard: CanActivateFn = () => {
   const router = inject(Router);
+  const auth = inject(Auth);
 
-  const utilisateurBrut = localStorage.getItem('dechetscan_user');
+  try {
+    const utilisateur = auth.getCurrentUser();
 
-  if (!utilisateurBrut) {
-    router.navigate(['/connexion-admin']);
-    return false;
+    if (auth.getToken() && utilisateur?.role === 'admin') {
+      return true;
+    }
+  } catch {
+    auth.logout();
   }
 
-  const utilisateur = JSON.parse(utilisateurBrut);
-
-  if (utilisateur.role !== 'admin') {
-    router.navigate(['/scan']);
-    return false;
-  }
-
-  return true;
+  return router.createUrlTree(['/connexion-admin']);
 };

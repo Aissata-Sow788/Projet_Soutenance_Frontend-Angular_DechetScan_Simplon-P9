@@ -1,474 +1,284 @@
-<!-- =========================================================
-     PAGE HISTORIQUE DES SCANS
-     ========================================================= -->
-<div class="citizen-responsive citizen-list min-h-screen bg-[#f3f4f3] pb-20 text-[#142337]">
+<div class="min-h-screen bg-[#f5f8fb] pb-24 text-[#182437] lg:pb-10">
+  <header class="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex h-[68px] max-w-[1200px] items-center justify-between px-4 sm:px-6 lg:h-[76px] lg:px-8">
+      <a routerLink="/home-citoyen" class="flex shrink-0 items-center gap-2" aria-label="DechetScan, accueil">
+        <img
+          src="assets/logo1-dechetscan.png"
+          alt="DechetScan"
+          class="h-14 w-[180px] object-contain"
+        >
+      </a>
 
-  <!-- =======================================================
-       HEADER
-       ======================================================= -->
-  <header class="flex h-[70px] items-center justify-between bg-[#f8f9fd] px-5">
+      <nav class="hidden items-center gap-7 text-sm font-semibold text-slate-500 lg:flex" aria-label="Navigation principale">
+        <a routerLink="/home-citoyen" class="transition hover:text-[#0EA5A4]">Accueil</a>
+        <a routerLink="/scan" class="transition hover:text-[#0EA5A4]">Scanner</a>
+        <a routerLink="/points-collecte" class="transition hover:text-[#0EA5A4]">Points de collecte</a>
+        <a routerLink="/historique" aria-current="page" class="border-b-2 border-[#0EA5A4] py-2 font-bold text-[#0EA5A4]">Historique</a>
+      </nav>
 
-    <!-- Logo DechetScan -->
-    <img
-      src="assets/logo1-dechetscan.png"
-      alt="DechetScan"
-      class="h-30 w-auto object-contain"
-    />
-
-    <!-- Bouton notifications -->
-    <button
-      routerLink="/notification"
-      type="button"
-      aria-label="Notifications"
-      class="flex h-9 w-9 items-center justify-center text-[#3f4a4d]"
-    >
-      <svg
-        class="h-5 w-5"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-        <path d="M10 21h4"/>
-      </svg>
-    </button>
-
+      <div class="flex items-center gap-3">
+        <a
+          routerLink="/notification"
+          aria-label="Notifications"
+          class="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+            <path d="M10 21h4"/>
+          </svg>
+        </a>
+        <a routerLink="/profile" aria-label="Mon profil" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#d9f4f1] text-sm font-extrabold text-[#087c78] ring-2 ring-white">
+          DS
+        </a>
+      </div>
+    </div>
   </header>
 
-
-  <!-- =======================================================
-       CONTENU PRINCIPAL
-       ======================================================= -->
-  <main class="citizen-content px-5 pt-4">
-
-    <!-- Petit indicateur de section -->
-    <div class="flex items-center gap-1.5">
-
-      <span class="h-2.5 w-2.5 rounded-full bg-[#0EA5A4]"></span>
-
-      <p class="text-[11px] font-bold tracking-[0.08em] text-[#087c7c]">
-        JOURNAL ÉCO-CITOYEN
+  <main class="mx-auto w-full max-w-[1200px] px-4 pt-7 sm:px-6 lg:px-8 lg:pt-9">
+    <section class="mb-6 sm:mb-8">
+      <p class="mb-2 text-[11px] font-extrabold uppercase tracking-[0.17em] text-[#0EA5A4]">Journal éco-citoyen</p>
+      <h1 class="text-[26px] font-black leading-tight tracking-tight text-[#182437] sm:text-3xl">
+        Historique des scans
+      </h1>
+      <p class="mt-2 text-sm text-slate-500 sm:text-base">
+        Retrouvez vos analyses de déchets réalisées avec DechetScan.
       </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         TITRE
-         ===================================================== -->
-    <h1 class="mt-1.5 text-[26px] font-bold leading-[1.08] tracking-[-0.025em]">
-      Historique des scans
-    </h1>
-
-    <p class="mt-1 text-[15px] leading-5 text-[#536064]">
-      Retrouvez vos objets analysés et triés
-    </p>
-
-
-    <!-- =====================================================
-         BARRE DE RECHERCHE
-         ===================================================== -->
-    <div class="mt-5 flex h-[48px] items-center rounded-full bg-white px-5 shadow-[0_2px_7px_rgba(15,23,42,0.07)]">
-
-      <!-- Icône recherche -->
-      <svg
-        class="mr-2.5 h-4 w-4 flex-shrink-0 text-slate-300"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <circle cx="11" cy="11" r="7"/>
-        <path d="m20 20-4-4"/>
-      </svg>
-
-      <!-- Champ de recherche -->
-      <input
-        type="text"
-        [value]="recherche()"
-        (input)="rechercher($event)"
-        placeholder="Rechercher dans l'historique..."
-        class="w-full border-0 bg-transparent text-[14px] text-[#334155] outline-none placeholder:text-[#8a9497]"
-      />
-
-    </div>
-
-
-    <!-- =====================================================
-         FILTRES
-         ===================================================== -->
-    <div class="scrollbar-hide mt-4 flex gap-2 overflow-x-auto">
-
-      <!-- Cette semaine -->
-      <button
-        type="button"
-        (click)="changerFiltre('semaine')"
-        class="h-[40px] flex-shrink-0 rounded-full px-5 text-[14px] font-bold"
-        [class.bg-[#0EA5A4]]="filtreActif() === 'semaine'"
-        [class.text-white]="filtreActif() === 'semaine'"
-        [class.bg-[#dfeafb]]="filtreActif() !== 'semaine'"
-        [class.text-[#46535a]]="filtreActif() !== 'semaine'"
-      >
-        Cette semaine
-      </button>
-
-
-      <!-- Ce mois -->
-      <button
-        type="button"
-        (click)="changerFiltre('mois')"
-        class="h-[40px] flex-shrink-0 rounded-full px-5 text-[14px] font-bold"
-        [class.bg-[#0EA5A4]]="filtreActif() === 'mois'"
-        [class.text-white]="filtreActif() === 'mois'"
-        [class.bg-[#dfeafb]]="filtreActif() !== 'mois'"
-        [class.text-[#46535a]]="filtreActif() !== 'mois'"
-      >
-        Ce mois
-      </button>
-
-
-      <!-- Tout l'historique -->
-      <button
-        type="button"
-        (click)="changerFiltre('tout')"
-        class="h-[40px] flex-shrink-0 rounded-full px-5 text-[14px] font-bold"
-        [class.bg-[#0EA5A4]]="filtreActif() === 'tout'"
-        [class.text-white]="filtreActif() === 'tout'"
-        [class.bg-[#dfeafb]]="filtreActif() !== 'tout'"
-        [class.text-[#46535a]]="filtreActif() !== 'tout'"
-      >
-        Tout l'historique
-      </button>
-
-    </div>
-
-
-    <!-- =====================================================
-         ÉTAT DE CHARGEMENT
-         ===================================================== -->
-    <div
-      *ngIf="chargement()"
-      class="mt-5 rounded-[20px] bg-white p-6 text-center shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
-    >
-
-      <!-- Petit indicateur visuel -->
-      <div class="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-[#dce8fa] border-t-[#0EA5A4]"></div>
-
-      <p class="mt-3 text-[13px] font-semibold text-[#687477]">
-        Chargement de votre historique...
-      </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         MESSAGE D'ERREUR
-         ===================================================== -->
-    <div
-      *ngIf="!chargement() && erreur()"
-      class="mt-5 rounded-[20px] bg-white p-6 text-center shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
-    >
-
-      <!-- Icône erreur -->
-      <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#fde8e8] text-[#b42318]">
-
-        <svg
-          class="h-6 w-6"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M12 8v5"/>
-          <path d="M12 16h.01"/>
-        </svg>
-
-      </div>
-
-      <p class="mt-3 text-[14px] font-semibold text-[#39484c]">
-        Impossible de charger votre historique.
-      </p>
-
-      <p class="mt-1 text-[12px] text-[#7a8587]">
-        {{ erreur() }}
-      </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         LISTE DES SCANS
-         ===================================================== -->
-    <section
-      *ngIf="!chargement() && !erreur()"
-      class="mt-5 space-y-4"
-    >
-
-      <!-- ===================================================
-           CARTE D'UN SCAN
-           =================================================== -->
-      <article
-        *ngFor="let scan of scansFiltres()"
-        class="min-h-[132px] rounded-[22px] bg-white px-4 py-4 shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
-      >
-
-        <!-- Partie supérieure de la carte -->
-        <div class="flex gap-3.5">
-
-          <!-- ===============================================
-               IMAGE
-               =============================================== -->
-          <div class="relative h-[84px] w-[84px] flex-shrink-0 overflow-hidden rounded-[17px] bg-slate-100">
-
-            <img
-              [src]="scan.image"
-              [alt]="scan.objet"
-              class="h-full w-full object-cover"
-            />
-
-
-            <!-- =============================================
-                 ICÔNE SELON LE TYPE DE DÉCHET
-                 ============================================= -->
-
-            <!-- Icône recyclage -->
-            <span
-              *ngIf="scan.icone === 'recyclage'"
-              class="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#087f7b] text-white"
-            >
-
-              <svg
-                class="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M7 19l-3-3m0 0l3-3m-3 3h13a4 4 0 0 0 4-4v-1"/>
-                <path d="M17 5l3 3m0 0l-3 3m3-3H7a4 4 0 0 0-4 4v1"/>
-              </svg>
-
-            </span>
-
-
-            <!-- Icône bac -->
-            <span
-              *ngIf="scan.icone === 'bac'"
-              class="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#087f7b] text-white"
-            >
-
-              <svg
-                class="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              >
-                <path d="M4 7h16"/>
-                <path d="M7 7l1 13h8l1-13"/>
-                <path d="M9 7V4h6v3"/>
-              </svg>
-
-            </span>
-
-
-            <!-- Icône carton -->
-            <span
-              *ngIf="scan.icone === 'carton'"
-              class="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#087f7b] text-white"
-            >
-
-              <svg
-                class="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="4" y="5" width="16" height="15" rx="2"/>
-                <path d="M8 9h8"/>
-                <path d="M8 13h5"/>
-              </svg>
-
-            </span>
-
-
-            <!-- Icône compost -->
-            <span
-              *ngIf="scan.icone === 'compost'"
-              class="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#087f7b] text-white"
-            >
-
-              <svg
-                class="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M12 20c5-2 7-7 6-13-6 0-11 3-11 8 0 2 2 4 5 5Z"/>
-                <path d="M12 20V10"/>
-              </svg>
-
-            </span>
-
-          </div>
-
-
-          <!-- ===============================================
-               INFORMATIONS DU SCAN
-               =============================================== -->
-          <div class="min-w-0 flex-1">
-
-            <!-- Catégorie -->
-            <span class="inline-flex max-w-full rounded-full bg-[#a8f0e2] px-3 py-0.5 text-[11px] font-semibold text-[#087c72]">
-              {{ scan.categorie }}
-            </span>
-
-
-            <!-- Objet détecté -->
-            <h2 class="mt-1.5 truncate text-[19px] font-semibold tracking-[-0.02em]">
-              {{ scan.objet }}
-            </h2>
-
-
-            <!-- Date et heure -->
-            <div class="mt-3 flex items-center gap-1.5 whitespace-nowrap text-[13px] text-[#596467]">
-
-              <svg
-                class="h-4 w-4 flex-shrink-0"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="9"/>
-                <path d="M12 7v5l3 2"/>
-              </svg>
-
-              <span>
-                {{ scan.date }} • {{ scan.heure }}
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- =================================================
-             DESTINATION / CONSEIL
-             ================================================= -->
-        <div class="mt-[-23px] flex justify-end">
-
-          <span class="inline-flex max-w-[70%] items-center gap-1.5 rounded-full bg-[#d5f8f4] px-3 py-1 text-[11px] font-bold text-[#087c72]">
-
-            <!-- Icône pour les déchets non organiques -->
-            <svg
-              *ngIf="scan.icone !== 'compost'"
-              class="h-4 w-4 flex-shrink-0"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 3l2 2 3-.1.8 2.8 2.2 2-1.2 2.8 1.2 2.8-2.2 2-.8 2.8-3-.1-2 2-2-2-3 .1-.8-2.8-2.2-2 1.2-2.8-1.2-2.8 2.2-2 .8-2.8 3 .1 2-2Z"/>
-              <path d="m8.5 12 2.2 2.2 4.8-5"/>
-            </svg>
-
-
-            <!-- Icône compost -->
-            <svg
-              *ngIf="scan.icone === 'compost'"
-              class="h-4 w-4 flex-shrink-0"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 20V9"/>
-              <path d="M12 12c-4 0-6-2-6-5 4 0 6 2 6 5Z"/>
-              <path d="M12 10c0-4 2-6 6-6 0 4-2 6-6 6Z"/>
-            </svg>
-
-            <!-- Conseil de tri -->
-            <span class="truncate">
-              {{ scan.destination }}
-            </span>
-
-          </span>
-
-        </div>
-
-      </article>
-
-
-      <!-- ===================================================
-           AUCUN RÉSULTAT
-           =================================================== -->
-      <div
-        *ngIf="scansFiltres().length === 0"
-        class="rounded-[22px] bg-white p-7 text-center shadow-[0_2px_7px_rgba(15,23,42,0.05)]"
-      >
-
-        <!-- Icône -->
-        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#e7effc] text-[#526b91]">
-
-          <svg
-            class="h-6 w-6"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="11" cy="11" r="7"/>
-            <path d="m20 20-4-4"/>
-          </svg>
-
-        </div>
-
-        <p class="mt-3 text-[14px] font-semibold text-[#39484c]">
-          Aucun scan trouvé.
-        </p>
-
-        <p class="mt-1 text-[12px] text-[#7a8587]">
-          Essayez une autre recherche ou un autre filtre.
-        </p>
-
-      </div>
-
     </section>
 
+    <section class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4" aria-label="Statistiques de l'historique">
+      <article class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-5">
+        <div class="flex items-center gap-3">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f7f6] text-[#0EA5A4]" aria-hidden="true">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zm4 4h3v3h-3zm0-4h3"/>
+            </svg>
+          </span>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Total des scans</p>
+            @if (chargement()) {
+              <p class="text-xl font-black leading-tight" aria-label="Chargement">—</p>
+            } @else {
+              <p class="text-xl font-black leading-tight">{{ nombreScans() }}</p>
+            }
+          </div>
+        </div>
+      </article>
+
+      <article class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-5">
+        <div class="flex items-center gap-3">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f7f6] text-[#0EA5A4]" aria-hidden="true">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7h16l-1.5 13h-13L4 7Z"/><path d="M9 7a3 3 0 0 1 6 0M8 11v5m4-5v5m4-5v5"/>
+            </svg>
+          </span>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Déchets identifiés</p>
+            @if (chargement()) {
+              <p class="text-xl font-black leading-tight" aria-label="Chargement">—</p>
+            } @else {
+              <p class="text-xl font-black leading-tight">{{ nombreDetections() }}</p>
+            }
+          </div>
+        </div>
+      </article>
+
+      <article class="col-span-2 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:col-span-1 sm:p-5">
+        <div class="flex items-center gap-3">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f7f6] text-[#0EA5A4]" aria-hidden="true">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 8h16l-1 12H5L4 8Z"/><path d="M9 8a3 3 0 0 1 6 0M9 12v4m3-4v4m3-4v4"/>
+            </svg>
+          </span>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Catégories reconnues</p>
+            @if (chargement()) {
+              <p class="text-xl font-black leading-tight" aria-label="Chargement">—</p>
+            } @else {
+              <p class="text-xl font-black leading-tight">{{ categoriesIdentifiees() }}</p>
+            }
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <label class="flex h-12 w-full items-center gap-3 rounded-xl border border-slate-100 bg-white px-4 shadow-sm focus-within:ring-2 focus-within:ring-[#0EA5A4]/30 lg:order-2 lg:max-w-[330px]">
+        <svg class="h-5 w-5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>
+        </svg>
+        <input
+          type="search"
+          [value]="recherche()"
+          (input)="rechercher($event)"
+          placeholder="Rechercher un déchet..."
+          aria-label="Rechercher dans l'historique"
+          class="min-w-0 flex-1 border-0 bg-transparent text-sm outline-none placeholder:text-slate-400"
+        >
+      </label>
+
+      <div class="grid grid-cols-3 rounded-xl bg-[#eaf0f7] p-1 lg:order-1 lg:inline-grid">
+        <button
+          type="button"
+          (click)="changerFiltre('tout')"
+          [class.bg-white]="filtreActif() === 'tout'"
+          [class.text-[#0EA5A4]]="filtreActif() === 'tout'"
+          [class.shadow-sm]="filtreActif() === 'tout'"
+          [class.text-slate-600]="filtreActif() !== 'tout'"
+          class="rounded-lg px-3 py-2 text-sm font-bold transition sm:px-5"
+        >Tout</button>
+        <button
+          type="button"
+          (click)="changerFiltre('semaine')"
+          [class.bg-white]="filtreActif() === 'semaine'"
+          [class.text-[#0EA5A4]]="filtreActif() === 'semaine'"
+          [class.shadow-sm]="filtreActif() === 'semaine'"
+          [class.text-slate-600]="filtreActif() !== 'semaine'"
+          class="rounded-lg px-3 py-2 text-sm font-bold transition sm:px-5"
+        >Cette semaine</button>
+        <button
+          type="button"
+          (click)="changerFiltre('mois')"
+          [class.bg-white]="filtreActif() === 'mois'"
+          [class.text-[#0EA5A4]]="filtreActif() === 'mois'"
+          [class.shadow-sm]="filtreActif() === 'mois'"
+          [class.text-slate-600]="filtreActif() !== 'mois'"
+          class="rounded-lg px-3 py-2 text-sm font-bold transition sm:px-5"
+        >Ce mois</button>
+      </div>
+    </section>
+
+    @if (chargement()) {
+      <section class="rounded-2xl border border-slate-100 bg-white px-5 py-14 text-center shadow-sm">
+        <div class="mx-auto h-9 w-9 animate-spin rounded-full border-4 border-slate-100 border-t-[#0EA5A4]"></div>
+        <p class="mt-4 text-sm font-semibold text-slate-500">Chargement de votre historique...</p>
+      </section>
+    } @else if (erreur()) {
+      <section class="rounded-2xl border border-red-100 bg-white px-5 py-10 text-center shadow-sm" role="alert">
+        <p class="font-bold text-red-700">{{ erreur() }}</p>
+        <button
+          type="button"
+          (click)="chargerHistorique()"
+          class="mt-4 rounded-xl bg-[#0EA5A4] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+        >Réessayer</button>
+      </section>
+    } @else if (scansFiltres().length === 0) {
+      <section class="rounded-2xl border border-slate-100 bg-white px-5 py-12 text-center shadow-sm">
+        <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e8f7f6] text-[#0EA5A4]" aria-hidden="true">
+          <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>
+          </svg>
+        </span>
+        <h2 class="mt-4 font-extrabold text-[#182437]">Aucun scan trouvé</h2>
+        <p class="mt-1 text-sm text-slate-500">Essayez une autre recherche ou un autre filtre.</p>
+      </section>
+    } @else {
+      <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3" aria-label="Mes scans">
+        @for (scan of scansPage(); track scan.id) {
+          <article class="group overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="relative aspect-[16/9] overflow-hidden bg-slate-100">
+              <img
+                [src]="scan.image"
+                [alt]="'Photo du scan ' + scan.id"
+                class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                loading="lazy"
+              >
+              <span class="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wide text-[#087c78] shadow-sm">
+                <span class="h-1.5 w-1.5 rounded-full" [class.bg-[#0EA5A4]]="scan.nombreDetections > 0" [class.bg-amber-400]="scan.nombreDetections === 0"></span>
+                {{ scan.nombreDetections > 0 ? 'Analyse terminée' : 'Non identifié' }}
+              </span>
+            </div>
+
+            <div class="p-4 sm:p-5">
+              <div class="flex items-center justify-between gap-2 text-[11px] font-medium text-slate-500">
+                <span class="flex min-w-0 items-center gap-1.5">
+                  <svg class="h-3.5 w-3.5 shrink-0 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                    <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>
+                  </svg>
+                  <span class="truncate">{{ scan.date }}</span>
+                </span>
+                <span class="flex shrink-0 items-center gap-1.5">
+                  <svg class="h-3.5 w-3.5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+                  </svg>
+                  {{ scan.heure }}
+                </span>
+              </div>
+
+              <h2 class="mt-3 line-clamp-2 min-h-11 text-base font-extrabold leading-snug text-[#182437]">
+                {{ scan.nombreDetections }} déchet{{ scan.nombreDetections === 1 ? '' : 's' }} détecté{{ scan.nombreDetections === 1 ? '' : 's' }}
+              </h2>
+
+              <div class="mt-2 flex min-h-7 flex-wrap gap-1.5">
+                @for (categorie of scan.categories; track categorie) {
+                  <span class="rounded-md bg-[#eff6ff] px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-[#2563eb]">
+                    {{ categorie }}
+                  </span>
+                } @empty {
+                  <span class="rounded-md bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase text-slate-500">
+                    À identifier
+                  </span>
+                }
+              </div>
+
+              <button
+                type="button"
+                (click)="ouvrirDetail(scan.id)"
+                class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#eff9f8] px-4 py-2.5 text-sm font-extrabold text-[#079c99] transition hover:bg-[#dff4f2]"
+              >
+                Voir le détail
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+
+      @if (nombrePages() > 1) {
+        <nav class="mt-7 flex items-center justify-center gap-2" aria-label="Pagination de l'historique">
+          <button
+            type="button"
+            (click)="changerPage(pageActuelle() - 1)"
+            [disabled]="pageActuelle() === 1"
+            class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-[#0EA5A4] disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label="Page précédente"
+          >‹</button>
+          @for (page of pages(); track page) {
+            <button
+              type="button"
+              (click)="changerPage(page)"
+              [attr.aria-current]="pageActuelle() === page ? 'page' : null"
+              [class.bg-[#0EA5A4]]="pageActuelle() === page"
+              [class.text-white]="pageActuelle() === page"
+              [class.shadow-md]="pageActuelle() === page"
+              [class.border-slate-200]="pageActuelle() !== page"
+              [class.bg-white]="pageActuelle() !== page"
+              [class.text-slate-600]="pageActuelle() !== page"
+              class="h-10 min-w-10 rounded-xl border px-3 text-sm font-bold transition"
+            >{{ page }}</button>
+          }
+          <button
+            type="button"
+            (click)="changerPage(pageActuelle() + 1)"
+            [disabled]="pageActuelle() === nombrePages()"
+            class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-[#0EA5A4] disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label="Page suivante"
+          >›</button>
+        </nav>
+      }
+    }
   </main>
 
+  <footer class="mx-auto mt-12 hidden max-w-[1200px] items-center justify-between border-t border-slate-200 px-8 py-5 text-xs text-slate-400 lg:flex">
+    <span>© 2026 DechetScan. Tous droits réservés.</span>
+    <div class="flex gap-5">
+      <a routerLink="/accueil" class="hover:text-[#0EA5A4]">Politique de confidentialité</a>
+      <a routerLink="/accueil" class="hover:text-[#0EA5A4]">Conditions d'utilisation</a>
+      <a routerLink="/accueil" class="hover:text-[#0EA5A4]">Aide</a>
+    </div>
+  </footer>
 
-  <!-- =======================================================
-       NAVIGATION BASSE
-       ======================================================= -->
-  <app-barre-navigations></app-barre-navigations>
-
+  <div class="lg:hidden">
+    <app-barre-navigations></app-barre-navigations>
+  </div>
 </div>

@@ -69,6 +69,8 @@ export class MesDemandes implements OnInit {
     const libelles: Record<StatutDemande, string> = {
       en_attente: 'En attente',
       acceptee: 'Acceptée',
+      refusee: 'Refusée',
+      planifiee: 'Planifiée',
       en_cours: 'En cours',
       terminee: 'Terminée',
       annulee: 'Annulée',
@@ -84,6 +86,9 @@ export class MesDemandes implements OnInit {
         return 'bg-blue-50 text-blue-700';
       case 'terminee':
         return 'bg-emerald-50 text-emerald-700';
+      case 'planifiee':
+        return 'bg-orange-50 text-orange-700';
+      case 'refusee':
       case 'annulee':
         return 'bg-red-50 text-red-700';
       default:

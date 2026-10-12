@@ -1,464 +1,224 @@
-<div class="citizen-responsive citizen-analysis min-h-screen bg-[#f4f5f5] text-[#102238]">
-
-  <!-- HEADER -->
-  <header class="bg-[#f8f9fc]">
-    <div class="mx-auto flex h-[68px] max-w-[430px] items-center gap-3 px-4">
-
-      <!-- Retour vers le scanner -->
-      <button
-        type="button"
-        (click)="retour()"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-white"
-        aria-label="Retour"
-      >
-        <svg
-          class="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M19 12H5"/>
-          <path d="M12 19l-7-7 7-7"/>
-        </svg>
-      </button>
-
-      <h1 class="text-[20px] font-semibold">
-        Fiche Déchet
-      </h1>
-
-    </div>
+<div class="waste-page min-h-screen bg-[#F5F7FC] text-[#142337]">
+  <header class="waste-header">
+    <button type="button" (click)="retour()" aria-label="Retour" class="back-button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5"></path>
+        <path d="m12 19-7-7 7-7"></path>
+      </svg>
+    </button>
+    <h1>Fiche Déchet</h1>
   </header>
 
-
-  <!-- CONTENU -->
-  <main class="citizen-content mx-auto w-full max-w-[430px] px-4 pb-8">
-
-    <!-- ============================== -->
-    <!-- ÉTAT : ANALYSE RÉUSSIE -->
-    <!-- ============================== -->
-
-    <section
-      class="mt-3 rounded-[22px] bg-white px-4 py-3 shadow-sm"
-    >
-
-      <div class="flex items-center gap-3">
-
-        <!-- Icône validation -->
-        <div
-          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#b6f5e9]"
-        >
-          <svg
-            class="h-5 w-5 text-[#007e78]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M8 12l2.5 2.5L16 9"/>
-          </svg>
-        </div>
-
-        <div>
-          <p class="text-[16px] font-semibold">
-            Analyse réussie
-          </p>
-
-          <p class="mt-0.5 text-[12px] text-[#5f6b76]">
-            L'IA a analysé votre image.
-          </p>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ============================== -->
-    <!-- PHOTO ANALYSÉE -->
-    <!-- ============================== -->
-
-    <section
-      class="mt-4 overflow-hidden rounded-[28px] bg-white shadow-[0_3px_10px_rgba(16,34,56,0.10)]"
-    >
-
-      <!-- Image réelle envoyée à Django -->
-      @if (imageUrl) {
-
-        <div class="relative h-[230px] overflow-hidden bg-[#dfe7ed]">
-
-          <img
-            [src]="imageUrl"
-            alt="Photo analysée"
-            class="h-full w-full object-cover"
-          />
-
-          <!-- Badge indiquant le nombre de détections -->
-          <div
-            class="absolute left-4 top-4 rounded-full bg-[#123344]/90 px-3 py-2 text-[12px] font-semibold text-white"
-          >
-            {{ detections.length }}
-            {{ detections.length > 1 ? 'déchets détectés' : 'déchet détecté' }}
-          </div>
-
-        </div>
-
-      }
-
-      <!-- Message si aucune photo n'est disponible -->
-      @else {
-
-        <div
-          class="flex h-[180px] items-center justify-center bg-[#edf3ff] text-[14px] text-[#697687]"
-        >
-          Photo non disponible
-        </div>
-
-      }
-
-
-      <!-- Information sous la photo -->
-      <div
-        class="flex items-center gap-2 px-4 py-3 text-[12px] text-[#53616e]"
-      >
-
-        <svg
-          class="h-4 w-4 shrink-0 text-[#007d78]"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M12 8v4"/>
-          <circle cx="12" cy="16" r="1"/>
-        </svg>
-
-        <span>
-          Touchez un résultat pour consulter son conseil de tri.
-        </span>
-
-      </div>
-
-    </section>
-
-
-    <!-- ============================== -->
-    <!-- RÉSUMÉ DE L'ANALYSE -->
-    <!-- ============================== -->
-
-    <section
-      class="mt-4 rounded-[26px] bg-white p-4 shadow-[0_3px_10px_rgba(16,34,56,0.10)]"
-    >
-
-      <div class="flex items-center justify-between gap-3">
-
-        <div
-          class="flex items-center gap-2 rounded-full bg-[#b6f4e9] px-3 py-1.5"
-        >
-
-          <svg
-            class="h-4 w-4 text-[#007d78]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M8 12l2.5 2.5L16 9"/>
-          </svg>
-
-          <span class="text-[12px] font-semibold text-[#007d78]">
-            Analyse terminée
-          </span>
-
-        </div>
-
-        <span class="text-[12px] font-semibold text-[#687587]">
-          {{ detections.length }} résultat{{ detections.length > 1 ? 's' : '' }}
-        </span>
-
-      </div>
-
-
-      <h2 class="mt-3 text-[22px] font-semibold">
-        {{ detections.length }}
-        {{ detections.length > 1 ? 'déchets détectés' : 'déchet détecté' }}
-      </h2>
-
-      <p class="mt-2 text-[14px] leading-[1.5] text-[#59656d]">
-        Voici les déchets identifiés dans votre image
-        et les consignes de tri correspondantes.
-      </p>
-
-    </section>
-
-
-<!-- ============================== -->
-<!-- LISTE DES DÉTECTIONS -->
-<!-- ============================== -->
-
-@if (detections.length > 0) {
-
-  @for (detection of detections; track detection.idDetection) {
-
-    <!-- Carte individuelle du déchet détecté -->
-    <section
-      class="mt-4 w-full min-w-0 overflow-hidden rounded-[22px] bg-white p-4 shadow-[0_3px_10px_rgba(16,34,56,0.10)]"
-    >
-
-      <!-- ============================== -->
-      <!-- EN-TÊTE : ICÔNE + NOM + BADGE -->
-      <!-- ============================== -->
-
-      <div class="flex min-w-0 items-start gap-3">
-
-        <!-- Icône du déchet -->
-        <div
-          class="flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-[15px] bg-[#b6f4e9]"
-        >
-          <svg
-            class="h-6 w-6 text-[#007d78]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="6" y="7" width="12" height="14" rx="2"/>
-            <path d="M9 7V4h6v3"/>
-            <path d="M9 11h6"/>
-            <path d="M9 15h4"/>
-          </svg>
-        </div>
-
-
-        <!-- ============================== -->
-        <!-- NOM + CATÉGORIE -->
-        <!-- ============================== -->
-
-        <div class="min-w-0 flex-1">
-
-          <!-- Nom de l'objet détecté -->
-          <h3
-            class="break-words text-[17px] font-semibold leading-[1.25] text-[#102238]"
-          >
-            {{ detection.objet }}
-          </h3>
-
-
-          <!-- Badge de catégorie -->
-          <div class="mt-2">
-
-            <span
-              class="inline-flex max-w-full rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.4px]"
-              [ngClass]="getCouleurCategorie(detection.idTypeDechet.nom)"
-            >
-              {{ detection.idTypeDechet.nom }}
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- ============================== -->
-      <!-- CONSEIL DE TRI -->
-      <!-- ============================== -->
-
-      @if (detection.idTypeDechet.conseil) {
-
-        <div
-          class="mt-4 w-full min-w-0 overflow-hidden rounded-[17px] bg-[#edf4ff] px-3 py-3"
-        >
-
-          <div class="flex min-w-0 items-start gap-2.5">
-
-            <!-- Icône du conseil -->
-            <svg
-              class="mt-0.5 h-4 w-4 shrink-0 text-[#007d78]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M8 12l2.5 2.5L16 9"/>
+  <main class="waste-content">
+    @if (chargement()) {
+      <section class="state-card">
+        <span class="loading-indicator" aria-hidden="true"></span>
+        <p>Analyse de votre image en cours…</p>
+      </section>
+    } @else if (erreur()) {
+      <section class="state-card state-card--error" role="alert">
+        <h2>Impossible d’afficher la fiche déchet</h2>
+        <p>{{ erreur() }}</p>
+        <button type="button" class="primary-action" (click)="retour()">Retour au scan</button>
+      </section>
+    } @else {
+      <section class="analysis-summary">
+        <div class="analysis-message">
+          <span class="summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3 14.2 5.2 17.3 5l.8 3 2.5 1.8-1.2 2.9 1.2 2.9-2.5 1.8-.8 3-3.1-.2L12 22l-2.2-2.2-3.1.2-.8-3-2.5-1.8 1.2-2.9-1.2-2.9 2.5-1.8.8-3 3.1.2L12 3Z"></path>
+              <path d="m9 12 2 2 4-4"></path>
             </svg>
+          </span>
+          <div>
+            <h2>Analyse réussie</h2>
+            <p>L’IA a identifié plusieurs déchets dans votre image avec leurs consignes de valorisation.</p>
+          </div>
+        </div>
 
+        <div class="analysis-photo">
+          @if (imageUrl) {
+            <img [src]="imageUrl" alt="Image analysée par DechetScan">
+          } @else {
+            <div class="photo-placeholder" role="img" aria-label="Image non disponible">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                <circle cx="8.5" cy="9" r="1.5"></circle>
+                <path d="m21 15-5-5L7 20"></path>
+              </svg>
+              <span>Image non disponible</span>
+            </div>
+          }
 
-            <!-- Contenu du conseil -->
-            <div class="min-w-0 flex-1">
+          <div class="photo-meta">
+            <span><i></i> DÉTECTION MULTI-OBJETS</span>
+            <span>{{ formaterConfiance(confianceMoyenne()) }} confiance</span>
+          </div>
+          @for (detection of detections.slice(0, 4); track detection.idDetection; let index = $index) {
+            <span class="photo-detection" [class.photo-detection--second]="index === 1" [class.photo-detection--third]="index === 2" [class.photo-detection--fourth]="index === 3">
+              {{ detection.idTypeDechet?.nom ?? 'Déchet' }} • {{ formaterConfiance(detection.confiance) }}
+            </span>
+          }
+          <button type="button" class="photo-zoom" (click)="agrandirImage()" [disabled]="!imageUrl">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>
+            </svg>
+            Agrandir
+          </button>
+        </div>
 
-              <!-- Titre du conseil -->
-              <p
-                class="text-[10px] font-bold uppercase tracking-[0.5px] text-[#007d78]"
-              >
-                Conseil de tri
-              </p>
+        <div class="analysis-result">
+          <div class="result-status">
+            <span class="status-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="m8 12 2.5 2.5L16 9"></path>
+              </svg>
+              ANALYSE TERMINÉE
+            </span>
+            @if (resultat()?.dateScan) {
+              <span class="scan-date">{{ dateScan() }} · {{ heureScan() }}</span>
+            }
+          </div>
+          <div class="result-count">
+            <h2>{{ detections.length }} {{ detections.length === 1 ? 'déchet détecté' : 'déchets détectés' }}</h2>
+            <p>Séparez ces catégories pour optimiser la collecte.</p>
+          </div>
+        </div>
+      </section>
 
-
-              <!-- Consigne -->
-              <p
-                class="mt-1 break-words text-[13px] font-semibold leading-[1.45] text-[#26384c]"
-              >
-                {{ detection.idTypeDechet.conseil.consigne }}
-              </p>
-
+      <section class="detections-list" aria-label="Déchets détectés">
+        @for (detection of detections; track detection.idDetection) {
+          <article class="waste-card detection-card">
+            <div class="waste-title-row">
+              <div class="material-icon" [ngClass]="getCouleurCategorie(detection.idTypeDechet?.nom ?? '')" aria-hidden="true">
+                @if ((detection.idTypeDechet?.nom ?? '').toLowerCase().includes('verre')) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3h8v5a4 4 0 0 1-8 0V3Z"></path><path d="M12 12v7M9 21h6M8 5h8"></path>
+                  </svg>
+                } @else if ((detection.idTypeDechet?.nom ?? '').toLowerCase().includes('carton') || (detection.idTypeDechet?.nom ?? '').toLowerCase().includes('papier')) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7h18v14H3zM2 3h20v4H2z"></path><path d="M8 11h8M8 15h5"></path>
+                  </svg>
+                } @else if ((detection.idTypeDechet?.nom ?? '').toLowerCase().includes('métal') || (detection.idTypeDechet?.nom ?? '').toLowerCase().includes('metal')) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3h8l2 3v15H6V6l2-3Z"></path><path d="M8 3v3h8V3M9 11h6M9 15h6"></path>
+                  </svg>
+                } @else {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 7h10l-.8 13H7.8L7 7Z"></path><path d="M5 7h14M9 7V4h6v3"></path><path d="M10 10v7M14 10v7"></path>
+                  </svg>
+                }
+              </div>
+              <div class="waste-name">
+                <h2>{{ detection.objet }}</h2>
+                <span class="category-pill" [ngClass]="getCouleurCategorie(detection.idTypeDechet?.nom ?? '')">
+                  {{ detection.idTypeDechet?.nom ?? 'Catégorie inconnue' }}
+                </span>
+              </div>
+              <span class="confidence-pill detection-confidence">IA {{ formaterConfiance(detection.confiance) }}</span>
             </div>
 
+            <div class="sorting-advice">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 7h16l-1 13H5L4 7Z"></path><path d="M3 7h18M9 7V4h6v3"></path>
+              </svg>
+              <div>
+                <strong>{{ destinationLabel(detection.idTypeDechet?.nom) }}</strong>
+                <p>{{ conseilPourDetection(detection) }}</p>
+              </div>
+            </div>
+
+            <div class="waste-actions">
+              <div class="quantity-stepper" [attr.aria-label]="'Quantité : ' + quantiteSelectionnee(detection.idDetection)">
+                <button type="button" (click)="modifierQuantite(detection.idDetection, -1)" [attr.aria-label]="'Diminuer la quantité de ' + detection.objet">−</button>
+                <span>{{ quantiteSelectionnee(detection.idDetection) }}</span>
+                <button type="button" (click)="modifierQuantite(detection.idDetection, 1)" [attr.aria-label]="'Augmenter la quantité de ' + detection.objet">+</button>
+              </div>
+
+              @if (estConnecte() && detectionEstIdentifiee(detection)) {
+                <button
+                  type="button"
+                  class="add-button"
+                  [class.add-button--added]="detectionEstAjoutee(detection.idDetection)"
+                  [disabled]="ajoutEstEnCours(detection.idDetection) || detectionEstAjoutee(detection.idDetection)"
+                  (click)="ajouterAuPanier(detection)"
+                >
+                  @if (detectionEstAjoutee(detection.idDetection)) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+                  }
+                  {{ texteBoutonPanier(detection.idDetection) }}
+                </button>
+              } @else if (!estConnecte() && detectionEstIdentifiee(detection)) {
+                <button type="button" class="add-button" (click)="connexion()">
+                  Se connecter pour ajouter
+                </button>
+              } @else {
+                <span class="unknown-category">Catégorie non reconnue</span>
+              }
+            </div>
+          </article>
+        } @empty {
+          <section class="state-card empty-detections">
+            <p>Aucun déchet n’a été identifié dans cette image.</p>
+          </section>
+        }
+      </section>
+
+      @if (erreurPanier()) {
+        <p class="inline-error" role="alert">{{ erreurPanier() }}</p>
+      }
+
+      @if (estConnecte()) {
+        <section class="basket-summary" aria-label="Résumé de mes paniers">
+          <div class="basket-heading">
+            <span aria-hidden="true">🧺</span>
+            <div>
+              <h2>Mon panier de déchets</h2>
+              <p>{{ nombreObjetsDansPanier() }} {{ nombreObjetsDansPanier() === 1 ? 'déchet ajouté' : 'déchets ajoutés' }} à vos paniers</p>
+            </div>
           </div>
-
-        </div>
-
+          @if (nombrePaniersRemplis() > 0) {
+            <div class="basket-categories">
+              @for (panier of paniers(); track panier.idPanier) {
+                @if (panier.nombreDisponible > 0) {
+                  <div class="basket-category">
+                    <span>{{ panier.typeDechet.nom }}</span>
+                    <strong>{{ panier.nombreDisponible }}</strong>
+                  </div>
+                }
+              }
+            </div>
+          } @else {
+            <p class="basket-empty">Ajoutez un déchet pour commencer à remplir vos paniers.</p>
+          }
+          <button type="button" class="basket-link" (click)="ouvrirPanier()">
+            Voir mon panier
+            <span aria-hidden="true">→</span>
+          </button>
+        </section>
       }
 
-      @else {
-
-        <!-- Message lorsqu'aucun conseil n'est disponible -->
-        <div
-          class="mt-4 w-full min-w-0 rounded-[17px] bg-[#f2f4f7] px-3 py-3 text-[13px] leading-[1.45] text-[#687587]"
-        >
-          Aucun conseil de tri disponible pour cette catégorie.
-        </div>
-
-      }
-
-    </section>
-
-  }
-
-}
-
-
-    <!-- ============================== -->
-    <!-- AUCUNE DÉTECTION -->
-    <!-- ============================== -->
-
-    @else {
-
-      <section
-        class="mt-4 rounded-[26px] bg-white p-5 text-center shadow-sm"
-      >
-
-        <div
-          class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#edf3ff]"
-        >
-          <svg
-            class="h-6 w-6 text-[#687587]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-          >
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M9 9l6 6"/>
-            <path d="M15 9l-6 6"/>
+      <section class="responsible-tip">
+        <span class="tip-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 4c-8 0-14 3-14 10a6 6 0 0 0 6 6c7 0 8-8 8-16Z"></path><path d="M4 21c3-5 6-8 11-11"></path>
           </svg>
+        </span>
+        <div>
+          <h2>Conseil de tri responsable</h2>
+          <p>Ne mélangez pas les déchets recyclables dans un même sac. Séparez chaque catégorie avant de les déposer afin d’optimiser la chaîne de recyclage.</p>
         </div>
-
-        <h3 class="mt-3 text-[18px] font-semibold">
-          Aucun déchet identifié
-        </h3>
-
-        <p class="mt-2 text-[13px] leading-[1.5] text-[#687587]">
-          L'analyse n'a pas permis d'identifier une catégorie
-          de déchet dans cette image.
-        </p>
-
       </section>
 
+      <button type="button" class="collection-points-button" (click)="voirPointsCollecte()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m3 11 18-8-8 18-2-8-8-2Z"></path><path d="m11 13 5-5"></path>
+        </svg>
+        Voir les points de collecte
+      </button>
     }
-
-
-    <!-- ============================== -->
-    <!-- CONSEIL GÉNÉRAL -->
-    <!-- ============================== -->
-
-    @if (detections.length > 1) {
-
-      <section
-        class="mt-4 rounded-[26px] bg-[#cef5ef] p-5"
-      >
-
-        <div class="flex items-center gap-3">
-
-          <div
-            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/70"
-          >
-            <svg
-              class="h-6 w-6 text-[#007d78]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 3c5 0 8 3 8 8 0 6-4 10-10 10-4 0-6-2-6-5 0-5 3-13 8-13z"/>
-              <path d="M6 19c2-4 5-7 9-9"/>
-            </svg>
-          </div>
-
-          <h3 class="text-[18px] font-semibold text-[#007d78]">
-            Conseil de tri responsable
-          </h3>
-
-        </div>
-
-        <p
-          class="mt-3 text-[14px] leading-[1.6] text-[#40565b]"
-        >
-          Ne mélangez pas les différentes catégories de déchets.
-          Séparez chaque déchet selon sa catégorie et appliquez
-          la consigne correspondante avant de le déposer dans
-          un point de collecte adapté.
-        </p>
-
-      </section>
-
-    }
-
-
-    <!-- ============================== -->
-    <!-- POINTS DE COLLECTE -->
-    <!-- ============================== -->
-
-    <button
-      type="button"
-      (click)="voirPointsCollecte()"
-      class="mt-4 flex h-[58px] w-full items-center justify-center gap-3 rounded-[21px] bg-[#13aaa9] px-4 text-[15px] font-semibold text-white shadow-[0_8px_18px_rgba(19,170,169,0.25)] transition active:scale-[0.98]"
-    >
-
-      <svg
-        class="h-5 w-5 shrink-0"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M21 3L10 14"/>
-        <path d="M21 3l-7 18-4-7-7-4 18-7z"/>
-      </svg>
-
-      <span>
-        Voir les points de collecte proches
-      </span>
-
-    </button>
-
   </main>
-
 </div>

@@ -158,18 +158,31 @@ export class Scan implements OnInit, OnDestroy {
           this.messageSucces.set(resultat.messageRemerciement);
         }
 
-        // Laisse le message visible un court instant avant de naviguer,
-        // pour que le citoyen ait le temps de le voir.
-        setTimeout(() => {
-          // On transmet l'identifiant du scan dans l'URL.
-          // Ainsi, même après un rafraîchissement, AnalyseIA
-          // pourra récupérer les données depuis Django.
-          this.router.navigate(['/analyse-ia'], { queryParams: { idScan: resultat.idScan } });
-        }, 900);
+        // Ouvre immédiatement la fiche et transmet l'identifiant du scan
+        // afin que la page puisse recharger le résultat depuis Django.
+        void this.router.navigate(
+          ['/analyse-ia'],
+          { queryParams: { idScan: resultat.idScan } },
+        ).then((navigationReussie) => {
+          if (!navigationReussie) {
+            this.erreur.set(
+              'Le scan a réussi, mais la fiche résultat ne peut pas être ouverte.',
+            );
+          }
+        }).catch((erreurNavigation: unknown) => {
+          console.error('Erreur lors de l’ouverture de la fiche résultat :', erreurNavigation);
+          this.erreur.set(
+            'Le scan a réussi, mais la fiche résultat ne peut pas être ouverte.',
+          );
+        });
       },
       error: (err) => {
         this.analyseEnCours.set(false);
-        this.erreur.set(err.message ?? "Erreur lors de l'analyse.");
+        this.erreur.set(
+          err.error?.detail
+          ?? err.message
+          ?? "Erreur lors de l'analyse.",
+        );
       }
     });
   }

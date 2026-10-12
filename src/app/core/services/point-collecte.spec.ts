@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { PointCollecte } from './point-collecte';
+import { provideHttpClient } from '@angular/common/http';
+import { PointCollecteService } from './point-collecte';
 
-describe('PointCollecte', () => {
-  let service: PointCollecte;
+describe('PointCollecteService', () => {
+  let service: PointCollecteService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(PointCollecte);
+    TestBed.configureTestingModule({ providers: [provideHttpClient()] });
+    service = TestBed.inject(PointCollecteService);
   });
 
   it('should be created', () => {

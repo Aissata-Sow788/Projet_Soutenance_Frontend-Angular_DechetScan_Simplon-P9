@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 
 import {BarreNavigations} from '../../shared/components/barre-navigations/barre-navigations';
 import { NotificationsService } from '../../core/services/notification';
-import { Notification } from '../../shared/models/notification.model';
+import type { Notification as NotificationModel } from '../../shared/models/notification.model';
+import { PushNotifications } from '../../shared/components/push-notifications/push-notifications';
 
 
 @Component({
-  imports: [CommonModule, BarreNavigations],
+  imports: [CommonModule, BarreNavigations, PushNotifications],
   selector: 'app-notifications',
   styleUrl: './notifications.css',
   templateUrl: './notifications.html',
@@ -22,7 +23,7 @@ export class Notifications implements OnInit {
   private notificationsService = inject(NotificationsService);
 
   // Stocke toutes les notifications récupérées depuis l'API.
-  notifications = signal<Notification[]>([]);
+  notifications = signal<NotificationModel[]>([]);
 
   // Indique si les données sont encore en cours de chargement.
   chargement = signal(true);
@@ -130,7 +131,7 @@ export class Notifications implements OnInit {
    * La modification est également envoyée à Django.
    */
   marquerCommeLue(
-    notification: Notification
+    notification: NotificationModel
   ): void {
 
     // Si elle est déjà lue, aucune requête n'est nécessaire.

@@ -7,6 +7,9 @@ import { authInterceptor } from './core/interceptors/auth-interceptor';
 import { provideServiceWorker } from '@angular/service-worker';
 import { isDevMode } from '@angular/core';
 
+const shouldEnableServiceWorker =
+  !isDevMode() || ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
@@ -17,10 +20,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
 
-        // Service worker : actif seulement en production, s'enregistre
-    // une fois l'app stable pour ne pas ralentir le premier chargement
+    // Le service worker est nécessaire pour les notifications push.
+    // On l'active aussi en local sur localhost pour tester le flux sans HTTPS.
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      enabled: shouldEnableServiceWorker,
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ]

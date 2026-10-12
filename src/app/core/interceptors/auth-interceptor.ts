@@ -73,6 +73,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const estRoutePublique =
     estRouteAuthentificationPublique ||
+    estScanPublic ||
     estLectureReferentielPublique;
 
   // -----------------------------------------------------------
@@ -124,7 +125,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       // Vérifie qu'un refresh token existe en localStorage.
       // S'il n'existe pas, la session est terminée → déconnexion.
       // ---------------------------------------------------------
-      const refreshToken = localStorage.getItem('dechetscan_refresh');
+      const refreshToken = authService.getRefreshToken();
 
       if (!refreshToken) {
         // Nettoie le storage et redirige vers la connexion.

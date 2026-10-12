@@ -1,0 +1,42 @@
+.tariff-form-page{width:min(100%,1100px);margin-inline:auto;padding:28px 24px 40px;color:#142337}
+.page-heading{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.back-button{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border:1px solid #e2e8f0;border-radius:13px;background:#fff;color:#35465a;cursor:pointer}
+.back-button svg{width:21px;height:21px}
+.eyebrow{margin:0 0 5px;color:#07877e;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.page-heading h1{margin:0;font-size:clamp(23px,3vw,30px);font-weight:800;letter-spacing:-.03em}
+.page-description{margin:6px 0 0;color:#667487;font-size:14px}
+.tariff-form{padding:26px;border:1px solid #e7ebf1;border-radius:20px;background:#fff;box-shadow:0 8px 24px #14233708}
+.form-intro{display:flex;align-items:center;gap:14px;margin-bottom:26px;padding-bottom:21px;border-bottom:1px solid #edf0f4}
+.intro-icon{width:54px;height:54px;flex:0 0 54px;display:grid;place-items:center;border-radius:16px;background:#d5f8f1;color:#087c78;font-size:28px}
+.form-intro h2{margin:0;color:#142337;font-size:17px;font-weight:800}
+.form-intro p{margin:4px 0 0;color:#667487;font-size:13px;line-height:1.5}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 20px}
+.field{min-width:0;display:flex;flex-direction:column;gap:8px;color:#344451;font-size:13px;font-weight:700}
+.field--wide{grid-column:1/-1}
+.field>span b,.required-note b{color:#0ea5a4}
+.field input,.field select{width:100%;min-height:50px;padding:0 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;color:#142337;font:inherit;font-size:14px;font-weight:500;outline:none}
+.field input:focus,.field select:focus{border-color:#0ea5a4;box-shadow:0 0 0 3px #0ea5a41a}
+.input-with-unit{position:relative}
+.input-with-unit input{padding-right:105px}
+.input-with-unit>span{position:absolute;top:50%;right:14px;transform:translateY(-50%);color:#087c78;font-size:12px;font-weight:750}
+.field small{color:#748196;font-size:11px;font-weight:400}
+.field-error{margin:14px 0 0;color:#b42332;font-size:12px}
+.form-actions{display:flex;gap:12px;margin-top:28px}
+.primary-button,.cancel-button,.secondary-button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:0 20px;border:0;border-radius:12px;font:inherit;font-size:14px;font-weight:750;cursor:pointer}
+.primary-button{flex:1;background:#0ea5a4;color:#fff;box-shadow:0 8px 18px #0ea5a426}
+.primary-button:hover:not(:disabled){background:#087c78}
+.primary-button:disabled,.cancel-button:disabled{opacity:.5;cursor:not-allowed}
+.cancel-button{min-width:160px;border:1px solid #e2e8f0;background:#f8fafc;color:#40505a}
+.required-note{margin:15px 0 0;color:#748196;font-size:11px}
+.state-panel,.success-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:36px;border:1px solid #e7ebf1;border-radius:18px;background:#fff;text-align:center}
+.state-panel p,.success-panel p,.success-panel h2{margin:0}
+.state-panel{min-height:200px;color:#667487}
+.loader{width:25px;height:25px;border:3px solid #d9eeeb;border-top-color:#0ea5a4;border-radius:50%;animation:spin .7s linear infinite}
+.error-banner{margin-bottom:16px;padding:13px 15px;border:1px solid #fecaca;border-radius:12px;background:#fff1f2;color:#b42332;font-size:13px}
+.success-panel{min-height:350px;border-color:#c6eee8}
+.success-icon{width:62px;height:62px;display:grid;place-items:center;border-radius:50%;background:#d5f8f1;color:#079b91;font-size:34px;font-weight:800}
+.success-panel h2{font-size:22px}
+.success-panel p{max-width:520px;color:#667487;line-height:1.6}
+.secondary-button{margin-top:8px;border:1px solid #d9e8ff;background:#f6f8ff;color:#07877e}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:640px){.tariff-form-page{padding:20px 14px 30px}.page-heading{align-items:flex-start;gap:11px;margin-bottom:18px}.back-button{width:38px;height:38px;flex-basis:38px}.page-description{font-size:13px}.tariff-form{padding:18px;border-radius:17px}.form-grid{grid-template-columns:1fr;gap:18px}.field--wide{grid-column:auto}.form-actions{flex-direction:column}.cancel-button{min-width:0}.success-panel{padding:25px 18px}}

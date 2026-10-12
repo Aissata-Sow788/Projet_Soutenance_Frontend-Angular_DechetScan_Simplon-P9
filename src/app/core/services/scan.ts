@@ -5,6 +5,27 @@ import { Observable } from 'rxjs';
 import { ScanDechet } from '../../shared/models/scan.model';
 
 /**
+ * Panier d'un citoyen : un nombre d'objets par catégorie, sans poids inféré.
+ */
+export interface PanierDechetApi {
+  idPanier: number;
+  idTypeDechet: number;
+  typeDechet: {
+    idTypeDechet: number;
+    nom: string;
+    description: string;
+    conseil?: {
+      idConseil: number;
+      consigne: string;
+      idTypeDechet: number;
+    } | null;
+  };
+  nombreDisponible: number;
+  unite: string;
+  dateMiseAJour: string;
+}
+
+/**
  * Informations du citoyen associées à un scan côté administration.
  */
 export interface CitoyenAdmin {
@@ -118,6 +139,39 @@ export class ScanService {
 
     return this.http.get<ScanDechet>(
       `${this.baseUrl}scans/${idScan}/`
+    );
+  }
+
+  /**
+   * Récupère les paniers du citoyen authentifié.
+   */
+  getPaniers(): Observable<PanierDechetApi[]> {
+    return this.http.get<PanierDechetApi[]>(`${this.baseUrl}paniers/`);
+  }
+
+  /**
+   * Ajoute un nombre d'objets au panier de la catégorie sélectionnée.
+   */
+  ajouterAuPanier(
+    idTypeDechet: number,
+    nombreObjets = 1,
+  ): Observable<PanierDechetApi> {
+    return this.http.post<PanierDechetApi>(`${this.baseUrl}paniers/`, {
+      idTypeDechet,
+      nombreDisponible: nombreObjets,
+    });
+  }
+
+  /**
+   * Remplace le compte d'objets disponible d'un panier existant.
+   */
+  modifierPanier(
+    idPanier: number,
+    nombreDisponible: number,
+  ): Observable<PanierDechetApi> {
+    return this.http.patch<PanierDechetApi>(
+      `${this.baseUrl}paniers/${idPanier}/`,
+      { nombreDisponible },
     );
   }
 

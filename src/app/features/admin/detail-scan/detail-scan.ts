@@ -25,6 +25,9 @@ export class DetailScan implements OnInit {
   // Contient le scan récupéré depuis Django.
   scan = signal<ScanAdmin | null>(null);
 
+  // Masque la photo si le fichier média ne peut pas être chargé.
+  imageEnErreur = signal(false);
+
   ngOnInit(): void {
 
     // IMPORTANT :
@@ -63,6 +66,7 @@ export class DetailScan implements OnInit {
       next: (scan) => {
         console.log('[DETAIL SCAN] Scan reçu :', scan);
         this.scan.set(scan);
+        this.imageEnErreur.set(false);
         this.chargement.set(false);
       },
 
@@ -134,23 +138,33 @@ export class DetailScan implements OnInit {
     );
   }
 
-  // Construit l'URL complète de l'image stockée par Django.
+  // Utilise le proxy média du frontend au lieu d'une adresse locale codée en dur.
   imageScan(): string {
 
     const photo = this.scan()?.photoUrl;
 
-    if (!photo) {
-      return '/assets/images/placeholder-scan.png';
+    if (!photo?.trim()) {
+      return '';
     }
 
-    // Si Django renvoie déjà une URL complète,
-    // on l'utilise directement.
-    if (photo.startsWith('http')) {
-      return photo;
-    }
+    const url = new URL(photo, window.location.origin);
+    const cheminMedia = url.pathname.startsWith('/media/')
+      ? url.pathname
+      : `/media/${url.pathname.replace(/^\/+/, '')}`;
 
-    // Sinon on ajoute l'adresse du serveur Django.
-    return `http://127.0.0.1:8000${photo}`;
+    return `${cheminMedia}${url.search}${url.hash}`;
+  }
+
+  // Affiche un état de remplacement si la photo est absente ou inaccessible.
+  imageScanIndisponible(): void {
+    this.imageEnErreur.set(true);
+  }
+
+  ouvrirImage(): void {
+    const image = this.imageScan();
+    if (image && !this.imageEnErreur()) {
+      window.open(image, '_blank', 'noopener,noreferrer');
+    }
   }
 
   // Formate la date du scan.
@@ -216,5 +230,56 @@ nombreScans(): number {
   // Retourne vers la liste de tous les scans.
   retourScans(): void {
     this.router.navigate(['/admin/tous-scans']);
+  }
+
+  // ─── Helpers visuels (couleurs badges et icônes) ──────────────
+
+  /**
+   * Formate la confiance en pourcentage lisible.
+   * Ex: 0.96 → "96%"
+   */
+  formaterConfiance(confiance: number): string {
+    return `${Math.round(confiance * 100)}%`;
+  }
+
+  /** Classe de fond de l'icône selon la catégorie. */
+  iconeBg(nom: string | null | undefined): string {
+    const n = (nom ?? '').toLowerCase();
+    if (n.includes('plastique'))                    return 'bg-[#C9F5EF]';
+    if (n.includes('métal') || n.includes('metal')) return 'bg-[#DCE8FA]';
+    if (n.includes('papier') || n.includes('carton')) return 'bg-orange-100';
+    if (n.includes('verre'))                        return 'bg-green-100';
+    return 'bg-slate-100';
+  }
+
+  /** Classe de couleur de l'icône selon la catégorie. */
+  iconeColor(nom: string | null | undefined): string {
+    const n = (nom ?? '').toLowerCase();
+    if (n.includes('plastique'))                    return 'text-[#0EA5A4]';
+    if (n.includes('métal') || n.includes('metal')) return 'text-blue-600';
+    if (n.includes('papier') || n.includes('carton')) return 'text-orange-500';
+    if (n.includes('verre'))                        return 'text-green-600';
+    return 'text-slate-500';
+  }
+
+  /** Classe du badge catégorie. */
+  badgeClasse(nom: string | null | undefined): string {
+    const n = (nom ?? '').toLowerCase();
+    if (n.includes('plastique'))                    return 'bg-[#C9F5EF] text-[#087C78]';
+    if (n.includes('métal') || n.includes('metal')) return 'bg-[#DCE8FA] text-[#315273]';
+    if (n.includes('papier') || n.includes('carton')) return 'bg-orange-100 text-orange-700';
+    if (n.includes('verre'))                        return 'bg-green-100 text-green-700';
+    return 'bg-slate-100 text-slate-500';
+  }
+
+  /** Libellé de destination selon la catégorie. */
+  destinationLabel(nom: string | null | undefined): string {
+    const n = (nom ?? '').toLowerCase();
+    if (n.includes('plastique'))                    return 'Bac plastique';
+    if (n.includes('métal') || n.includes('metal')) return 'Bac métaux';
+    if (n.includes('papier') || n.includes('carton')) return 'Bac papier/carton';
+    if (n.includes('verre'))                        return 'Bac verre';
+    if (n.includes('organique'))                    return 'Compost';
+    return 'Bac approprié';
   }
 }

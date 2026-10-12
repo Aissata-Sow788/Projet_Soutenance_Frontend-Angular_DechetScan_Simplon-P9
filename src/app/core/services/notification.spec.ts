@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { Notification } from './notification';
+import { provideHttpClient } from '@angular/common/http';
+import { NotificationsService } from './notification';
 
-describe('Notification', () => {
-  let service: Notification;
+describe('NotificationsService', () => {
+  let service: NotificationsService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Notification);
+    TestBed.configureTestingModule({ providers: [provideHttpClient()] });
+    service = TestBed.inject(NotificationsService);
   });
 
   it('should be created', () => {

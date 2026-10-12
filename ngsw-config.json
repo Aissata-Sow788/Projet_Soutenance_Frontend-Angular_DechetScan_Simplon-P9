@@ -26,17 +26,5 @@
         ]
       }
     }
-  ],
-  "dataGroups": [
-    {
-      "name": "api-scans",
-      "urls": ["/api/scans/**", "/api/points-collecte/**"],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "maxSize": 50,
-        "maxAge": "1h",
-        "timeout": "5s"
-      }
-    }
   ]
 }

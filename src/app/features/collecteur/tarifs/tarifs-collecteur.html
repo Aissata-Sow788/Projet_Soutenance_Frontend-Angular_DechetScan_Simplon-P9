@@ -1,0 +1,94 @@
+<section class="tariffs-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Gestion commerciale</p>
+      <h1>Mes tarifs</h1>
+      <p class="page-description">
+        Définissez les prix de rachat proposés aux citoyens pour chaque catégorie de déchet.
+      </p>
+    </div>
+    <button type="button" class="primary-button add-button" (click)="ouvrirFormulaire()">
+      <span aria-hidden="true">＋</span>
+      Ajouter un tarif
+    </button>
+  </header>
+
+  @if (erreur()) {
+    <div class="error-banner" role="alert">
+      <span>{{ erreur() }}</span>
+      @if (!chargement()) {
+        <button type="button" class="retry-button" (click)="chargerTarifs()">Réessayer</button>
+      }
+    </div>
+  }
+
+  @if (chargement()) {
+    <div class="state-panel" aria-live="polite">
+      <span class="loader" aria-hidden="true"></span>
+      <p>Chargement de vos tarifs…</p>
+    </div>
+  } @else if (tarifs().length === 0) {
+    <div class="state-panel empty-state">
+      <span class="empty-icon" aria-hidden="true">₣</span>
+      <h2>Vous n’avez pas encore de tarif</h2>
+      <p>Ajoutez un prix de rachat pour que les citoyens sachent ce que vous proposez.</p>
+      <button type="button" class="primary-button" (click)="ouvrirFormulaire()">
+        Ajouter mon premier tarif
+      </button>
+    </div>
+  } @else {
+    <div class="tariff-grid">
+      @for (tarif of tarifs(); track tarif.idPrix) {
+        <article class="tariff-card">
+          <div class="tariff-card__top">
+            <div class="material-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10l-.8 13H7.8L7 7Z"></path>
+                <path d="M5 7h14M9 7V4h6v3"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+            <div class="tariff-title">
+              <h2>{{ tarif.nomTypeDechet }}</h2>
+              <p>{{ tarif.prixParKg | number:'1.0-2' }} <span>FCFA/kg</span></p>
+            </div>
+            <span class="status-badge" [ngClass]="'status-badge--' + statutTarif(tarif)">
+              {{ statutTarif(tarif) === 'actif' ? 'Actif' : statutTarif(tarif) === 'a-venir' ? 'À venir' : 'Expiré' }}
+            </span>
+          </div>
+
+          <div class="date-range">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+              <path d="M16 3v4M8 3v4M3 10h18"></path>
+            </svg>
+            <span>
+              @if (tarif.dateFin) {
+                Du {{ tarif.dateDebut | date:'dd/MM/yyyy' }} au {{ tarif.dateFin | date:'dd/MM/yyyy' }}
+              } @else {
+                Depuis le {{ tarif.dateDebut | date:'dd/MM/yyyy' }} · sans date de fin
+              }
+            </span>
+          </div>
+
+          <div class="tariff-actions">
+            <button type="button" class="secondary-button" (click)="ouvrirFormulaire(tarif.idPrix)">
+              <span aria-hidden="true">✎</span> Modifier
+            </button>
+            <button
+              type="button"
+              class="secondary-button delete-button"
+              [disabled]="suppressionEnCours() !== null"
+              (click)="supprimerTarif(tarif)"
+            >
+              <span aria-hidden="true">{{ suppressionEnCours() === tarif.idPrix ? '…' : '⌫' }}</span>
+              {{ suppressionEnCours() === tarif.idPrix ? 'Suppression…' : 'Supprimer' }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

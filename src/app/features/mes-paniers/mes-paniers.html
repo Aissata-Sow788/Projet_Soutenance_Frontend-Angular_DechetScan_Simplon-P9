@@ -1,0 +1,134 @@
+<div class="cart-page citizen-responsive">
+  <header class="cart-header">
+    <button type="button" class="back-button" (click)="retour()" aria-label="Retour">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"/></svg>
+    </button>
+    <h1>Mes paniers de déchets</h1>
+    <span class="header-basket" aria-hidden="true">♧</span>
+  </header>
+
+  <main class="cart-content">
+    <p class="cart-intro">Retrouvez ici les déchets que vous avez sélectionnés lors de vos scans.</p>
+
+    @if (chargement()) {
+      <section class="status-card" aria-live="polite">
+        <span class="loading-indicator" aria-hidden="true"></span>
+        <p>Chargement de vos paniers…</p>
+      </section>
+    } @else if (erreur() && paniers().length === 0) {
+      <section class="status-card" role="alert">
+        <p>{{ erreur() }}</p>
+        <button type="button" class="primary-button" (click)="chargerPaniers()">Réessayer</button>
+      </section>
+    } @else if (paniersRemplis.length === 0) {
+      <section class="empty-state">
+        <div class="empty-illustration" aria-hidden="true">
+          <span>🧺</span>
+          <svg viewBox="0 0 180 150"><path d="M30 66h120l-12 72H42L30 66Zm20 0 22-42m58 42-22-42M64 82v38m26-38v38m26-38v38"/></svg>
+        </div>
+        <h2>Votre panier est vide</h2>
+        <p>Ajoutez des déchets à votre panier après une analyse IA pour les retrouver ici.</p>
+        <button type="button" class="primary-button empty-scan-button" (click)="scanner()">
+          <span aria-hidden="true">▦</span>
+          Scanner un déchet
+        </button>
+      </section>
+    } @else {
+      <section class="summary-card">
+        <div class="summary-heading">
+          <div>
+            <h2><span aria-hidden="true">🧺</span> Mon panier</h2>
+            <p>{{ nombreObjetsTotal }} déchet{{ nombreObjetsTotal === 1 ? '' : 's' }} au total</p>
+          </div>
+          <div class="updated-at">
+            <span>Dernière mise à jour</span>
+            <strong>{{ derniereMiseAJourTexte }}</strong>
+          </div>
+        </div>
+        <div class="category-summary">
+          @for (panier of paniersRemplis; track panier.idPanier) {
+            <div class="category-count">
+              <span>{{ panier.typeDechet.nom }}</span>
+              <strong>{{ panier.nombreDisponible }}</strong>
+            </div>
+          }
+        </div>
+        <button type="button" class="clear-link" (click)="ouvrirConfirmationVider()">Vider mon panier</button>
+      </section>
+
+      @for (panier of paniersRemplis; track panier.idPanier) {
+        <article class="waste-card">
+          <div class="waste-heading">
+            <span class="waste-icon" [ngClass]="getCouleurCategorie(panier.typeDechet.nom)" aria-hidden="true">
+              @if (getCouleurCategorie(panier.typeDechet.nom) === 'category-plastic') {
+                <svg viewBox="0 0 24 24"><path d="M9 3h6m-5 0v3l-2 2v11h8V8l-2-2V3m-5 7h6"/></svg>
+              } @else if (getCouleurCategorie(panier.typeDechet.nom) === 'category-metal') {
+                <svg viewBox="0 0 24 24"><path d="M8 5h8v3l2 2v10H6V10l2-2V5Zm0 5h8m-7-8h6"/></svg>
+              } @else if (getCouleurCategorie(panier.typeDechet.nom) === 'category-paper') {
+                <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM3 4h18v3H3zm5 7h8"/></svg>
+              } @else {
+                <svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Zm5 10v6m-4 0h8M9 7h6"/></svg>
+              }
+            </span>
+            <div class="waste-title">
+              <h2>{{ panier.typeDechet.nom }}</h2>
+              <span class="category-label" [ngClass]="getCouleurCategorie(panier.typeDechet.nom)">
+                {{ panier.typeDechet.nom }}
+              </span>
+            </div>
+          </div>
+          <div class="waste-controls">
+            <div class="quantity-control" [attr.aria-label]="'Quantité de ' + panier.typeDechet.nom">
+              <button type="button" (click)="modifierNombreObjets(panier, -1)"
+                [disabled]="panierEnCours() !== null || panier.nombreDisponible <= 0"
+                [attr.aria-label]="'Diminuer ' + panier.typeDechet.nom">−</button>
+              <strong>{{ panier.nombreDisponible }}</strong>
+              <button type="button" (click)="modifierNombreObjets(panier, 1)"
+                [disabled]="panierEnCours() !== null"
+                [attr.aria-label]="'Augmenter ' + panier.typeDechet.nom">+</button>
+              <small>objet{{ panier.nombreDisponible === 1 ? '' : 's' }}</small>
+            </div>
+            <button type="button" class="remove-button" (click)="retirer(panier)" [disabled]="panierEnCours() !== null">
+              {{ panierEnCours() === panier.idPanier ? 'En cours…' : 'Retirer' }}
+            </button>
+          </div>
+        </article>
+      }
+
+      <section class="total-card">
+        <h2>Résumé</h2>
+        <p><span>Total des déchets</span><strong>{{ nombreObjetsTotal }} objet{{ nombreObjetsTotal === 1 ? '' : 's' }}</strong></p>
+        <p><span>Catégories</span><strong>{{ nombreCategories }} {{ nombreCategories === 1 ? 'catégorie' : 'catégories' }}</strong></p>
+      </section>
+
+      <button type="button" class="primary-button collection-button" (click)="demanderCollecte()">
+        <strong><span aria-hidden="true">♧</span> Demander une collecte</strong>
+        <small>Un collecteur pourra récupérer vos déchets selon votre zone et les types de déchets acceptés.</small>
+      </button>
+      <button type="button" class="points-button" (click)="voirPointsCollecte()">
+        <span aria-hidden="true">➤</span> Voir les points de collecte
+      </button>
+    }
+
+    @if (erreur() && paniers().length > 0) {
+      <p class="error-message" role="alert">{{ erreur() }}</p>
+    }
+  </main>
+
+  <app-barre-navigations />
+
+  @if (confirmationVider()) {
+    <div class="confirm-backdrop" (click)="fermerConfirmationVider()">
+      <section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="clear-cart-title"
+        (click)="$event.stopPropagation()">
+        <span class="trash-icon" aria-hidden="true">▤</span>
+        <h2 id="clear-cart-title">Voulez-vous vraiment vider votre panier ?</h2>
+        <p>Cette action supprimera tous les déchets actuellement sélectionnés de votre liste.</p>
+        <button type="button" class="primary-button" (click)="fermerConfirmationVider()" [disabled]="vidageEnCours()">Annuler</button>
+        <button type="button" class="confirm-clear-button" (click)="viderPanier()" [disabled]="vidageEnCours()">
+          {{ vidageEnCours() ? 'Vidage en cours…' : 'Vider' }}
+        </button>
+      </section>
+    </div>
+  }
+</div>

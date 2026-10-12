@@ -21,7 +21,7 @@
   <div class="mx-auto mt-4 max-w-lg px-4">
     <div class="flex items-center gap-2">
       @for (step of [
-        { id: 'choisir-dechet', label: 'Déchet' },
+        { id: 'choisir-dechet', label: 'Déchets' },
         { id: 'choisir-collecteur', label: 'Collecteur' },
         { id: 'confirmer', label: 'Confirmation' }
       ]; track step.id; let i = $index) {
@@ -53,77 +53,130 @@
   </div>
 
   <main class="citizen-content mx-auto max-w-lg px-4 pt-5 space-y-4">
+    @if (erreur()) {
+      <div class="rounded-xl bg-red-50 p-3 text-sm text-red-600" role="alert">
+        {{ erreur() }}
+      </div>
+    }
 
     <!-- =========================================================
-         ÉTAPE 1 — CHOISIR LE DÉCHET ET LA QUANTITÉ
+         ÉTAPE 1 — CHOISIR LES DÉCHETS ET LEUR POIDS
          ========================================================= -->
     @if (etape() === 'choisir-dechet') {
 
-      <!-- Type de déchet -->
       <div class="rounded-2xl bg-white p-5 shadow-sm">
         <label class="mb-3 block text-sm font-bold text-[#142337]">
-          Quel type de déchet voulez-vous vendre ?
+          Quels déchets souhaitez-vous vendre ?
           <span class="text-[#0EA5A4]">*</span>
         </label>
+        <p class="mb-4 text-xs leading-relaxed text-slate-500">
+          Sélectionnez les catégories, choisissez le nombre d’objets et saisissez uniquement leur poids réellement pesé.
+        </p>
 
         @if (chargementTypes()) {
-          <p class="text-sm text-slate-400">Chargement...</p>
+          <p class="text-sm text-slate-400">Chargement de votre panier...</p>
+        } @else if (paniers().length === 0) {
+          <div class="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
+            Votre panier ne contient encore aucune catégorie de déchet.
+            Ajoutez des déchets depuis une fiche de scan avant de préparer une vente.
+          </div>
         } @else {
-          <div class="grid grid-cols-2 gap-3">
-            @for (type of typesDechets(); track type.idTypeDechet) {
+          <div class="mb-4 rounded-2xl border border-[#D7F0EB] bg-[#F0FDFA] p-4">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-bold text-[#142337]">Votre panier de déchets</p>
+                <p class="mt-1 text-xs text-slate-600">
+                  {{ paniers().length }} catégorie{{ paniers().length === 1 ? '' : 's' }}
+                  · {{ nombreObjetsDansPanier() }} objet{{ nombreObjetsDansPanier() === 1 ? '' : 's' }} disponibles
+                </p>
+              </div>
               <button
                 type="button"
-                (click)="idTypeSelectionne.set(type.idTypeDechet)"
-                class="flex items-center gap-3 rounded-xl border-2 p-3 text-left transition"
-                [ngClass]="idTypeSelectionne() === type.idTypeDechet
-                  ? 'border-[#0EA5A4] bg-[#F0FDFA]'
-                  : 'border-slate-200 bg-white hover:border-slate-300'"
+                (click)="ouvrirMonPanier()"
+                class="shrink-0 text-xs font-bold text-[#087C78] underline"
               >
-                <!-- Icône -->
-                <div
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                  [ngClass]="idTypeSelectionne() === type.idTypeDechet
-                    ? 'bg-[#0EA5A4]' : 'bg-slate-100'"
-                >
-                  <svg
-                    class="h-5 w-5"
-                    [ngClass]="idTypeSelectionne() === type.idTypeDechet ? 'text-white' : 'text-slate-500'"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                  >
-                    <path d="M3 7l3 9h12l3-9H3z"></path>
-                    <path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </div>
-                <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm font-bold text-[#142337]">{{ type.nom }}</p>
-                  @if (type.conseil) {
-                    <p class="truncate text-[10px] text-slate-400">{{ type.conseil.consigne }}</p>
-                  }
-                </div>
+                Gérer mon panier
               </button>
+            </div>
+          </div>
+
+          @if (paniersDisponibles().length === 0) {
+            <div class="mb-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
+              Aucun objet n’est disponible pour la vente. Ajoutez ou corrigez les quantités dans votre panier.
+            </div>
+          }
+
+          <div class="space-y-3">
+            @for (panier of paniers(); track panier.idPanier) {
+              <article
+                class="rounded-xl border p-3"
+                [ngClass]="panier.nombreDisponible > 0
+                  ? 'border-slate-200 bg-[#F8F9FF]'
+                  : 'border-slate-100 bg-slate-50 opacity-75'"
+              >
+                <label class="flex cursor-pointer items-start gap-3">
+                  <input
+                    type="checkbox"
+                    [checked]="panierEstSelectionne(panier)"
+                    [disabled]="panier.nombreDisponible < 1"
+                    (change)="changerSelection(panier, $any($event.target).checked)"
+                    class="mt-1 h-4 w-4 accent-[#0EA5A4]"
+                  />
+                  <span class="min-w-0 flex-1">
+                    <span class="block text-sm font-bold text-[#142337]">{{ panier.typeDechet.nom }}</span>
+                    <span class="mt-1 block text-xs text-slate-500">
+                      Disponible : {{ panier.nombreDisponible }} objet{{ panier.nombreDisponible === 1 ? '' : 's' }}
+                    </span>
+                  </span>
+                  @if (panier.nombreDisponible > 0) {
+                    <span class="max-w-32 text-right text-xs text-slate-500">
+                      Tarif selon le collecteur choisi
+                    </span>
+                  } @else {
+                    <span class="text-right text-xs text-slate-400">Panier vide</span>
+                  }
+                </label>
+                @if (panierEstSelectionne(panier)) {
+                  <div class="mt-3 grid grid-cols-2 gap-3">
+                    <label class="text-xs font-semibold text-slate-600">
+                      Nombre d’objets
+                      <input
+                        type="number"
+                        min="1"
+                        [max]="panier.nombreDisponible"
+                        step="1"
+                        [value]="nombrePourPanier(panier)"
+                        (input)="modifierNombreObjets(panier, +$any($event.target).value)"
+                        class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                      />
+                    </label>
+                    <label class="text-xs font-semibold text-slate-600">
+                      Poids mesuré (kg)
+                      <input
+                        type="number"
+                        min="0.001"
+                        step="0.001"
+                        [value]="poidsPourPanier(panier) ?? ''"
+                        (input)="modifierPoids(panier, +$any($event.target).value || null)"
+                        placeholder="Ex. 2,5"
+                        class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                      />
+                    </label>
+                  </div>
+                }
+              </article>
             }
           </div>
+          <div class="mt-4 rounded-xl bg-[#F0FDFA] p-3 text-sm">
+            <p class="font-semibold text-[#142337]">
+              {{ nombreObjetsSelectionnes() }} objet{{ nombreObjetsSelectionnes() === 1 ? '' : 's' }}
+              · {{ poidsTotalKg() | number:'1.0-3' }} kg pesés
+            </p>
+            <p class="mt-1 text-xs text-[#087C78]">
+              Le montant estimé s’affichera après le choix d’un collecteur et de ses tarifs.
+            </p>
+          </div>
         }
-      </div>
-
-      <!-- Quantité estimée -->
-      <div class="rounded-2xl bg-white p-5 shadow-sm">
-        <label class="mb-2 block text-sm font-bold text-[#142337]">
-          Quantité estimée <span class="text-[#0EA5A4]">*</span>
-        </label>
-        <div class="relative">
-          <input
-            type="number"
-            placeholder="0.0"
-            min="0.5"
-            step="0.5"
-            [value]="quantite()"
-            (input)="quantite.set(+$any($event.target).value || null)"
-            class="w-full rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 pr-12 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
-          />
-          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">kg</span>
-        </div>
       </div>
 
       <!-- Bouton suivant -->
@@ -146,17 +199,22 @@
          ========================================================= -->
     @if (etape() === 'choisir-collecteur') {
 
-      <!-- Résumé du choix -->
-      <div class="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
+      <!-- Résumé des catégories, objets et pesées sélectionnés. -->
+      <div class="rounded-2xl bg-white p-4 shadow-sm">
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#C9F5EF]">
           <svg class="h-5 w-5 text-[#087C78]" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 7l3 9h12l3-9H3z"></path>
           </svg>
         </div>
-        <div>
-          <p class="text-sm font-bold text-[#142337]">{{ typeSelectionne()?.nom }}</p>
-          <p class="text-xs text-slate-400">{{ quantite() }} kg à vendre</p>
+        <div class="mt-3 space-y-2">
+          @for (panier of paniersChoisis(); track panier.idPanier) {
+            <p class="text-sm text-[#142337]">
+              <strong>{{ panier.typeDechet.nom }}</strong> —
+              {{ nombrePourPanier(panier) }} objet{{ nombrePourPanier(panier) === 1 ? '' : 's' }},
+              {{ poidsPourPanier(panier) }} kg
+            </p>
+          }
         </div>
         <button (click)="retourEtape1()" type="button"
           class="ml-auto text-xs font-semibold text-[#0EA5A4] hover:underline">
@@ -262,9 +320,10 @@
               <button
                 (click)="choisirCollecteur(collecteur)"
                 type="button"
+                [disabled]="chargementTarifCollecteur()"
                 class="mt-4 w-full rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
               >
-                Choisir ce collecteur
+                {{ chargementTarifCollecteur() ? 'Vérification de ses tarifs…' : 'Choisir ce collecteur' }}
               </button>
             </div>
           }
@@ -284,18 +343,16 @@
         </p>
 
         <div class="space-y-3">
-          <!-- Déchet -->
+          @for (panier of paniersChoisis(); track panier.idPanier) {
           <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-500">Type de déchet</span>
+            <span class="text-sm text-slate-500">
+              {{ panier.typeDechet.nom }} — {{ nombrePourPanier(panier) }} objet{{ nombrePourPanier(panier) === 1 ? '' : 's' }}
+            </span>
             <span class="text-sm font-bold text-[#142337]">
-              {{ typeSelectionne()?.nom }}
+              {{ poidsPourPanier(panier) }} kg × {{ tarifPourPanier(panier)?.prixParKg }} FCFA/kg
             </span>
           </div>
-          <!-- Quantité -->
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-500">Quantité</span>
-            <span class="text-sm font-bold text-[#142337]">{{ quantite() }} kg</span>
-          </div>
+          }
           <!-- Collecteur -->
           <div class="flex items-center justify-between">
             <span class="text-sm text-slate-500">Collecteur</span>
@@ -313,39 +370,16 @@
         </div>
       </div>
 
-      <!-- Prix par kg -->
       <div class="rounded-2xl bg-white p-5 shadow-sm">
-        <label class="mb-2 block text-sm font-bold text-[#142337]">
-          Prix proposé par kg (FCFA) <span class="text-[#0EA5A4]">*</span>
-        </label>
-        <div class="relative">
-          <input
-            type="number"
-            placeholder="ex: 600"
-            min="1"
-            [value]="prixParKg()"
-            (input)="prixParKg.set(+$any($event.target).value || null)"
-            class="w-full rounded-xl border border-slate-200 bg-[#F8F9FF] px-4 py-3 pr-16 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
-          />
-          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">
-            FCFA/kg
+        <div class="flex items-center justify-between rounded-xl bg-[#F0FDFA] p-3">
+          <span class="text-sm text-slate-600">Montant estimé au tarif actif</span>
+          <span class="text-xl font-black text-[#0EA5A4]">
+            {{ montantTotal() | number:'1.0-0' }} FCFA
           </span>
         </div>
-
-        <!-- Estimation -->
-        @if (montantTotal() !== null) {
-          <div class="mt-3 flex items-center justify-between rounded-xl bg-[#F0FDFA] p-3">
-            <span class="text-sm text-slate-600">
-              {{ quantite() }} kg × {{ prixParKg() }} FCFA/kg
-            </span>
-            <span class="text-xl font-black text-[#0EA5A4]">
-              {{ montantTotal() | number }} FCFA
-            </span>
-          </div>
-          <p class="mt-1 text-[10px] text-slate-400">
-            Montant confirmé après pesée par le collecteur.
-          </p>
-        }
+        <p class="mt-2 text-xs text-slate-500">
+          Le paiement final est calculé à partir du poids contrôlé et des tarifs en vigueur.
+        </p>
       </div>
 
       <!-- Méthode de paiement -->

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, adminGuard } from './core/guards/auth-guard' // adapte le chemin réel
+import { authGuard, adminGuard } from './core/guards/auth-guard';
 import { AjouterPointCollecte } from './features/admin/ajouter-point-collecte/ajouter-point-collecte';
 import { collecteurSubscriptionGuard } from './core/guards/collecteur-subscription.guard';
 
@@ -65,6 +65,13 @@ export const routes: Routes = [
   },
 
   {
+    path: 'mes-paniers',
+    loadComponent: () =>
+      import('./features/mes-paniers/mes-paniers')
+        .then(m => m.MesPaniers)
+  },
+
+  {
     path: 'points-collecte',
     loadComponent: () =>
       import('./features/points-collecte/points-collecte')
@@ -87,7 +94,7 @@ export const routes: Routes = [
 
   {
     path: 'historique',
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/historique/historique')
         .then(m => m.Historique)
@@ -201,7 +208,8 @@ export const routes: Routes = [
   {
     // URL : /admin
     path: 'admin',
-    // canActivate: [adminGuard],
+    canActivate: [adminGuard],
+    canActivateChild: [adminGuard],
     // Charge le layout qui contient le SidebarAdmin et le HeaderAdmin.
     loadComponent: () =>
       import('./shared/components/admin-layout/admin-layout')
@@ -223,6 +231,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/profile-admin/profile-admin')
             .then(m => m.ProfileAdmin)
+      },
+
+      {
+        // URL : /admin/notifications
+        // Notifications reçues dans la console administrateur.
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/admin/notifications/notifications-admin')
+            .then(m => m.NotificationsAdmin)
       },
 
       {
@@ -294,6 +311,24 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/referentiel-dechets/conseils-tri/conseils-tri')
             .then(m => m.ConseilsTri)
+      },
+
+      {
+        // URL : /admin/collecteurs
+        // Liste de tous les collecteurs avec popup de validation.
+        path: 'collecteurs',
+        loadComponent: () =>
+          import('./features/admin/collecteurs/collecteurs')
+            .then(m => m.CollecteursAdmin)
+      },
+
+      {
+        // URL : /admin/collecteurs/:id
+        // Détail d'un collecteur : profil, stats, historique, actions.
+        path: 'collecteurs/:id',
+        loadComponent: () =>
+          import('./features/admin/detail-collecteur/detail-collecteur')
+            .then(m => m.DetailCollecteur)
       }
 
     ]
@@ -435,6 +470,21 @@ export const routes: Routes = [
       },
 
       {
+        // Tarifs d'achat propres au collecteur connecté.
+        path: 'tarifs/formulaire',
+        loadComponent: () =>
+          import('./features/collecteur/tarifs/formulaire-tarif-collecteur')
+            .then(m => m.FormulaireTarifCollecteur)
+      },
+
+      {
+        path: 'tarifs',
+        loadComponent: () =>
+          import('./features/collecteur/tarifs/tarifs-collecteur')
+            .then(m => m.TarifsCollecteur)
+      },
+
+      {
         // URL : /collecteur/paiements
         // Page de paiement des citoyens vendeurs via PayDunya.
         // Gère aussi le retour PayDunya via ?reference=VP-xxx.
@@ -442,6 +492,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/collecteur/paiements/paiements-collecteur')
             .then(m => m.PaiementsCollecteur)
+      },
+
+      {
+        // URL : /collecteur/notifications
+        // Liste des notifications du collecteur avec mise en page dédiée.
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/collecteur/notifications/notifications-collecteur')
+            .then(m => m.NotificationsCollecteur)
       },
 
       {

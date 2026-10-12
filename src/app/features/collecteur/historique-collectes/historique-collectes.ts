@@ -77,7 +77,7 @@ export class HistoriqueCollectes implements OnInit {
     Array.from({ length: this.totalPages() }, (_, i) => i + 1)
   );
 
-  // Nombre total de collectes réalisées.
+  // Nombre total de collectes du collecteur.
   totalTerminees = computed(() => this.collectes().length);
 
   ngOnInit(): void {
@@ -90,14 +90,14 @@ export class HistoriqueCollectes implements OnInit {
 
     this.collecteService.listerCollectes().subscribe({
       next: (collectes) => {
-        // Garde uniquement les collectes terminées, triées par date réelle décroissante.
-        const terminees = collectes
-          .filter(c => c.statut === 'terminee')
-          .sort((a, b) =>
-            new Date(b.dateRealisation ?? b.datePlanifiee).getTime() -
-            new Date(a.dateRealisation ?? a.datePlanifiee).getTime()
-          );
-        this.collectes.set(terminees);
+        // Affiche toutes les collectes du collecteur triées par date décroissante.
+        // On inclut planifiee, en_cours ET terminee pour que l'historique
+        // ne soit pas vide si aucune collecte n'est encore terminée.
+        const triees = [...collectes].sort((a, b) =>
+          new Date(b.dateRealisation ?? b.datePlanifiee).getTime() -
+          new Date(a.dateRealisation ?? a.datePlanifiee).getTime()
+        );
+        this.collectes.set(triees);
         this.chargement.set(false);
       },
       error: () => {

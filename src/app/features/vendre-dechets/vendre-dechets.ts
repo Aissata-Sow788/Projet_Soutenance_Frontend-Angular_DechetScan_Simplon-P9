@@ -1,20 +1,17 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CollecteurService } from '../../core/services/collecteur';
 import { VenteDechetService } from '../../core/services/vente-dechet';
-import { PointCollecteService } from '../../core/services/point-collecte';
+import { PrixDechetService } from '../../core/services/prix-dechet';
+import { ScanService, PanierDechetApi } from '../../core/services/scan';
 import { Collecteur } from '../../shared/models/collecteur.model';
-import { TypeDechet } from '../../shared/models/type-dechet.model';
+import { PrixDechet } from '../../shared/models/prix-dechet.model';
 import { VenteDechetCreation } from '../../shared/models/vente-dechet.model';
 
-/**
- * Étapes du tunnel de vente :
- * 1. choisir-dechet  → le citoyen sélectionne le type de déchet
- * 2. choisir-collecteur → liste des collecteurs disponibles
- * 3. confirmer       → résumé + méthode de paiement avant envoi
- */
+/** Étapes du parcours de vente : sélection, collecteur, puis confirmation. */
 type Etape = 'choisir-dechet' | 'choisir-collecteur' | 'confirmer';
 
 @Component({
@@ -24,135 +21,236 @@ type Etape = 'choisir-dechet' | 'choisir-collecteur' | 'confirmer';
   templateUrl: './vendre-dechets.html',
 })
 export class VendreDechets implements OnInit {
-
-  private readonly router           = inject(Router);
+  private readonly router = inject(Router);
   private readonly collecteurService = inject(CollecteurService);
-  private readonly venteService      = inject(VenteDechetService);
-  private readonly pointService      = inject(PointCollecteService);
+  private readonly venteService = inject(VenteDechetService);
+  private readonly prixService = inject(PrixDechetService);
+  private readonly scanService = inject(ScanService);
 
-  // ─── Navigation dans le tunnel ───────────────────────────────
   etape = signal<Etape>('choisir-dechet');
-
-  // ─── Étape 1 : choisir le déchet ─────────────────────────────
-  typesDechets        = signal<TypeDechet[]>([]);
-  chargementTypes     = signal(true);
-  idTypeSelectionne   = signal<number | null>(null);
-  quantite            = signal<number | null>(null);
-  rechercheZone       = signal('');
-
-  typeSelectionne = computed(() =>
-    this.typesDechets().find(t => t.idTypeDechet === this.idTypeSelectionne()) ?? null
-  );
-
-  // ─── Étape 2 : choisir le collecteur ─────────────────────────
-  collecteurs          = signal<Collecteur[]>([]);
+  paniers = signal<PanierDechetApi[]>([]);
+  tarifs = signal<PrixDechet[]>([]);
+  chargementTypes = signal(true);
+  selection = signal<Set<number>>(new Set());
+  nombresObjets = signal<Record<number, number>>({});
+  poidsMesuresKg = signal<Record<number, number | null>>({});
+  rechercheZone = signal('');
+  collecteurs = signal<Collecteur[]>([]);
   chargementCollecteurs = signal(false);
-  collecteurChoisi     = signal<Collecteur | null>(null);
-
-  // ─── Étape 3 : confirmer la vente ────────────────────────────
-  methodePaiement  = signal<string>('Wave');
-  prixParKg        = signal<number | null>(null);
-  enEnvoi          = signal(false);
-  erreur           = signal<string | null>(null);
-  venteCreee       = signal(false);
-
-  // ─── Montant estimé ──────────────────────────────────────────
-  montantTotal = computed(() => {
-    const q = this.quantite();
-    const p = this.prixParKg();
-    if (!q || !p || q <= 0 || p <= 0) return null;
-    return Math.round(q * p);
-  });
-
-  // ─── Validation de chaque étape ──────────────────────────────
-  etape1Valide = computed(() =>
-    this.idTypeSelectionne() !== null && (this.quantite() ?? 0) > 0
-  );
-
-  etape2Valide = computed(() =>
-    this.collecteurChoisi() !== null
-  );
-
-  etape3Valide = computed(() =>
-    this.methodePaiement().trim().length > 0 &&
-    (this.prixParKg() ?? 0) > 0
-  );
-
-  // ─── Méthodes de paiement disponibles ────────────────────────
+  chargementTarifCollecteur = signal(false);
+  collecteurChoisi = signal<Collecteur | null>(null);
+  methodePaiement = signal<string>('Wave');
+  enEnvoi = signal(false);
+  erreur = signal<string | null>(null);
+  venteCreee = signal(false);
   readonly methodesPaiement = ['Wave', 'Orange Money', 'Free Money', 'Espèces'];
 
+  paniersDisponibles = computed(() =>
+    this.paniers().filter((panier) => panier.nombreDisponible > 0)
+  );
+
+  // Le résumé couvre toutes les catégories du panier, même celles encore vides.
+  nombreObjetsDansPanier = computed(() =>
+    this.paniers().reduce((total, panier) => total + panier.nombreDisponible, 0)
+  );
+
+  paniersChoisis = computed(() =>
+    this.paniersDisponibles().filter((panier) => this.selection().has(panier.idPanier))
+  );
+
+  nombreObjetsSelectionnes = computed(() =>
+    this.paniersChoisis().reduce(
+      (total, panier) => total + this.nombrePourPanier(panier),
+      0,
+    )
+  );
+
+  poidsTotalKg = computed(() =>
+    this.paniersChoisis().reduce(
+      (total, panier) => total + (this.poidsPourPanier(panier) ?? 0),
+      0,
+    )
+  );
+
+  montantTotal = computed(() =>
+    this.paniersChoisis().reduce((total, panier) => {
+      const tarif = this.tarifPourPanier(panier);
+      const poids = this.poidsPourPanier(panier) ?? 0;
+      return total + poids * (tarif?.prixParKg ?? 0);
+    }, 0)
+  );
+
+  /** La première étape valide les objets et leur poids mesuré avant le choix du collecteur. */
+  etape1Valide = computed(() =>
+    !this.chargementTypes()
+    && this.paniersChoisis().length > 0
+    && this.paniersChoisis().every((panier) =>
+      this.nombrePourPanier(panier) > 0
+      && (this.poidsPourPanier(panier) ?? 0) > 0,
+    )
+  );
+
+  etape2Valide = computed(() => this.collecteurChoisi() !== null);
+
+  etape3Valide = computed(() =>
+    this.methodePaiement().trim().length > 0 && this.montantTotal() > 0
+  );
+
   ngOnInit(): void {
-    this.chargerTypesDechets();
+    this.chargerPaniersEtTarifs();
   }
 
-  // ─── Chargement types de déchets ─────────────────────────────
-  private chargerTypesDechets(): void {
+  private chargerPaniersEtTarifs(): void {
     this.chargementTypes.set(true);
-    this.pointService.listerTypesDechets().subscribe({
-      next:  (types) => { this.typesDechets.set(types); this.chargementTypes.set(false); },
-      error: ()      => { this.chargementTypes.set(false); }
+    this.erreur.set(null);
+
+    this.scanService.getPaniers().subscribe({
+      next: (paniers) => {
+        this.paniers.set(paniers);
+        this.chargementTypes.set(false);
+      },
+      error: (erreur: unknown) => {
+        console.error('Erreur lors du chargement des déchets à vendre :', erreur);
+        this.erreur.set('Impossible de charger vos paniers. Vérifiez votre connexion puis réessayez.');
+        this.chargementTypes.set(false);
+      },
     });
   }
 
-  // ─── Chargement des collecteurs disponibles ──────────────────
+  panierEstSelectionne(panier: PanierDechetApi): boolean {
+    return this.selection().has(panier.idPanier);
+  }
+
+  changerSelection(panier: PanierDechetApi, choisi: boolean): void {
+    this.selection.update((selection) => {
+      const nouvelleSelection = new Set(selection);
+      if (choisi) {
+        nouvelleSelection.add(panier.idPanier);
+        this.nombresObjets.update((nombres) => ({
+          ...nombres,
+          [panier.idPanier]: nombres[panier.idPanier] ?? panier.nombreDisponible,
+        }));
+      } else {
+        nouvelleSelection.delete(panier.idPanier);
+      }
+      return nouvelleSelection;
+    });
+  }
+
+  nombrePourPanier(panier: PanierDechetApi): number {
+    return this.nombresObjets()[panier.idPanier] ?? 0;
+  }
+
+  modifierNombreObjets(panier: PanierDechetApi, valeur: number): void {
+    const nombre = Number.isFinite(valeur)
+      ? Math.max(1, Math.min(panier.nombreDisponible, Math.floor(valeur)))
+      : 1;
+    this.nombresObjets.update((nombres) => ({
+      ...nombres,
+      [panier.idPanier]: nombre,
+    }));
+  }
+
+  poidsPourPanier(panier: PanierDechetApi): number | null {
+    return this.poidsMesuresKg()[panier.idPanier] ?? null;
+  }
+
+  modifierPoids(panier: PanierDechetApi, poids: number | null): void {
+    this.poidsMesuresKg.update((poidsActuels) => ({
+      ...poidsActuels,
+      [panier.idPanier]: poids !== null && Number.isFinite(poids) && poids > 0
+        ? poids
+        : null,
+    }));
+  }
+
+  tarifPourPanier(panier: PanierDechetApi): PrixDechet | null {
+    return this.tarifs().find((tarif) => tarif.idTypeDechet === panier.idTypeDechet) ?? null;
+  }
+
   private chargerCollecteurs(): void {
     this.chargementCollecteurs.set(true);
     this.collecteurService.listerDisponibles(this.rechercheZone()).subscribe({
-      next:  (liste) => { this.collecteurs.set(liste); this.chargementCollecteurs.set(false); },
-      error: ()      => { this.chargementCollecteurs.set(false); }
+      next: (liste) => {
+        this.collecteurs.set(liste);
+        this.chargementCollecteurs.set(false);
+      },
+      error: (erreur: unknown) => {
+        console.error('Erreur lors du chargement des collecteurs disponibles :', erreur);
+        this.erreur.set('Impossible de charger les collecteurs. Réessayez.');
+        this.chargementCollecteurs.set(false);
+      },
     });
   }
 
-  // ─── Navigation entre étapes ─────────────────────────────────
-
-  /** Étape 1 → 2 : valide le choix du déchet et charge les collecteurs. */
   allerEtape2(): void {
     if (!this.etape1Valide()) return;
+    this.erreur.set(null);
     this.etape.set('choisir-collecteur');
     this.chargerCollecteurs();
   }
 
-  /** Étape 2 → 3 : valide le collecteur choisi. */
   allerEtape3(): void {
     if (!this.etape2Valide()) return;
     this.etape.set('confirmer');
   }
 
-  /** Revenir à l'étape précédente. */
   retourEtape1(): void { this.etape.set('choisir-dechet'); }
   retourEtape2(): void { this.etape.set('choisir-collecteur'); }
 
-  /** Sélectionne un collecteur et passe à l'étape suivante. */
   choisirCollecteur(collecteur: Collecteur): void {
-    this.collecteurChoisi.set(collecteur);
-    this.allerEtape3();
+    if (this.chargementTarifCollecteur()) return;
+
+    this.chargementTarifCollecteur.set(true);
+    this.erreur.set(null);
+    this.prixService.listerPrix(collecteur.idCollecteur).subscribe({
+      next: (tarifs) => {
+        const tarifsActifs = tarifs.filter((tarif) => tarif.est_actif);
+        const categoriesSansTarif = this.paniersChoisis()
+          .filter((panier) => !tarifsActifs.some(
+            (tarif) => tarif.idTypeDechet === panier.idTypeDechet,
+          ))
+          .map((panier) => panier.typeDechet.nom);
+
+        this.chargementTarifCollecteur.set(false);
+        if (categoriesSansTarif.length > 0) {
+          this.erreur.set(
+            `Ce collecteur n’a pas de tarif actif pour : ${categoriesSansTarif.join(', ')}. Choisissez un autre collecteur.`,
+          );
+          return;
+        }
+
+        this.tarifs.set(tarifsActifs);
+        this.collecteurChoisi.set(collecteur);
+        this.allerEtape3();
+      },
+      error: (erreur: unknown) => {
+        console.error('Erreur lors du chargement des tarifs du collecteur :', erreur);
+        this.chargementTarifCollecteur.set(false);
+        this.erreur.set('Impossible de charger les tarifs de ce collecteur. Réessayez.');
+      },
+    });
   }
 
-  // ─── Filtrer les collecteurs par zone ─────────────────────────
   filtrerCollecteurs(): void {
     this.chargerCollecteurs();
   }
 
-  // ─── Soumission finale ────────────────────────────────────────
   confirmerVente(): void {
     if (!this.etape3Valide() || this.enEnvoi()) return;
-
     const collecteur = this.collecteurChoisi();
-    const type       = this.typeSelectionne();
-    if (!collecteur || !type) return;
+    if (!collecteur) return;
 
     this.enEnvoi.set(true);
     this.erreur.set(null);
-
     const donnees: VenteDechetCreation = {
-      idCollecteur:      collecteur.idCollecteur,
-      idTypeDechet:      type.idTypeDechet,
-      quantite:          this.quantite()!,
-      prixPaye:          this.montantTotal()!,
-      methodePaiement:   this.methodePaiement(),
-      // La vente est créée en attente de confirmation du collecteur.
-      statutPaiement:    'en_attente',
-      referencePaiement: '',
+      idCollecteur: collecteur.idCollecteur,
+      methodePaiement: this.methodePaiement(),
+      details: this.paniersChoisis().map((panier) => ({
+        idPanier: panier.idPanier,
+        nombreObjets: this.nombrePourPanier(panier),
+        poidsKg: this.poidsPourPanier(panier)!,
+      })),
     };
 
     this.venteService.creerVente(donnees).subscribe({
@@ -160,30 +258,61 @@ export class VendreDechets implements OnInit {
         this.enEnvoi.set(false);
         this.venteCreee.set(true);
       },
-      error: (err) => {
+      error: (erreur: unknown) => {
         this.enEnvoi.set(false);
-        this.erreur.set(
-          err?.error?.detail ?? 'Une erreur est survenue. Veuillez réessayer.'
-        );
-      }
+        this.erreur.set(this.messageErreurVente(erreur));
+      },
     });
   }
 
-  // ─── Helpers ──────────────────────────────────────────────────
+  private messageErreurVente(erreur: unknown): string {
+    if (!(erreur instanceof HttpErrorResponse)) {
+      return 'La vente n’a pas pu être créée. Vérifiez le stock et réessayez.';
+    }
+    return this.extraireMessage(erreur.error)
+      ?? 'La vente n’a pas pu être créée. Vérifiez le stock et réessayez.';
+  }
 
-  /** Initiales pour l'avatar du collecteur. */
+  private extraireMessage(valeur: unknown): string | null {
+    if (typeof valeur === 'string' && valeur.trim()) return valeur;
+    if (Array.isArray(valeur)) {
+      for (const element of valeur) {
+        const message = this.extraireMessage(element);
+        if (message) return message;
+      }
+      return null;
+    }
+    if (typeof valeur !== 'object' || valeur === null) return null;
+
+    const donnees = valeur as Record<string, unknown>;
+    for (const cle of [
+      'detail',
+      'details',
+      'nombreObjets',
+      'poidsKg',
+      'idPanier',
+      'idCollecteur',
+    ]) {
+      const message = this.extraireMessage(donnees[cle]);
+      if (message) return message;
+    }
+    return null;
+  }
+
   initiales(collecteur: Collecteur): string {
     const nom = collecteur.nomEntreprise || collecteur.emailUtilisateur;
     return nom.slice(0, 2).toUpperCase();
   }
 
-  /** Retour au home citoyen. */
   retour(): void {
     this.router.navigate(['/home-citoyen']);
   }
 
-  /** Après la vente : retour au home. */
   allerAccueil(): void {
     this.router.navigate(['/home-citoyen']);
+  }
+
+  ouvrirMonPanier(): void {
+    this.router.navigate(['/mes-paniers']);
   }
 }

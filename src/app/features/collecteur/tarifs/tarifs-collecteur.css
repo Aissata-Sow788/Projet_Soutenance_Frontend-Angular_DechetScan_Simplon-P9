@@ -1,0 +1,41 @@
+.tariffs-page{width:min(100%,1440px);margin-inline:auto;padding:28px 24px 40px;color:#142337}
+.page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.eyebrow{margin:0 0 6px;color:#07877e;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.page-heading h1{margin:0;font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.03em}
+.page-description{max-width:650px;margin:8px 0 0;color:#667487;font-size:14px;line-height:1.55}
+.primary-button{min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 20px;border:0;border-radius:13px;background:#0ea5a4;color:#fff;font:inherit;font-size:14px;font-weight:750;box-shadow:0 8px 18px #0ea5a426;cursor:pointer;transition:background .15s,transform .15s}
+.primary-button:hover{background:#087c78;transform:translateY(-1px)}
+.add-button{flex:0 0 auto}
+.add-button span{font-size:20px;line-height:1}
+.tariff-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.tariff-card{min-width:0;padding:22px;border:1px solid #e7ebf1;border-radius:20px;background:#fff;box-shadow:0 8px 24px #14233708}
+.tariff-card__top{display:flex;align-items:center;gap:15px;min-width:0}
+.material-icon{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:17px;background:#d5f8f1;color:#087c78}
+.material-icon svg{width:29px;height:29px}
+.tariff-title{min-width:0;flex:1}
+.tariff-title h2{overflow:hidden;margin:0;color:#142337;font-size:18px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+.tariff-title p{margin:5px 0 0;color:#0a9f98;font-size:21px;font-weight:850}
+.tariff-title p span{font-size:13px;font-weight:700}
+.status-badge{flex:0 0 auto;padding:7px 12px;border-radius:999px;font-size:10px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.status-badge--actif{background:#c9f7ed;color:#087b70}
+.status-badge--a-venir{background:#fff0d8;color:#c75c0a}
+.status-badge--expire{background:#eef1f5;color:#687587}
+.date-range{display:flex;align-items:center;gap:9px;margin-top:21px;color:#667487;font-size:13px}
+.date-range svg{width:18px;height:18px;flex:0 0 18px;color:#748196}
+.tariff-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:19px;padding-top:17px;border-top:1px solid #edf0f4}
+.secondary-button{min-height:42px;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;border:1px solid #edf0f6;border-radius:12px;background:#f7f9fc;color:#40505a;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.secondary-button:hover:not(:disabled){border-color:#b7ebe3;background:#effcf9;color:#087c78}
+.secondary-button:disabled{opacity:.55;cursor:wait}
+.delete-button span{color:#ec6a6a;font-size:18px}
+.state-panel{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px;border:1px solid #e7ebf1;border-radius:18px;background:#fff;color:#667487;text-align:center}
+.state-panel p,.state-panel h2{margin:0}
+.state-panel h2{color:#142337;font-size:19px}
+.empty-state>p{max-width:440px;line-height:1.55}
+.empty-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:#d5f8f1;color:#087c78;font-size:25px;font-weight:800}
+.loader{width:25px;height:25px;border:3px solid #d9eeeb;border-top-color:#0ea5a4;border-radius:50%;animation:spin .7s linear infinite}
+.error-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;padding:14px 16px;border:1px solid #fecaca;border-radius:12px;background:#fff1f2;color:#b42332;font-size:13px}
+.retry-button{padding:7px 12px;border:0;border-radius:8px;background:#fff;color:#b42332;font:inherit;font-weight:700;cursor:pointer}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (min-width:1400px){.tariff-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:900px){.tariffs-page{padding:22px 18px 32px}.tariff-grid{grid-template-columns:1fr}}
+@media (max-width:560px){.tariffs-page{padding:20px 14px 28px}.page-heading{align-items:stretch;flex-direction:column;gap:16px;margin-bottom:20px}.add-button{width:100%}.tariff-card{padding:16px;border-radius:17px}.tariff-card__top{gap:10px}.material-icon{width:48px;height:48px;flex-basis:48px}.material-icon svg{width:25px;height:25px}.tariff-title h2{font-size:16px}.tariff-title p{font-size:19px}.status-badge{padding:6px 9px;font-size:9px}.date-range{margin-top:16px}.tariff-actions{gap:8px}.secondary-button{gap:5px;padding:0 7px;font-size:12px}}

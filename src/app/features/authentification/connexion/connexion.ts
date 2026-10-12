@@ -75,7 +75,7 @@ export class Connexion implements OnInit {
   // → après connexion, l'utilisateur retourne sur /historique.
   ngOnInit(): void {
     const redirect = this.route.snapshot.queryParamMap.get('redirect');
-    if (redirect) {
+    if (redirect?.startsWith('/') && !redirect.startsWith('//')) {
       this.urlRedirection = redirect;
     }
   }
@@ -134,14 +134,19 @@ export class Connexion implements OnInit {
 
       // Exécuté lorsque Django accepte la connexion.
       next: () => {
-
-        // Désactive le chargement.
-        this.chargement.set(false);
-
-        // Redirige vers l'URL d'origine si l'intercepteur
-        // avait sauvegardé une redirection (?redirect=...),
-        // sinon vers l'accueil citoyen par défaut.
-        void this.router.navigateByUrl(this.urlRedirection);
+        this.authService.me().subscribe({
+          next: () => {
+            this.chargement.set(false);
+            void this.router.navigateByUrl(this.urlRedirection);
+          },
+          error: () => {
+            this.authService.logout();
+            this.chargement.set(false);
+            this.erreurServeur.set(
+              'Impossible de récupérer les informations du compte. Réessayez.'
+            );
+          },
+        });
       },
 
       // Exécuté lorsque Django refuse la connexion.

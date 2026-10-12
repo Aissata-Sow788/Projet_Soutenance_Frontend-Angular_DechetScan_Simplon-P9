@@ -2,7 +2,11 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DemandeCollecteService } from '../../../core/services/demande-collecte';
-import { DemandeCollecte } from '../../../shared/models/demande-collecte.model';
+import {
+  DemandeCollecte,
+  DemandeScanPhoto,
+  DetailDemandeCollecte,
+} from '../../../shared/models/demande-collecte.model';
 
 @Component({
   imports: [CommonModule, RouterLink],
@@ -22,6 +26,12 @@ export class DetailDemande implements OnInit {
   enTraitement = signal(false);
   // ─── Demande ──────────────────────────────────────────────────
   demande = signal<DemandeCollecte | null>(null);
+  // Garde l'état du visualiseur de photos ouvert depuis une catégorie.
+  photosOuvertes = signal<{
+    categorie: string;
+    photos: DemandeScanPhoto[];
+    index: number;
+  } | null>(null);
   statutNormalise = computed(() => {
     const statut = this.demande()?.statut;
     return statut
@@ -166,5 +176,40 @@ export class DetailDemande implements OnInit {
   // Initiales pour l'avatar.
   initiales(prenom: string, nom: string): string {
     return ((prenom?.[0] ?? '') + (nom?.[0] ?? '')).toUpperCase();
+  }
+
+  // Ouvre la galerie avec la photo sur laquelle le collecteur a cliqué.
+  ouvrirPhotos(detail: DetailDemandeCollecte, index: number): void {
+    const photos = detail.photos ?? [];
+    if (!photos.length) return;
+
+    this.photosOuvertes.set({
+      categorie: detail.typeDechet?.nom ?? 'Déchet',
+      photos,
+      index,
+    });
+  }
+
+  // Ferme le visualiseur de photos.
+  fermerPhotos(): void {
+    this.photosOuvertes.set(null);
+  }
+
+  // Parcourt les photos de la catégorie sans quitter la fenêtre modale.
+  photoSuivante(deplacement: number): void {
+    this.photosOuvertes.update((galerie) => {
+      if (!galerie || galerie.photos.length < 2) return galerie;
+      const index = (galerie.index + deplacement + galerie.photos.length) % galerie.photos.length;
+      return { ...galerie, index };
+    });
+  }
+
+  // Normalise l'URL vers le proxy média partagé avec l'API.
+  urlPhoto(photo: DemandeScanPhoto): string {
+    const url = new URL(photo.photoUrl, window.location.origin);
+    const chemin = url.pathname.startsWith('/media/')
+      ? url.pathname
+      : `/media/${url.pathname.replace(/^\/+/, '')}`;
+    return `${chemin}${url.search}${url.hash}`;
   }
 }

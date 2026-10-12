@@ -3,6 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
 import { Notification } from '../../shared/models/notification.model';
 
+export interface PushConfig {
+  enabled: boolean;
+  publicKey: string | null;
+}
+
+export interface PushSubscriptionPayload {
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+}
 
 
 @Injectable({
@@ -24,6 +34,17 @@ export class NotificationsService {
    */
   getNotifications(): Observable<Notification[]> {
     return this.http.get<Notification[]>(`${this.apiUrl}/`);
+  }
+
+  getPushConfig(): Observable<PushConfig> {
+    return this.http.get<PushConfig>(`${this.apiUrl}/push/config/`);
+  }
+
+  enregistrerAbonnementPush(subscription: PushSubscriptionPayload): Observable<void> {
+    return this.http.post<void>(
+      `${this.apiUrl}/push/subscriptions/`,
+      subscription,
+    );
   }
 
   /**

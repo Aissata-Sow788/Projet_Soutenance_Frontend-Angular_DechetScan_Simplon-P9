@@ -6,6 +6,7 @@ import { BarreNavigations } from '../../shared/components/barre-navigations/barr
 import { ScanService } from '../../core/services/scan';
 import { ScanDechet } from '../../shared/models/scan.model';
 import { PointCollecteService } from '../../core/services/point-collecte';
+import { Auth } from '../../core/services/auth';
 
 
 /**
@@ -52,6 +53,7 @@ export class HomeCitoyen implements OnInit {
 
   // Service permettant de récupérer les points de collecte.
   private pointCollecteService = inject(PointCollecteService);
+  private authService = inject(Auth);
 
 
   // =========================================================
@@ -92,6 +94,7 @@ export class HomeCitoyen implements OnInit {
    * plus de faux points directement dans le code.
    */
   pointsProches = signal<PointProche[]>([]);
+  nombrePoints = signal(0);
 
   // Nombre de citoyens actifs récupéré depuis l'API.
   // On laisse vide tant que le backend ne fournit pas cette statistique.
@@ -140,22 +143,12 @@ export class HomeCitoyen implements OnInit {
    * par le service d'authentification.
    */
   private chargerUtilisateur(): void {
-
-    const utilisateurJson =
-      localStorage.getItem('dechetscan_user');
-
-    // Aucun utilisateur enregistré.
-    if (!utilisateurJson) {
-      return;
-    }
-
     try {
-
-      const utilisateur = JSON.parse(utilisateurJson);
+      const utilisateur = this.authService.getCurrentUser();
 
       // On affiche le prénom lorsqu'il est disponible.
-      if (utilisateur.prenom) {
-        this.nomUtilisateur.set(utilisateur.prenom);
+      if (utilisateur?.first_name) {
+        this.nomUtilisateur.set(utilisateur.first_name);
       }
 
     } catch (erreur) {
@@ -257,11 +250,21 @@ export class HomeCitoyen implements OnInit {
         'Aucun conseil disponible',
 
       // URL complète de l'image.
-      image:
-        scan.photoUrl.startsWith('http')
-          ? scan.photoUrl
-          : `http://127.0.0.1:8000${scan.photoUrl}`
+      image: this.urlPhoto(scan.photoUrl)
     };
+  }
+
+  private urlPhoto(photoUrl: string): string {
+    const url = new URL(photoUrl, window.location.origin);
+    const chemin = url.pathname.startsWith('/media/')
+      ? url.pathname
+      : `/media/${url.pathname.replace(/^\/+/, '')}`;
+
+    return `${chemin}${url.search}${url.hash}`;
+  }
+
+  retirerImage(scan: DernierScan): void {
+    scan.image = undefined;
   }
 
 
@@ -337,6 +340,8 @@ export class HomeCitoyen implements OnInit {
          * que "listerPoints()", il faudra simplement utiliser
          * le nom réel de ta méthode.
          */
+        this.nombrePoints.set(points.length);
+
         const pointsAccueil =
           points.slice(0, 2).map((point: any) => {
 
@@ -370,6 +375,7 @@ export class HomeCitoyen implements OnInit {
 
         // Aucun faux point : on affiche simplement une liste vide.
         this.pointsProches.set([]);
+        this.nombrePoints.set(0);
       }
     });
   }
@@ -418,6 +424,13 @@ export class HomeCitoyen implements OnInit {
   voirHistorique(): void {
 
     this.router.navigate(['/historique']);
+  }
+
+  /**
+   * Ouvre le dernier scan connu et affiche directement le popup du panier.
+   */
+  voirMesDechets(): void {
+    this.router.navigate(['/mes-paniers']);
   }
 
   /** Ouvre le formulaire de demande de ramassage. */

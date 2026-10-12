@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DemandeCollecteService } from '../../core/services/demande-collecte';
-import { PointCollecteService } from '../../core/services/point-collecte';
-import { TypeDechet } from '../../shared/models/type-dechet.model';
+import { PanierDechetApi, ScanService } from '../../core/services/scan';
 import {
   DemandeCollecte,
   DemandeCollecteCreation
@@ -26,11 +25,11 @@ export class DemandeRamassage implements OnInit {
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
   private readonly demandeService = inject(DemandeCollecteService);
-  private readonly pointCollecteService = inject(PointCollecteService);
+  private readonly scanService = inject(ScanService);
 
-  // Liste des types de déchets disponibles dans le backend.
-  typesDechets = signal<TypeDechet[]>([]);
-  chargementTypes = signal(true);
+  // Paniers déjà renseignés par le citoyen.
+  paniers = signal<PanierDechetApi[]>([]);
+  chargementPaniers = signal(true);
 
   // Coordonnées GPS détectées par le navigateur.
   // null signifie qu'aucune position n'a encore été obtenue.
@@ -72,9 +71,10 @@ export class DemandeRamassage implements OnInit {
     this.quartierManuel().trim() || this.quartierDetecte()
   );
 
-  // Informations saisies dans le formulaire de demande.
-  idTypeDechetSelectionne = signal<number | null>(null);
-  quantite = signal<number | null>(null);
+  // La sélection est explicite : aucune catégorie du panier n'est engagée d'office.
+  paniersSelectionnes = signal<Set<number>>(new Set());
+  nombresObjetsDemandes = signal<Record<number, number>>({});
+  poidsMesuresKg = signal<Record<number, number | null>>({});
   dateSouhaitee = signal('');
   heureSouhaitee = signal('');
 
@@ -90,21 +90,38 @@ export class DemandeRamassage implements OnInit {
   erreur = signal<string | null>(null);
   demandeCreee = signal<DemandeCollecte | null>(null);
 
-  // Récupère automatiquement le type de déchet sélectionné.
-  typeDechetSelectionne = computed(() =>
-    this.typesDechets().find(
-      t => t.idTypeDechet === this.idTypeDechetSelectionne()
-    ) ?? null
+  paniersRemplis = computed(() =>
+    this.paniers().filter((panier) => panier.nombreDisponible > 0)
+  );
+
+  paniersChoisis = computed(() =>
+    this.paniersRemplis().filter((panier) =>
+      this.paniersSelectionnes().has(panier.idPanier),
+    )
+  );
+
+  nombreObjetsDemande = computed(() =>
+    this.paniersChoisis().reduce(
+      (total, panier) => total + this.nombreObjetsPourDemande(panier),
+      0,
+    )
+  );
+
+  poidsTotalKgDemande = computed(() =>
+    this.paniersChoisis().reduce(
+      (total, panier) => total + (this.poidsKgPourDemande(panier) ?? 0),
+      0,
+    )
   );
 
   /**
    * Calcule le montant estimé de la vente.
    *
    * Formule :
-   * quantité × prix proposé par unité.
+   * poids réellement pesé × prix proposé par kilogramme.
    */
   montantEstime = computed(() => {
-    const q = this.quantite();
+    const q = this.poidsTotalKgDemande();
     const p = this.prixPropose();
 
     if (!q || !p || q <= 0 || p <= 0) {
@@ -121,33 +138,87 @@ export class DemandeRamassage implements OnInit {
    * au collecteur de connaître l'emplacement du ramassage.
    */
   formulaireValide = computed(() =>
-    this.idTypeDechetSelectionne() !== null &&
-    (this.quantite() ?? 0) > 0 &&
+    !this.chargementPaniers() &&
+    this.paniersChoisis().length > 0 &&
+    this.paniersChoisis().every((panier) =>
+      this.nombreObjetsPourDemande(panier) > 0
+      && (this.poidsKgPourDemande(panier) ?? 0) > 0,
+    ) &&
     this.latitude() !== null &&
     this.longitude() !== null
   );
 
   ngOnInit(): void {
-    // Charge les types de déchets dès l'ouverture de la page.
-    this.chargerTypesDechets();
+    // Charge les comptes d'objets disponibles depuis les paniers du citoyen.
+    this.chargerPaniers();
 
     // Demande automatiquement la position actuelle du citoyen.
     this.demanderGeolocalisation();
   }
 
-  private chargerTypesDechets(): void {
-    this.chargementTypes.set(true);
-
-    // Récupère les types de déchets disponibles depuis l'API.
-    this.pointCollecteService.listerTypesDechets().subscribe({
-      next: types => {
-        this.typesDechets.set(types);
-        this.chargementTypes.set(false);
+  private chargerPaniers(): void {
+    this.chargementPaniers.set(true);
+    this.scanService.getPaniers().subscribe({
+      next: (paniers) => {
+        this.paniers.set(paniers);
+        this.paniersSelectionnes.set(new Set());
+        this.nombresObjetsDemandes.set({});
+        this.poidsMesuresKg.set({});
+        this.chargementPaniers.set(false);
       },
-      error: () => {
-        this.chargementTypes.set(false);
-      }
+      error: (erreur: unknown) => {
+        console.error('Erreur lors du chargement des paniers pour la demande :', erreur);
+        this.erreur.set('Impossible de charger vos déchets. Vérifiez votre connexion puis réessayez.');
+        this.chargementPaniers.set(false);
+      },
     });
+  }
+
+  panierEstSelectionne(panier: PanierDechetApi): boolean {
+    return this.paniersSelectionnes().has(panier.idPanier);
+  }
+
+  changerSelection(panier: PanierDechetApi, selectionne: boolean): void {
+    this.paniersSelectionnes.update((selection) => {
+      const miseAJour = new Set(selection);
+      if (selectionne) {
+        miseAJour.add(panier.idPanier);
+        this.nombresObjetsDemandes.update((nombres) => ({
+          ...nombres,
+          [panier.idPanier]: nombres[panier.idPanier] ?? panier.nombreDisponible,
+        }));
+      } else {
+        miseAJour.delete(panier.idPanier);
+      }
+      return miseAJour;
+    });
+  }
+
+  nombreObjetsPourDemande(panier: PanierDechetApi): number {
+    return this.nombresObjetsDemandes()[panier.idPanier] ?? 0;
+  }
+
+  modifierNombreObjets(panier: PanierDechetApi, valeur: number): void {
+    const nombre = Number.isFinite(valeur)
+      ? Math.max(1, Math.min(panier.nombreDisponible, Math.floor(valeur)))
+      : 1;
+    this.nombresObjetsDemandes.update((nombres) => ({
+      ...nombres,
+      [panier.idPanier]: nombre,
+    }));
+  }
+
+  poidsKgPourDemande(panier: PanierDechetApi): number | null {
+    return this.poidsMesuresKg()[panier.idPanier] ?? null;
+  }
+
+  modifierPoidsMesure(panier: PanierDechetApi, valeur: number | null): void {
+    this.poidsMesuresKg.update((poids) => ({
+      ...poids,
+      [panier.idPanier]: valeur !== null && Number.isFinite(valeur) && valeur > 0
+        ? valeur
+        : null,
+    }));
   }
 
   /**
@@ -369,9 +440,16 @@ export class DemandeRamassage implements OnInit {
      * Les coordonnées latitude/longitude permettent au collecteur
      * de connaître précisément l'emplacement du ramassage.
      */
+    const details = this.paniersRemplis()
+      .map((panier) => ({
+        idPanier: panier.idPanier,
+        nombreObjets: this.nombreObjetsPourDemande(panier),
+        poidsKg: this.poidsKgPourDemande(panier) ?? 0,
+      }))
+      .filter((detail) => detail.nombreObjets > 0 && detail.poidsKg > 0);
+
     const donnees: DemandeCollecteCreation = {
-      idTypeDechet: this.idTypeDechetSelectionne()!,
-      quantite: this.quantite()!,
+      details,
       typeDemande: 'ramassage',
       prixPropose: this.afficherPrix()
         ? this.prixPropose()
@@ -434,28 +512,6 @@ export class DemandeRamassage implements OnInit {
     });
   }
 
-  // Met à jour le type de déchet sélectionné.
-  onTypeDechetChange(event: Event): void {
-    const val =
-      (event.target as HTMLSelectElement).value;
-
-    this.idTypeDechetSelectionne.set(
-      val ? Number(val) : null
-    );
-  }
-
-  // Met à jour la quantité saisie.
-  onQuantiteChange(event: Event): void {
-    const val =
-      parseFloat(
-        (event.target as HTMLInputElement).value
-      );
-
-    this.quantite.set(
-      isNaN(val) ? null : val
-    );
-  }
-
   // Met à jour le prix proposé par l'utilisateur.
   onPrixChange(event: Event): void {
     const val =
@@ -473,6 +529,10 @@ export class DemandeRamassage implements OnInit {
     this.router.navigate(['/home-citoyen']);
   }
 
+  retourPanier(): void {
+    this.router.navigate(['/mes-paniers']);
+  }
+
   // Ouvre la page de suivi de la demande créée.
   suivreDemande(): void {
     const demande = this.demandeCreee();
@@ -488,6 +548,24 @@ export class DemandeRamassage implements OnInit {
   // Génère une référence lisible à partir de l'identifiant de la demande.
   referenceDemande(id: number): string {
     return `DEM-${String(id).padStart(5, '0')}`;
+  }
+
+  typesDechetsDemande(demande: DemandeCollecte): string {
+    const types = demande.details?.map((detail) => detail.typeDechet?.nom)
+      .filter((nom): nom is string => Boolean(nom));
+    return types?.length
+      ? types.join(', ')
+      : demande.typeDechet?.nom ?? 'Non précisé';
+  }
+
+  nombreObjetsDemandeCreee(demande: DemandeCollecte): number | null {
+    if (demande.details.some((detail) => detail.nombreObjets === null)) {
+      return null;
+    }
+    return demande.details.reduce(
+      (total, detail) => total + (detail.nombreObjets ?? 0),
+      0,
+    );
   }
 
   // Formate la date souhaitée en français.

@@ -1,0 +1,96 @@
+<section class="tariff-form-page">
+  <header class="page-heading">
+    <button type="button" class="back-button" (click)="retourListe()" aria-label="Retour à mes tarifs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"></path><path d="M9 12h12"></path>
+      </svg>
+    </button>
+    <div>
+      <p class="eyebrow">Gestion commerciale</p>
+      <h1>{{ estModification ? 'Modifier un tarif' : 'Ajouter un tarif' }}</h1>
+      <p class="page-description">Renseignez le prix de rachat et sa période de validité.</p>
+    </div>
+  </header>
+
+  @if (erreur()) {
+    <div class="error-banner" role="alert">{{ erreur() }}</div>
+  }
+
+  @if (chargement()) {
+    <div class="state-panel" aria-live="polite">
+      <span class="loader" aria-hidden="true"></span>
+      <p>Chargement du formulaire…</p>
+    </div>
+  } @else if (enregistre()) {
+    <section class="success-panel" aria-live="polite">
+      <span class="success-icon" aria-hidden="true">✓</span>
+      <h2>Tarif enregistré avec succès !</h2>
+      <p>Votre tarif est maintenant visible par les citoyens lorsqu’ils choisissent votre collecteur.</p>
+      <button type="button" class="secondary-button" (click)="retourListe()">Retour à mes tarifs</button>
+    </section>
+  } @else {
+    <form class="tariff-form" (ngSubmit)="enregistrer()">
+      <div class="form-intro">
+        <div class="intro-icon" aria-hidden="true">♻</div>
+        <div>
+          <h2>Informations du tarif</h2>
+          <p>Le tarif s’applique uniquement aux ventes qui vous sont adressées.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label class="field field--wide">
+          <span>Type de déchet <b>*</b></span>
+          <select name="typeDechet" [(ngModel)]="idTypeDechet" required>
+            <option [ngValue]="null" disabled>Sélectionner un type</option>
+            @for (type of typesDechets(); track type.idTypeDechet) {
+              <option [ngValue]="type.idTypeDechet">{{ type.nom }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field field--wide">
+          <span>Prix par kilogramme <b>*</b></span>
+          <div class="input-with-unit">
+            <input
+              type="number"
+              name="prixParKg"
+              [(ngModel)]="prixParKg"
+              min="1"
+              step="1"
+              placeholder="Ex. 75"
+              required
+            />
+            <span>FCFA/kg</span>
+          </div>
+        </label>
+
+        <label class="field">
+          <span>Date de début <b>*</b></span>
+          <input type="date" name="dateDebut" [(ngModel)]="dateDebut" required />
+        </label>
+
+        <label class="field">
+          <span>Date de fin</span>
+          <input type="date" name="dateFin" [(ngModel)]="dateFin" [min]="dateDebut" />
+          <small>Laisser vide pour un tarif sans date de fin.</small>
+        </label>
+      </div>
+
+      @if (dateFin && dateFin < dateDebut) {
+        <p class="field-error" role="alert">La date de fin doit être postérieure à la date de début.</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" class="primary-button" [disabled]="!formulaireValide() || enregistrement()">
+          {{ enregistrement() ? 'Enregistrement…' : estModification ? 'Enregistrer les modifications' : 'Enregistrer le tarif' }}
+        </button>
+        <button type="button" class="cancel-button" (click)="retourListe()" [disabled]="enregistrement()">
+          Annuler
+        </button>
+      </div>
+      <p class="required-note"><b>*</b> Champs obligatoires</p>
+    </form>
+  }
+</section>

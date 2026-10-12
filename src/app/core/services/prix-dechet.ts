@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   PrixDechet,
@@ -14,10 +14,14 @@ export class PrixDechetService {
   private readonly apiUrl = '/api/prix-dechets';
 
   /**
-   * Récupère tous les tarifs d'achat des déchets.
+   * Récupère les tarifs visibles, éventuellement limités à un collecteur.
    */
-  listerPrix(): Observable<PrixDechet[]> {
-    return this.http.get<PrixDechet[]>(`${this.apiUrl}/`);
+  listerPrix(idCollecteur?: number): Observable<PrixDechet[]> {
+    let params = new HttpParams();
+    if (idCollecteur !== undefined) {
+      params = params.set('idCollecteur', idCollecteur);
+    }
+    return this.http.get<PrixDechet[]>(`${this.apiUrl}/`, { params });
   }
 
   /**
@@ -28,14 +32,14 @@ export class PrixDechetService {
   }
 
   /**
-   * Crée un nouveau tarif (admin uniquement).
+   * Crée un tarif global (admin) ou un tarif appartenant au collecteur connecté.
    */
   creerPrix(donnees: PrixDechetCreation): Observable<PrixDechet> {
     return this.http.post<PrixDechet>(`${this.apiUrl}/`, donnees);
   }
 
   /**
-   * Modifie un tarif existant (admin uniquement).
+   * Modifie un tarif global (admin) ou un tarif appartenant au collecteur connecté.
    */
   modifierPrix(
     id: number,
@@ -45,7 +49,7 @@ export class PrixDechetService {
   }
 
   /**
-   * Supprime un tarif (admin uniquement).
+   * Supprime un tarif global (admin) ou un tarif appartenant au collecteur connecté.
    */
   supprimerPrix(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}/`);

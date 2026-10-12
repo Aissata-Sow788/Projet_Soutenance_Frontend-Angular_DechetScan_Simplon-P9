@@ -245,7 +245,7 @@
                       </div>
 
                       <span class="font-medium text-[#142337]">
-                        {{ vente.typeDechet?.nom ?? '—' }}
+                        {{ nomDechets(vente) }}
                       </span>
                     </div>
                   </td>
@@ -411,7 +411,7 @@
           </div>
           <div>
             <dt class="text-xs text-slate-400">Type de déchet</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ vente.typeDechet?.nom ?? '—' }}</dd>
+            <dd class="mt-1 font-semibold text-[#142337]">{{ nomDechets(vente) }}</dd>
           </div>
           <div>
             <dt class="text-xs text-slate-400">Quantité</dt>

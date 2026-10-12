@@ -6,6 +6,9 @@ import { Router } from '@angular/router';
 
 import { CollecteurService } from '../../core/services/collecteur';
 
+export const TELEPHONE_PROFESSIONNEL_PATTERN =
+  /^(?:\+?221[\s.-]?)?(?:(?:70|75|76|77|78)[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}|33[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2})$/;
+
 @Component({
   imports: [CommonModule, ReactiveFormsModule],
   selector: 'app-devenir-collecteur',
@@ -30,18 +33,19 @@ export class DevenirCollecteur {
     nomEntreprise: ['', [Validators.maxLength(150)]],
 
     // Numéro professionnel obligatoire.
-    // Le pattern accepte les numéros sénégalais commençant notamment par
-    // 70, 75, 76, 77 ou 78, avec ou sans l'indicatif +221.
+    // Le pattern accepte les mobiles (70, 75, 76, 77 ou 78) et les fixes (33),
+    // avec ou sans l'indicatif +221.
     // Formats acceptés :
     //   +221 77 076 69 09
     //   +221 77 000 00 00
+    //   +221 33 827 00 47
     //   77 000 00 00
     //   770000000
     telephoneProfessionnel: [
       '',
       [
         Validators.required,
-        Validators.pattern(/^(?:\+?221[\s.-]?)?(?:70|75|76|77|78)[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}$/),
+        Validators.pattern(TELEPHONE_PROFESSIONNEL_PATTERN),
         Validators.maxLength(20),
       ],
     ],

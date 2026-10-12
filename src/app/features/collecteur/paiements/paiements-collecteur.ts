@@ -135,8 +135,8 @@ export class PaiementsCollecteur implements OnInit {
         );
         this.chargement.set(false);
       },
-      error: () => {
-        this.erreur.set('Impossible de charger les ventes.');
+      error: (err: HttpErrorResponse) => {
+        this.erreur.set(this.messageErreurChargement(err));
         this.chargement.set(false);
       },
     });
@@ -277,6 +277,17 @@ export class PaiementsCollecteur implements OnInit {
     return typeof detail === 'string'
       ? detail
       : 'Une erreur est survenue. Veuillez réessayer.';
+  }
+
+  /** Distingue les erreurs d'accès et de délai de l'API de ventes. */
+  private messageErreurChargement(err: HttpErrorResponse): string {
+    if (err.status === 401 || err.status === 403) {
+      return 'Votre session a expiré ou votre compte n’a pas accès aux paiements. Reconnectez-vous puis réessayez.';
+    }
+    if (err.status === 504) {
+      return 'Le serveur met trop de temps à répondre. Vos paiements n’ont pas été chargés ; réessayez dans quelques instants.';
+    }
+    return this.messageErreur(err);
   }
 
   /** Initiales du citoyen pour l'avatar (prénom + nom ou email). */

@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { ScanService } from '../../../core/services/scan';
 import { ScanDechet } from '../../../shared/models/scan.model';
@@ -117,14 +118,15 @@ export class TousScans {
       },
 
       // Si l'appel API échoue.
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
 
         console.error('ERREUR SCANS ADMIN :', error);
 
-        // Affiche le message dans l'interface.
-        this.erreur.set(
-          'Impossible de charger les scans.'
-        );
+        this.erreur.set(error.status === 403
+          ? 'Accès refusé : connectez-vous avec un compte administrateur pour consulter les scans.'
+          : error.status === 401
+            ? 'Votre session a expiré. Reconnectez-vous pour consulter les scans.'
+            : 'Impossible de charger les scans. Vérifiez votre connexion puis réessayez.');
 
         // Termine l'état de chargement.
         this.chargement.set(false);

@@ -13,6 +13,8 @@ export type TypeDemande = 'ramassage' | 'depot';
 export type StatutDemande =
   | 'en_attente'
   | 'acceptee'
+  | 'refusee'
+  | 'planifiee'
   | 'en_cours'
   | 'terminee'
   | 'annulee';
@@ -58,9 +60,12 @@ export interface DemandeCollecte {
   prenomUtilisateur: string;
   nomUtilisateur: string;
   telephoneUtilisateur: string | null;
-  idTypeDechet: number;
-  typeDechet: TypeDechet;
+  idTypeDechet: number | null;
+  typeDechet: TypeDechet | null;
   quantite: number;
+  poidsTotalKg: number;
+  nombreObjets: number | null;
+  details: DetailDemandeCollecte[];
   typeDemande: TypeDemande;
   prixPropose: number | null;
   quartier: string;
@@ -72,8 +77,29 @@ export interface DemandeCollecte {
   // Collecteur qui a accepté la demande.
   // NULL tant que la demande est en_attente.
   collecteurAttribue: CollecteurAttribue | null;
+  // Indique si le collecteur connecté est celui qui a pris la demande.
+  attribueAuCollecteurConnecte: boolean;
   // Collecte planifiée liée (pour la page suivi citoyen).
   collecte: CollecteResumeSuivi | null;
+}
+
+export interface DetailDemandeCollecte {
+  idDetail: number;
+  idPanier: number;
+  idTypeDechet: number;
+  typeDechet: TypeDechet;
+  nombreObjets: number | null;
+  poidsKg: number;
+  /** Alias historique de poidsKg conservé pour les anciennes réponses API. */
+  quantite: number;
+  photos: DemandeScanPhoto[];
+}
+
+/** Photo d'un scan correspondant à une catégorie de déchets demandée. */
+export interface DemandeScanPhoto {
+  idScan: number;
+  dateScan: string;
+  photoUrl: string;
 }
 
 /**
@@ -83,8 +109,11 @@ export interface DemandeCollecte {
  * prixPropose est optionnel (si le citoyen veut juste un ramassage).
  */
 export interface DemandeCollecteCreation {
-  idTypeDechet: number;
-  quantite: number;
+  details: Array<{
+    idPanier: number;
+    nombreObjets: number;
+    poidsKg: number;
+  }>;
   typeDemande: TypeDemande;
   // Optionnel : NULL si le citoyen ne veut pas vendre ses déchets.
   prixPropose?: number | null;

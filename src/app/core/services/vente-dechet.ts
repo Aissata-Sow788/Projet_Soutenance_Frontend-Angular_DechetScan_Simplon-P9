@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
+  DetailVenteDechet,
   VenteDechet,
   VenteDechetCreation,
   StatutPaiementVente,
@@ -9,6 +10,29 @@ import {
   VentePaiementInitiationReponse,
   VentePaiementVerification,
 } from '../../shared/models/vente-dechet.model';
+
+type ValeurNumeriqueApi = number | string;
+
+// Django sérialise ses Decimal en chaînes ; ces types décrivent le transport HTTP.
+type DetailVenteDechetApi = Omit<
+  DetailVenteDechet,
+  'poidsKg' | 'quantite' | 'prixParKg' | 'sousTotal'
+> & {
+  poidsKg: ValeurNumeriqueApi;
+  quantite: ValeurNumeriqueApi;
+  prixParKg: ValeurNumeriqueApi;
+  sousTotal: ValeurNumeriqueApi;
+};
+
+type VenteDechetApi = Omit<
+  VenteDechet,
+  'quantite' | 'poidsTotalKg' | 'prixPaye' | 'details'
+> & {
+  quantite: ValeurNumeriqueApi;
+  poidsTotalKg: ValeurNumeriqueApi;
+  prixPaye: ValeurNumeriqueApi;
+  details: DetailVenteDechetApi[];
+};
 
 @Injectable({ providedIn: 'root' })
 export class VenteDechetService {
@@ -32,14 +56,18 @@ export class VenteDechetService {
    * Citoyen    → ses propres ventes soumises.
    */
   listerVentes(): Observable<VenteDechet[]> {
-    return this.http.get<VenteDechet[]>(`${this.apiUrl}/`);
+    return this.http.get<VenteDechetApi[]>(`${this.apiUrl}/`).pipe(
+      map(ventes => ventes.map(vente => this.normaliserVente(vente)))
+    );
   }
 
   /**
    * Récupère le détail d'une vente précise par son identifiant.
    */
   obtenirVente(id: number): Observable<VenteDechet> {
-    return this.http.get<VenteDechet>(`${this.apiUrl}/${id}/`);
+    return this.http.get<VenteDechetApi>(`${this.apiUrl}/${id}/`).pipe(
+      map(vente => this.normaliserVente(vente))
+    );
   }
 
   /**
@@ -48,7 +76,9 @@ export class VenteDechetService {
    * depuis l'utilisateur connecté (le citoyen vendeur).
    */
   creerVente(donnees: VenteDechetCreation): Observable<VenteDechet> {
-    return this.http.post<VenteDechet>(`${this.apiUrl}/`, donnees);
+    return this.http.post<VenteDechetApi>(`${this.apiUrl}/`, donnees).pipe(
+      map(vente => this.normaliserVente(vente))
+    );
   }
 
   /**
@@ -59,10 +89,10 @@ export class VenteDechetService {
     id: number,
     statutPaiement: StatutPaiementVente
   ): Observable<VenteDechet> {
-    return this.http.patch<VenteDechet>(
+    return this.http.patch<VenteDechetApi>(
       `${this.apiUrl}/${id}/statut/`,
       { statutPaiement }
-    );
+    ).pipe(map(vente => this.normaliserVente(vente)));
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -108,5 +138,33 @@ export class VenteDechetService {
       `${this.apiPaiementUrl}/verifier/`,
       { params: { reference } }
     );
+  }
+
+  /** Convertit les décimaux renvoyés par Django avant les calculs Angular. */
+  private normaliserVente(vente: VenteDechetApi): VenteDechet {
+    return {
+      ...vente,
+      quantite: this.convertirNombre(vente.quantite, 'quantite'),
+      poidsTotalKg: this.convertirNombre(vente.poidsTotalKg, 'poidsTotalKg'),
+      prixPaye: this.convertirNombre(vente.prixPaye, 'prixPaye'),
+      details: vente.details.map(detail => ({
+        ...detail,
+        poidsKg: this.convertirNombre(detail.poidsKg, 'details.poidsKg'),
+        quantite: this.convertirNombre(detail.quantite, 'details.quantite'),
+        prixParKg: this.convertirNombre(detail.prixParKg, 'details.prixParKg'),
+        sousTotal: this.convertirNombre(detail.sousTotal, 'details.sousTotal'),
+      })),
+    };
+  }
+
+  /** Refuse une valeur invalide au lieu de la propager jusqu'au pipe number. */
+  private convertirNombre(valeur: ValeurNumeriqueApi, champ: string): number {
+    const nombre = typeof valeur === 'number' ? valeur : Number(valeur);
+
+    if (!Number.isFinite(nombre)) {
+      throw new Error(`Valeur numérique invalide reçue pour ${champ}.`);
+    }
+
+    return nombre;
   }
 }

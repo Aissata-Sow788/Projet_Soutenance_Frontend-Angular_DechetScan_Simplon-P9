@@ -133,6 +133,7 @@ export class DetailCollecte implements OnInit {
     // Les demandes acceptées utilisent le statut acceptee avant le démarrage.
     const demande = this.demande();
     const statutActuel = this.statutNormalise();
+    if (!demande?.attribueAuCollecteurConnecte) return;
     const transitionAutorisee =
       (statut === 'en_cours' && statutActuel === 'acceptee') ||
       (statut === 'terminee' && statutActuel === 'en_cours');

@@ -163,6 +163,11 @@
       </article>
     </div>
 
+    @if (!collecte.attribueAuCollecteurConnecte) {
+      <p class="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-bold text-amber-800" role="status">
+        Cette demande est déjà prise par {{ collecte.collecteurAttribue?.nomEntreprise ?? 'un autre collecteur' }}.
+      </p>
+    } @else {
     <!-- Le workflow de demande affiche Commencer puis Terminer. -->
     <div class="mt-6 flex flex-wrap gap-3">
       @if (statutNormalise() === 'acceptee') {
@@ -189,5 +194,6 @@
         </p>
       }
     </div>
+    }
   }
 </section>

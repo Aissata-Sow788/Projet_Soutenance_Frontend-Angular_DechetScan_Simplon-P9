@@ -36,11 +36,27 @@ export interface VenteDechet {
   // Détail complet du type de déchet (calculé côté Django).
   typeDechet: TypeDechet | null;
   quantite: number;
+  poidsTotalKg: number;
+  nombreObjets: number | null;
   prixPaye: number;
   methodePaiement: string;
   statutPaiement: StatutPaiementVente;
   referencePaiement: string;
   dateVente: string;
+  details: DetailVenteDechet[];
+}
+
+/** Ligne de vente : le nombre d'objets reste distinct du poids mesuré. */
+export interface DetailVenteDechet {
+  idDetail: number;
+  idPanier: number;
+  idTypeDechet: number;
+  typeDechet: TypeDechet;
+  nombreObjets: number | null;
+  poidsKg: number;
+  quantite: number;
+  prixParKg: number;
+  sousTotal: number;
 }
 
 /**
@@ -49,12 +65,12 @@ export interface VenteDechet {
  */
 export interface VenteDechetCreation {
   idCollecteur: number;
-  idTypeDechet: number;
-  quantite: number;
-  prixPaye: number;
   methodePaiement: string;
-  statutPaiement: StatutPaiementVente;
-  referencePaiement: string;
+  details: Array<{
+    idPanier: number;
+    nombreObjets: number;
+    poidsKg: number;
+  }>;
 }
 
 /**

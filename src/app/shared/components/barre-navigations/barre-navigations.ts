@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
+import { Auth } from '../../../core/services/auth';
 
 @Component({
   imports: [RouterLink],
@@ -11,9 +12,10 @@ import { Router } from '@angular/router';
 export class BarreNavigations {
 
   private router = inject(Router);
+  private auth = inject(Auth);
 
   get utilisateurConnecte(): boolean {
-    return !!localStorage.getItem('dechetscan_token');
+    return this.auth.isAuthenticated();
   }
 
   /**

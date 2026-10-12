@@ -7,6 +7,7 @@ import { TypeDechet } from './type-dechet.model';
 export interface PrixDechet {
   idPrix: number;
   idTypeDechet: number;
+  idCollecteur: number | null;
   // Nom du type de déchet pour affichage (calculé côté Django).
   nomTypeDechet: string;
   // Prix d'achat en FCFA par kilogramme.

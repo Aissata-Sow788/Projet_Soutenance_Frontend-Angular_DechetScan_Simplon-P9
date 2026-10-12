@@ -14,7 +14,7 @@ export interface DetectionIA {
   confiance: number;
 
   // Type de déchet correspondant à l'objet détecté.
-  idTypeDechet: TypeDechet;
+  idTypeDechet: TypeDechet | null;
 }
 
 /**

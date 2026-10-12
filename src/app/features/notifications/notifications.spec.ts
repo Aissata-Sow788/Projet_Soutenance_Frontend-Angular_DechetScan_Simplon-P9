@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SwPush } from '@angular/service-worker';
+import { of } from 'rxjs';
 import { Notifications } from './notifications';
+import { NotificationsService } from '../../core/services/notification';
 
 describe('Notifications', () => {
   let component: Notifications;
@@ -7,7 +10,25 @@ describe('Notifications', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Notifications]
+      imports: [Notifications],
+      providers: [
+        {
+          provide: NotificationsService,
+          useValue: {
+            getNotifications: () => of([]),
+            getPushConfig: () => of({ enabled: false, publicKey: null }),
+            marquerToutesCommeLues: () => of([]),
+          },
+        },
+        {
+          provide: SwPush,
+          useValue: {
+            isEnabled: false,
+            subscription: of(null),
+            requestSubscription: vi.fn(),
+          },
+        },
+      ],
     })
       .compileComponents();
 

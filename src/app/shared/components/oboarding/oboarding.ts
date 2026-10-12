@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Auth } from '../../../core/services/auth';
 
 // Structure d'une slide d'onboarding
 interface OnboardingSlide {
@@ -17,6 +18,7 @@ interface OnboardingSlide {
 export class Oboarding implements OnInit, OnDestroy {
 
   private readonly router = inject(Router);
+  private readonly auth = inject(Auth);
 
   // 0 = Splash logo
   // 1 = Slide scanner
@@ -41,16 +43,11 @@ export class Oboarding implements OnInit, OnDestroy {
 
       if (onboardingTermine === 'true') {
 
-        const utilisateurBrut =
-          localStorage.getItem('dechetscan_user');
-
         // Utilisateur connecté
-        if (utilisateurBrut) {
+        try {
+          const utilisateur = this.auth.getCurrentUser();
 
-          try {
-
-            const utilisateur = JSON.parse(utilisateurBrut);
-
+          if (utilisateur) {
             // Admin
             if (utilisateur.role === 'admin') {
               this.router.navigate(['/admin']);
@@ -60,12 +57,9 @@ export class Oboarding implements OnInit, OnDestroy {
             // Citoyen connecté
             this.router.navigate(['/home-citoyen']);
             return;
-
-          } catch {
-
-            // Données utilisateur incorrectes
-            localStorage.removeItem('dechetscan_user');
           }
+        } catch {
+          this.auth.logout();
         }
 
         // Citoyen non connecté
@@ -120,4 +114,3 @@ export class Oboarding implements OnInit, OnDestroy {
     this.slideActif.set(index);
   }
 }
-

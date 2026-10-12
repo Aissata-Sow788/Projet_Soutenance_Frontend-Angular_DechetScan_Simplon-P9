@@ -1,9 +1,67 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
 import { RegisterPayload } from '../../../shared/models/utilisateur.model';
+
+export function formaterErreurInscription(erreur: unknown): string {
+  if (!(erreur instanceof HttpErrorResponse)) {
+    return 'Une erreur inattendue est survenue. Réessayez.';
+  }
+
+  if (erreur.status === 504) {
+    return 'Le serveur a mis trop de temps à répondre. Vérifiez votre connexion puis réessayez. Si le compte a peut-être été créé, essayez d’abord de vous connecter.';
+  }
+  if (erreur.status === 0) {
+    return 'Impossible de joindre le serveur. Vérifiez votre connexion puis réessayez.';
+  }
+
+  const donnees = erreur.error;
+  if (!donnees || typeof donnees !== 'object' || Array.isArray(donnees)) {
+    return typeof donnees === 'string' && donnees
+      ? donnees
+      : 'L’inscription a échoué. Vérifiez les informations saisies puis réessayez.';
+  }
+
+  const erreurs = donnees as Record<string, unknown>;
+  const messages = Object.entries(erreurs).flatMap(([champ, valeur]) => {
+    const valeurs = Array.isArray(valeur) ? valeur : [valeur];
+    const texte = valeurs
+      .filter((element): element is string => typeof element === 'string')
+      .join(' ')
+      .toLowerCase();
+
+    if (champ === 'email') {
+      return [texte.includes('already exists') || texte.includes('déjà')
+        ? 'Cette adresse e-mail est déjà utilisée.'
+        : 'Vérifiez votre adresse e-mail.'];
+    }
+    if (champ === 'telephone') {
+      return [texte.includes('already exists') || texte.includes('déjà')
+        ? 'Ce numéro de téléphone est déjà associé à un compte.'
+        : 'Vérifiez votre numéro de téléphone.'];
+    }
+    if (champ === 'password' || champ === 'password2') {
+      return [texte.includes('do not match') || texte.includes('ne correspondent')
+        ? 'Les mots de passe ne correspondent pas.'
+        : 'Le mot de passe ne respecte pas les conditions requises.'];
+    }
+    if (champ === 'first_name' || champ === 'last_name' || champ === 'ville') {
+      return ['Vérifiez que tous les champs obligatoires sont remplis.'];
+    }
+    if (champ === 'non_field_errors' || champ === 'detail') {
+      return valeurs.filter((element): element is string => typeof element === 'string');
+    }
+
+    return valeurs.filter((element): element is string => typeof element === 'string');
+  });
+
+  return messages.length > 0
+    ? [...new Set(messages)].join(' ')
+    : 'L’inscription a échoué. Vérifiez les informations saisies puis réessayez.';
+}
 
 
 @Component({
@@ -178,8 +236,7 @@ const payload: RegisterPayload = {
       // Erreur lors de l'inscription
       error: (err) => {
         this.chargement = false;
-        this.erreurServeur =
-          err.message ?? 'Une erreur est survenue.';
+        this.erreurServeur = formaterErreurInscription(err);
       }
     });
   }
