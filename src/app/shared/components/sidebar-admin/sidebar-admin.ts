@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
-import { Router } from '@angular/router';
 
 @Component({
   imports: [RouterLink, RouterLinkActive],
@@ -9,18 +9,114 @@ import { Router } from '@angular/router';
   styleUrl: './sidebar-admin.css',
   templateUrl: './sidebar-admin.html',
 })
-export class SidebarAdmin {
+export class SidebarAdmin implements OnInit {
 
-  private readonly auth = inject(Auth)
-  private readonly router = inject(Router)
+  private readonly auth = inject(Auth);
+  private readonly router = inject(Router);
 
-    // Déconnecte l'utilisateur.
+  // Informations affichées dans le profil administrateur.
+  interfaceProfil = {
+    nom: '',
+    prenom: '',
+    email: '',
+    username: ''
+  };
+
+  // Charge automatiquement le compte à l'ouverture de la sidebar.
+  ngOnInit(): void {
+    this.chargerProfilConnecte();
+  }
+
+  // Lit les informations enregistrées après la connexion.
+  chargerProfilConnecte(): void {
+    try {
+      const donnees = localStorage.getItem('dechetscan_user');
+
+      if (!donnees) {
+        console.warn(
+          'Aucun utilisateur trouvé dans localStorage : dechetscan_user'
+        );
+        return;
+      }
+
+      const resultat: unknown = JSON.parse(donnees);
+
+      // Vérifie que les données récupérées sont un objet.
+      if (
+        resultat === null ||
+        typeof resultat !== 'object' ||
+        Array.isArray(resultat)
+      ) {
+        console.error('Les données utilisateur sont invalides.');
+        return;
+      }
+
+      const donneesUtilisateur = resultat as Record<string, unknown>;
+
+      // Certains services stockent les informations sous "user".
+      const utilisateur =
+        donneesUtilisateur['user'] &&
+        typeof donneesUtilisateur['user'] === 'object'
+          ? donneesUtilisateur['user'] as Record<string, unknown>
+          : donneesUtilisateur;
+
+      // Accepte les noms de champs courants du frontend et de Django.
+      this.interfaceProfil = {
+        nom: this.lireTexte(
+          utilisateur['nom'] ?? utilisateur['last_name'] ?? utilisateur['nomUtilisateur']
+        ),
+        prenom: this.lireTexte(
+          utilisateur['prenom'] ?? utilisateur['first_name']
+        ),
+        email: this.lireTexte(utilisateur['email']),
+        username: this.lireTexte(
+          utilisateur['username'] ?? utilisateur['identifiant']
+        )
+      };
+
+      // À vérifier dans la console si les informations restent vides.
+      console.log('Profil chargé :', this.interfaceProfil);
+
+    } catch (erreur) {
+      console.error(
+        'Erreur lors du chargement du profil administrateur :',
+        erreur
+      );
+    }
+  }
+
+  // Évite d'afficher des valeurs qui ne sont pas des chaînes de caractères.
+  private lireTexte(valeur: unknown): string {
+    return typeof valeur === 'string' ? valeur.trim() : '';
+  }
+
+  // Construit le nom complet à afficher.
+  get nomCompletAdmin(): string {
+    const nomComplet = [
+      this.interfaceProfil.prenom,
+      this.interfaceProfil.nom
+    ].filter(Boolean).join(' ');
+
+    return nomComplet ||
+      this.interfaceProfil.username ||
+      this.interfaceProfil.email ||
+      'Administrateur';
+  }
+
+  // Génère les initiales du compte connecté.
+  get initialesAdmin(): string {
+    return this.nomCompletAdmin
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(partie => partie.charAt(0))
+      .join('')
+      .toUpperCase();
+  }
+
+  // Déconnecte l'utilisateur et retourne à la connexion admin.
   deconnecter(): void {
-
-    // Supprime les informations d'authentification.
     this.auth.logout();
-
-    // Redirige vers la page de connexion.
-    this.router.navigate(['/connexion-admin']);
+    void this.router.navigate(['/connexion-admin']);
   }
 }

@@ -1,122 +1,172 @@
-<div class="min-h-screen bg-[#F5F7FA] px-4 pb-16 pt-6 lg:px-8">
+
+<!-- Page des notifications du collecteur -->
+<div class="min-h-screen bg-[#F5F7FA] px-3 pb-16 pt-5 text-[#142337] sm:px-4 sm:pt-6 lg:px-8">
   <div class="mx-auto max-w-[1100px]">
-    <div class="mb-6 flex items-center justify-between gap-4">
-      <h1 class="text-[28px] font-extrabold tracking-tight text-[#142337]">Notifications</h1>
 
-      <div class="flex items-center gap-3">
-        <button
-          type="button"
-          aria-label="Notifications"
-          class="flex h-10 w-10 items-center justify-center rounded-full border border-[#E4E4E4] bg-white text-[#4d5c66] shadow-sm"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
-            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-            <path d="M10 21h4"></path>
-          </svg>
-        </button>
-
-        <div class="flex items-center gap-3 rounded-full border border-[#E3E7EA] bg-white px-3 py-2 shadow-sm">
-          <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[#0D273E]">Collecteur Agréé</span>
-          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[#11AAA9] text-[11px] font-bold text-white">MD</span>
-        </div>
-      </div>
+    <!-- En-tête -->
+    <div class="mb-6 flex items-center justify-between gap-3">
+      <h1 class="text-2xl font-extrabold tracking-tight sm:text-[28px]">
+        Notifications
+      </h1>
     </div>
 
+    <!-- Filtres des notifications -->
     <div class="mb-6 flex flex-wrap gap-2 rounded-2xl border border-[#E5E7EB] bg-[#F1F3F4] p-2 shadow-sm">
       <button
         type="button"
         (click)="changerOnglet('toutes')"
-        class="rounded-full px-4 py-2 text-sm font-semibold transition"
         [ngClass]="badgeActif('toutes')"
+        class="rounded-full px-4 py-2 text-sm font-semibold transition"
       >
         Toutes
       </button>
+
       <button
         type="button"
         (click)="changerOnglet('non-lues')"
-        class="rounded-full px-4 py-2 text-sm font-semibold transition"
         [ngClass]="badgeActif('non-lues')"
+        class="rounded-full px-4 py-2 text-sm font-semibold transition"
       >
         Non lues
       </button>
+
       <button
         type="button"
         (click)="changerOnglet('collectes')"
-        class="rounded-full px-4 py-2 text-sm font-semibold transition"
         [ngClass]="badgeActif('collectes')"
+        class="rounded-full px-4 py-2 text-sm font-semibold transition"
       >
         Collectes
       </button>
+
       <button
         type="button"
         (click)="changerOnglet('paiements')"
-        class="rounded-full px-4 py-2 text-sm font-semibold transition"
         [ngClass]="badgeActif('paiements')"
+        class="rounded-full px-4 py-2 text-sm font-semibold transition"
       >
         Paiements
       </button>
     </div>
 
+    <!-- Paramètres des notifications push -->
     <app-push-notifications />
 
+    <!-- Action : marquer toutes les notifications comme lues -->
     <div class="mb-5 flex justify-end">
       <button
         type="button"
-        class="inline-flex items-center gap-2 rounded-full border border-[#D8E2E6] bg-white px-4 py-2 text-sm font-semibold text-[#1F2A34] shadow-sm"
+        (click)="marquerToutesCommeLues()"
+        [disabled]="notifications().every(notification => notification.lu)"
+        class="inline-flex items-center gap-2 rounded-full border border-[#D8E2E6] bg-white px-4 py-2 text-sm font-semibold text-[#1F2A34] shadow-sm transition hover:bg-[#F0FAFA] disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-[#11AAA9]">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4 text-[#11AAA9]"
+          aria-hidden="true"
+        >
           <path d="M4 12l4 4L16 8"></path>
           <path d="M9 12l4 4L21 8"></path>
         </svg>
+
         Tout marquer comme lu
       </button>
     </div>
 
+    <!-- Chargement -->
     @if (chargement()) {
-      <div class="rounded-2xl border border-[#E7ECF0] bg-white p-12 text-center text-sm text-slate-500 shadow-sm">
+      <div class="rounded-2xl border border-[#E7ECF0] bg-white p-8 text-center text-sm text-slate-500 shadow-sm sm:p-12">
         Chargement des notifications…
       </div>
-    } @else if (erreur()) {
-      <div class="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700 shadow-sm">
+    }
+
+    <!-- Erreur -->
+    @else if (erreur()) {
+      <div class="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 shadow-sm">
         {{ erreur() }}
       </div>
-    } @else {
-      <div class="space-y-4">
+    }
+
+    <!-- Liste des notifications -->
+    @else {
+      <div class="space-y-3 sm:space-y-4">
+
         @for (notification of notificationsFiltrees(); track notification.idNotification) {
-          <div class="flex items-center gap-3 rounded-2xl border border-[#E7EAED] bg-white p-4 shadow-sm transition hover:shadow-md">
-            <div class="relative flex h-12 w-12 items-center justify-center rounded-full border border-[#E7EAED] bg-[#F7FAFB]">
-              <span class="absolute left-0 top-1/2 h-7 w-1 -translate-y-1/2 rounded-r-full bg-[#11AAA9]"></span>
-              <span [ngClass]="couleurBadge(notification)" class="flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-bold">
+          <div
+            role="button"
+            tabindex="0"
+            (click)="marquerCommeLue(notification)"
+            (keydown.enter)="marquerCommeLue(notification)"
+            (keydown.space)="$event.preventDefault(); marquerCommeLue(notification)"
+            [attr.aria-label]="notification.titre + (notification.lu ? ', déjà lue' : ', marquer comme lue')"
+            class="flex cursor-pointer items-start gap-3 rounded-2xl border bg-white p-3 shadow-sm transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#11AAA9] sm:items-center sm:p-4"
+            [ngClass]="notification.lu ? 'border-[#E7EAED]' : 'border-[#BDE9E7] bg-[#FCFFFF]'"
+          >
+
+            <!-- Icône de notification -->
+            <div class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#E7EAED] bg-[#F7FAFB] sm:h-12 sm:w-12">
+
+              <!-- Barre turquoise visible pour les notifications non lues -->
+              @if (!notification.lu) {
+                <span class="absolute left-0 top-1/2 h-7 w-1 -translate-y-1/2 rounded-r-full bg-[#11AAA9]"></span>
+              }
+
+              <span
+                [ngClass]="couleurBadge(notification)"
+                class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold"
+              >
                 {{ iconeNotification(notification) }}
               </span>
             </div>
 
+            <!-- Contenu -->
             <div class="min-w-0 flex-1">
-              <div class="mb-1 flex items-center gap-2">
-                <h2 class="text-[15px] font-bold text-[#142337]">{{ notification.titre }}</h2>
+              <div class="mb-1 flex flex-wrap items-center gap-2">
+                <h2 class="text-sm font-bold text-[#142337] sm:text-[15px]">
+                  {{ notification.titre }}
+                </h2>
+
+                <!-- Point turquoise : uniquement si la notification est non lue -->
                 @if (!notification.lu) {
-                  <span class="h-2.5 w-2.5 rounded-full bg-[#11AAA9]"></span>
+                  <span
+                    class="h-2.5 w-2.5 shrink-0 rounded-full bg-[#11AAA9]"
+                    aria-label="Non lue"
+                  ></span>
                 }
               </div>
-              <p class="text-[14px] leading-6 text-[#495A63]">{{ notification.message }}</p>
+
+              <p class="text-[13px] leading-5 text-[#495A63] sm:text-sm sm:leading-6">
+                {{ notification.message }}
+              </p>
+
+              <!-- Date affichée sur mobile -->
+              <p class="mt-2 text-xs font-medium text-[#647079] sm:hidden">
+                {{ formatterTemps(notification.dateEnvoi) }}
+              </p>
             </div>
 
-            <div class="shrink-0 text-right text-[12px] font-medium text-[#647079]">
+            <!-- Date affichée sur écran plus large -->
+            <div class="hidden shrink-0 text-right text-xs font-medium text-[#647079] sm:block">
               {{ formatterTemps(notification.dateEnvoi) }}
             </div>
+
+          </div>
+        } @empty {
+          <div class="rounded-2xl border border-[#E7ECF0] bg-white px-5 py-10 text-center shadow-sm">
+            <p class="text-sm font-semibold text-[#45565E]">
+              Aucune notification dans cet onglet.
+            </p>
           </div>
         }
+
       </div>
     }
 
-    <div class="mt-8 flex justify-end">
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 rounded-full border border-[#D8E2E6] bg-white px-4 py-2.5 text-sm font-semibold text-[#1F2A34] shadow-sm"
-      >
-        <span class="flex h-4 w-4 items-center justify-center rounded-full border border-[#11AAA9] text-[10px] text-[#11AAA9]">i</span>
-        Signaler un problème
-      </button>
-    </div>
   </div>
 </div>
+

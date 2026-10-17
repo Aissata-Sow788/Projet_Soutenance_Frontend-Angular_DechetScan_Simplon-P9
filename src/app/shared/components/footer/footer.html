@@ -1,0 +1,39 @@
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- Marque -->
+    <div class="footer-brand">
+      <img src="/assets/logo-dechetscan.png" alt="DechetScan" class="footer-logo" />
+      <p class="footer-text">
+        Scannez, triez, recyclez : identifiez vos déchets et trouvez où les déposer.
+      </p>
+    </div>
+
+    <!-- Découvrir -->
+    <nav class="footer-column" aria-label="Découvrir">
+      <h2>Découvrir</h2>
+      <ul>
+        @for (lien of navigation; track lien.route) {
+          <li><a [routerLink]="lien.route">{{ lien.label }}</a></li>
+        }
+      </ul>
+    </nav>
+
+    <!-- Mon espace -->
+    <nav class="footer-column" aria-label="Mon espace">
+      <h2>Mon espace</h2>
+      <ul>
+        @for (lien of espace; track lien.route) {
+          <li><a [routerLink]="lien.route">{{ lien.label }}</a></li>
+        }
+      </ul>
+    </nav>
+
+  </div>
+
+  <!-- Bas de page -->
+  <div class="footer-bottom">
+    <p>© {{ annee }} DechetScan · Dakar, Sénégal</p>
+    <p class="footer-signature">Chaque déchet a son avenir.</p>
+  </div>
+</footer>

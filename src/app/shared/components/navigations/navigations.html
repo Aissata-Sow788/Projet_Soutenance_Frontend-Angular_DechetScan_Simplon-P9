@@ -1,0 +1,78 @@
+<!-- ================================================================
+     NAVBAR DESKTOP — sticky, masquée sur mobile
+     ================================================================ -->
+<nav class="sticky top-0 z-40 hidden border-b border-slate-200/80
+            bg-white/95 backdrop-blur-xl lg:block">
+  <div class="mx-auto flex h-[68px] max-w-[1280px] items-center
+              justify-between px-8">
+
+    <!-- Logo -->
+    <a routerLink="/home-citoyen" class="flex items-center gap-2.5">
+   <img src="/assets/logo1-dechetscan.png" alt="DechetScan" class="h-40 w-auto object-contain" />
+    </a>
+
+    <!-- Liens -->
+    <div class="flex items-center gap-8 text-[14px] font-semibold text-[#475569]">
+      <a routerLink="/home-citoyen"
+         class="border-b-2 border-[#0EA5A4] pb-0.5 text-[#0EA5A4]">
+        Accueil
+      </a>
+      <a routerLink="/scan" class="hover:text-[#0EA5A4] transition-colors">
+        Scanner
+      </a>
+      <a routerLink="/points-collecte" class="hover:text-[#0EA5A4] transition-colors">
+        Points de collecte
+      </a>
+      <a routerLink="/historique" class="hover:text-[#0EA5A4] transition-colors">
+        Historique
+      </a>
+    </div>
+
+    <!-- Actions droite -->
+    <div class="flex items-center gap-3">
+      <!-- Notifications -->
+
+<!-- Cloche -->
+      <button
+        type="button"
+        routerLink="/notification"
+        aria-label="Notifications"
+        class="relative mt-2 flex h-10 w-10 items-center justify-center text-[#4C5759] transition hover:bg-slate-200/50 rounded-full"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-6 w-6"
+        >
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+          <path d="M10 21h4"></path>
+        </svg>
+
+        <!-- Indicateur de notification non lue (s'affiche si nombreNonLues() est supérieur à 0) -->
+        @if (nombreNonLues() > 0) {
+          <span
+            class="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-[#0EA5A4] ring-2 ring-white"
+          ></span>
+        }
+      </button>
+
+      <!-- Profil -->
+      <button routerLink="/profile" type="button"
+        class="flex h-9 w-9 items-center justify-center
+               rounded-full bg-[#0EA5A4] text-white
+               hover:bg-[#087C78] transition">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3"/>
+          <path d="M5 20c.8-3.5 3.1-5.5 7-5.5s6.2 2 7 5.5"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</nav>

@@ -1,8 +1,8 @@
-<div class="citizen-responsive citizen-scanner min-h-screen w-full overflow-hidden bg-[#6c8197] text-white">
+<div class="min-h-screen w-full bg-[#6c8197] text-white">
 
   <!-- HEADER -->
-  <header class="flex h-[60px] items-center bg-[#f8f9fd] px-[14px] text-[#172536]">
-    <button routerLink="/" type="button" class="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-white" aria-label="Retour">
+  <header class="flex h-[60px] items-center bg-[#f8f9fd] px-[14px] text-[#172536] lg:px-10">
+    <button routerLink="/home-citoyen" type="button" class="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full bg-white" aria-label="Retour">
       <svg class="h-[20px] w-[20px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M19 12H5"></path>
         <path d="M11 6l-6 6 6 6"></path>
@@ -11,7 +11,8 @@
     <h1 class="ml-[9px] text-[18px] font-bold">Scanner</h1>
   </header>
 
-  <main class="relative min-h-[calc(100vh-60px)] overflow-hidden">
+  <!-- Colonne centrée : pleine largeur sur mobile, 480 px max sur desktop -->
+  <main class="mx-auto w-full max-w-[480px] pb-10 lg:pt-6">
 
     <!-- BARRE SUPÉRIEURE -->
     <div class="flex items-center justify-between px-[18px] pt-[9px]">
@@ -21,7 +22,7 @@
           [class.bg-[#91f2df]]="cameraActive()"
           [class.bg-red-400]="!cameraActive()"
         ></span>
-        <span class="text-[9px] font-bold tracking-[1px] text-[#f4f6fa]">
+        <span class="text-[9px] font-bold tracking-[1px] text-[#f4f6fa] lg:text-[11px]">
           {{ cameraActive() ? 'DIRECT · VISION IA' : 'CAMÉRA INACTIVE' }}
         </span>
       </div>
@@ -30,7 +31,7 @@
         <button
           type="button"
           (click)="ouvrirGalerie()"
-          class="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white/20"
+          class="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white/20 transition hover:bg-white/30"
           aria-label="Galerie"
         >
           <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -40,7 +41,7 @@
           </svg>
         </button>
 
-        <button type="button" class="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white/20" aria-label="Historique">
+        <button type="button" class="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white/20 transition hover:bg-white/30" aria-label="Historique">
           <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M3 12a9 9 0 1 0 3-6.7"></path>
             <path d="M3 4v5h5"></path>
@@ -51,37 +52,39 @@
     </div>
 
     <!-- TITRE -->
-    <div class="px-4 pt-[32px] text-center">
-      <h2 class="text-[18px] font-bold leading-[23px]">Placez le déchet dans le cadre</h2>
-      <p class="mx-auto mt-[2px] max-w-[230px] text-[12px] leading-[16px] text-[#e0e5eb]">
+    <div class="px-4 pt-[32px] text-center lg:pt-8">
+      <h2 class="text-[18px] font-bold leading-[23px] lg:text-2xl lg:leading-8">Placez le déchet dans le cadre</h2>
+      <p class="mx-auto mt-[2px] max-w-[230px] text-[12px] leading-[16px] text-[#e0e5eb] lg:mt-1 lg:max-w-[340px] lg:text-sm lg:leading-5">
         Reconnaissance instantanée par intelligence artificielle
       </p>
     </div>
 
     <!-- MESSAGE D'ERREUR (ex: permission caméra refusée) -->
     @if (erreur()) {
-      <div class="mx-auto mt-[14px] max-w-[280px] rounded-[14px] bg-red-500/20 px-4 py-2.5 text-center text-[12px] text-red-100">
+      <div class="mx-auto mt-[14px] max-w-[280px] rounded-[14px] bg-red-500/20 px-4 py-2.5 text-center text-[12px] text-red-100 lg:max-w-[380px] lg:text-sm">
         {{ erreur() }}
       </div>
     }
 
     <!-- MESSAGE DE REMERCIEMENT après un scan réussi, connecté ou non -->
     @if (messageSucces()) {
-      <div class="mx-auto mt-[14px] max-w-[280px] rounded-[14px] bg-[#11aaa9]/25 px-4 py-2.5 text-center text-[12px] text-[#d9fff9]">
+      <div class="mx-auto mt-[14px] max-w-[280px] rounded-[14px] bg-[#11aaa9]/25 px-4 py-2.5 text-center text-[12px] text-[#d9fff9] lg:max-w-[380px] lg:text-sm">
         {{ messageSucces() }}
       </div>
     }
 
     <!-- CADRE DE SCAN -->
-    <div class="relative mx-auto mt-[28px] h-[330px] w-[calc(100%-58px)] max-w-[300px] overflow-hidden rounded-[52px] bg-gradient-to-b from-[#40536b] via-[#506a80] to-[#27374f]">
+    <div class="relative mx-auto mt-[28px] h-[330px] w-[calc(100%-58px)] max-w-[300px] overflow-hidden rounded-[52px] bg-gradient-to-b from-[#40536b] via-[#506a80] to-[#27374f] lg:h-[420px] lg:w-full lg:max-w-[400px] lg:rounded-[44px]">
 
-      <!-- Flux caméra live : toujours présent, visible tant qu'aucune photo n'est capturée -->
+      <!-- Flux caméra live : couche du fond (z-0).
+           Effet miroir uniquement pour la caméra avant. -->
       <video
         #videoElement
         autoplay
         playsinline
         muted
-        class="absolute inset-0 h-full w-full object-cover"
+        class="absolute inset-0 z-0 h-full w-full object-cover"
+        [style.transform]="modeCamera() === 'user' ? 'scaleX(-1)' : 'none'"
       ></video>
 
       <!-- Aperçu de la photo capturée/importée, par-dessus la vidéo -->
@@ -89,22 +92,23 @@
         <img
           [src]="photoApercu()"
           alt="Aperçu du déchet"
-          class="absolute inset-0 h-full w-full object-cover"
+          class="absolute inset-0 z-20 h-full w-full object-cover"
         />
       }
 
-      <div class="absolute left-1/2 top-1/2 h-[140px] w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7f9caf]/20 blur-[30px]"></div>
-      <div class="absolute left-[38px] top-[43px] h-[32px] w-[32px] rounded-tl-[3px] border-l-[3px] border-t-[3px] border-[#87f5dc]"></div>
-      <div class="absolute right-[38px] top-[43px] h-[32px] w-[32px] rounded-tr-[3px] border-r-[3px] border-t-[3px] border-[#87f5dc]"></div>
-      <div class="absolute bottom-[43px] left-[38px] h-[32px] w-[32px] rounded-bl-[3px] border-b-[3px] border-l-[3px] border-[#87f5dc]"></div>
-      <div class="absolute bottom-[43px] right-[38px] h-[32px] w-[32px] rounded-br-[3px] border-b-[3px] border-r-[3px] border-[#87f5dc]"></div>
+      <!-- Décorations : au-dessus de la vidéo, mais ne bloquent pas les clics -->
+      <div class="pointer-events-none absolute left-1/2 top-1/2 z-10 h-[140px] w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7f9caf]/20 blur-[30px]"></div>
+      <div class="pointer-events-none absolute left-[38px] top-[43px] z-10 h-[32px] w-[32px] rounded-tl-[3px] border-l-[3px] border-t-[3px] border-[#87f5dc]"></div>
+      <div class="pointer-events-none absolute right-[38px] top-[43px] z-10 h-[32px] w-[32px] rounded-tr-[3px] border-r-[3px] border-t-[3px] border-[#87f5dc]"></div>
+      <div class="pointer-events-none absolute bottom-[43px] left-[38px] z-10 h-[32px] w-[32px] rounded-bl-[3px] border-b-[3px] border-l-[3px] border-[#87f5dc]"></div>
+      <div class="pointer-events-none absolute bottom-[43px] right-[38px] z-10 h-[32px] w-[32px] rounded-br-[3px] border-b-[3px] border-r-[3px] border-[#87f5dc]"></div>
 
       <!-- Bouton bascule caméra avant/arrière, en coin du cadre -->
       @if (!photoApercu()) {
         <button
           type="button"
           (click)="basculerCamera()"
-          class="absolute right-[14px] top-[14px] flex h-[36px] w-[36px] items-center justify-center rounded-full bg-black/40 backdrop-blur-sm"
+          class="absolute right-[14px] top-[14px] z-20 flex h-[36px] w-[36px] items-center justify-center rounded-full bg-black/40"
           aria-label="Changer de caméra"
         >
           <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -116,51 +120,13 @@
       }
     </div>
 
-    <!-- MODES -->
-    <div class="mx-auto mt-[35px] flex h-[43px] w-[calc(100%-62px)] max-w-[300px] items-center justify-between rounded-full bg-[#a5b8c5]/60 px-[6px] backdrop-blur-md">
-      <button type="button" class="flex h-[33px] flex-1 items-center justify-center gap-[4px] rounded-full text-[11px] text-[#eef3f5]">
-        <svg class="h-[15px] w-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M9 3l-2 7h4l-2 11 8-13h-5l2-5z"></path>
-          <path d="M3 3l18 18"></path>
-        </svg>
-        Flash
-      </button>
-
-      <div class="h-[21px] w-px bg-white/30"></div>
-
-      <button type="button" class="flex h-[33px] flex-1 items-center justify-center gap-[4px] rounded-full bg-white/25 text-[11px] font-bold">
-        <svg class="h-[15px] w-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-          <path d="M3 5v14"></path>
-          <path d="M6 5v14"></path>
-          <path d="M9 5v14"></path>
-          <path d="M13 5v14"></path>
-          <path d="M16 5v14"></path>
-          <path d="M21 5v14"></path>
-        </svg>
-        Code-barres
-      </button>
-
-      <div class="h-[21px] w-px bg-white/30"></div>
-
-      <button type="button" class="flex h-[33px] flex-1 items-center justify-center gap-[4px] text-[11px] text-[#eef3f5]">
-        <svg class="h-[14px] w-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-          <path d="M8 3H3v5"></path>
-          <path d="M16 3h5v5"></path>
-          <path d="M8 21H3v-5"></path>
-          <path d="M16 21h5v-5"></path>
-          <circle cx="12" cy="12" r="2"></circle>
-        </svg>
-        Macro
-      </button>
-    </div>
-
     <!-- ACTIONS (galerie / capture / bascule caméra) -->
     @if (!photoApercu()) {
-      <div class="mx-auto mt-[16px] flex max-w-[210px] items-center justify-between">
+      <div class="mx-auto mt-[16px] flex max-w-[210px] items-center justify-between lg:mt-8 lg:max-w-[260px]">
         <button
           type="button"
           (click)="ouvrirGalerie()"
-          class="flex h-[48px] w-[48px] items-center justify-center rounded-full bg-[#a5b7c4]/65 text-white"
+          class="flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-full bg-[#a5b7c4]/65 text-white transition hover:bg-[#a5b7c4]/90"
           aria-label="Importer une image"
         >
           <svg class="h-[20px] w-[20px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -177,17 +143,17 @@
           type="button"
           (click)="prendrePhoto()"
           [disabled]="!cameraActive()"
-          class="relative flex h-[72px] w-[72px] items-center justify-center rounded-full border-[6px] border-[#a5b9c7]/70 bg-[#11aaa9] disabled:opacity-50"
+          class="relative flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full border-[6px] border-[#a5b9c7]/70 bg-[#11aaa9] transition hover:bg-[#0e9594] disabled:opacity-50"
           aria-label="Prendre une photo"
         >
-          <div class="absolute inset-[-7px] rounded-full border-[2px] border-white/10"></div>
+          <div class="pointer-events-none absolute inset-[-7px] rounded-full border-[2px] border-white/10"></div>
           <svg class="h-[25px] w-[25px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 7h3l1.5-2h7L17 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
         </button>
 
-        <button type="button" (click)="basculerCamera()" class="flex h-[48px] w-[48px] items-center justify-center rounded-full bg-[#a5b7c4]/65 text-white" aria-label="Changer de caméra">
+        <button type="button" (click)="basculerCamera()" class="flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-full bg-[#a5b7c4]/65 text-white transition hover:bg-[#a5b7c4]/90" aria-label="Changer de caméra">
           <svg class="h-[20px] w-[20px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 4v5h-5"></path>
             <path d="M4 20v-5h5"></path>
@@ -199,11 +165,11 @@
 
     <!-- BOUTONS REPRENDRE / ANALYSER -->
     @if (photoApercu()) {
-      <div class="mx-auto mt-[16px] flex max-w-[210px] items-center justify-between gap-3">
+      <div class="mx-auto mt-[16px] flex max-w-[210px] items-center justify-between gap-3 lg:mt-8 lg:max-w-[320px]">
         <button
           type="button"
           (click)="reprendrePhoto()"
-          class="flex-1 rounded-full bg-white/20 py-3 text-[13px] font-semibold"
+          class="flex-1 rounded-full bg-white/20 py-3 text-[13px] font-semibold transition hover:bg-white/30"
         >
           Reprendre
         </button>
@@ -211,7 +177,7 @@
           type="button"
           (click)="envoyerAuScan()"
           [disabled]="analyseEnCours()"
-          class="flex-1 rounded-full bg-[#11aaa9] py-3 text-[13px] font-semibold disabled:opacity-60"
+          class="flex-1 rounded-full bg-[#11aaa9] py-3 text-[13px] font-semibold transition hover:bg-[#0e9594] disabled:opacity-60"
         >
           {{ analyseEnCours() ? 'Analyse...' : 'Analyser' }}
         </button>

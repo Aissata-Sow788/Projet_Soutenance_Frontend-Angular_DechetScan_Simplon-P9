@@ -1,13 +1,29 @@
-<div class="cart-page citizen-responsive">
-  <header class="cart-header">
-    <button type="button" class="back-button" (click)="retour()" aria-label="Retour">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"/></svg>
-    </button>
-    <h1>Mes paniers de déchets</h1>
-    <span class="header-basket" aria-hidden="true">♧</span>
+<div class="cart-page citizen-responsive flex min-h-screen flex-col lg:!pb-0">
+
+  <!-- NAVIGATION DESKTOP : visible uniquement sur grand écran -->
+  <div class="hidden lg:block">
+    <app-navigations></app-navigations>
+  </div>
+
+
+      <!-- EN-TÊTE MOBILE : masqué sur desktop -->
+  <header class="landing-header">
+    <a routerLink="/home-citoyen" class="landing-brand">
+      <img src="/assets/logo1-dechetscan.png" alt="DechetScan" />
+    </a>
+    <a routerLink="/notification" class="landing-notifications" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+        <path d="M10 21h4" />
+      </svg>
+    </a>
   </header>
 
+
   <main class="cart-content">
+
+    <!-- Titre desktop -->
+    <h1 class="hidden text-3xl font-extrabold tracking-tight lg:block">Mes paniers de déchets</h1>
     <p class="cart-intro">Retrouvez ici les déchets que vous avez sélectionnés lors de vos scans.</p>
 
     @if (chargement()) {
@@ -34,80 +50,88 @@
         </button>
       </section>
     } @else {
-      <section class="summary-card">
-        <div class="summary-heading">
-          <div>
-            <h2><span aria-hidden="true">🧺</span> Mon panier</h2>
-            <p>{{ nombreObjetsTotal }} déchet{{ nombreObjetsTotal === 1 ? '' : 's' }} au total</p>
-          </div>
-          <div class="updated-at">
-            <span>Dernière mise à jour</span>
-            <strong>{{ derniereMiseAJourTexte }}</strong>
-          </div>
-        </div>
-        <div class="category-summary">
-          @for (panier of paniersRemplis; track panier.idPanier) {
-            <div class="category-count">
-              <span>{{ panier.typeDechet.nom }}</span>
-              <strong>{{ panier.nombreDisponible }}</strong>
+
+      <!-- Mobile : une colonne. Desktop : liste à gauche, résumé et actions à droite -->
+      <div class="cart-layout">
+
+        <section class="summary-card">
+          <div class="summary-heading">
+            <div>
+              <h2><span aria-hidden="true">🧺</span> Mon panier</h2>
+              <p>{{ nombreObjetsTotal }} déchet{{ nombreObjetsTotal === 1 ? '' : 's' }} au total</p>
             </div>
+            <div class="updated-at">
+              <span>Dernière mise à jour</span>
+              <strong>{{ derniereMiseAJourTexte }}</strong>
+            </div>
+          </div>
+          <div class="category-summary">
+            @for (panier of paniersRemplis; track panier.idPanier) {
+              <div class="category-count">
+                <span>{{ panier.typeDechet.nom }}</span>
+                <strong>{{ panier.nombreDisponible }}</strong>
+              </div>
+            }
+          </div>
+          <button type="button" class="clear-link" (click)="ouvrirConfirmationVider()">Vider mon panier</button>
+        </section>
+
+        <!-- Liste des catégories -->
+        <div class="cart-list">
+          @for (panier of paniersRemplis; track panier.idPanier) {
+            <article class="waste-card">
+              <div class="waste-heading">
+                <span class="waste-icon" [ngClass]="getCouleurCategorie(panier.typeDechet.nom)" aria-hidden="true">
+                  @if (getCouleurCategorie(panier.typeDechet.nom) === 'category-plastic') {
+                    <svg viewBox="0 0 24 24"><path d="M9 3h6m-5 0v3l-2 2v11h8V8l-2-2V3m-5 7h6"/></svg>
+                  } @else if (getCouleurCategorie(panier.typeDechet.nom) === 'category-metal') {
+                    <svg viewBox="0 0 24 24"><path d="M8 5h8v3l2 2v10H6V10l2-2V5Zm0 5h8m-7-8h6"/></svg>
+                  } @else if (getCouleurCategorie(panier.typeDechet.nom) === 'category-paper') {
+                    <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM3 4h18v3H3zm5 7h8"/></svg>
+                  } @else {
+                    <svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Zm5 10v6m-4 0h8M9 7h6"/></svg>
+                  }
+                </span>
+                <div class="waste-title">
+                  <h2>{{ panier.typeDechet.nom }}</h2>
+                  <span class="category-label" [ngClass]="getCouleurCategorie(panier.typeDechet.nom)">
+                    {{ panier.typeDechet.nom }}
+                  </span>
+                </div>
+              </div>
+              <div class="waste-controls">
+                <div class="quantity-control" [attr.aria-label]="'Quantité de ' + panier.typeDechet.nom">
+                  <button type="button" (click)="modifierNombreObjets(panier, -1)"
+                    [disabled]="panierEnCours() !== null || panier.nombreDisponible <= 0"
+                    [attr.aria-label]="'Diminuer ' + panier.typeDechet.nom">−</button>
+                  <strong>{{ panier.nombreDisponible }}</strong>
+                  <button type="button" (click)="modifierNombreObjets(panier, 1)"
+                    [disabled]="panierEnCours() !== null"
+                    [attr.aria-label]="'Augmenter ' + panier.typeDechet.nom">+</button>
+                  <small>objet{{ panier.nombreDisponible === 1 ? '' : 's' }}</small>
+                </div>
+                <button type="button" class="remove-button" (click)="retirer(panier)" [disabled]="panierEnCours() !== null">
+                  {{ panierEnCours() === panier.idPanier ? 'En cours…' : 'Retirer' }}
+                </button>
+              </div>
+            </article>
           }
         </div>
-        <button type="button" class="clear-link" (click)="ouvrirConfirmationVider()">Vider mon panier</button>
-      </section>
 
-      @for (panier of paniersRemplis; track panier.idPanier) {
-        <article class="waste-card">
-          <div class="waste-heading">
-            <span class="waste-icon" [ngClass]="getCouleurCategorie(panier.typeDechet.nom)" aria-hidden="true">
-              @if (getCouleurCategorie(panier.typeDechet.nom) === 'category-plastic') {
-                <svg viewBox="0 0 24 24"><path d="M9 3h6m-5 0v3l-2 2v11h8V8l-2-2V3m-5 7h6"/></svg>
-              } @else if (getCouleurCategorie(panier.typeDechet.nom) === 'category-metal') {
-                <svg viewBox="0 0 24 24"><path d="M8 5h8v3l2 2v10H6V10l2-2V5Zm0 5h8m-7-8h6"/></svg>
-              } @else if (getCouleurCategorie(panier.typeDechet.nom) === 'category-paper') {
-                <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM3 4h18v3H3zm5 7h8"/></svg>
-              } @else {
-                <svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Zm5 10v6m-4 0h8M9 7h6"/></svg>
-              }
-            </span>
-            <div class="waste-title">
-              <h2>{{ panier.typeDechet.nom }}</h2>
-              <span class="category-label" [ngClass]="getCouleurCategorie(panier.typeDechet.nom)">
-                {{ panier.typeDechet.nom }}
-              </span>
-            </div>
-          </div>
-          <div class="waste-controls">
-            <div class="quantity-control" [attr.aria-label]="'Quantité de ' + panier.typeDechet.nom">
-              <button type="button" (click)="modifierNombreObjets(panier, -1)"
-                [disabled]="panierEnCours() !== null || panier.nombreDisponible <= 0"
-                [attr.aria-label]="'Diminuer ' + panier.typeDechet.nom">−</button>
-              <strong>{{ panier.nombreDisponible }}</strong>
-              <button type="button" (click)="modifierNombreObjets(panier, 1)"
-                [disabled]="panierEnCours() !== null"
-                [attr.aria-label]="'Augmenter ' + panier.typeDechet.nom">+</button>
-              <small>objet{{ panier.nombreDisponible === 1 ? '' : 's' }}</small>
-            </div>
-            <button type="button" class="remove-button" (click)="retirer(panier)" [disabled]="panierEnCours() !== null">
-              {{ panierEnCours() === panier.idPanier ? 'En cours…' : 'Retirer' }}
-            </button>
-          </div>
-        </article>
-      }
+        <section class="total-card">
+          <h2>Résumé</h2>
+          <p><span>Total des déchets</span><strong>{{ nombreObjetsTotal }} objet{{ nombreObjetsTotal === 1 ? '' : 's' }}</strong></p>
+          <p><span>Catégories</span><strong>{{ nombreCategories }} {{ nombreCategories === 1 ? 'catégorie' : 'catégories' }}</strong></p>
+        </section>
 
-      <section class="total-card">
-        <h2>Résumé</h2>
-        <p><span>Total des déchets</span><strong>{{ nombreObjetsTotal }} objet{{ nombreObjetsTotal === 1 ? '' : 's' }}</strong></p>
-        <p><span>Catégories</span><strong>{{ nombreCategories }} {{ nombreCategories === 1 ? 'catégorie' : 'catégories' }}</strong></p>
-      </section>
-
-      <button type="button" class="primary-button collection-button" (click)="demanderCollecte()">
-        <strong><span aria-hidden="true">♧</span> Demander une collecte</strong>
-        <small>Un collecteur pourra récupérer vos déchets selon votre zone et les types de déchets acceptés.</small>
-      </button>
-      <button type="button" class="points-button" (click)="voirPointsCollecte()">
-        <span aria-hidden="true">➤</span> Voir les points de collecte
-      </button>
+        <button type="button" class="primary-button collection-button" (click)="demanderCollecte()">
+          <strong><span aria-hidden="true">♧</span> Demander une collecte</strong>
+          <small>Un collecteur pourra récupérer vos déchets selon votre zone et les types de déchets acceptés.</small>
+        </button>
+        <button type="button" class="points-button" (click)="voirPointsCollecte()">
+          <span aria-hidden="true">➤</span> Voir les points de collecte
+        </button>
+      </div>
     }
 
     @if (erreur() && paniers().length > 0) {
@@ -115,7 +139,15 @@
     }
   </main>
 
-  <app-barre-navigations />
+  <!-- BARRE DU BAS : mobile uniquement -->
+  <div class="lg:hidden">
+    <app-barre-navigations />
+  </div>
+
+  <!-- FOOTER : desktop uniquement -->
+  <div class="hidden lg:block">
+    <app-footer></app-footer>
+  </div>
 
   @if (confirmationVider()) {
     <div class="confirm-backdrop" (click)="fermerConfirmationVider()">

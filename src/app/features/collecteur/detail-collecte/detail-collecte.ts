@@ -5,6 +5,7 @@ import { CollecteService } from '../../../core/services/collecte';
 import { DemandeCollecteService } from '../../../core/services/demande-collecte';
 import { Collecte } from '../../../shared/models/collecte.model';
 import { DemandeCollecte } from '../../../shared/models/demande-collecte.model';
+import * as L from 'leaflet';
 
 /**
  * Affiche et met à jour une collecte.
@@ -24,6 +25,8 @@ export class DetailCollecte implements OnInit {
   private readonly collecteService = inject(CollecteService);
   private readonly demandeService = inject(DemandeCollecteService);
 
+
+
   // État de l'écran : chargement, messages, action en cours et données affichées.
   chargement = signal(true);
   erreur = signal<string | null>(null);
@@ -39,6 +42,8 @@ export class DetailCollecte implements OnInit {
     const statut = this.collecteOperation()?.statut ?? this.demande()?.statut;
     return statut ? this.normaliserStatut(statut) : '';
   });
+
+  
 
   /**
    * Lit l'identifiant dans l'URL puis charge la bonne ressource.

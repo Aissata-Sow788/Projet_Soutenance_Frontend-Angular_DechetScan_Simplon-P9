@@ -1,236 +1,143 @@
-// Importe les outils Angular nécessaires au composant.
+// Outils Angular nécessaires au composant.
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { RouterLink } from '@angular/router';
-// Importe le service et le modèle des points de collecte.
+import { Router, RouterLink } from '@angular/router';
+// Service et modèle des points de collecte.
 import { PointCollecteService } from '../../core/services/point-collecte';
 import { PointCollecte } from '../../shared/models/point-collecte.model';
 import { BarreNavigations } from '../../shared/components/barre-navigations/barre-navigations';
+import { Navigations } from '../../shared/components/navigations/navigations';
+import { Footer } from '../../shared/components/footer/footer';
 
-// Point de collecte enrichi avec sa distance et son icône calculée pour l'affichage
+// Point enrichi avec sa distance et son icône (calculées pour l'affichage).
 interface PointAvecDistance extends PointCollecte {
   distanceKm: number;
   icone: 'recyclage' | 'poubelle' | 'ecran' | 'maison';
 }
+
 @Component({
-  imports: [CommonModule, BarreNavigations, RouterLink], // Modules utilisés dans le HTML.
-  selector: 'app-points-collecte', // Nom du composant.
-  styleUrl: './points-collecte.css', // Fichier CSS.
-  templateUrl: './points-collecte.html', // Fichier HTML.
+  imports: [CommonModule, BarreNavigations, RouterLink, Navigations, Footer],
+  selector: 'app-points-collecte',
+  styleUrl: './points-collecte.css',
+  templateUrl: './points-collecte.html',
 })
 export class PointsCollecte implements OnInit {
-
-  // Injection du service responsable des appels API
-  // liés aux points de collecte.
+  // Service d'appel à l'API et Router pour la navigation.
   private pointCollecteService = inject(PointCollecteService);
-
-  // Injection du Router pour naviguer vers la page de détail
-  // d'un point de collecte.
   private router = inject(Router);
 
-
-  // Indique si les données sont encore en cours de chargement.
-  // true au démarrage signifie que l'API est en train d'être appelée.
+  // true tant que l'API n'a pas répondu.
   chargement = signal(true);
 
-  // Contient un éventuel message d'erreur lié à la géolocalisation.
-  // null signifie qu'aucune erreur n'est présente.
+  // Message d'erreur de géolocalisation (null = aucune erreur).
   erreurGeoloc = signal<string | null>(null);
 
-  // Stocke la position actuelle de l'utilisateur.
-  // La valeur est null tant que la position n'est pas disponible.
-  positionUtilisateur = signal<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  // Position de l'utilisateur (null tant qu'elle est inconnue).
+  positionUtilisateur = signal<{ lat: number; lng: number } | null>(null);
 
-  // Contient la liste des points de collecte récupérés depuis l'API.
+  // Points récupérés depuis l'API.
   points = signal<PointCollecte[]>([]);
 
+  // Texte saisi dans la barre de recherche.
+  recherche = signal('');
 
-  // Liste calculée automatiquement à partir des points récupérés.
-  // Chaque point reçoit une icône et éventuellement une distance.
+  // Liste finale : filtrée par la recherche, avec icône, distance et tri.
   pointsTries = computed<PointAvecDistance[]>(() => {
-
-    // Récupère la position actuelle de l'utilisateur.
     const position = this.positionUtilisateur();
+    const terme = this.normaliser(this.recherche());
 
-    // Récupère la liste actuelle des points de collecte.
-    const liste = this.points();
+    // 1. Filtre : garde les points dont le nom, l'adresse,
+    //    le quartier ou un type de déchet contient le terme.
+    const filtres = this.points().filter(p => {
+      if (!terme) return true;
+      const champs = [
+        p.nom,
+        (p as any).adresse ?? '',
+        (p as any).quartier ?? '',
+        ...p.dechetsAcceptes.map(d => d.nom),
+      ];
+      return champs.some(c => this.normaliser(c ?? '').includes(terme));
+    });
 
+    // 2. Ajoute l'icône à chaque point.
+    const avecIcone = filtres.map(p => ({ ...p, icone: this.determinerIcone(p) }));
 
-    // Ajoute une icône à chaque point de collecte.
-    // L'icône est déterminée à partir des déchets acceptés.
-    const avecIcone = liste.map(p => ({
-      ...p,
-      icone: this.determinerIcone(p)
-    }));
-
-
-    // Si la position de l'utilisateur n'est pas encore disponible,
-    // on retourne les points sans calculer leur véritable distance.
+    // 3. Sans position : distance à 0, pas de tri.
     if (!position) {
-      return avecIcone.map(p => ({
-        ...p,
-        distanceKm: 0
-      }));
+      return avecIcone.map(p => ({ ...p, distanceKm: 0 }));
     }
 
-
-    // Lorsque la position est disponible :
-    // 1. calcule la distance pour chaque point ;
-    // 2. ajoute cette distance au point ;
-    // 3. trie les points du plus proche au plus éloigné.
+    // 4. Avec position : calcule la distance puis trie du plus proche au plus loin.
     return avecIcone
       .map(p => ({
         ...p,
-
-        // Calcul de la distance entre la position de l'utilisateur
-        // et les coordonnées du point de collecte.
-        distanceKm:
-          this.pointCollecteService.calculerDistanceKm(
-            position.lat,
-            position.lng,
-            p.latitude,
-            p.longitude
-          )
+        distanceKm: this.pointCollecteService.calculerDistanceKm(
+          position.lat, position.lng, p.latitude, p.longitude
+        ),
       }))
-
-      // Trie les points par distance croissante.
-      // Le point le plus proche apparaît donc en premier.
       .sort((a, b) => a.distanceKm - b.distanceKm);
   });
 
-
-  // Méthode exécutée automatiquement au chargement du composant.
+  // Au chargement : récupère les points et la position.
   ngOnInit(): void {
-
-    // Lance la récupération des points depuis l'API.
     this.chargerPoints();
-
-    // Demande la position actuelle de l'utilisateur.
     this.localiserUtilisateur();
   }
 
+  // Met à jour la recherche à chaque frappe.
+  surRecherche(event: Event): void {
+    this.recherche.set((event.target as HTMLInputElement).value);
+  }
 
-  // Récupère les points de collecte depuis le backend.
+  // Minuscules + suppression des accents ("Médina" = "medina").
+  private normaliser(texte: string): string {
+    return texte
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  // Appelle l'API Django pour lister les points.
   private chargerPoints(): void {
-
-    // Appelle la méthode du service qui interroge l'API Django.
     this.pointCollecteService.listerPoints().subscribe({
-
-      // Exécuté lorsque l'API répond correctement.
       next: (liste) => {
-
-        // Stocke les points reçus dans le signal.
         this.points.set(liste);
-
-        // Désactive l'indicateur de chargement.
         this.chargement.set(false);
       },
-
-      // Exécuté lorsqu'une erreur se produit pendant l'appel API.
-      error: () => {
-
-        // Arrête le chargement même si la requête échoue.
-        this.chargement.set(false);
-      }
+      // Même en cas d'erreur, on arrête le chargement.
+      error: () => this.chargement.set(false),
     });
   }
 
-
-  // Récupère la position géographique actuelle de l'utilisateur.
+  // Demande la position au navigateur.
   private localiserUtilisateur(): void {
-
-    // Vérifie si le navigateur prend en charge la géolocalisation.
     if (!navigator.geolocation) {
-
-      // Affiche un message si la fonctionnalité n'est pas disponible.
-      this.erreurGeoloc.set(
-        'Géolocalisation non supportée par ce navigateur.'
-      );
-
+      this.erreurGeoloc.set('Géolocalisation non supportée par ce navigateur.');
       return;
     }
-
-
-    // Demande la position actuelle au navigateur.
     navigator.geolocation.getCurrentPosition(
-
-      // Exécuté lorsque la position est récupérée avec succès.
-      (position) => {
-
-        // Stocke les coordonnées de l'utilisateur.
+      (position) =>
         this.positionUtilisateur.set({
           lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-      },
-
-      // Exécuté lorsque la position ne peut pas être récupérée.
-      () => {
-
-        // Informe l'utilisateur que le tri par proximité
-        // ne pourra pas être effectué.
-        this.erreurGeoloc.set(
-          'Position non disponible — tri par proximité désactivé.'
-        );
-      }
+          lng: position.coords.longitude,
+        }),
+      () => this.erreurGeoloc.set('Position non disponible — tri par proximité désactivé.')
     );
   }
 
+  // Choisit l'icône selon le premier type de déchet accepté.
+  private determinerIcone(point: PointCollecte): 'recyclage' | 'poubelle' | 'ecran' | 'maison' {
+    const type = point.dechetsAcceptes[0]?.nom?.toLowerCase() ?? '';
 
-  // Détermine l'icône à afficher pour un point de collecte.
-  // Le choix est effectué à partir du premier type de déchet accepté.
-  //
-  // Le champ "icone" n'existe pas directement dans la base de données,
-  // donc l'icône est déterminée côté frontend.
-  private determinerIcone(
-    point: PointCollecte
-  ): 'recyclage' | 'poubelle' | 'ecran' | 'maison' {
-
-    // Récupère le nom du premier déchet accepté.
-    // Si aucun déchet n'est disponible, utilise une chaîne vide.
-    const premierType =
-      point.dechetsAcceptes[0]?.nom?.toLowerCase() ?? '';
-
-
-    // Si le type correspond à un déchet électronique,
-    // on utilise l'icône écran.
-    if (
-      premierType.includes('électro') ||
-      premierType.includes('electro')
-    ) {
-      return 'ecran';
-    }
-
-
-    // Pour les déchets organiques ou le carton,
-    // on utilise l'icône poubelle.
-    if (premierType.includes('organique') || premierType.includes('carton')) {
-      return 'poubelle';
-    }
-
-
-    // Pour le métal ou le verre,
-    // on utilise l'icône maison.
-    if (premierType.includes('métal') || premierType.includes('metal') || premierType.includes('verre')) {
-      return 'maison';
-    }
-
-
-    // Pour les autres types de déchets,
-    // on utilise l'icône de recyclage par défaut.
-    return 'recyclage';
+    if (type.includes('électro') || type.includes('electro')) return 'ecran';
+    if (type.includes('organique') || type.includes('carton')) return 'poubelle';
+    if (type.includes('métal') || type.includes('metal') || type.includes('verre')) return 'maison';
+    return 'recyclage'; // Icône par défaut.
   }
 
-
-  // Ouvre la page de détail d'un point de collecte.
+  // Ouvre la page de détail, ex. /points-collecte/5.
   ouvrirDetail(idPoint: number): void {
-
-    // Navigue vers l'URL contenant l'identifiant du point.
-    // Exemple : /points-collecte/5
-    this.router.navigate([ '/points-collecte', idPoint]);
+    this.router.navigate(['/points-collecte', idPoint]);
   }
 }

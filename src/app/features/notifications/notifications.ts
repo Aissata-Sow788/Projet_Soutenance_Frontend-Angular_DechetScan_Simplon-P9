@@ -6,10 +6,11 @@ import {BarreNavigations} from '../../shared/components/barre-navigations/barre-
 import { NotificationsService } from '../../core/services/notification';
 import type { Notification as NotificationModel } from '../../shared/models/notification.model';
 import { PushNotifications } from '../../shared/components/push-notifications/push-notifications';
+import { Navigations } from '../../shared/components/navigations/navigations';
 
 
 @Component({
-  imports: [CommonModule, BarreNavigations, PushNotifications],
+  imports: [CommonModule, BarreNavigations, PushNotifications, Navigations],
   selector: 'app-notifications',
   styleUrl: './notifications.css',
   templateUrl: './notifications.html',

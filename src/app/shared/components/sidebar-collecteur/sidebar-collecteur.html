@@ -1,39 +1,104 @@
 <!--
-  Sidebar principal de l'espace collecteur.
-  Fond sombre #0E172B, identique au sidebar admin.
-  Liens vers toutes les pages du dashboard collecteur.
+  Sidebar de l'espace collecteur.
+  - Desktop (lg+) : barre latérale fixe de 220 px.
+  - Mobile / tablette : barre du haut avec bouton burger, le menu s'ouvre dans un tiroir.
+  L'état ouvert/fermé est géré par une case à cocher cachée (aucun code TypeScript requis).
 -->
+
+<!-- Case à cocher qui pilote l'ouverture du tiroir (doit rester avant l'overlay et l'aside) -->
+<input
+  #menuToggle
+  id="menu-collecteur"
+  type="checkbox"
+  class="peer sr-only"
+  aria-label="Ouvrir le menu"
+  (keydown.escape)="menuToggle.checked = false"
+/>
+
+<!-- BARRE DU HAUT : mobile et tablette uniquement -->
+<header class="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between bg-[#0E172B] px-4 shadow-md lg:hidden">
+  <label
+    for="menu-collecteur"
+    role="button"
+    aria-label="Ouvrir le menu"
+    class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-white transition hover:bg-white/10"
+  >
+    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 6h16"></path>
+      <path d="M4 12h16"></path>
+      <path d="M4 18h16"></path>
+    </svg>
+  </label>
+
+  <a routerLink="/collecteur" class="flex items-center">
+    <img src="assets/logo-dechetscan.png" alt="DechetScan" class="h-12 w-auto object-contain" />
+  </a>
+
+  <a
+    routerLink="/collecteur/notifications"
+    aria-label="Notifications"
+    class="flex h-10 w-10 items-center justify-center rounded-xl text-white transition hover:bg-white/10"
+  >
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+      <path d="M10 21h4"></path>
+    </svg>
+  </a>
+</header>
+
+<!-- FOND SOMBRE derrière le tiroir : mobile uniquement, un clic ferme le menu -->
+<label
+  for="menu-collecteur"
+  aria-hidden="true"
+  class="pointer-events-none fixed inset-0 z-40 bg-black/50 opacity-0 backdrop-blur-[1px] transition-opacity duration-300 peer-checked:pointer-events-auto peer-checked:opacity-100 lg:hidden"
+></label>
+
+<!-- SIDEBAR : tiroir sur mobile, barre fixe sur desktop -->
 <aside
-  class="fixed inset-y-0 left-0 z-40 hidden w-[220px] flex-col bg-[#0E172B] px-4 py-5 lg:flex"
+  class="fixed inset-y-0 left-0 z-50 flex w-[280px] max-w-[85vw] -translate-x-full flex-col bg-[#0E172B] px-4 py-5 transition-transform duration-300 ease-out peer-checked:translate-x-0
+         lg:z-40 lg:w-[220px] lg:max-w-none lg:translate-x-0"
 >
 
-  <!-- LOGO -->
-  <div class="flex items-center px-1">
+  <!-- LOGO + bouton fermer (mobile) -->
+  <div class="flex items-center justify-between px-1">
     <img
       src="assets/logo-dechetscan.png"
       alt="DechetScan"
-      class="h-[110px] w-auto object-contain"
+      class="h-20 w-auto object-contain lg:h-[110px]"
     />
+
+    <label
+      for="menu-collecteur"
+      role="button"
+      aria-label="Fermer le menu"
+      class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-slate-300 transition hover:bg-white/10 hover:text-white lg:hidden"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 6l12 12"></path>
+        <path d="M18 6L6 18"></path>
+      </svg>
+    </label>
   </div>
 
   <!-- BADGE COLLECTEUR -->
   <div
-    class="mt-6 inline-flex w-fit rounded-full bg-[#8FEDE2] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wide text-[#087C78]"
+    class="mt-4 inline-flex w-fit rounded-full bg-[#8FEDE2] px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-[#087C78] lg:mt-6 lg:text-[9px]"
   >
     Espace Collecteur
   </div>
 
   <!-- MENU PRINCIPAL -->
-  <nav class="mt-2.5 space-y-0.5 overflow-y-auto flex-1">
+  <nav class="mt-3 flex-1 space-y-0.5 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mt-2.5">
 
     <!-- Tableau de bord -->
     <a
       routerLink="/collecteur"
       routerLinkActive="bg-[#11AAA9] text-white"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <rect x="4" y="4" width="6" height="6" rx="1"></rect>
         <rect x="14" y="4" width="6" height="6" rx="1"></rect>
@@ -47,9 +112,10 @@
     <a
       routerLink="/collecteur/demandes"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <rect x="5" y="5" width="14" height="16" rx="2"></rect>
         <path d="M8 9h8"></path>
@@ -63,9 +129,10 @@
     <a
       routerLink="/collecteur/planification"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2"></rect>
         <path d="M16 2v4"></path>
@@ -79,9 +146,10 @@
     <a
       routerLink="/collecteur/mes-collectes"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <rect x="1" y="3" width="15" height="13" rx="2"></rect>
         <path d="M16 8h4l3 3v5h-7V8z"></path>
@@ -95,9 +163,10 @@
     <a
       routerLink="/collecteur/historique"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"></path>
         <path d="M3 3v5h5"></path>
@@ -110,9 +179,10 @@
     <a
       routerLink="/collecteur/points-collecte"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
         <circle cx="12" cy="10" r="2.5"></circle>
@@ -124,9 +194,10 @@
     <a
       routerLink="/collecteur/ventes"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -139,9 +210,10 @@
     <a
       routerLink="/collecteur/tarifs"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
       </svg>
@@ -152,9 +224,10 @@
     <a
       routerLink="/collecteur/abonnement"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z"></path>
       </svg>
@@ -165,9 +238,10 @@
     <a
       routerLink="/collecteur/paiements"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <rect x="2" y="5" width="20" height="14" rx="2"></rect>
         <path d="M2 10h20"></path>
@@ -179,9 +253,10 @@
     <a
       routerLink="/collecteur/notifications"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
         <path d="M10 21h4"></path>
@@ -193,9 +268,10 @@
     <a
       routerLink="/collecteur/profil"
       routerLinkActive="bg-[#11AAA9] text-white"
-      class="group flex h-[38px] items-center gap-2.5 rounded-lg px-3 text-[11px] font-bold text-slate-200 transition hover:bg-[#18263D]"
+      (click)="menuToggle.checked = false"
+      class="group flex h-11 items-center gap-3 rounded-lg px-3 text-[13px] font-bold text-slate-200 transition hover:bg-[#18263D] lg:h-[38px] lg:gap-2.5 lg:text-[11px]"
     >
-      <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      <svg class="h-[18px] w-[18px] shrink-0 lg:h-4 lg:w-4" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="8" r="3"></circle>
         <path d="M5 20c.8-3.5 3.1-5.5 7-5.5s6.2 2 7 5.5"></path>
@@ -213,40 +289,63 @@
       <div class="flex items-center gap-2">
         <span class="h-2 w-2 rounded-full bg-[#0EA5A4]"></span>
         <div>
-          <p class="text-[9px] font-bold text-slate-200">CONNECTÉ</p>
-          <p class="text-[9px] text-slate-400">Zone: Dakar Plateau</p>
+          <p class="text-[10px] font-bold text-slate-200 lg:text-[9px]">CONNECTÉ</p>
+          <p class="text-[10px] text-slate-400 lg:text-[9px]">Zone: Dakar Plateau</p>
         </div>
       </div>
-      <p class="mt-1 text-[8px] text-slate-500">V 1.0 PRO</p>
+      <p class="mt-1 text-[9px] text-slate-500 lg:text-[8px]">V 1.0 PRO</p>
     </div>
 
-    <!-- Profil + déconnexion -->
-    <div class="rounded-xl bg-[#F1F5FF] p-2.5">
-      <div class="flex items-center gap-2">
-        <div
-          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#087C78] text-[10px] font-extrabold text-white"
-        >
-          CO
-        </div>
-        <div class="min-w-0 flex-1">
-          <p class="truncate text-[10px] font-extrabold text-[#142337]">Collecteur</p>
-          <p class="truncate text-[9px] text-slate-600">collecteur@dechetscan.com</p>
-        </div>
-        <button
-          (click)="deconnecter()"
-          type="button"
-          class="text-slate-600 transition hover:text-[#087C78]"
-          aria-label="Se déconnecter"
-        >
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 17l5-5-5-5"></path>
-            <path d="M15 12H3"></path>
-            <path d="M21 5v14"></path>
-          </svg>
-        </button>
-      </div>
+<!-- Profil de l'administrateur connecté -->
+<div class="mt-2 rounded-xl bg-[#F1F5FF] p-2.5">
+  <div class="flex items-center gap-2">
+
+    <!-- Initiales dynamiques -->
+    <div
+      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#087C78] text-[10px] font-extrabold text-white lg:h-8 lg:w-8"
+    >
+      {{ initialesAdmin }}
     </div>
+
+    <!-- Nom et e-mail réels -->
+    <div class="min-w-0 flex-1">
+      <p
+        class="truncate text-[11px] font-extrabold text-[#142337] lg:text-[10px]"
+      >
+        {{ nomCompletAdmin }}
+      </p>
+
+      <p
+        class="truncate text-[10px] text-slate-600 lg:text-[9px]"
+      >
+        {{ interfaceProfil.email || interfaceProfil.username || 'E-mail indisponible' }}
+      </p>
+    </div>
+
+    <!-- Bouton de déconnexion -->
+    <button
+      (click)="menuToggle.checked = false; deconnecter()"
+      type="button"
+      aria-label="Se déconnecter"
+      class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 transition hover:bg-white hover:text-[#087C78] lg:h-auto lg:w-auto"
+    >
+      <svg
+        class="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M10 17l5-5-5-5"></path>
+        <path d="M15 12H3"></path>
+        <path d="M21 5v14"></path>
+      </svg>
+    </button>
+
+  </div>
+</div>
 
   </div>
 

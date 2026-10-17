@@ -267,14 +267,12 @@ export class DetailPointCollecteCollecteur implements OnInit, OnDestroy {
     const point = this.point();
     const utilisateurId = this.utilisateurId();
 
-    // L'administrateur peut toujours gérer le point.
-    return this.estAdministrateur ||
-
-      // Sinon, seul le gestionnaire enregistré du point
-      // peut effectuer les opérations de gestion.
-      (!!point &&
-        utilisateurId !== null &&
-        Number(point.gerePar) === utilisateurId);
+    // Seul l'utilisateur enregistré comme gestionnaire du point
+    // peut afficher les boutons Modifier et Supprimer.
+    // L'administrateur n'est pas considéré comme propriétaire du point.
+    return !!point &&
+      utilisateurId !== null &&
+      Number(point.gerePar) === utilisateurId;
   }
 
 

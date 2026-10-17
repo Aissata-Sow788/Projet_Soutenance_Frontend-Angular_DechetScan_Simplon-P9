@@ -1,5 +1,5 @@
 <!-- Page Détail d'un point de collecte — espace collecteur -->
-<div class="p-6 xl:p-8">
+<div class="min-w-0 p-3 sm:p-6 xl:p-8">
 
   <!-- CHARGEMENT -->
   @if (chargement()) {
@@ -30,14 +30,14 @@
     </div>
 
     <!-- EN-TÊTE : nom + boutons -->
-    <div class="mb-6 flex items-start justify-between gap-4">
-      <h1 class="text-2xl font-bold text-[#142337]">{{ point()!.nom }}</h1>
-      <div class="flex shrink-0 items-center gap-2">
+    <div class="mb-6 flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <h1 class="min-w-0 break-words text-xl font-bold text-[#142337] sm:text-2xl">{{ point()!.nom }}</h1>
+      <div class="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:shrink-0 sm:items-center">
         @if (estGerant()) {
           <button
             (click)="modifierPoint()"
             type="button"
-            class="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+            class="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto sm:px-4"
           >
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -49,7 +49,7 @@
           <button
             (click)="supprimerPoint()"
             type="button"
-            class="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-red-600"
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-3 py-2.5 text-sm font-bold text-white transition hover:bg-red-600 sm:w-auto sm:px-4"
           >
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -66,7 +66,7 @@
           <button
           (click)="planifierCollecte()"
           type="button"
-          class="flex items-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+          class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-3 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78] sm:w-auto sm:px-4"
         >
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -232,7 +232,8 @@
           Aucune collecte enregistrée pour ce point.
         </div>
       } @else {
-        <table class="w-full text-sm">
+        <div class="w-full overflow-x-auto">
+        <table class="w-full min-w-[620px] text-sm">
           <thead>
             <tr class="border-b border-slate-100">
               <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
@@ -294,6 +295,7 @@
             }
           </tbody>
         </table>
+        </div>
       }
 
     </div>

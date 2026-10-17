@@ -1,10 +1,12 @@
-<!--
-  Contenu central de la page "Gestion des utilisateurs".
 
-  Le SidebarAdmin et le HeaderAdmin sont gérés par AdminLayout.
+<!--
+  Page Gestion des utilisateurs — espace administrateur.
+  Mobile : cartes utilisateurs et filtres adaptés.
+  Desktop : tableau conservé.
+  SidebarAdmin et HeaderAdmin sont gérés par AdminLayout.
 -->
 
-<section class="min-h-[calc(100vh-60px)] bg-[#F6F8FD] px-7 py-5">
+<section class="min-h-[calc(100vh-60px)] bg-[#F6F8FD] px-3 py-4 sm:px-5 sm:py-5 lg:px-7">
 
   <!-- ============================================================
        EN-TÊTE DE LA PAGE
@@ -12,30 +14,18 @@
 
   <div class="mb-5">
 
-    <!-- Ligne d'information : date et localisation. -->
     <div class="mb-2 flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
-
       <span class="text-slate-300">|</span>
-
-      <span>
-        10 Septembre 2026
-      </span>
-
+      <span>10 Septembre 2026</span>
       <span class="text-slate-300">|</span>
-
-      <span>
-        Dakar, SN
-      </span>
-
+      <span>Dakar, SN</span>
     </div>
 
-    <!-- Titre principal. -->
-    <h1 class="text-[28px] font-bold leading-tight text-[#142337]">
+    <h1 class="text-xl font-bold leading-tight text-[#142337] sm:text-2xl lg:text-[28px]">
       Gestion des utilisateurs
     </h1>
 
-    <!-- Description de la page. -->
-    <p class="mt-1 max-w-[520px] text-[13px] leading-[1.5] text-slate-500">
+    <p class="mt-1 max-w-[520px] text-xs leading-relaxed text-slate-500 sm:text-[13px]">
       Consultez et gérez la communauté civique :
       comptes citoyens répertoriés et sessions de scan anonymes.
     </p>
@@ -49,59 +39,48 @@
 
   <div class="overflow-hidden rounded-2xl bg-white shadow-sm">
 
-
     <!-- ==========================================================
          ONGLET UTILISATEURS
          ========================================================== -->
 
-    <div class="flex border-b border-slate-100 px-3 pt-1">
+    <div class="overflow-x-auto border-b border-slate-100 px-2 pt-1 sm:px-3">
+      <div class="flex min-w-max">
 
-
-      <!-- --------------------------------------------------------
-           ONGLET UTILISATEURS CONNECTÉS
-           -------------------------------------------------------- -->
-
-      <button
-        type="button"
-        (click)="changerOnglet('connectes')"
-        class="flex items-center gap-2 rounded-xl px-4 py-3 text-[12px] font-semibold transition"
-        [class.bg-[#0EA5A4]]="ongletActif() === 'connectes'"
-        [class.text-white]="ongletActif() === 'connectes'"
-        [class.text-slate-500]="ongletActif() !== 'connectes'"
-      >
-
-        <!-- Icône utilisateurs. -->
-        <svg
-          class="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
+        <button
+          type="button"
+          (click)="changerOnglet('connectes')"
+          class="flex items-center gap-2 rounded-xl px-3 py-3 text-[11px] font-semibold transition sm:px-4 sm:text-xs"
+          [class.bg-[#0EA5A4]]="ongletActif() === 'connectes'"
+          [class.text-white]="ongletActif() === 'connectes'"
+          [class.text-slate-500]="ongletActif() !== 'connectes'"
         >
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </svg>
 
-        <span>
-          Utilisateurs connectés
-        </span>
+          <svg
+            class="h-4 w-4 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
 
-        <!-- Nombre d'utilisateurs connectés. -->
-        <span
-          class="rounded-md px-2 py-0.5 text-[9px]"
-          [class.bg-white/20]="ongletActif() === 'connectes'"
-          [class.bg-black/5]="ongletActif() !== 'connectes'"
-        >
-          {{ nombreResultats() }}
-        </span>
+          <span>Utilisateurs connectés</span>
 
-      </button>
+          <span
+            class="rounded-md px-2 py-0.5 text-[9px]"
+            [class.bg-white/20]="ongletActif() === 'connectes'"
+            [class.bg-black/5]="ongletActif() !== 'connectes'"
+          >
+            {{ nombreResultats() }}
+          </span>
 
+        </button>
 
-
-
+      </div>
     </div>
 
 
@@ -109,16 +88,11 @@
          RECHERCHE ET FILTRES
          ========================================================== -->
 
-    <div class="flex flex-col gap-2.5 p-4 lg:flex-row lg:items-center">
+    <div class="grid grid-cols-1 gap-3 p-3 sm:p-4 md:grid-cols-2 lg:flex lg:items-center">
 
+      <!-- Recherche -->
+      <div class="relative min-w-0 lg:flex-1">
 
-      <!-- --------------------------------------------------------
-           BARRE DE RECHERCHE
-           -------------------------------------------------------- -->
-
-      <div class="relative min-w-0 flex-1">
-
-        <!-- Icône de recherche. -->
         <svg
           class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
           viewBox="0 0 24 24"
@@ -130,102 +104,39 @@
           <path d="m20 20-4-4"></path>
         </svg>
 
-        <!-- Champ de recherche. -->
         <input
           type="text"
           [ngModel]="recherche()"
           (ngModelChange)="changerRecherche($event)"
           placeholder="Rechercher un utilisateur (nom, email, ID)..."
-          class="h-10 w-full rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-3 text-[11px] text-[#142337] outline-none transition placeholder:text-slate-400 focus:border-[#0EA5A4] focus:ring-2 focus:ring-[#0EA5A4]/10"
+          class="h-10 w-full rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-3 text-xs text-[#142337] outline-none transition placeholder:text-slate-400 focus:border-[#0EA5A4] focus:ring-2 focus:ring-[#0EA5A4]/10"
         />
 
       </div>
 
 
-      <!-- --------------------------------------------------------
-           FILTRE RÔLE
-           -------------------------------------------------------- -->
-
-      <div class="relative">
-
-        <!-- Icône du filtre rôle. -->
-        <svg
-          class="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M4 6h16"></path>
-          <path d="M7 12h10"></path>
-          <path d="M10 18h4"></path>
-        </svg>
-
-        <!-- Sélection du rôle. -->
-        <select
-          [ngModel]="filtreRole()"
-          (ngModelChange)="changerRole($event)"
-          class="h-10 appearance-none rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-8 text-[11px] font-semibold text-[#142337] outline-none"
-        >
-
-          <option>
-            Tous les rôles
-          </option>
-
-          <option>
-            Citoyen
-          </option>
-
-          <option>
-            Administrateur
-          </option>
-
-        </select>
-
-      </div>
+      <!-- Filtre rôle -->
+      <select
+        [ngModel]="filtreRole()"
+        (ngModelChange)="changerRole($event)"
+        class="h-10 w-full min-w-0 rounded-xl border border-slate-100 bg-[#F4F8FE] px-3 text-xs font-semibold text-[#142337] outline-none focus:border-[#0EA5A4] lg:w-auto"
+      >
+        <option>Tous les rôles</option>
+        <option>Citoyen</option>
+        <option>Administrateur</option>
+      </select>
 
 
-      <!-- --------------------------------------------------------
-           FILTRE STATUT
-           -------------------------------------------------------- -->
-
-      <div class="relative">
-
-        <!-- Icône du filtre statut. -->
-        <svg
-          class="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M4 5h16"></path>
-          <path d="M7 12h10"></path>
-          <path d="M10 19h4"></path>
-        </svg>
-
-        <!-- Sélection du statut. -->
-        <select
-          [ngModel]="filtreStatut()"
-          (ngModelChange)="changerStatut($event)"
-          class="h-10 appearance-none rounded-xl border border-slate-100 bg-[#F4F8FE] pl-9 pr-8 text-[11px] font-semibold text-[#142337] outline-none"
-        >
-
-          <option>
-            Tous les statuts
-          </option>
-
-          <option>
-            Actif
-          </option>
-
-          <option>
-            Inactif
-          </option>
-
-        </select>
-
-      </div>
+      <!-- Filtre statut -->
+      <select
+        [ngModel]="filtreStatut()"
+        (ngModelChange)="changerStatut($event)"
+        class="h-10 w-full min-w-0 rounded-xl border border-slate-100 bg-[#F4F8FE] px-3 text-xs font-semibold text-[#142337] outline-none focus:border-[#0EA5A4] lg:w-auto"
+      >
+        <option>Tous les statuts</option>
+        <option>Actif</option>
+        <option>Inactif</option>
+      </select>
 
     </div>
 
@@ -236,14 +147,11 @@
 
     @if (chargement()) {
 
-      <div class="px-4 pb-6">
+      <div class="px-3 pb-5 sm:px-4 sm:pb-6">
 
         <div class="rounded-xl border border-slate-100 bg-[#F8FAFD] px-4 py-8 text-center">
 
-          <!-- Petit indicateur de chargement. -->
-          <div
-            class="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"
-          ></div>
+          <div class="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></div>
 
           <p class="mt-3 text-[11px] text-slate-500">
             Chargement des utilisateurs...
@@ -262,11 +170,10 @@
 
     @if (!chargement() && erreur()) {
 
-      <div class="px-4 pb-6">
+      <div class="px-3 pb-5 sm:px-4 sm:pb-6">
 
         <div class="rounded-xl border border-red-100 bg-red-50 px-4 py-5 text-center">
 
-          <!-- Icône d'erreur. -->
           <svg
             class="mx-auto h-7 w-7 text-red-400"
             viewBox="0 0 24 24"
@@ -279,7 +186,7 @@
             <path d="M12 16h.01"></path>
           </svg>
 
-          <p class="mt-2 text-[11px] font-medium text-red-500">
+          <p class="mt-2 break-words text-[11px] font-medium text-red-500">
             {{ erreur() }}
           </p>
 
@@ -291,54 +198,162 @@
 
 
     <!-- ==========================================================
-         TABLEAU
+         LISTE DES UTILISATEURS
          ========================================================== -->
 
     @if (!chargement() && !erreur()) {
 
-      <div class="px-4 pb-4">
+      <div class="px-3 pb-4 sm:px-4">
 
-        <!-- Conteneur permettant le scroll horizontal sur petit écran. -->
-        <div class="overflow-x-auto rounded-xl border border-slate-100">
+        <!-- ======================================================
+             CARTES UTILISATEURS — MOBILE
+             ====================================================== -->
+
+        <div class="space-y-3 sm:hidden">
+
+          @for (utilisateur of utilisateursAffiches(); track utilisateur.id) {
+
+            <article class="rounded-xl border border-slate-100 bg-white p-3 transition hover:border-slate-200">
+
+              <!-- Avatar et identité -->
+              <div class="flex min-w-0 items-center gap-3">
+
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0EA5A4]/10 text-xs font-bold text-[#0EA5A4]"
+                >
+                  {{ utilisateur.first_name?.charAt(0) || '?' }}{{ utilisateur.last_name?.charAt(0) || '' }}
+                </div>
+
+                <div class="min-w-0 flex-1">
+
+                  <p class="break-words text-sm font-semibold text-[#142337]">
+                    {{ utilisateur.first_name }} {{ utilisateur.last_name }}
+                  </p>
+
+                  <p class="break-all text-xs text-slate-500">
+                    {{ utilisateur.email }}
+                  </p>
+
+                  <p class="mt-1 text-[11px] text-slate-400">
+                    {{ utilisateur.ville || 'Ville non renseignée' }}
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <!-- Rôle et statut -->
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+
+                <span class="rounded-full bg-[#E7F0FF] px-2.5 py-1 text-[10px] font-semibold text-[#42689B]">
+                  {{ utilisateur.role }}
+                </span>
+
+                <span
+                  class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold"
+                  [class.bg-emerald-50]="utilisateur.is_active"
+                  [class.text-emerald-600]="utilisateur.is_active"
+                  [class.bg-red-50]="!utilisateur.is_active"
+                  [class.text-red-500]="!utilisateur.is_active"
+                >
+
+                  <span
+                    class="h-1.5 w-1.5 rounded-full"
+                    [class.bg-emerald-500]="utilisateur.is_active"
+                    [class.bg-red-500]="!utilisateur.is_active"
+                  ></span>
+
+                  {{ utilisateur.is_active ? 'Actif' : 'Inactif' }}
+
+                </span>
+
+              </div>
+
+
+              <!-- Bouton profil -->
+              <button
+                type="button"
+                (click)="ouvrirProfil(utilisateur)"
+                class="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-[#EAF2FD] px-3 py-2 text-xs font-semibold text-[#142337] transition hover:bg-[#DCE9FA]"
+              >
+                Voir le profil
+
+                <svg
+                  class="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="m9 18 6-6-6-6"></path>
+                </svg>
+
+              </button>
+
+            </article>
+
+          }
+
+
+          <!-- État vide mobile -->
+          @if (utilisateursAffiches().length === 0) {
+
+            <div class="rounded-xl border border-slate-100 bg-white px-4 py-10 text-center">
+
+              <svg
+                class="mx-auto h-9 w-9 text-slate-300"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+
+              <p class="mt-3 text-sm font-medium text-slate-500">
+                Aucun utilisateur trouvé.
+              </p>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- ======================================================
+             TABLEAU — TABLETTE ET DESKTOP
+             ====================================================== -->
+
+        <div class="hidden overflow-x-auto rounded-xl border border-slate-100 sm:block">
 
           <table class="w-full min-w-[900px] text-left">
-
-
-            <!-- ----------------------------------------------------
-                 EN-TÊTE DU TABLEAU
-                 ---------------------------------------------------- -->
 
             <thead class="bg-[#F8FAFD]">
 
               <tr class="border-b border-slate-100">
 
-                <th
-                  class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-500"
-                >
+                <th class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-500">
                   Utilisateur
                 </th>
 
-                <th
-                  class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-500"
-                >
+                <th class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-500">
                   Email
                 </th>
 
-                <th
-                  class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500"
-                >
+                <th class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500">
                   Rôle
                 </th>
 
-                <th
-                  class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500"
-                >
+                <th class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500">
                   Statut
                 </th>
 
-                <th
-                  class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500"
-                >
+                <th class="px-4 py-3 text-center text-[9px] font-bold uppercase tracking-wide text-slate-500">
                   Action
                 </th>
 
@@ -347,57 +362,28 @@
             </thead>
 
 
-            <!-- ----------------------------------------------------
-                 CORPS DU TABLEAU
-                 ---------------------------------------------------- -->
-
             <tbody class="divide-y divide-slate-100">
 
-              <!--
-                IMPORTANT :
-                On utilise utilisateursAffiches() et non
-                utilisateursFiltres() afin que la pagination
-                fonctionne réellement.
-              -->
-              @for (
-                utilisateur of utilisateursAffiches();
-                track utilisateur.id
-              ) {
+              @for (utilisateur of utilisateursAffiches(); track utilisateur.id) {
 
                 <tr class="transition hover:bg-slate-50">
 
-
-                  <!-- =================================================
-                       UTILISATEUR
-                       ================================================= -->
-
+                  <!-- Utilisateur -->
                   <td class="px-4 py-3">
 
                     <div class="flex items-center gap-3">
 
-                      <!-- Avatar avec les initiales. -->
-                      <div
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0EA5A4]/10 text-[11px] font-bold text-[#0EA5A4]"
-                      >
+                      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0EA5A4]/10 text-[11px] font-bold text-[#0EA5A4]">
                         {{ utilisateur.first_name?.charAt(0) || '?' }}{{ utilisateur.last_name?.charAt(0) || '' }}
                       </div>
 
-
-                      <!-- Nom et ville. -->
                       <div class="min-w-0">
 
-                        <!-- Nom complet. -->
-                        <p
-                          class="truncate text-[12px] font-semibold text-[#142337]"
-                        >
-                          {{ utilisateur.first_name }}
-                          {{ utilisateur.last_name }}
+                        <p class="truncate text-[12px] font-semibold text-[#142337]">
+                          {{ utilisateur.first_name }} {{ utilisateur.last_name }}
                         </p>
 
-                        <!-- Ville sous le nom. -->
-                        <p
-                          class="truncate text-[10px] text-slate-400"
-                        >
+                        <p class="truncate text-[10px] text-slate-400">
                           {{ utilisateur.ville || 'Ville non renseignée' }}
                         </p>
 
@@ -408,36 +394,23 @@
                   </td>
 
 
-                  <!-- =================================================
-                       EMAIL
-                       ================================================= -->
-
+                  <!-- Email -->
                   <td class="px-4 py-3 text-[10px] text-slate-600">
-
                     {{ utilisateur.email }}
-
                   </td>
 
 
-                  <!-- =================================================
-                       RÔLE
-                       ================================================= -->
-
+                  <!-- Rôle -->
                   <td class="px-4 py-3 text-center">
 
-                    <span
-                      class="inline-flex rounded-full bg-[#E7F0FF] px-2.5 py-1 text-[9px] font-semibold text-[#42689B]"
-                    >
+                    <span class="inline-flex rounded-full bg-[#E7F0FF] px-2.5 py-1 text-[9px] font-semibold text-[#42689B]">
                       {{ utilisateur.role }}
                     </span>
 
                   </td>
 
 
-                  <!-- =================================================
-                       STATUT
-                       ================================================= -->
-
+                  <!-- Statut -->
                   <td class="px-4 py-3 text-center">
 
                     <span
@@ -448,7 +421,6 @@
                       [class.text-red-500]="!utilisateur.is_active"
                     >
 
-                      <!-- Indicateur visuel du statut. -->
                       <span
                         class="h-1.5 w-1.5 rounded-full"
                         [class.bg-emerald-500]="utilisateur.is_active"
@@ -462,22 +434,16 @@
                   </td>
 
 
-                  <!-- =================================================
-                       ACTION
-                       ================================================= -->
-
+                  <!-- Action -->
                   <td class="px-4 py-3 text-center">
 
-                    <!-- Bouton permettant d'ouvrir les détails. -->
                     <button
                       type="button"
                       (click)="ouvrirProfil(utilisateur)"
                       class="inline-flex items-center gap-1 rounded-xl bg-[#EAF2FD] px-3 py-2 text-[10px] font-semibold text-[#142337] transition hover:bg-[#DCE9FA]"
                     >
-
                       Voir plus
 
-                      <!-- Flèche. -->
                       <svg
                         class="h-3 w-3"
                         viewBox="0 0 24 24"
@@ -497,20 +463,13 @@
               }
 
 
-              <!-- ====================================================
-                   ÉTAT VIDE
-                   ==================================================== -->
-
+              <!-- État vide tableau -->
               @if (utilisateursAffiches().length === 0) {
 
                 <tr>
 
-                  <td
-                    colspan="5"
-                    class="px-4 py-12 text-center"
-                  >
+                  <td colspan="5" class="px-4 py-12 text-center">
 
-                    <!-- Icône utilisateur. -->
                     <svg
                       class="mx-auto h-9 w-9 text-slate-300"
                       viewBox="0 0 24 24"
@@ -524,10 +483,7 @@
                       <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
 
-                    <!-- Message d'état vide. -->
-                    <p
-                      class="mt-3 text-[13px] font-medium text-slate-500"
-                    >
+                    <p class="mt-3 text-[13px] font-medium text-slate-500">
                       Aucun utilisateur trouvé.
                     </p>
 
@@ -547,50 +503,39 @@
 
     }
 
-
   </div>
 
 
   <!-- ============================================================
-       BAS DE PAGE : INFORMATIONS + PAGINATION
+       INFORMATIONS ET PAGINATION
        ============================================================ -->
 
   @if (!chargement() && !erreur()) {
 
-    <div
-      class="mt-4 flex flex-col gap-3 px-1 sm:flex-row sm:items-center sm:justify-between"
-    >
+    <div class="mt-4 flex flex-col gap-3 px-1 sm:flex-row sm:items-center sm:justify-between">
 
-
-      <!-- --------------------------------------------------------
-           INFORMATIONS SUR LES RÉSULTATS
-           -------------------------------------------------------- -->
-
+      <!-- Nombre de résultats -->
       <p class="text-[10px] text-slate-500">
 
         Affichage de
 
         <span class="font-semibold text-[#142337]">
-
           {{
             nombreResultats() === 0
               ? 0
               : ((pageActuelle() - 1) * taillePage) + 1
           }}
-
         </span>
 
         à
 
         <span class="font-semibold text-[#142337]">
-
           {{
             Math.min(
               pageActuelle() * taillePage,
               nombreResultats()
             )
           }}
-
         </span>
 
         sur
@@ -604,83 +549,52 @@
       </p>
 
 
-      <!-- --------------------------------------------------------
-           PAGINATION
-           -------------------------------------------------------- -->
+      <!-- Pagination -->
+      <div class="flex flex-wrap items-center gap-1">
 
-      <div class="flex items-center gap-1">
-
-
-        <!-- Bouton page précédente. -->
+        <!-- Page précédente -->
         <button
           type="button"
           (click)="changerPage(pageActuelle() - 1)"
           [disabled]="pageActuelle() === 1"
-          class="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Page précédente"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
         >
-
-          <svg
-            class="h-3.5 w-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m15 18-6-6 6-6"></path>
           </svg>
-
         </button>
 
 
-        <!--
-          Génère automatiquement les numéros de pages.
-
-          Exemple :
-          1 2 3 4 ... 250
-        -->
-        @for (
-          page of [].constructor(nombrePages());
-          track $index
-        ) {
+        <!-- Numéros de pages -->
+        @for (page of [].constructor(nombrePages()); track $index) {
 
           <button
             type="button"
             (click)="changerPage($index + 1)"
-            class="flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-semibold transition"
+            class="flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-[10px] font-semibold transition"
             [class.bg-[#0EA5A4]]="pageActuelle() === $index + 1"
             [class.text-white]="pageActuelle() === $index + 1"
             [class.bg-white]="pageActuelle() !== $index + 1"
             [class.text-slate-500]="pageActuelle() !== $index + 1"
           >
-
             {{ $index + 1 }}
-
           </button>
 
         }
 
 
-        <!-- Bouton page suivante. -->
+        <!-- Page suivante -->
         <button
           type="button"
           (click)="changerPage(pageActuelle() + 1)"
-          [disabled]="
-            pageActuelle() === nombrePages() ||
-            nombrePages() === 0
-          "
-          class="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+          [disabled]="pageActuelle() === nombrePages() || nombrePages() === 0"
+          aria-label="Page suivante"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
         >
-
-          <svg
-            class="h-3.5 w-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m9 18 6-6-6-6"></path>
           </svg>
-
         </button>
 
       </div>
@@ -689,290 +603,263 @@
 
   }
 
+
   <!-- ============================================================
-     POPUP : DÉTAIL DE L'UTILISATEUR
-     La popup apparaît uniquement lorsqu'un utilisateur est sélectionné.
-     ============================================================ -->
-@if (popupProfilOuverte() && utilisateurSelectionne(); as utilisateur) {
+       POPUP : DÉTAIL DE L'UTILISATEUR
+       ============================================================ -->
 
-  <!-- Fond sombre + flou derrière la popup -->
-  <div
-    class="fixed inset-0 z-50 flex justify-end bg-slate-900/35 backdrop-blur-[3px]"
-    (click)="fermerProfil()"
-  >
+  @if (popupProfilOuverte() && utilisateurSelectionne(); as utilisateur) {
 
-    <!-- ========================================================
-         PANNEAU DE PROFIL
-         Le clic à l'intérieur ne ferme pas la popup.
-         ======================================================== -->
+    <!-- Fond de la popup -->
     <div
-      class="h-full w-full max-w-[560px] overflow-y-auto bg-white px-7 py-6 shadow-2xl"
-      (click)="$event.stopPropagation()"
+      class="fixed inset-0 z-50 flex items-end justify-end bg-slate-900/35 backdrop-blur-[3px] sm:items-center lg:items-stretch"
+      (click)="fermerProfil()"
     >
 
-      <!-- ======================================================
-           EN-TÊTE DE LA POPUP
-           ====================================================== -->
-      <div class="flex items-center justify-between border-b border-slate-200 pb-5">
+      <!-- Panneau du profil -->
+      <div
+        class="h-[94dvh] w-full overflow-y-auto rounded-t-2xl bg-white px-4 py-5 shadow-2xl sm:h-auto sm:max-h-[92dvh] sm:max-w-[560px] sm:rounded-2xl sm:px-6 sm:py-6 lg:h-full lg:max-h-none lg:rounded-none"
+        (click)="$event.stopPropagation()"
+      >
 
-        <div class="flex items-center gap-3 text-sm text-slate-600">
+        <!-- En-tête -->
+        <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-4 sm:items-center sm:pb-5">
+
+          <div class="flex min-w-0 items-start gap-2 text-xs text-slate-600 sm:items-center sm:gap-3 sm:text-sm">
+
+            <button
+              type="button"
+              (click)="fermerProfil()"
+              class="flex shrink-0 items-center gap-1 font-medium transition hover:text-slate-900 sm:gap-2"
+            >
+              <span class="text-xl">←</span>
+              <span class="hidden sm:inline">Retour aux utilisateurs</span>
+              <span class="sm:hidden">Retour</span>
+            </button>
+
+            <span class="text-slate-300">•</span>
+
+            <h2 class="text-sm font-bold text-slate-900 sm:text-xl">
+              Détail de l'utilisateur
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            (click)="fermerProfil()"
+            aria-label="Fermer"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EAF2FC] text-xl text-slate-600 transition hover:bg-[#DCEAF8]"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <!-- Carte principale -->
+        <div class="mt-4 rounded-2xl bg-[#F3F7FD] p-4 sm:mt-6 sm:p-6">
+
+          <!-- Identité et statut -->
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+
+            <div class="flex min-w-0 items-center gap-3 sm:gap-4">
+
+              <!-- Avatar -->
+              <div class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#16A6A6] text-lg font-bold text-[#063D46] sm:h-16 sm:w-16 sm:text-xl">
+
+                {{
+                  (
+                    (utilisateur.first_name?.charAt(0) || '') +
+                    (utilisateur.last_name?.charAt(0) || '')
+                  ).toUpperCase()
+                }}
+
+                @if (utilisateur.is_active) {
+                  <span class="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-[#16A6A6]"></span>
+                }
+
+              </div>
+
+
+              <!-- Informations -->
+              <div class="min-w-0 flex-1">
+
+                <div class="flex flex-wrap items-center gap-2">
+
+                  <h3 class="break-words text-base font-bold text-slate-900 sm:text-lg">
+                    {{ utilisateur.first_name }} {{ utilisateur.last_name }}
+                  </h3>
+
+                  <span class="rounded-full bg-[#8DE6D8] px-2.5 py-1 text-[10px] font-bold text-[#08665D] sm:text-xs">
+                    {{ utilisateur.role }}
+                  </span>
+
+                </div>
+
+                <p class="mt-1 text-xs font-medium text-slate-700 sm:text-sm">
+                  Citoyen Éco-engagé
+                </p>
+
+                <p class="text-xs text-slate-600 sm:text-sm">
+                  {{ utilisateur.ville || 'Ville non renseignée' }}
+                </p>
+
+                <p class="mt-1 break-all font-mono text-[11px] text-slate-600 sm:text-xs">
+                  {{ utilisateur.email }}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- Statut -->
+            <div
+              class="flex w-fit shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+              [class.bg-[#DDF7F0]]="utilisateur.is_active"
+              [class.text-[#087A69]]="utilisateur.is_active"
+              [class.bg-[#FFF0D5]]="!utilisateur.is_active"
+              [class.text-[#A45A00]]="!utilisateur.is_active"
+            >
+
+              <span
+                class="h-2 w-2 rounded-full"
+                [class.bg-[#0B9F87]]="utilisateur.is_active"
+                [class.bg-[#E99A23]]="!utilisateur.is_active"
+              ></span>
+
+              {{ utilisateur.is_active ? 'Actif' : 'Inactif' }}
+
+            </div>
+
+          </div>
+
+
+          <!-- Statistiques -->
+          <div class="mt-6 grid grid-cols-1 gap-3 border-t border-slate-200 pt-4 sm:mt-8 sm:grid-cols-2">
+
+            <!-- Nombre de scans -->
+            <div class="rounded-xl bg-white p-4">
+
+              <p class="text-xs text-slate-600 sm:text-sm">
+                Nombre total de scans
+              </p>
+
+              <p class="mt-1 text-lg font-bold text-slate-900 sm:text-xl">
+                {{ utilisateur.nombreScans ?? 0 }} scans
+              </p>
+
+            </div>
+
+
+            <!-- Dernière activité -->
+            <div class="rounded-xl bg-white p-4">
+
+              <p class="text-xs text-slate-600 sm:text-sm">
+                Dernière activité
+              </p>
+
+              <p class="mt-1 break-words text-sm font-bold text-slate-900 sm:text-base">
+
+                @if (utilisateur.last_login) {
+                  {{ utilisateur.last_login | date:'dd MMM yyyy, HH:mm' }}
+                } @else {
+                  Aucune activité
+                }
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Date d'inscription -->
+          <div class="mt-4 border-t border-slate-200 pt-4">
+
+            <div class="flex items-start gap-2 text-xs text-slate-600 sm:text-sm">
+
+              <svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                <path d="M16 3v4M8 3v4M3 11h18"></path>
+              </svg>
+
+              @if (utilisateur.date_joined) {
+
+                <span>
+                  Inscrit le
+                  <strong class="font-semibold text-slate-700">
+                    {{ utilisateur.date_joined | date:'dd MMMM yyyy' }}
+                  </strong>
+                </span>
+
+              } @else {
+
+                <span>Date d'inscription non disponible</span>
+
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             ACTIONS DU COMPTE
+             ====================================================== -->
+
+        <div class="mt-6 border-t border-slate-200 pt-5 sm:mt-8">
 
           <!-- Retour -->
           <button
             type="button"
             (click)="fermerProfil()"
-            class="flex items-center gap-2 font-medium transition hover:text-slate-900"
+            class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#E7F0FE] px-4 py-3 text-sm font-semibold text-[#173C67] transition hover:bg-[#DCE9FA] sm:w-auto"
           >
-            <span class="text-xl">←</span>
+            <span class="text-lg">←</span>
             Retour aux utilisateurs
           </button>
 
-          <span class="text-slate-300">•</span>
 
-          <h2 class="text-xl font-bold text-slate-900">
-            Détail de l'utilisateur
-          </h2>
+          <!-- Désactivation et suppression -->
+          <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
 
-        </div>
-
-        <!-- Bouton fermer -->
-        <button
-          type="button"
-          (click)="fermerProfil()"
-          aria-label="Fermer"
-          class="flex h-9 w-9 items-center justify-center rounded-full bg-[#EAF2FC] text-xl text-slate-600 transition hover:bg-[#DCEAF8]"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <!-- ======================================================
-           CARTE PRINCIPALE DE L'UTILISATEUR
-           ====================================================== -->
-      <div class="mt-6 rounded-2xl bg-[#F3F7FD] p-6">
-
-        <!-- Informations principales -->
-        <div class="flex items-start justify-between gap-4">
-
-          <div class="flex items-center gap-4">
-
-            <!-- Avatar avec initiales -->
-            <div
-              class="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#16A6A6] text-xl font-bold text-[#063D46]"
+            <button
+              type="button"
+              (click)="desactiverCompte(utilisateur)"
+              [disabled]="!utilisateur.is_active"
+              class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#FFF2C9] px-4 py-3 text-sm font-semibold text-[#A85C00] transition hover:bg-[#FFE9A8] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
-              {{
-                (
-                  (utilisateur.first_name?.charAt(0) || '') +
-                  (utilisateur.last_name?.charAt(0) || '')
-                ).toUpperCase()
-              }}
 
-              <!-- Petit indicateur de connexion -->
               @if (utilisateur.is_active) {
-                <span
-                  class="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-[#16A6A6]"
-                ></span>
+                Désactiver le compte
+              } @else {
+                Compte désactivé
               }
-            </div>
+
+            </button>
 
 
-            <!-- Nom + informations -->
-            <div class="min-w-0">
-
-              <div class="flex flex-wrap items-center gap-2">
-
-                <h3 class="text-lg font-bold text-slate-900">
-                  {{ utilisateur.first_name }} {{ utilisateur.last_name }}
-                </h3>
-
-                <!-- Badge rôle -->
-                <span
-                  class="rounded-full bg-[#8DE6D8] px-2.5 py-1 text-xs font-bold text-[#08665D]"
-                >
-                  {{ utilisateur.role }}
-                </span>
-
-              </div>
-
-              <p class="mt-1 text-sm font-medium text-slate-700">
-                Citoyen Éco-engagé
-              </p>
-
-              <p class="text-sm text-slate-600">
-                Dakar Plateau
-              </p>
-
-              <p class="font-mono text-xs text-slate-600">
-                {{ utilisateur.email }}
-              </p>
-
-            </div>
+            <button
+              type="button"
+              (click)="supprimerCompte(utilisateurSelectionne()!)"
+              class="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#FFE6E8] px-4 py-3 text-sm font-semibold text-[#D32932] transition hover:bg-[#FFDADD] sm:w-auto"
+            >
+              Supprimer le compte
+            </button>
 
           </div>
-
-
-          <!-- Statut -->
-          <div
-            class="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
-            [class.bg-[#DDF7F0]]="utilisateur.is_active"
-            [class.text-[#087A69]]="utilisateur.is_active"
-            [class.bg-[#FFF0D5]]="!utilisateur.is_active"
-            [class.text-[#A45A00]]="!utilisateur.is_active"
-          >
-            <span
-              class="h-2 w-2 rounded-full"
-              [class.bg-[#0B9F87]]="utilisateur.is_active"
-              [class.bg-[#E99A23]]="!utilisateur.is_active"
-            ></span>
-
-            {{ utilisateur.is_active ? 'Actif' : 'Inactif' }}
-          </div>
-
-        </div>
-
-
-        <!-- ====================================================
-             DATE D'INSCRIPTION
-             ==================================================== -->
-        <div class="mt-5 border-t border-slate-200 pt-4">
-
-          <div class="flex items-center gap-2 text-sm text-slate-600">
-
-            <span class="text-base"></span>
-
-            <span>
-              Inscrit le
-              <strong class="font-semibold text-slate-700">
-                {{ utilisateur.date_joined | date:'dd MMMM yyyy' }}
-              </strong>
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <!-- ====================================================
-             STATISTIQUES
-             ==================================================== -->
-<!-- ============================================================
-     STATISTIQUES DE L'UTILISATEUR
-     Les valeurs utilisent des valeurs de secours si l'API
-     ne fournit pas encore ces informations.
-     ============================================================ -->
-<div class="mt-8 grid grid-cols-2 gap-3">
-
-  <!-- Nombre total de scans -->
-  <div class="rounded-xl bg-white p-4">
-
-    <p class="text-sm text-slate-600">
-      Nombre total de scans
-    </p>
-
-    <p class="mt-1 text-xl font-bold text-slate-900">
-      {{ utilisateur.nombreScans ?? 0 }} scans
-    </p>
-
-  </div>
-
-  <!-- Dernière activité -->
-  <div class="rounded-xl bg-white p-4">
-
-    <p class="text-sm text-slate-600">
-      Dernière activité
-    </p>
-
-    <p class="mt-1 text-base font-bold text-slate-900">
-      @if (utilisateur.last_login) {
-        {{ utilisateur.last_login | date:'dd MMM yyyy, HH:mm' }}
-      } @else {
-        Aucune activité
-      }
-    </p>
-
-  </div>
-
-</div>
-
-<div class="mt-5 border-t border-slate-200 pt-4">
-
-  <div class="flex items-center gap-2 text-sm text-slate-600">
-
-    <span class="text-base"></span>
-
-    @if (utilisateur.date_joined) {
-      <span>
-        Inscrit le
-        <strong class="font-semibold text-slate-700">
-          {{ utilisateur.date_joined | date:'dd MMMM yyyy' }}
-        </strong>
-      </span>
-    } @else {
-      <span>
-        Date d'inscription non disponible
-      </span>
-    }
-
-  </div>
-
-</div>
-
-      </div>
-
-
-      <!-- ======================================================
-           ACTIONS
-           ====================================================== -->
-      <div class="mt-11 border-t border-slate-200 pt-5">
-
-        <!-- Retour -->
-        <button
-          type="button"
-          (click)="fermerProfil()"
-          class="flex items-center gap-2 rounded-xl bg-[#E7F0FE] px-4 py-3 text-sm font-semibold text-[#173C67] transition hover:bg-[#DCE9FA]"
-        >
-          <span class="text-lg">←</span>
-          Retour aux utilisateurs
-        </button>
-
-
-        <!-- Actions compte -->
-        <div class="mt-3 flex flex-wrap gap-2">
-
-        <button
-          type="button"
-          (click)="desactiverCompte(utilisateur)"
-          [disabled]="!utilisateur.is_active"
-          class="flex items-center gap-2 rounded-xl bg-[#FFF2C9] px-4 py-3 text-sm font-semibold text-[#A85C00] transition hover:bg-[#FFE9A8] disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <span></span>
-
-          @if (utilisateur.is_active) {
-            Désactiver le compte
-          } @else {
-            Compte désactivé
-          }
-        </button>
-
-
-          <!-- Suppression -->
-          <button
-            type="button"
-            (click)="supprimerCompte(utilisateurSelectionne()!)"
-            class="flex items-center gap-2 rounded-xl bg-[#FFE6E8] px-4 py-3 text-sm font-semibold text-[#D32932] transition hover:bg-[#FFDADD]"
-          >
-            <span></span>
-            Supprimer le compte
-          </button>
 
         </div>
 
       </div>
 
     </div>
-  </div>
-}
+
+  }
 
 </section>
+

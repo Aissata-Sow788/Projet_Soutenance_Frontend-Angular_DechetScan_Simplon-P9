@@ -1,30 +1,29 @@
-<div class="citizen-responsive citizen-dashboard landing-page min-h-screen pb-[106px]">
-  <header class="landing-header">
-    <a class="landing-brand" routerLink="/home-citoyen" aria-label="DechetScan, accueil">
-      <img src="assets/logo1-dechetscan.png" alt="DechetScan" />
-    </a>
+<div class="citizen-dashboard landing-page min-h-screen">
+  <!-- Navbar principale (gère desktop et/ou mobile selon la configuration du composant) -->
+  <app-navigations></app-navigations>
 
-    <button
-      routerLink="/notification"
-      type="button"
-      aria-label="Notifications"
-      class="landing-notifications"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <!-- EN-TÊTE MOBILE : masqué sur desktop -->
+  <header class="landing-header lg:hidden">
+    <a routerLink="/home-citoyen" class="landing-brand">
+      <img src="/assets/logo1-dechetscan.png" alt="DechetScan" />
+    </a>
+    <a routerLink="/notification" class="landing-notifications" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
         <path d="M10 21h4" />
       </svg>
-    </button>
+    </a>
   </header>
 
-  <main class="landing-content">
+  <!-- HERO EN PLEINE LARGEUR -->
+  <div class="landing-hero-wrapper">
     <section class="landing-hero">
       <div class="landing-hero-photo" aria-hidden="true">
-        <img src="/assets/phone.png" alt="" />
+        <img src="/assets/hero-bg.png" alt="photo scan" />
       </div>
 
       <div class="landing-hero-copy">
-        <p class="landing-kicker">Ensemble, gardons Dakar propre</p>
+        <p class="landing-kicker">Bonjour {{ nomUtilisateur() }}</p>
         <h1>Un bon tri commence par <span>un scan.</span></h1>
         <p class="landing-hero-description">
           Identifiez vos déchets en quelques secondes et découvrez comment leur donner une seconde vie.
@@ -49,14 +48,17 @@
         </div>
       </div>
     </section>
+  </div>
 
-    <section class="landing-stats" aria-label="Votre activité">
+  <main class="landing-content">
+
+    <!-- STATISTIQUES -->
+    <section class="landing-stats"aria-label="Votre activité">
       <article class="landing-stat">
         <span class="landing-stat-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M3 12a9 9 0 1 0 3-6.7" />
-            <path d="M3 4v5h5" />
-            <path d="M12 7v5l3 2" />
+            <path d="M4 7h3l1.5-2h7L17 7h3v12H4V7Z" />
+            <circle cx="12" cy="13" r="3.5" />
           </svg>
         </span>
         <span class="landing-stat-copy">
@@ -66,7 +68,7 @@
       </article>
 
       <article class="landing-stat">
-        <span class="landing-stat-icon landing-stat-icon--points">
+        <span class="landing-stat-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
             <circle cx="12" cy="10" r="2.5" />
@@ -77,21 +79,9 @@
           <strong>{{ nombrePoints() }} disponible{{ nombrePoints() > 1 ? 's' : '' }}</strong>
         </span>
       </article>
-
-      <article class="landing-stat">
-        <span class="landing-stat-icon landing-stat-icon--community">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="8" r="3.5" />
-            <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
-          </svg>
-        </span>
-        <span class="landing-stat-copy">
-          <span>Votre espace</span>
-          <strong>Citoyen engagé</strong>
-        </span>
-      </article>
     </section>
 
+    <!-- ACTIONS RAPIDES -->
     <section class="landing-actions-section" aria-labelledby="landing-actions-title">
       <div class="landing-section-heading">
         <div>
@@ -145,6 +135,7 @@
       </div>
     </section>
 
+    <!-- DERNIERS SCANS + CONSEIL -->
     <div class="landing-lower">
       <section class="landing-panel landing-scans" aria-labelledby="landing-scans-title">
         <div class="landing-section-heading">
@@ -155,45 +146,47 @@
           <button type="button" class="landing-text-link" (click)="voirHistorique()">Voir tout <span aria-hidden="true">→</span></button>
         </div>
 
-        <div *ngIf="derniersScans().length > 0; else noRecentScans" class="landing-scan-track" aria-label="Défilement horizontal des derniers scans">
-          <article *ngFor="let scan of derniersScans()" class="landing-scan-card">
-            <img
-              *ngIf="scan.image"
-              [src]="scan.image"
-              [alt]="scan.nom"
-              (error)="retirerImage(scan)"
-            />
-            <div *ngIf="!scan.image" class="landing-scan-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <circle cx="8.5" cy="9" r="1.5" />
-                <path d="m21 15-4.5-4.5L7 20" />
-              </svg>
-            </div>
-            <div class="landing-scan-shade"></div>
-            <div class="landing-scan-copy">
-              <span>
-                <strong>{{ scan.nom }}</strong>
-                <small>{{ scan.date }}</small>
-              </span>
-              <span class="landing-scan-tag">{{ scan.categorie }}</span>
-            </div>
-          </article>
-        </div>
-
-        <ng-template #noRecentScans>
+        @if (derniersScans().length > 0) {
+          <div class="landing-scan-track" aria-label="Défilement horizontal des derniers scans">
+            @for (scan of derniersScans(); track $index) {
+              <article class="landing-scan-card">
+                @if (scan.image) {
+                  <img [src]="scan.image" [alt]="scan.nom" (error)="retirerImage(scan)" />
+                } @else {
+                  <div class="landing-scan-placeholder" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="16" rx="2" />
+                      <circle cx="8.5" cy="9" r="1.5" />
+                      <path d="m21 15-4.5-4.5L7 20" />
+                    </svg>
+                  </div>
+                }
+                <div class="landing-scan-shade"></div>
+                <div class="landing-scan-copy">
+                  <span>
+                    <strong>{{ scan.nom }}</strong>
+                    <small>{{ scan.date }}</small>
+                  </span>
+                  <span class="landing-scan-tag">{{ scan.categorie }}</span>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
           <div class="landing-empty-scans">
             <p>Aucun scan pour le moment.</p>
             <button type="button" (click)="scanner()">Scanner un déchet</button>
           </div>
-        </ng-template>
+        }
       </section>
 
       <section class="landing-panel landing-tip" aria-labelledby="landing-tip-title">
-        <span class="landing-tip-label">Conseil du jour</span>
+        <span class="landing-tip-label">Sensibilisation</span>
         <h2 id="landing-tip-title">Un petit geste, un grand impact.</h2>
-        <p>{{ conseil() }}</p>
-        <button type="button" class="landing-tip-link" (click)="voirConseils()">Découvrir d’autres conseils <span aria-hidden="true">→</span></button>
+        <p>Ne jetez pas vos sachets et vos bouteilles dans la rue ou dans les caniveaux : ils bouchent l’écoulement de l’eau, aggravent les inondations et finissent à la mer. Scannez vos déchets,
+           triez-les et déposez-les dans un point de collecte.
+            Ensemble, gardons Dakar propre.</p>
+
         <div class="landing-tip-footer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M20 4c-8 0-14 3-14 10a6 6 0 0 0 6 6c7 0 8-8 8-16Z" />
@@ -204,6 +197,7 @@
       </section>
     </div>
 
+    <!-- DEVENIR COLLECTEUR -->
     <button type="button" class="landing-collector-link" routerLink="/devenir-collecteur">
       <span class="landing-quick-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -221,5 +215,13 @@
     </button>
   </main>
 
-  <app-barre-navigations></app-barre-navigations>
+  <!-- FOOTER -->
+  <div class="hidden lg:block">
+    <app-footer></app-footer>
+  </div>
+
+  <!-- BARRE DU BAS : mobile seulement -->
+  <div class="lg:hidden">
+    <app-barre-navigations></app-barre-navigations>
+  </div>
 </div>

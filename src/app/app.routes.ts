@@ -153,6 +153,17 @@ export const routes: Routes = [
         .then(m => m.DemandeRamassage)
   },
 
+    {
+    // URL : /demande-ramassage
+    // Page du formulaire de demande de ramassage.
+    path: 'footer',
+    loadComponent: () =>
+      import('./shared/components/footer/footer')
+        .then(m => m.Footer)
+  },
+
+
+
   {
     // Formulaire de création du profil professionnel collecteur.
     path: 'devenir-collecteur',

@@ -1,146 +1,251 @@
-<!-- Page historique des collectes -->
-<div class="p-6 xl:p-8">
 
-  <!-- EN-TÊTE -->
-  <div class="mb-6 flex items-start justify-between gap-4">
+<div class="min-h-screen bg-[#F4F7F8] p-3 text-[#142337] sm:p-5 lg:p-7">
+
+  <!-- En-tête de la page -->
+  <header class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-[#142337]">Historique des collectes</h1>
-      <p class="mt-1 text-sm text-slate-500">Consultez vos collectes réalisées.</p>
+      <h1 class="text-xl font-bold sm:text-2xl">
+        Historique des collectes
+      </h1>
+      <p class="mt-1 text-xs text-slate-500 sm:text-sm">
+        Retrouvez les déchets récupérés et les zones d'intervention.
+      </p>
     </div>
-    <!-- Badge total -->
-    <div class="shrink-0 rounded-xl bg-[#C9F5EF] px-4 py-2">
-      <span class="text-sm font-black text-[#087C78]">
-        {{ totalTerminees() }} collectes réalisées
+
+    <div class="w-fit rounded-xl bg-[#C9F5EF] px-3 py-2">
+      <span class="text-xs font-bold text-[#087C78] sm:text-sm">
+        {{ totalTerminees() }} résultat(s)
       </span>
     </div>
-  </div>
+  </header>
 
-  <!-- BARRE FILTRES -->
-  <div class="mb-6 flex flex-wrap items-center gap-3">
+  <!-- Recherche et filtres -->
+  <section class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(220px,1fr)_180px_190px]">
 
     <!-- Recherche -->
-    <div class="relative flex-1 min-w-[200px]">
-      <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-           viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-           stroke-linecap="round" stroke-linejoin="round">
+    <div class="relative">
+      <svg
+        class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true">
         <circle cx="11" cy="11" r="8"></circle>
-        <path d="M21 21l-4.35-4.35"></path>
+        <path d="m21 21-4.35-4.35"></path>
       </svg>
+
       <input
-        type="text"
-        placeholder="Rechercher une collecte..."
+        type="search"
+        [value]="recherche()"
         (input)="onRecherche($event)"
-        class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+        placeholder="Déchet, zone, collecteur..."
+        aria-label="Rechercher une collecte"
+        class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-[#0EA5A4] focus:ring-2 focus:ring-[#0EA5A4]/10"
       />
     </div>
 
-    <!-- Filtre période -->
+    <!-- Filtre de période -->
     <select
+      [value]="filtrePeriode()"
       (change)="onFiltrePeriode($event)"
-      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
-    >
-      <option value="tout">Période: Tout</option>
-      <option value="semaine">Cette semaine</option>
-      <option value="mois">Ce mois</option>
-      <option value="trimestre">Ce trimestre</option>
+      aria-label="Filtrer par période"
+      class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-[#0EA5A4]">
+      <option value="tout">Toutes les périodes</option>
+      <option value="semaine">7 derniers jours</option>
+      <option value="mois">Dernier mois</option>
+      <option value="trimestre">3 derniers mois</option>
     </select>
 
-    <!-- Filtre type déchet -->
+    <!-- Filtre de déchet -->
     <select
-      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
-    >
-      <option value="">Type de déchet: Tout</option>
+      [value]="filtreDechet()"
+      (change)="onFiltreDechet($event)"
+      aria-label="Filtrer par type de déchet"
+      class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-[#0EA5A4]">
+      <option value="">Tous les déchets</option>
       <option value="plastique">Plastique</option>
       <option value="metal">Métal</option>
       <option value="carton">Carton</option>
       <option value="verre">Verre</option>
+      <option value="papier">Papier</option>
+      <option value="organique">Organique</option>
     </select>
 
-  </div>
+  </section>
 
-  <!-- CHARGEMENT -->
+  <!-- Chargement -->
   @if (chargement()) {
-    <div class="py-16 text-center text-sm text-slate-400">Chargement de l'historique...</div>
+    <div class="rounded-2xl bg-white px-4 py-14 text-center text-sm text-slate-500">
+      Chargement de l'historique...
+    </div>
   }
 
-  <!-- ERREUR -->
+  <!-- Erreur -->
   @else if (erreur()) {
-    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+    <div class="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
+      {{ erreur() }}
+    </div>
   }
 
-  <!-- TABLEAU -->
+  <!-- Résultats -->
   @else {
-    <div class="rounded-2xl bg-white shadow-sm">
 
-      @if (collectesFiltrees().length === 0) {
-        <div class="py-16 text-center text-sm text-slate-400">
-          Aucune collecte terminée trouvée.
-        </div>
-      } @else {
+    @if (collectesFiltrees().length === 0) {
+      <div class="rounded-2xl border border-slate-100 bg-white px-4 py-14 text-center">
+        <p class="text-sm font-semibold text-slate-600">
+          Aucune collecte trouvée
+        </p>
+        <p class="mt-1 text-xs text-slate-400">
+          Essaie de modifier la période, le déchet ou ta recherche.
+        </p>
+        <button
+          type="button"
+          (click)="recherche.set(''); filtrePeriode.set('tout'); filtreDechet.set(''); pageCourante.set(1)"
+          class="mt-4 rounded-lg bg-[#0EA5A4] px-4 py-2 text-xs font-semibold text-white hover:bg-[#087C78]">
+          Réinitialiser les filtres
+        </button>
+      </div>
+    } @else {
+
+      <!-- Cartes : mobiles -->
+      <div class="space-y-3 md:hidden">
+        @for (collecte of collectesPage(); track collecte.idCollecte) {
+          <article class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
+
+            <div class="flex items-start gap-3">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#C9F5EF] text-[#087C78]">
+                <svg
+                  class="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true">
+                  <path d="M7 3h10l4 6-4 12H7L3 9l4-6Z"></path>
+                  <path d="M3 9h18M7 3l5 6 5-6M12 9v12"></path>
+                </svg>
+              </div>
+
+              <div class="min-w-0 flex-1">
+                <h2 class="break-words text-sm font-bold">
+                  {{ nomDechets(collecte) }}
+                </h2>
+                <p class="mt-1 text-xs text-slate-500">
+                  {{ formaterDate(collecte.dateRealisation ?? collecte.datePlanifiee) }}
+                </p>
+              </div>
+
+              <span class="shrink-0 rounded-full bg-green-50 px-2 py-1 text-[10px] font-bold text-green-700">
+                {{ collecte.dateRealisation ? 'Réalisée' : 'Planifiée' }}
+              </span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+
+              <div>
+                <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                  Quantité récupérée
+                </p>
+                <p class="mt-1 text-sm font-bold text-[#087C78]">
+                  @if (collecte.quantiteRecuperee != null) {
+                    {{ collecte.quantiteRecuperee }} kg
+                  } @else {
+                    Non renseignée
+                  }
+                </p>
+              </div>
+
+              <div class="min-w-0">
+                <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                  Zone d'intervention
+                </p>
+                <p class="mt-1 break-words text-xs font-medium">
+                  {{ nomZone(collecte) }}
+                </p>
+              </div>
+
+              <div class="col-span-2">
+                <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                  Collecteur
+                </p>
+                <p class="mt-1 break-words text-xs font-medium">
+                  {{ collecte.nomCollecteur || 'Non renseigné' }}
+                </p>
+              </div>
+
+              @if (collecte.idDemande) {
+                <div class="col-span-2">
+                  <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                    Demande associée
+                  </p>
+                  <p class="mt-1 text-xs font-medium">
+                    #{{ collecte.idDemande }}
+                  </p>
+                </div>
+              }
+
+            </div>
+          </article>
+        }
+      </div>
+
+      <!-- Tableau : tablette et ordinateur -->
+      <div class="hidden overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm md:block">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="border-b border-slate-100">
-                <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Date</th>
-                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Déchet</th>
-                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Quantité</th>
-                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen</th>
-                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Zone</th>
-                <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Statut</th>
+          <table class="w-full min-w-[800px] text-left text-sm">
+            <thead class="border-b border-slate-100 bg-slate-50">
+              <tr>
+                <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-slate-500">Date</th>
+                <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-slate-500">Déchets</th>
+                <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-slate-500">Quantité</th>
+                <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-slate-500">Zone d'intervention</th>
+                <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-slate-500">Collecteur</th>
+                <th class="px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-slate-500">Statut</th>
               </tr>
             </thead>
-            <tbody>
-              @for (collecte of collectesPage(); track collecte.idCollecte) {
-                <tr class="border-b border-slate-50 hover:bg-slate-50">
 
-                  <!-- Date de réalisation -->
-                  <td class="px-6 py-4 font-medium text-[#142337]">
+            <tbody class="divide-y divide-slate-100">
+              @for (collecte of collectesPage(); track collecte.idCollecte) {
+                <tr class="transition hover:bg-slate-50">
+
+                  <td class="whitespace-nowrap px-4 py-4 text-xs text-slate-600">
                     {{ formaterDate(collecte.dateRealisation ?? collecte.datePlanifiee) }}
                   </td>
 
-                  <!-- Déchet -->
-                  <td class="px-4 py-4">
-                    <div class="flex items-center gap-2">
-                      <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C9F5EF]">
-                        <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M3 7l3 9h12l3-9H3z"></path>
-                        </svg>
-                      </div>
-                      <span class="font-medium text-[#142337]">
-                        {{ collecte.nomPoint ?? 'Ramassage' }}
-                      </span>
-                    </div>
+                  <td class="max-w-[220px] px-4 py-4">
+                    <span class="break-words font-semibold text-[#142337]">
+                      {{ nomDechets(collecte) }}
+                    </span>
                   </td>
 
-                  <!-- Quantité -->
-                  <td class="px-4 py-4 text-slate-600">
-                    {{ collecte.quantiteRecuperee ? collecte.quantiteRecuperee + ' kg' : '—' }}
-                  </td>
-
-                  <!-- Citoyen (via demande) -->
-                  <td class="px-4 py-4">
-                    @if (collecte.idDemande) {
-                      <div class="flex items-center gap-2">
-                        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-[#EEF4FF] text-[10px] font-bold text-[#087C78]">
-                          {{ initiales(collecte.nomCollecteur) }}
-                        </div>
-                        <span class="text-slate-600">Demande #{{ collecte.idDemande }}</span>
-                      </div>
+                  <td class="whitespace-nowrap px-4 py-4 font-semibold text-[#087C78]">
+                    @if (collecte.quantiteRecuperee != null) {
+                      {{ collecte.quantiteRecuperee }} kg
                     } @else {
-                      <span class="text-slate-400">—</span>
+                      —
                     }
                   </td>
 
-                  <!-- Zone -->
-                  <td class="px-4 py-4 text-slate-600">
-                    {{ collecte.nomPoint ?? '—' }}
+                  <td class="max-w-[220px] px-4 py-4 text-xs text-slate-600">
+                    {{ nomZone(collecte) }}
                   </td>
 
-                  <!-- Statut terminée -->
-                  <td class="px-4 py-4">
-                    <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-1 text-[10px] font-bold text-green-700">
-                      Terminée
+                  <td class="px-4 py-4 text-xs text-slate-600">
+                    {{ collecte.nomCollecteur || '—' }}
+                  </td>
+
+                  <td class="whitespace-nowrap px-4 py-4">
+                    <span
+                      class="rounded-full px-2.5 py-1 text-[10px] font-bold"
+                      [ngClass]="collecte.dateRealisation
+                        ? 'bg-green-50 text-green-700'
+                        : 'bg-amber-50 text-amber-700'">
+                      {{ collecte.dateRealisation ? 'Réalisée' : 'Planifiée' }}
                     </span>
                   </td>
 
@@ -149,51 +254,57 @@
             </tbody>
           </table>
         </div>
+      </div>
 
-        <!-- PAGINATION -->
-        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
-          <p class="text-xs text-slate-400">
-            Affichage de 1 à {{ collectesFiltrees().length }} sur
-            {{ totalTerminees() }} collectes réalisées
-          </p>
-          <div class="flex items-center gap-1">
-            <button
-              (click)="allerPage(pageCourante() - 1)"
-              [disabled]="pageCourante() === 1"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
-            >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 18l-6-6 6-6"></path>
-              </svg>
-            </button>
-            @for (page of pages(); track page) {
-              <button
-                (click)="allerPage(page)"
-                type="button"
-                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
-                [ngClass]="page === pageCourante()
-                  ? 'bg-[#0EA5A4] text-white'
-                  : 'border border-slate-200 text-slate-600 hover:bg-slate-50'"
-              >
-                {{ page }}
-              </button>
-            }
-            <button
-              (click)="allerPage(pageCourante() + 1)"
-              [disabled]="pageCourante() === totalPages()"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
-            >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18l6-6-6-6"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      }
+      <!-- Pagination -->
+      <footer class="mt-4 flex flex-col gap-3 rounded-xl border border-slate-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
 
-    </div>
+        <p class="text-center text-xs text-slate-500 sm:text-left">
+          {{ debutAffichage() }}–{{ finAffichage() }}
+          sur {{ totalTerminees() }} résultat(s)
+        </p>
+
+        <nav
+          class="flex flex-wrap items-center justify-center gap-1"
+          aria-label="Pagination de l'historique">
+
+          <button
+            type="button"
+            (click)="allerPage(pageCourante() - 1)"
+            [disabled]="pageCourante() === 1"
+            aria-label="Page précédente"
+            class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="m15 18-6-6 6-6"></path>
+            </svg>
+          </button>
+
+          @for (page of pages(); track page) {
+            <button
+              type="button"
+              (click)="allerPage(page)"
+              [attr.aria-current]="page === pageCourante() ? 'page' : null"
+              class="flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-xs font-semibold"
+              [ngClass]="page === pageCourante()
+                ? 'bg-[#0EA5A4] text-white'
+                : 'border border-slate-200 text-slate-600 hover:bg-slate-50'">
+              {{ page }}
+            </button>
+          }
+
+          <button
+            type="button"
+            (click)="allerPage(pageCourante() + 1)"
+            [disabled]="pageCourante() === totalPages()"
+            aria-label="Page suivante"
+            class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="m9 18 6-6-6-6"></path>
+            </svg>
+          </button>
+
+        </nav>
+      </footer>
+    }
   }
-
 </div>

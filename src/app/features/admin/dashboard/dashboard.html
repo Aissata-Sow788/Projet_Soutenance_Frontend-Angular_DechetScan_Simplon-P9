@@ -1,71 +1,39 @@
 <!-- ============================================================
-     CONTENU DU DASHBOARD ADMIN
+     CONTENU DU DASHBOARD ADMIN (responsive)
 
-     Le Sidebar et le Header sont déjà gérés par ton
-     composant de layout administrateur.
+     Mobile d'abord : les classes sans préfixe visent le mobile,
+     sm: >= 640px, md: >= 768px, lg: >= 1024px.
      ============================================================ -->
 
-<section class="min-h-full bg-[#f6f8fd] px-9 pb-10 pt-7">
+<section class="min-h-full bg-[#f6f8fd] px-4 pb-8 pt-5 md:px-9 md:pb-10 md:pt-7">
 
 
   <!-- ==========================================================
        EN-TÊTE DU DASHBOARD
        ========================================================== -->
 
-  <div class="mb-7 flex items-start justify-between">
+  <div class="mb-5 md:mb-7">
 
-    <div>
-
-      <!-- Petit indicateur de section -->
-      <div class="mb-2 flex items-center gap-2">
-
-        <span
-          class="text-[11px] font-bold uppercase tracking-[0.08em] text-[#079c98]"
-        >
-           TABLEAU ANALYTIQUE
-        </span>
-
-      </div>
-
-
-      <!-- Titre principal -->
-      <h1
-        class="text-[34px] font-bold leading-none tracking-[-1.2px] text-[#142238]"
+    <!-- Petit indicateur de section -->
+    <div class="mb-2 flex items-center gap-2">
+      <span
+        class="text-[11px] font-bold uppercase tracking-[0.08em] text-[#079c98]"
       >
-        Tableau de bord
-      </h1>
-
-
-      <!-- Description -->
-      <p class="mt-2 text-[15px] text-[#5d6774]">
-        Analysez l'activité globale de tri et la participation des utilisateurs.
-      </p>
-
+        TABLEAU ANALYTIQUE
+      </span>
     </div>
 
-
-    <!-- Sélecteur de période -->
-    <div
-      class="flex h-[44px] items-center gap-2 rounded-[14px] bg-white px-4 shadow-[0_2px_10px_rgba(20,35,60,0.04)]"
+    <!-- Titre principal -->
+    <h1
+      class="text-[26px] font-bold leading-none tracking-[-1px] text-[#142238] md:text-[34px] md:tracking-[-1.2px]"
     >
+      Tableau de bord
+    </h1>
 
-      <span class="text-[17px] text-[#0b9d99]">
-
-      </span>
-
-      <span class="text-[12px] font-semibold text-[#273448]">
-        Période :
-      </span>
-
-      <span class="text-[12px] font-bold text-[#0b9d99]">
-        {{ periodeActive() }}
-      </span>
-
-      <span class="ml-2 text-[14px] text-[#77818d]">
-       ⌄
-      </span>
-
-    </div>
+    <!-- Description -->
+    <p class="mt-2 text-[13px] text-[#5d6774] md:text-[15px]">
+      Analysez l'activité globale de tri et la participation des utilisateurs.
+    </p>
 
   </div>
 
@@ -77,7 +45,7 @@
   @if (chargement()) {
 
     <div
-      class="mb-6 flex items-center justify-center rounded-[18px] bg-white px-6 py-8 text-[14px] font-medium text-[#657181]"
+      class="mb-5 flex items-center justify-center rounded-[18px] bg-white px-6 py-6 text-[14px] font-medium text-[#657181] md:mb-6 md:py-8"
     >
       Chargement des statistiques...
     </div>
@@ -92,13 +60,12 @@
   @if (erreur()) {
 
     <div
-      class="mb-6 flex items-center justify-between rounded-[18px] border border-red-100 bg-red-50 px-5 py-4"
+      class="mb-5 flex flex-col gap-3 rounded-[18px] border border-red-100 bg-red-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:mb-6 md:px-5"
     >
 
       <span class="text-[13px] font-medium text-red-600">
         {{ erreur() }}
       </span>
-
 
       <!-- Permet de relancer l'appel API -->
       <button
@@ -116,166 +83,131 @@
 
   <!-- ==========================================================
        CARTES STATISTIQUES PRINCIPALES
+       2 colonnes sur mobile, 4 sur grand écran
        ========================================================== -->
 
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
 
 
-    <!-- --------------------------------------------------------
-         CARTE : NOMBRE TOTAL DE SCANS
-         -------------------------------------------------------- -->
-
+    <!-- CARTE : NOMBRE TOTAL DE SCANS -->
     <div
-      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+      class="rounded-[18px] bg-white px-4 py-4 shadow-[0_2px_12px_rgba(20,35,60,0.035)] md:px-6 md:py-5"
     >
 
-      <!-- Icône -->
       <div
-        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+        class="mb-3 flex h-[36px] w-[36px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[18px] text-[#008e91] md:mb-4 md:h-[40px] md:w-[40px] md:text-[20px]"
       >
 
       </div>
 
-
-      <p class="text-[12px] font-medium text-[#65707c]">
+      <p class="text-[11px] font-medium text-[#65707c] md:text-[12px]">
         Nombre total de scans
       </p>
 
-
-      <div class="mt-1 flex items-end gap-2">
-
+      <div class="mt-1 flex flex-wrap items-end gap-x-2">
         <span
-          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+          class="text-[28px] font-bold leading-none tracking-[-1px] text-[#142238] md:text-[39px]"
         >
           {{ nombreScans() | number:'1.0-0' }}
         </span>
-
         <span
           class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
         >
           scans
         </span>
-
       </div>
 
     </div>
 
 
-    <!-- --------------------------------------------------------
-         CARTE : UTILISATEURS ACTIFS
-         -------------------------------------------------------- -->
-
+    <!-- CARTE : UTILISATEURS ACTIFS -->
     <div
-      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+      class="rounded-[18px] bg-white px-4 py-4 shadow-[0_2px_12px_rgba(20,35,60,0.035)] md:px-6 md:py-5"
     >
 
-      <!-- Icône -->
       <div
-        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+        class="mb-3 flex h-[36px] w-[36px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[18px] text-[#008e91] md:mb-4 md:h-[40px] md:w-[40px] md:text-[20px]"
       >
         ♙
       </div>
 
-
-      <p class="text-[12px] font-medium text-[#65707c]">
+      <p class="text-[11px] font-medium text-[#65707c] md:text-[12px]">
         Utilisateurs actifs
       </p>
 
-
-      <div class="mt-1 flex items-end gap-2">
-
+      <div class="mt-1 flex flex-wrap items-end gap-x-2">
         <span
-          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+          class="text-[28px] font-bold leading-none tracking-[-1px] text-[#142238] md:text-[39px]"
         >
           {{ utilisateursActifs() | number:'1.0-0' }}
         </span>
-
         <span
           class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
         >
           citoyens
         </span>
-
       </div>
 
     </div>
 
 
-    <!-- --------------------------------------------------------
-         CARTE : DÉCHETS ANALYSÉS
-         -------------------------------------------------------- -->
-
+    <!-- CARTE : DÉCHETS ANALYSÉS -->
     <div
-      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+      class="rounded-[18px] bg-white px-4 py-4 shadow-[0_2px_12px_rgba(20,35,60,0.035)] md:px-6 md:py-5"
     >
 
-      <!-- Icône -->
       <div
-        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+        class="mb-3 flex h-[36px] w-[36px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[18px] text-[#008e91] md:mb-4 md:h-[40px] md:w-[40px] md:text-[20px]"
       >
         ✓
       </div>
 
-
-      <p class="text-[12px] font-medium text-[#65707c]">
+      <p class="text-[11px] font-medium text-[#65707c] md:text-[12px]">
         Déchets analysés
       </p>
 
-
-      <div class="mt-1 flex items-end gap-2">
-
+      <div class="mt-1 flex flex-wrap items-end gap-x-2">
         <span
-          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+          class="text-[28px] font-bold leading-none tracking-[-1px] text-[#142238] md:text-[39px]"
         >
           {{ dechetsAnalyses() | number:'1.0-0' }}
         </span>
-
         <span
           class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
         >
           déchets
         </span>
-
       </div>
 
     </div>
 
 
-    <!-- --------------------------------------------------------
-         CARTE : POINTS DE COLLECTE
-         -------------------------------------------------------- -->
-
+    <!-- CARTE : POINTS DE COLLECTE -->
     <div
-      class="rounded-[18px] bg-white px-6 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+      class="rounded-[18px] bg-white px-4 py-4 shadow-[0_2px_12px_rgba(20,35,60,0.035)] md:px-6 md:py-5"
     >
 
-      <!-- Icône -->
       <div
-        class="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[20px] text-[#008e91]"
+        class="mb-3 flex h-[36px] w-[36px] items-center justify-center rounded-[11px] bg-[#e8f1ff] text-[18px] text-[#008e91] md:mb-4 md:h-[40px] md:w-[40px] md:text-[20px]"
       >
         ⌖
       </div>
 
-
-      <p class="text-[12px] font-medium text-[#65707c]">
+      <p class="text-[11px] font-medium text-[#65707c] md:text-[12px]">
         Points de collecte actifs
       </p>
 
-
-      <div class="mt-1 flex items-end gap-2">
-
+      <div class="mt-1 flex flex-wrap items-end gap-x-2">
         <span
-          class="text-[39px] font-bold leading-none tracking-[-1px] text-[#142238]"
+          class="text-[28px] font-bold leading-none tracking-[-1px] text-[#142238] md:text-[39px]"
         >
           {{ pointsActifs() | number:'1.0-0' }}
         </span>
-
         <span
           class="mb-1 text-[10px] font-bold tracking-wide text-[#7b858f]"
         >
           points
         </span>
-
       </div>
 
     </div>
@@ -285,9 +217,10 @@
 
   <!-- ==========================================================
        ZONE GRAPHIQUES
+       1 colonne sur mobile/tablette, 2 colonnes sur grand écran
        ========================================================== -->
 
-  <div class="mt-7 grid grid-cols-[2fr_1fr] gap-6">
+  <div class="mt-5 grid grid-cols-1 gap-4 md:mt-7 md:gap-6 lg:grid-cols-[2fr_1fr]">
 
 
     <!-- ========================================================
@@ -295,72 +228,60 @@
          ======================================================== -->
 
     <div
-      class="rounded-[18px] bg-white px-7 py-6 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+      class="min-w-0 rounded-[18px] bg-white px-4 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)] md:px-7 md:py-6"
     >
 
-      <!-- Titre + périodes -->
-      <div class="flex items-start justify-between">
+      <!-- Titre + périodes (empilés sur mobile) -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 
         <div>
-
           <h2
-            class="text-[18px] font-bold tracking-[-0.3px] text-[#142238]"
+            class="text-[16px] font-bold tracking-[-0.3px] text-[#142238] md:text-[18px]"
           >
             Évolution des scans
           </h2>
-
           <p class="mt-1 text-[12px] text-[#66717d]">
             Fréquence de scans IA et détections validées
           </p>
-
         </div>
-
 
         <!-- Sélecteur de période -->
         <div
-          class="flex items-center gap-1 rounded-[12px] bg-[#edf3fc] p-1"
+          class="flex w-full items-center gap-1 rounded-[12px] bg-[#edf3fc] p-1 sm:w-auto"
         >
 
           <button
             type="button"
             (click)="changerPeriode('7 jours')"
             [ngClass]="{
-              'bg-[#0ea5a4] text-white':
-                periodeActive() === '7 jours',
-              'text-[#596575]':
-                periodeActive() !== '7 jours'
+              'bg-[#0ea5a4] text-white': periodeActive() === '7 jours',
+              'text-[#596575]': periodeActive() !== '7 jours'
             }"
-            class="rounded-[9px] px-4 py-2 text-[10px] font-bold"
+            class="flex-1 rounded-[9px] px-3 py-2 text-[11px] font-bold sm:flex-none md:px-4 md:text-[10px]"
           >
             7 jours
           </button>
-
 
           <button
             type="button"
             (click)="changerPeriode('30 jours')"
             [ngClass]="{
-              'bg-[#0ea5a4] text-white':
-                periodeActive() === '30 jours',
-              'text-[#596575]':
-                periodeActive() !== '30 jours'
+              'bg-[#0ea5a4] text-white': periodeActive() === '30 jours',
+              'text-[#596575]': periodeActive() !== '30 jours'
             }"
-            class="rounded-[9px] px-4 py-2 text-[10px] font-bold"
+            class="flex-1 rounded-[9px] px-3 py-2 text-[11px] font-bold sm:flex-none md:px-4 md:text-[10px]"
           >
             30 jours
           </button>
-
 
           <button
             type="button"
             (click)="changerPeriode('3 mois')"
             [ngClass]="{
-              'bg-[#0ea5a4] text-white':
-                periodeActive() === '3 mois',
-              'text-[#596575]':
-                periodeActive() !== '3 mois'
+              'bg-[#0ea5a4] text-white': periodeActive() === '3 mois',
+              'text-[#596575]': periodeActive() !== '3 mois'
             }"
-            class="rounded-[9px] px-4 py-2 text-[10px] font-bold"
+            class="flex-1 rounded-[9px] px-3 py-2 text-[11px] font-bold sm:flex-none md:px-4 md:text-[10px]"
           >
             3 mois
           </button>
@@ -372,33 +293,28 @@
 
       <!-- ======================================================
            ZONE DU GRAPHIQUE
-
-           Le graphique visuel conserve la forme de ta maquette.
-           Les statistiques principales viennent de Django.
+           Hauteur réduite sur mobile. Les lignes horizontales
+           sont en % pour suivre la hauteur.
            ====================================================== -->
 
-      <div class="relative mt-7 h-[245px]">
-
+      <div class="relative mt-6 h-[220px] md:mt-7 md:h-[245px]">
 
         <!-- Lignes horizontales -->
         <div
-          class="absolute left-0 right-0 top-[35px] border-t border-dashed border-[#dce6f2]"
+          class="absolute left-0 right-0 top-[14%] border-t border-dashed border-[#dce6f2]"
         ></div>
-
         <div
-          class="absolute left-0 right-0 top-[88px] border-t border-dashed border-[#dce6f2]"
+          class="absolute left-0 right-0 top-[36%] border-t border-dashed border-[#dce6f2]"
         ></div>
-
         <div
-          class="absolute left-0 right-0 top-[141px] border-t border-dashed border-[#dce6f2]"
+          class="absolute left-0 right-0 top-[58%] border-t border-dashed border-[#dce6f2]"
         ></div>
-
         <div
-          class="absolute left-0 right-0 top-[194px] border-t border-dashed border-[#dce6f2]"
+          class="absolute left-0 right-0 top-[79%] border-t border-dashed border-[#dce6f2]"
         ></div>
 
 
-        <!-- Courbe -->
+        <!-- Courbe dynamique (sans les cercles : ils seraient déformés) -->
         <svg
           class="absolute inset-0 h-full w-full overflow-visible"
           viewBox="0 0 700 245"
@@ -406,91 +322,56 @@
         >
 
           <!-- Zone sous la courbe -->
-          <path
-            d="M0 205
-               C90 175 125 145 210 115
-               C300 83 365 95 440 67
-               C520 38 590 18 700 32
-               L700 245
-               L0 245 Z"
-            fill="#dff4f3"
-            opacity="0.9"
-          ></path>
+          <path [attr.d]="aire()" fill="#dff4f3" opacity="0.9"></path>
 
-
-          <!-- Ligne principale -->
+          <!-- Ligne principale : épaisseur constante quel que soit l'écran -->
           <path
-            d="M0 205
-               C90 175 125 145 210 115
-               C300 83 365 95 440 67
-               C520 38 590 18 700 32"
+            [attr.d]="ligne()"
             fill="none"
             stroke="#0ea5a4"
             stroke-width="4"
             stroke-linecap="round"
+            vector-effect="non-scaling-stroke"
           ></path>
-
-
-          <!-- Points -->
-          <circle
-            cx="210"
-            cy="115"
-            r="5"
-            fill="white"
-            stroke="#0ea5a4"
-            stroke-width="3"
-          ></circle>
-
-          <circle
-            cx="440"
-            cy="67"
-            r="5"
-            fill="white"
-            stroke="#0ea5a4"
-            stroke-width="3"
-          ></circle>
-
-          <circle
-            cx="590"
-            cy="25"
-            r="5"
-            fill="white"
-            stroke="#0ea5a4"
-            stroke-width="3"
-          ></circle>
 
         </svg>
 
 
+        <!-- Points en HTML : positionnés en %, toujours bien ronds -->
+        @for (p of points(); track p.label) {
+          <div
+            class="absolute h-[10px] w-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#0ea5a4] bg-white"
+            [style.left.%]="p.x / 7"
+            [style.top.%]="p.y / 245 * 100"
+          ></div>
+        }
+
+
+        <!-- Message affiché si aucune donnée -->
+        @if (points().length === 0 && !chargement()) {
+          <div
+            class="absolute inset-0 flex items-center justify-center text-[12px] font-medium text-[#77818a]"
+          >
+            Aucune donnée pour cette période
+          </div>
+        }
+
+
         <!-- Valeur sur le point principal -->
         <div
-          class="absolute right-[15%] top-[5px] rounded-[6px] bg-[#26364b] px-3 py-2 text-[11px] font-bold text-white"
+          class="absolute right-[8%] top-[5px] rounded-[6px] bg-[#26364b] px-2 py-1.5 text-[10px] font-bold text-white md:right-[15%] md:px-3 md:py-2 md:text-[11px]"
         >
           {{ nombreScans() | number:'1.0-0' }} scans
         </div>
 
 
-        <!-- Labels -->
+        <!-- Labels générés depuis les données -->
         <div
           class="absolute bottom-0 left-0 right-0 flex justify-between text-[10px] font-semibold text-[#77818a]"
         >
-
-          <span>
-            Semaine 1
-          </span>
-
-          <span>
-            Semaine 2
-          </span>
-
-          <span>
-            Semaine 3
-          </span>
-
-          <span>
-            Semaine 4
-          </span>
-
+          @for (p of points(); track p.label) {
+            <span>{{ p.label }}</span>
+          }
         </div>
 
       </div>
@@ -503,24 +384,21 @@
          ======================================================== -->
 
     <div
-      class="rounded-[18px] bg-white px-6 py-6 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+      class="min-w-0 rounded-[18px] bg-white px-4 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)] md:px-6 md:py-6"
     >
 
       <!-- Titre -->
       <div class="flex items-start justify-between">
 
         <div>
-
           <h2
-            class="text-[18px] font-bold tracking-[-0.3px] text-[#142238]"
+            class="text-[16px] font-bold tracking-[-0.3px] text-[#142238] md:text-[18px]"
           >
             Répartition des déchets
           </h2>
-
           <p class="mt-1 text-[12px] text-[#66717d]">
             Classification par flux IA
           </p>
-
         </div>
 
         <span class="text-[20px] text-[#7b858e]">
@@ -550,19 +428,16 @@
           <div
             class="flex h-[106px] w-[106px] flex-col items-center justify-center rounded-full bg-white"
           >
-
             <span
               class="text-[25px] font-bold leading-none text-[#142238]"
             >
               {{ dechetsAnalyses() | number:'1.0-0' }}
             </span>
-
             <span
               class="mt-1 text-[10px] font-semibold text-[#7b858e]"
             >
               Déchets analysés
             </span>
-
           </div>
 
         </div>
@@ -571,138 +446,72 @@
 
 
       <!-- Légende -->
-      <div class="mt-5 grid grid-cols-2 gap-x-5 gap-y-2">
-
+      <div class="mt-5 grid grid-cols-2 gap-x-4 gap-y-2 md:gap-x-5">
 
         <!-- Plastique -->
         <div class="flex items-center justify-between">
-
           <div class="flex items-center gap-2">
-
-            <span
-              class="h-[9px] w-[9px] rounded-full bg-[#0ea5a4]"
-            ></span>
-
-            <span class="text-[11px] text-[#344052]">
-              Plastique
-            </span>
-
+            <span class="h-[9px] w-[9px] rounded-full bg-[#0ea5a4]"></span>
+            <span class="text-[11px] text-[#344052]">Plastique</span>
           </div>
-
           <span class="text-[11px] font-bold text-[#253348]">
             {{ plastique() }}%
           </span>
-
         </div>
-
 
         <!-- Papier -->
         <div class="flex items-center justify-between">
-
           <div class="flex items-center gap-2">
-
-            <span
-              class="h-[9px] w-[9px] rounded-full bg-[#36aee8]"
-            ></span>
-
-            <span class="text-[11px] text-[#344052]">
-              Papier
-            </span>
-
+            <span class="h-[9px] w-[9px] rounded-full bg-[#36aee8]"></span>
+            <span class="text-[11px] text-[#344052]">Papier</span>
           </div>
-
           <span class="text-[11px] font-bold text-[#253348]">
             {{ papier() }}%
           </span>
-
         </div>
-
 
         <!-- Carton -->
         <div class="flex items-center justify-between">
-
           <div class="flex items-center gap-2">
-
-            <span
-              class="h-[9px] w-[9px] rounded-full bg-[#ffad13]"
-            ></span>
-
-            <span class="text-[11px] text-[#344052]">
-              Carton
-            </span>
-
+            <span class="h-[9px] w-[9px] rounded-full bg-[#ffad13]"></span>
+            <span class="text-[11px] text-[#344052]">Carton</span>
           </div>
-
           <span class="text-[11px] font-bold text-[#253348]">
             {{ carton() }}%
           </span>
-
         </div>
-
 
         <!-- Métal -->
         <div class="flex items-center justify-between">
-
           <div class="flex items-center gap-2">
-
-            <span
-              class="h-[9px] w-[9px] rounded-full bg-[#5960e9]"
-            ></span>
-
-            <span class="text-[11px] text-[#344052]">
-              Métal
-            </span>
-
+            <span class="h-[9px] w-[9px] rounded-full bg-[#5960e9]"></span>
+            <span class="text-[11px] text-[#344052]">Métal</span>
           </div>
-
           <span class="text-[11px] font-bold text-[#253348]">
             {{ metal() }}%
           </span>
-
         </div>
-
 
         <!-- Verre -->
         <div class="flex items-center justify-between">
-
           <div class="flex items-center gap-2">
-
-            <span
-              class="h-[9px] w-[9px] rounded-full bg-[#10b981]"
-            ></span>
-
-            <span class="text-[11px] text-[#344052]">
-              Verre
-            </span>
-
+            <span class="h-[9px] w-[9px] rounded-full bg-[#10b981]"></span>
+            <span class="text-[11px] text-[#344052]">Verre</span>
           </div>
-
           <span class="text-[11px] font-bold text-[#253348]">
             {{ verre() }}%
           </span>
-
         </div>
-
 
         <!-- Organique -->
         <div class="flex items-center justify-between">
-
           <div class="flex items-center gap-2">
-
-            <span
-              class="h-[9px] w-[9px] rounded-full bg-[#84cc16]"
-            ></span>
-
-            <span class="text-[11px] text-[#344052]">
-              Organique
-            </span>
-
+            <span class="h-[9px] w-[9px] rounded-full bg-[#84cc16]"></span>
+            <span class="text-[11px] text-[#344052]">Organique</span>
           </div>
-
           <span class="text-[11px] font-bold text-[#253348]">
             {{ organique() }}%
           </span>
-
         </div>
 
       </div>
@@ -717,163 +526,90 @@
        ========================================================== -->
 
   <div
-    class="mt-7 rounded-[18px] bg-white px-7 py-6 shadow-[0_2px_12px_rgba(20,35,60,0.035)]"
+    class="mt-5 rounded-[18px] bg-white px-4 py-5 shadow-[0_2px_12px_rgba(20,35,60,0.035)] md:mt-7 md:px-7 md:py-6"
   >
 
     <!-- En-tête -->
-    <div class="flex items-start justify-between">
+    <div class="flex items-start justify-between gap-3">
 
       <div>
-
         <h2
-          class="text-[18px] font-bold tracking-[-0.3px] text-[#142238]"
+          class="text-[16px] font-bold tracking-[-0.3px] text-[#142238] md:text-[18px]"
         >
           Indice de participation citoyenne
         </h2>
-
         <p class="mt-1 text-[12px] text-[#66717d]">
           Engagement communautaire sur les données disponibles
         </p>
-
       </div>
 
-
-      <!-- Petite icône -->
-      <span
-        class="text-[24px] font-bold text-[#008b88]"
-      >
+      <span class="text-[24px] font-bold text-[#008b88]">
         ♡
       </span>
 
     </div>
 
 
-    <!-- ========================================================
-         CARTES DE PARTICIPATION
-         ======================================================== -->
-
-    <div class="mt-7 grid grid-cols-3 gap-5">
-
+    <!-- CARTES DE PARTICIPATION : empilées sur mobile -->
+    <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3 md:mt-7 md:gap-5">
 
       <!-- Utilisateurs ayant participé -->
-      <div
-        class="rounded-[13px] bg-[#edf4ff] px-5 py-4"
-      >
-
+      <div class="rounded-[13px] bg-[#edf4ff] px-4 py-4 md:px-5">
         <p class="text-[11px] text-[#75808d]">
           Utilisateurs ayant réalisé un scan
         </p>
-
-
-        <p
-          class="mt-2 text-[28px] font-bold leading-none text-[#142238]"
-        >
+        <p class="mt-2 text-[24px] font-bold leading-none text-[#142238] md:text-[28px]">
           {{ utilisateursAyantScan() | number:'1.0-0' }}
         </p>
-
-
-        <p
-          class="mt-2 text-[10px] font-bold text-[#008b88]"
-        >
+        <p class="mt-2 text-[10px] font-bold text-[#008b88]">
           ✓ Utilisateurs participants
         </p>
-
       </div>
 
-
       <!-- Nombre de scans -->
-      <div
-        class="rounded-[13px] bg-[#edf4ff] px-5 py-4"
-      >
-
+      <div class="rounded-[13px] bg-[#edf4ff] px-4 py-4 md:px-5">
         <p class="text-[11px] text-[#75808d]">
           Nombre de scans réalisés
         </p>
-
-
-        <p
-          class="mt-2 text-[28px] font-bold leading-none text-[#142238]"
-        >
+        <p class="mt-2 text-[24px] font-bold leading-none text-[#142238] md:text-[28px]">
           {{ nombreScans() | number:'1.0-0' }}
         </p>
-
-
-        <p
-          class="mt-2 text-[10px] font-bold text-[#008b88]"
-        >
+        <p class="mt-2 text-[10px] font-bold text-[#008b88]">
           ⚡ Scans enregistrés
         </p>
-
       </div>
 
-
       <!-- Taux de participation -->
-      <div
-        class="rounded-[13px] bg-[#edf4ff] px-5 py-4"
-      >
-
+      <div class="rounded-[13px] bg-[#edf4ff] px-4 py-4 md:px-5">
         <p class="text-[11px] text-[#75808d]">
           Taux de participation
         </p>
-
-
-        <p
-          class="mt-2 text-[28px] font-bold leading-none text-[#007f7c]"
-        >
+        <p class="mt-2 text-[24px] font-bold leading-none text-[#007f7c] md:text-[28px]">
           {{ tauxParticipation() }}%
         </p>
-
-
-        <p
-          class="mt-2 text-[10px] font-semibold text-[#75808d]"
-        >
+        <p class="mt-2 text-[10px] font-semibold text-[#75808d]">
           Utilisateurs ayant participé
         </p>
-
       </div>
 
     </div>
 
 
-    <!-- ========================================================
-         PIED DU BLOC
-         ======================================================== -->
-
+    <!-- PIED DU BLOC -->
     <div
-      class="mt-6 flex items-center justify-between border-t border-[#edf0f5] pt-4"
+      class="mt-5 flex items-center justify-between border-t border-[#edf0f5] pt-4 md:mt-6"
     >
 
-      <div
-        class="flex items-center gap-2 text-[11px] text-[#65717c]"
-      >
-
-        <span class="text-[15px] text-[#008b88]">
-          ◉
-        </span>
-
+      <div class="flex items-center gap-2 text-[11px] text-[#65717c]">
         Données consolidées depuis la base de données Django.
-
       </div>
-
-
-      <!-- Bouton actualiser -->
-      <button
-        type="button"
-        (click)="actualiser()"
-        class="text-[11px] font-bold text-[#008b88] transition hover:text-[#006f6c]"
-      >
-        Actualiser les données ↻
-      </button>
 
     </div>
 
   </div>
 
 
-  <!-- ==========================================================
-       ESPACE FINAL
-       ========================================================== -->
-
+  <!-- ESPACE FINAL -->
   <div class="h-2"></div>
 
 </section>

@@ -778,3 +778,76 @@
   box-shadow: 0 4px 12px rgba(15,23,42,.12);
   white-space: nowrap;
 }
+/* ===== Nouveaux éléments : champ de recherche et panneau ===== */
+.map-search .search-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #172536;
+}
+.filter-button.active { background: #0EA5A4; color: #fff; }
+
+.search-dropdown {
+  position: absolute;
+  top: 64px;
+  left: 12px;
+  right: 12px;
+  max-width: 384px;
+  z-index: 1100;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.15);
+  overflow: hidden;
+}
+.dd-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 13px;
+  text-align: left;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid #eef0f4;
+  cursor: pointer;
+}
+.dd-row:hover { background: #f1f5f9; }
+.dd-reset { color: #0EA5A4; font-weight: 600; }
+.dd-empty { color: #64748b; cursor: default; }
+
+/* ===== Réduction des tailles : desktop uniquement ===== */
+@media (min-width: 1024px) {
+  .citizen-map-detail .point-card { padding: 16px !important; }
+  .citizen-map-detail .point-title-row h2 { font-size: 17px !important; }
+  .citizen-map-detail .point-address,
+  .citizen-map-detail .opening-row,
+  .citizen-map-detail .nearby-meta { font-size: 12px !important; }
+  .citizen-map-detail .accepted-title { font-size: 10px !important; margin: 12px 0 8px !important; }
+  .citizen-map-detail .accepted-chip { font-size: 11px !important; padding: 5px 10px !important; }
+  .citizen-map-detail .accepted-chip svg { width: 13px !important; height: 13px !important; }
+  .citizen-map-detail .route-button { font-size: 13px !important; padding: 10px 14px !important; min-height: 0 !important; }
+  .citizen-map-detail .verified-icon { width: 28px !important; height: 28px !important; }
+
+  .citizen-map-detail .nearby-heading h3 { font-size: 14px !important; }
+  .citizen-map-detail .nearby-heading button { font-size: 12px !important; }
+  .citizen-map-detail .nearby-card { padding: 10px !important; }
+  .citizen-map-detail .nearby-name { font-size: 13px !important; }
+  .citizen-map-detail .nearby-icon { width: 34px !important; height: 34px !important; }
+
+  .citizen-map-detail .waste-chip { font-size: 12px !important; padding: 6px 12px !important; min-height: 0 !important; }
+  .citizen-map-detail .waste-chip svg { width: 14px !important; height: 14px !important; }
+  .citizen-map-detail .gps-pill { font-size: 11px !important; padding: 5px 10px !important; }
+  .citizen-map-detail .optimized-route { font-size: 12px !important; padding: 8px 14px !important; }
+  .citizen-map-detail .map-controls button { width: 34px !important; height: 34px !important; font-size: 16px !important; }
+  .citizen-map-detail .location-button { width: 36px !important; height: 36px !important; }
+  .citizen-map-detail .map-search { padding: 6px 8px !important; min-height: 0 !important; }
+
+  .citizen-map-detail {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}

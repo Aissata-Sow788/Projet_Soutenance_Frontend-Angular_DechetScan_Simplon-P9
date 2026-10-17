@@ -1,19 +1,19 @@
 <!-- Page liste des demandes de collecte -->
-<div class="p-6 xl:p-8">
+<div class="p-4 sm:p-6 xl:p-8">
 
   <!-- EN-TÊTE -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-[#142337]">Demandes de collecte</h1>
+  <div class="mb-5 sm:mb-6">
+    <h1 class="text-xl font-bold text-[#142337] sm:text-2xl">Demandes de collecte</h1>
     <p class="mt-1 text-sm text-slate-500">
       Consultez les demandes disponibles des citoyens.
     </p>
   </div>
 
-  <!-- BARRE FILTRES -->
-  <div class="mb-6 flex flex-wrap items-center gap-3">
+  <!-- BARRE FILTRES : grille 2 colonnes sur mobile, ligne souple dès la tablette -->
+  <div class="mb-5 grid grid-cols-2 gap-3 sm:mb-6 sm:flex sm:flex-wrap sm:items-center">
 
     <!-- Recherche -->
-    <div class="relative flex-1 min-w-[200px]">
+    <div class="relative col-span-2 sm:min-w-[200px] sm:flex-1">
       <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
            stroke-linecap="round" stroke-linejoin="round">
@@ -31,7 +31,7 @@
     <!-- Filtre type de déchet -->
     <select
       (change)="onFiltreZone($event)"
-      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+      class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
     >
       <option value="">Type de déchet ↓</option>
       <option value="plastique">Plastique</option>
@@ -44,7 +44,7 @@
     <!-- Filtre zone -->
     <select
       (change)="onFiltreZone($event)"
-      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+      class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
     >
       <option value="">Zone ↓</option>
       <option value="dakar">Dakar</option>
@@ -56,7 +56,7 @@
     <!-- Filtre statut -->
     <select
       (change)="onFiltreStatut($event)"
-      class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+      class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
     >
       <option value="">Statut ↓</option>
       <option value="en_attente">En attente</option>
@@ -69,7 +69,7 @@
     <!-- Trier par -->
     <button
       type="button"
-      class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-[#142337] hover:bg-slate-50"
+      class="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-[#142337] hover:bg-slate-50 sm:w-auto"
     >
       <svg class="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none"
            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -94,16 +94,82 @@
     <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
   }
 
-  <!-- TABLEAU -->
+  <!-- LISTE -->
   @else {
     <div class="rounded-2xl bg-white shadow-sm">
 
       @if (demandesFiltrees().length === 0) {
-        <div class="py-16 text-center text-sm text-slate-400">
+        <div class="px-4 py-16 text-center text-sm text-slate-400">
           Aucune demande ne correspond aux filtres sélectionnés.
         </div>
       } @else {
-        <div class="overflow-x-auto">
+
+        <!-- MOBILE : liste de cartes (masquée dès md) -->
+        <ul class="divide-y divide-slate-100 md:hidden">
+          @for (demande of demandesPage(); track demande.idDemande) {
+            <li class="p-4">
+
+              <!-- Citoyen + statut -->
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex min-w-0 items-center gap-3">
+                  <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#C9F5EF] text-xs font-bold text-[#087C78]"
+                  >
+                    {{ initiales(demande.prenomUtilisateur, demande.nomUtilisateur) }}
+                  </div>
+                  <div class="min-w-0">
+                    <p class="truncate font-semibold text-[#142337]">
+                      {{ demande.prenomUtilisateur }} {{ demande.nomUtilisateur }}
+                    </p>
+                    <p class="truncate text-xs text-slate-400">{{ demande.emailUtilisateur }}</p>
+                  </div>
+                </div>
+
+                <span
+                  class="inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                  [ngClass]="classeStatut(demande.statut)"
+                >
+                  {{ libelleStatut(demande.statut) }}
+                </span>
+              </div>
+
+              <!-- Détails -->
+              <dl class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 rounded-xl bg-slate-50 p-3 text-xs">
+                <div>
+                  <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Déchet</dt>
+                  <dd class="mt-0.5 font-medium text-[#142337]">{{ demande.typeDechet?.nom ?? '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Quantité</dt>
+                  <dd class="mt-0.5 font-medium text-[#142337]">{{ demande.quantite }} kg</dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Zone</dt>
+                  <dd class="mt-0.5 font-medium text-[#142337]">{{ demande.quartier || '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Date souhaitée</dt>
+                  <dd class="mt-0.5 font-medium text-[#142337]">
+                    {{ demande.dateSouhaitee ? formaterDate(demande.dateSouhaitee) : '—' }}
+                  </dd>
+                </div>
+              </dl>
+
+              <!-- Action -->
+              <button
+                (click)="voirDemande(demande.idDemande)"
+                type="button"
+                class="mt-3 flex h-10 w-full items-center justify-center rounded-xl bg-[#F0FDFA] text-sm font-bold text-[#087C78] transition hover:bg-[#E0F7F4]"
+              >
+                Voir la demande →
+              </button>
+
+            </li>
+          }
+        </ul>
+
+        <!-- TABLETTE ET DESKTOP : tableau (masqué sur mobile) -->
+        <div class="hidden overflow-x-auto md:block">
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-slate-100">
@@ -130,7 +196,7 @@
                         {{ initiales(demande.prenomUtilisateur, demande.nomUtilisateur) }}
                       </div>
                       <div>
-                        <p class="font-semibold text-[#142337]">
+                        <p class="whitespace-nowrap font-semibold text-[#142337]">
                           {{ demande.prenomUtilisateur }} {{ demande.nomUtilisateur }}
                         </p>
                         <p class="text-xs text-slate-400">{{ demande.emailUtilisateur }}</p>
@@ -154,20 +220,20 @@
                   </td>
 
                   <!-- Quantité -->
-                  <td class="px-4 py-4 text-slate-600">{{ demande.quantite }} kg</td>
+                  <td class="whitespace-nowrap px-4 py-4 text-slate-600">{{ demande.quantite }} kg</td>
 
                   <!-- Zone -->
                   <td class="px-4 py-4 text-slate-600">{{ demande.quartier || '—' }}</td>
 
                   <!-- Date souhaitée -->
-                  <td class="px-4 py-4 text-slate-500 text-xs">
+                  <td class="whitespace-nowrap px-4 py-4 text-xs text-slate-500">
                     {{ demande.dateSouhaitee ? formaterDate(demande.dateSouhaitee) : '—' }}
                   </td>
 
                   <!-- Statut -->
                   <td class="px-4 py-4">
                     <span
-                      class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                      class="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold"
                       [ngClass]="classeStatut(demande.statut)"
                     >
                       {{ libelleStatut(demande.statut) }}
@@ -179,7 +245,7 @@
                     <button
                       (click)="voirDemande(demande.idDemande)"
                       type="button"
-                      class="text-sm font-semibold text-[#0EA5A4] hover:underline"
+                      class="whitespace-nowrap text-sm font-semibold text-[#0EA5A4] hover:underline"
                     >
                       Voir →
                     </button>
@@ -191,19 +257,21 @@
           </table>
         </div>
 
-        <!-- PAGINATION -->
-        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
-          <p class="text-xs text-slate-400">
+        <!-- PAGINATION : empilée et centrée sur mobile -->
+        <div class="flex flex-col items-center gap-3 border-t border-slate-100 px-4 py-4 sm:flex-row sm:justify-between sm:px-6">
+          <p class="text-center text-xs text-slate-400 sm:text-left">
             Affichage de {{ (pageCourante() - 1) * 6 + 1 }} à
             {{ Math.min(pageCourante() * 6, demandesFiltrees().length) }}
             sur {{ demandesFiltrees().length }} demandes
           </p>
-          <div class="flex items-center gap-1">
+          <div class="flex flex-wrap items-center justify-center gap-1">
             <!-- Précédent -->
             <button
               (click)="allerPage(pageCourante() - 1)"
               [disabled]="pageCourante() === 1"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+              type="button"
+              aria-label="Page précédente"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 sm:h-8 sm:w-8"
             >
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -216,7 +284,7 @@
               <button
                 (click)="allerPage(page)"
                 type="button"
-                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-semibold transition sm:h-8 sm:w-8"
                 [ngClass]="page === pageCourante()
                   ? 'bg-[#0EA5A4] text-white'
                   : 'border border-slate-200 text-slate-600 hover:bg-slate-50'"
@@ -229,7 +297,9 @@
             <button
               (click)="allerPage(pageCourante() + 1)"
               [disabled]="pageCourante() === totalPages()"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+              type="button"
+              aria-label="Page suivante"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 sm:h-8 sm:w-8"
             >
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

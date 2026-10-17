@@ -1,225 +1,190 @@
-<!-- ======================================================
-     CONTENU
-     ====================================================== -->
 
-<section class="px-9 pb-10 pt-8">
 
-  <!-- ====================================================
-       BADGE
-       ==================================================== -->
+<section class="min-w-0 bg-[#f7f9fe] px-3 pb-6 pt-5 text-[#122033] sm:px-5 sm:pb-8 sm:pt-6 lg:px-8 lg:pb-10 lg:pt-8">
 
-  <div class="mb-2 flex items-center gap-3">
+  <!-- ======================================================
+       BADGE DE LA PAGE
+       ====================================================== -->
 
-    <span
-      class="rounded-full bg-[#dff8f5] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[#008b84]"
-    >
+  <div class="mb-3 flex flex-wrap items-center gap-2 sm:gap-3">
+
+    <span class="rounded-full bg-[#dff8f5] px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-[#008b84] sm:text-[11px]">
       FLUX TEMPS RÉEL
     </span>
 
-    <span class="text-[13px] font-semibold text-[#56606c]">
-      •
-    </span>
+    <span class="text-xs font-semibold text-[#56606c]">•</span>
 
-    <span class="text-[13px] font-semibold text-[#56606c]">
+    <span class="text-xs font-semibold text-[#56606c] sm:text-[13px]">
       Réseau Sénégal National
     </span>
 
   </div>
 
+  <!-- ======================================================
+       TITRE ET ACTUALISATION
+       ====================================================== -->
 
-  <!-- ====================================================
-       TITRE + BOUTON ACTUALISER
-       ==================================================== -->
+  <div class="mb-5 flex flex-col gap-4 sm:mb-7 md:flex-row md:items-end md:justify-between">
 
-  <div class="mb-8 flex items-end justify-between">
+    <div class="min-w-0">
 
-    <div>
-
-      <h1
-        class="text-[34px] font-bold leading-tight tracking-[-1px] text-[#122033]"
-      >
+      <h1 class="text-[25px] font-bold leading-tight tracking-[-0.7px] text-[#122033] sm:text-[30px] lg:text-[34px]">
         Tous les scans
       </h1>
 
-      <p class="mt-2 text-[16px] text-[#596372]">
+      <p class="mt-2 max-w-2xl text-[12px] leading-5 text-[#596372] sm:text-[14px] sm:leading-6 lg:text-[16px]">
         Consultez l’ensemble des analyses de déchets réalisées par les citoyens.
       </p>
 
     </div>
 
-
-    <!-- Bouton Actualiser -->
+    <!-- Actualisation des données -->
     <button
       type="button"
       (click)="chargerScans()"
-      class="flex h-[51px] items-center gap-2 rounded-[16px] bg-[#0ea5a4] px-6 text-[15px] font-bold text-white shadow-sm transition hover:bg-[#0b9493]"
+      class="flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#0ea5a4] px-5 text-[13px] font-bold text-white shadow-sm transition hover:bg-[#0b9493] sm:h-11 sm:w-fit sm:rounded-[14px] sm:text-sm lg:h-[51px] lg:rounded-[16px] lg:px-6 lg:text-[15px]"
     >
-      ↻
+      <svg
+        class="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path d="M20 7v5h-5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 17v-5h5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5.6 9A7 7 0 0117.3 6.5L20 12"/>
+        <path d="M18.4 15A7 7 0 016.7 17.5L4 12"/>
+      </svg>
+
       Actualiser
     </button>
 
   </div>
 
+  <!-- ======================================================
+       RECHERCHE, CATÉGORIES ET TRI
+       ====================================================== -->
 
-  <!-- ====================================================
-       RECHERCHE + FILTRES
-       ==================================================== -->
+  <div class="mb-4 flex min-w-0 flex-col gap-3 rounded-2xl bg-white p-3 shadow-[0_2px_12px_rgba(20,35,60,0.03)] sm:mb-5 sm:gap-4 sm:p-4">
 
-  <div
-    class="mb-1 flex items-center gap-3 rounded-[20px] bg-white p-4 shadow-[0_2px_12px_rgba(20,35,60,0.03)]"
-  >
+    <!-- Recherche -->
+    <div class="flex h-11 min-w-0 items-center gap-3 rounded-xl bg-[#edf4ff] px-3 sm:h-[47px] sm:px-4">
 
-    <!-- ==================================================
-         RECHERCHE
-         ================================================== -->
-
-    <div
-      class="flex h-[47px] min-w-0 flex-1 items-center gap-3 rounded-[14px] bg-[#edf4ff] px-4"
-    >
-
-      <span class="text-[20px] text-[#718096]">
-        ⌕
-      </span>
+      <svg
+        class="h-5 w-5 shrink-0 text-[#718096]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <circle cx="10.8" cy="10.8" r="6.8"/>
+        <path d="m16 16 4 4" stroke-linecap="round"/>
+      </svg>
 
       <input
         type="text"
         [ngModel]="recherche()"
         (ngModelChange)="modifierRecherche($event)"
         placeholder="Rechercher un scan ou un utilisateur..."
-        class="w-full bg-transparent text-[15px] text-[#253449] outline-none placeholder:text-[#7c8795]"
+        class="min-w-0 w-full border-0 bg-transparent text-[12px] text-[#253449] outline-none placeholder:text-[#7c8795] focus:ring-0 sm:text-[14px] lg:text-[15px]"
       />
 
     </div>
 
+    <!-- Filtres et tri -->
+    <div class="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
 
-    <!-- ==================================================
-         CATÉGORIES
-         ================================================== -->
+      <!--
+        Les catégories sont disposées horizontalement.
+        Le défilement reste limité à cette zone sur les petits écrans.
+      -->
+      <div class="min-w-0 flex-1 overflow-x-auto overscroll-x-contain">
+        <div class="flex min-w-max items-center gap-1 rounded-xl bg-[#edf4ff] p-1">
 
-    <div
-      class="flex h-[47px] items-center gap-1 rounded-[14px] bg-[#edf4ff] p-1"
-    >
+          @for (
+            categorie of [
+              'Tous',
+              'Plastique',
+              'Verre',
+              'Métal',
+              'Papier',
+              'Autres'
+            ];
+            track categorie
+          ) {
 
-      @for (
-        categorie of [
-          'Tous',
-          'Plastique',
-          'Verre',
-          'Métal',
-          'Papier',
-          'Autres'
-        ];
-        track categorie
-      ) {
+            <button
+              type="button"
+              (click)="choisirCategorie(categorie)"
+              class="shrink-0 rounded-[9px] px-3 py-2 text-[11px] font-bold transition sm:px-4 sm:text-xs"
+              [ngClass]="{
+                'bg-[#0ea5a4] text-white shadow-sm':
+                  categorieActive() === categorie,
+                'text-[#4b5664] hover:bg-white':
+                  categorieActive() !== categorie
+              }"
+            >
+              {{ categorie }}
+            </button>
 
-        <button
-          type="button"
-          (click)="choisirCategorie(categorie)"
-          class="rounded-[11px] px-4 py-2 text-[12px] font-bold transition"
-          [ngClass]="{
-            'bg-[#0ea5a4] text-white shadow-sm':
-              categorieActive() === categorie,
-            'text-[#4b5664] hover:bg-white':
-              categorieActive() !== categorie
-          }"
-        >
-          {{ categorie }}
-        </button>
+          }
 
-      }
+        </div>
+      </div>
+
+      <!-- Tri par date -->
+      <select
+        [ngModel]="triActif()"
+        (ngModelChange)="triActif.set($event); pageActuelle.set(1)"
+        class="h-11 w-full min-w-0 rounded-xl bg-[#edf4ff] px-3 text-xs font-bold text-[#344052] outline-none focus:ring-2 focus:ring-[#b9e9e5] sm:px-4 lg:w-[205px] lg:shrink-0"
+        aria-label="Trier les scans par date"
+      >
+        <option value="recent">Trier : Plus récent</option>
+        <option value="ancien">Trier : Plus ancien</option>
+      </select>
 
     </div>
-
-
-    <!-- ==================================================
-         TRI
-         ================================================== -->
-
-    <select
-      [ngModel]="triActif()"
-      (ngModelChange)="triActif.set($event); pageActuelle.set(1)"
-      class="h-[47px] w-[205px] rounded-[14px] bg-[#edf4ff] px-4 text-[12px] font-bold text-[#344052] outline-none"
-    >
-
-      <option value="recent">
-        Trier : Plus récent
-      </option>
-
-      <option value="ancien">
-        Trier : Plus ancien
-      </option>
-
-    </select>
 
   </div>
 
+  <!-- ======================================================
+       CONTENEUR DES RÉSULTATS
+       ====================================================== -->
 
-  <!-- ====================================================
-       TABLEAU
-       ==================================================== -->
+  <div class="min-w-0 overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(20,35,60,0.03)] sm:rounded-[20px]">
 
-  <div
-    class="overflow-hidden rounded-[20px] bg-white shadow-[0_2px_12px_rgba(20,35,60,0.03)]"
-  >
-
-    <!-- ==================================================
-         EN-TÊTE DU TABLEAU
-         ================================================== -->
-
-    <div
-      class="grid grid-cols-[1.25fr_1.2fr_1fr_130px] bg-[#edf3fc] px-8 py-4 text-[12px] font-bold uppercase tracking-wide text-[#4c5865]"
-    >
-
-      <div>
-        Citoyen
-      </div>
-
-      <div>
-        Nombre de scans
-      </div>
-
-      <div>
-        Date & heure
-      </div>
-
-      <div class="text-center">
-        Action
-      </div>
-
-    </div>
-
-
-    <!-- ==================================================
+    <!-- ====================================================
          CHARGEMENT
-         ================================================== -->
+         ==================================================== -->
 
     @if (chargement()) {
 
-      <div
-        class="px-8 py-16 text-center text-[14px] text-[#687381]"
-      >
+      <div class="px-4 py-14 text-center text-sm text-[#687381] sm:px-8 sm:py-16">
+        <div class="mx-auto mb-3 h-7 w-7 animate-spin rounded-full border-[3px] border-[#dff8f5] border-t-[#0ea5a4]"></div>
         Chargement des scans...
       </div>
 
     }
 
-
-    <!-- ==================================================
+    <!-- ====================================================
          ERREUR
-         ================================================== -->
+         ==================================================== -->
 
     @else if (erreur()) {
 
-      <div class="px-8 py-16 text-center">
+      <div class="px-4 py-12 text-center sm:px-8 sm:py-16">
 
-        <p class="text-[14px] text-red-500">
+        <p class="break-words text-sm leading-6 text-red-500">
           {{ erreur() }}
         </p>
 
         <button
           type="button"
           (click)="chargerScans()"
-          class="mt-4 rounded-xl bg-[#0ea5a4] px-5 py-2 text-sm font-bold text-white"
+          class="mt-4 rounded-xl bg-[#0ea5a4] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#0b9493]"
         >
           Réessayer
         </button>
@@ -228,176 +193,237 @@
 
     }
 
-
-    <!-- ==================================================
+    <!-- ====================================================
          AUCUN RÉSULTAT
-         ================================================== -->
+         ==================================================== -->
 
     @else if (scansAffiches().length === 0) {
 
-      <div
-        class="px-8 py-16 text-center text-[14px] text-[#687381]"
-      >
+      <div class="px-4 py-12 text-center text-sm text-[#687381] sm:px-8 sm:py-16">
         Aucun scan trouvé.
       </div>
 
     }
 
-
-    <!-- ==================================================
-         LISTE DES SCANS / UTILISATEURS
-         ================================================== -->
-
     @else {
 
-      <!-- IMPORTANT :
-           On utilise scansAffiches() et non utilisateursUniques().
-           scansAffiches() applique maintenant la pagination. -->
-      @for (
-        scan of scansAffiches();
-        track scan.idScan
-      ) {
+      <!-- ==================================================
+           VERSION MOBILE : CARTES
+           ================================================== -->
 
-        <div
-          class="grid grid-cols-[1.25fr_1.2fr_1fr_130px] items-center border-b border-[#edf0f5] px-8 py-5 last:border-b-0"
-        >
+      <div class="divide-y divide-[#edf0f5] lg:hidden">
 
-          <!-- ==========================================
-               CITOYEN
-               ========================================== -->
+        @for (scan of scansAffiches(); track scan.idScan) {
 
-          <div class="flex items-center gap-4">
+          <article class="min-w-0 p-3 sm:p-4">
 
-            <!-- Avatar -->
-            <div
-              class="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full text-[14px] font-bold"
-              [ngClass]="{
-                'bg-[#b9f2e8] text-[#006f69]': scan.citoyen,
-                'bg-[#ffe3e0] text-[#b64036]': !scan.citoyen
-              }"
-            >
-              {{ initiales(scan) }}
-            </div>
+            <!-- Identité du citoyen -->
+            <div class="flex min-w-0 items-center gap-3">
 
-
-            <!-- Informations citoyen -->
-            <div class="min-w-0">
-
-              <p
-                class="truncate text-[15px] font-bold text-[#17243a]"
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                [ngClass]="{
+                  'bg-[#b9f2e8] text-[#006f69]': scan.citoyen,
+                  'bg-[#ffe3e0] text-[#b64036]': !scan.citoyen
+                }"
               >
-                {{ nomCitoyen(scan) }}
-              </p>
+                {{ initiales(scan) }}
+              </div>
 
-              <p
-                class="truncate text-[13px] text-[#68727d]"
-              >
-                {{ emailCitoyen(scan) }}
-              </p>
+              <div class="min-w-0 flex-1">
 
-            </div>
+                <p class="break-words text-[13px] font-bold text-[#17243a] sm:text-sm">
+                  {{ nomCitoyen(scan) }}
+                </p>
 
-          </div>
+                <p class="break-all text-[11px] leading-5 text-[#68727d] sm:text-xs">
+                  {{ emailCitoyen(scan) }}
+                </p>
 
+              </div>
 
-          <!-- ==========================================
-               NOMBRE DE SCANS
-               ========================================== -->
-
-          <div class="flex items-center gap-3">
-
-            <!-- Icône -->
-            <div
-              class="flex h-[39px] w-[39px] shrink-0 items-center justify-center rounded-[11px] bg-[#dff8f5] text-[17px] text-[#008b84]"
-            >
-              ✓
-            </div>
-
-            <!-- Nombre -->
-            <div>
-
-              <p
-                class="text-[15px] font-bold text-[#17243a]"
-              >
+              <span class="shrink-0 rounded-lg bg-[#dff8f5] px-2.5 py-1.5 text-[11px] font-bold text-[#008b84]">
                 {{ nombreScansUtilisateur(scan) }}
-              </p>
-
-              <p
-                class="text-[13px] text-[#68727d]"
-              >
-                {{
-                  nombreScansUtilisateur(scan) > 1
-                    ? 'scans réalisés'
-                    : 'scan réalisé'
-                }}
-              </p>
+                {{ nombreScansUtilisateur(scan) > 1 ? 'scans' : 'scan' }}
+              </span>
 
             </div>
 
-          </div>
+            <!-- Informations sur la date -->
+            <div class="mt-4 grid grid-cols-2 gap-3 rounded-xl bg-[#f6f8fc] p-3">
 
+              <div class="min-w-0">
 
-          <!-- ==========================================
-               DATE + HEURE
-               ========================================== -->
+                <p class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#778290]">
+                  Date du scan
+                </p>
 
-          <div>
+                <p class="break-words text-xs font-bold text-[#17243a]">
+                  {{ formaterDate(scan.dateScan) }}
+                </p>
 
-            <p
-              class="text-[15px] font-semibold text-[#17243a]"
-            >
-              {{ formaterDate(scan.dateScan) }}
-            </p>
+              </div>
 
-            <p
-              class="text-[13px] text-[#68727d]"
-            >
-              {{ formaterHeure(scan.dateScan) }}
-            </p>
+              <div class="min-w-0">
 
-          </div>
+                <p class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[#778290]">
+                  Heure
+                </p>
 
+                <p class="text-xs font-bold text-[#17243a]">
+                  {{ formaterHeure(scan.dateScan) }}
+                </p>
 
-          <!-- ==========================================
-               ACTION
-               ========================================== -->
+              </div>
 
-          <div class="text-center">
+            </div>
 
-            <button
-              type="button"
-              [routerLink]="['/admin/scans', scan.idScan]"
-              class="rounded-full bg-[#edf4ff] px-5 py-2.5 text-[12px] font-bold text-[#008b84] transition hover:bg-[#dff8f5]"
-            >
-              Voir plus →
-            </button>
+            <!-- Accès au détail du scan -->
+            <div class="mt-3 flex justify-end">
 
-          </div>
+              <button
+                type="button"
+                [routerLink]="['/admin/scans', scan.idScan]"
+                class="flex h-9 items-center justify-center gap-2 rounded-xl bg-[#edf4ff] px-4 text-xs font-bold text-[#008b84] transition hover:bg-[#dff8f5]"
+              >
+                Voir le détail
+                <span aria-hidden="true">→</span>
+              </button>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+      <!-- ==================================================
+           VERSION ORDINATEUR : TABLEAU
+           ================================================== -->
+
+      <div class="hidden lg:block">
+
+        <!-- En-tête du tableau -->
+        <div class="grid grid-cols-[minmax(0,1.25fr)_minmax(0,1.2fr)_minmax(0,1fr)_120px] gap-3 bg-[#edf3fc] px-5 py-4 text-[11px] font-bold uppercase tracking-wide text-[#4c5865] xl:px-8 xl:text-xs">
+
+          <div>Citoyen</div>
+          <div>Nombre de scans</div>
+          <div>Date & heure</div>
+          <div class="text-center">Action</div>
 
         </div>
 
-      }
+        <!-- Lignes du tableau -->
+        @for (scan of scansAffiches(); track scan.idScan) {
+
+          <div class="grid grid-cols-[minmax(0,1.25fr)_minmax(0,1.2fr)_minmax(0,1fr)_120px] items-center gap-3 border-b border-[#edf0f5] px-5 py-4 last:border-b-0 xl:px-8 xl:py-5">
+
+            <!-- Citoyen -->
+            <div class="flex min-w-0 items-center gap-3 xl:gap-4">
+
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                [ngClass]="{
+                  'bg-[#b9f2e8] text-[#006f69]': scan.citoyen,
+                  'bg-[#ffe3e0] text-[#b64036]': !scan.citoyen
+                }"
+              >
+                {{ initiales(scan) }}
+              </div>
+
+              <div class="min-w-0">
+
+                <p class="truncate text-[13px] font-bold text-[#17243a] xl:text-[15px]">
+                  {{ nomCitoyen(scan) }}
+                </p>
+
+                <p class="truncate text-[11px] text-[#68727d] xl:text-[13px]">
+                  {{ emailCitoyen(scan) }}
+                </p>
+
+              </div>
+
+            </div>
+
+            <!-- Nombre de scans -->
+            <div class="flex min-w-0 items-center gap-3">
+
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#dff8f5] text-[#008b84]">
+
+                <svg
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path d="m5 12 4 4L19 6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+              </div>
+
+              <div class="min-w-0">
+
+                <p class="text-sm font-bold text-[#17243a]">
+                  {{ nombreScansUtilisateur(scan) }}
+                </p>
+
+                <p class="text-[11px] leading-4 text-[#68727d] xl:text-[13px]">
+                  {{ nombreScansUtilisateur(scan) > 1 ? 'scans réalisés' : 'scan réalisé' }}
+                </p>
+
+              </div>
+
+            </div>
+
+            <!-- Date et heure -->
+            <div class="min-w-0">
+
+              <p class="text-[13px] font-semibold text-[#17243a] xl:text-[15px]">
+                {{ formaterDate(scan.dateScan) }}
+              </p>
+
+              <p class="mt-1 text-[11px] text-[#68727d] xl:text-[13px]">
+                {{ formaterHeure(scan.dateScan) }}
+              </p>
+
+            </div>
+
+            <!-- Action -->
+            <div class="text-center">
+
+              <button
+                type="button"
+                [routerLink]="['/admin/scans', scan.idScan]"
+                class="whitespace-nowrap rounded-full bg-[#edf4ff] px-3 py-2.5 text-[11px] font-bold text-[#008b84] transition hover:bg-[#dff8f5] xl:px-4 xl:text-xs"
+              >
+                Voir plus →
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
 
     }
 
-
-    <!-- ==================================================
+    <!-- ====================================================
          PAGINATION
-         ================================================== -->
+         ==================================================== -->
 
-    <div
-      class="flex items-center justify-between bg-[#f1f6fe] px-7 py-4"
-    >
+    <div class="flex flex-col gap-3 border-t border-[#e8eef6] bg-[#f1f6fe] px-3 py-4 sm:px-5 md:flex-row md:items-center md:justify-between lg:px-7">
 
-      <!-- ==================================================
-           TEXTE DE PAGINATION
-           ================================================== -->
-
-      <p class="text-[13px] text-[#53606d]">
+      <!-- Informations sur les résultats -->
+      <p class="text-center text-[11px] leading-5 text-[#53606d] sm:text-xs md:text-left lg:text-[13px]">
 
         Affichage de
 
-        <span class="font-semibold">
+        <span class="font-bold">
           {{
             nombreResultats() === 0
               ? 0
@@ -407,7 +433,7 @@
 
         à
 
-        <span class="font-semibold">
+        <span class="font-bold">
           {{
             Math.min(
               pageActuelle() * taillePage,
@@ -418,39 +444,27 @@
 
         sur
 
-        <span class="font-semibold">
-          {{ nombreResultats() }}
-        </span>
+        <span class="font-bold">{{ nombreResultats() }}</span>
 
         résultats
 
       </p>
 
+      <!-- Navigation entre les pages -->
+      <div class="flex max-w-full items-center justify-center gap-1.5 sm:gap-2">
 
-      <!-- ==================================================
-           BOUTONS DE PAGINATION
-           ================================================== -->
-
-      <div class="flex items-center gap-2">
-
-        <!-- ------------------------------------------------
-             PAGE PRÉCÉDENTE
-             ------------------------------------------------ -->
-
+        <!-- Page précédente -->
         <button
           type="button"
           (click)="changerPage(pageActuelle() - 1)"
           [disabled]="pageActuelle() === 1"
-          class="flex h-10 w-10 items-center justify-center rounded-xl text-[#778290] hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
+          aria-label="Page précédente"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-lg text-[#778290] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 sm:h-10 sm:w-10 sm:rounded-xl"
         >
           ‹
         </button>
 
-
-        <!-- ------------------------------------------------
-             NUMÉROS DES PAGES
-             ------------------------------------------------ -->
-
+        <!-- Numéros des pages -->
         @for (
           page of [].constructor(nombrePages());
           let i = $index;
@@ -460,7 +474,9 @@
           <button
             type="button"
             (click)="changerPage(i + 1)"
-            class="flex h-10 w-10 items-center justify-center rounded-xl text-[13px] font-bold"
+            [attr.aria-label]="'Page ' + (i + 1)"
+            [attr.aria-current]="pageActuelle() === i + 1 ? 'page' : null"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition sm:h-10 sm:w-10 sm:rounded-xl sm:text-[13px]"
             [ngClass]="{
               'bg-[#0ea5a4] text-white':
                 pageActuelle() === i + 1,
@@ -473,11 +489,7 @@
 
         }
 
-
-        <!-- ------------------------------------------------
-             PAGE SUIVANTE
-             ------------------------------------------------ -->
-
+        <!-- Page suivante -->
         <button
           type="button"
           (click)="changerPage(pageActuelle() + 1)"
@@ -485,7 +497,8 @@
             nombrePages() === 0 ||
             pageActuelle() === nombrePages()
           "
-          class="flex h-10 w-10 items-center justify-center rounded-xl text-[#778290] hover:bg-white disabled:cursor-not-allowed disabled:opacity-30"
+          aria-label="Page suivante"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-lg text-[#778290] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 sm:h-10 sm:w-10 sm:rounded-xl"
         >
           ›
         </button>
@@ -497,3 +510,4 @@
   </div>
 
 </section>
+

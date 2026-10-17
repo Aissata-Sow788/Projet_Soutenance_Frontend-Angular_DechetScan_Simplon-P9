@@ -1,26 +1,28 @@
-<!-- Page Ventes de déchets — espace collecteur -->
-<div class="p-6 xl:p-8">
 
-  <!-- ─── EN-TÊTE ──────────────────────────────────────────── -->
-  <div class="mb-6 flex items-start justify-between gap-4">
-    <div>
-      <h1 class="text-2xl font-bold text-[#142337]">Ventes de déchets</h1>
+<!-- Page Ventes de déchets — espace collecteur -->
+<div class="min-w-0 p-3 sm:p-5 lg:p-6 xl:p-8">
+
+  <!-- EN-TÊTE -->
+  <div class="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+    <div class="min-w-0">
+      <h1 class="text-xl font-bold text-[#142337] sm:text-2xl">
+        Ventes de déchets
+      </h1>
       <p class="mt-1 text-sm text-slate-500">
         Gérez vos transactions de vente de déchets collectés.
       </p>
     </div>
 
-    <!-- Badge total -->
     @if (!chargement() && totalVentes() > 0) {
-      <div class="shrink-0 rounded-xl bg-[#EEF4FF] px-4 py-2">
-        <span class="text-sm font-bold text-[#142337]">
+      <div class="self-start rounded-xl bg-[#EEF4FF] px-3 py-2 sm:shrink-0 sm:px-4">
+        <span class="text-xs font-bold text-[#142337] sm:text-sm">
           {{ totalVentes() }} ventes totales
         </span>
       </div>
     }
   </div>
 
-  <!-- ─── CHARGEMENT ────────────────────────────────────────── -->
+  <!-- CHARGEMENT -->
   @if (chargement()) {
     <div class="flex items-center justify-center py-20">
       <div class="flex items-center gap-2 text-sm text-slate-400">
@@ -30,13 +32,15 @@
     </div>
   }
 
+  <!-- ERREUR -->
   @else if (erreur()) {
-    <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-red-50 p-4 text-sm text-red-600">
+    <div class="flex flex-col gap-3 rounded-xl bg-red-50 p-4 text-sm text-red-600 sm:flex-row sm:items-center sm:justify-between">
       <span>{{ erreur() }}</span>
+
       <button
         type="button"
         (click)="chargerVentes()"
-        class="rounded-lg border border-red-200 px-3 py-2 font-semibold hover:bg-red-100"
+        class="self-start rounded-lg border border-red-200 px-3 py-2 font-semibold hover:bg-red-100 sm:self-auto"
       >
         Réessayer
       </button>
@@ -45,23 +49,23 @@
 
   @else {
 
-    <!-- ─── CARTES STATISTIQUES ───────────────────────────── -->
-    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- CARTES STATISTIQUES -->
+    <div class="mb-5 grid grid-cols-2 gap-3 sm:mb-6 sm:gap-4 lg:grid-cols-4">
 
       <!-- Nombre de ventes -->
-      <div class="min-h-[98px] rounded-2xl bg-white p-5 shadow-sm">
-        <div class="flex h-full items-center gap-3">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+      <div class="min-h-[100px] min-w-0 rounded-2xl bg-white p-3 shadow-sm sm:p-5">
+        <div class="flex h-full items-center gap-2 sm:gap-3">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 sm:h-10 sm:w-10">
             <svg class="h-5 w-5 text-blue-500" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
             </svg>
           </div>
           <div class="min-w-0">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <p class="text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px] sm:tracking-widest">
               Nombre de ventes
             </p>
-            <p class="mt-1 text-2xl font-black leading-tight text-[#142337]">
+            <p class="mt-1 break-words text-xl font-black leading-tight text-[#142337] sm:text-2xl">
               {{ totalVentes() }}
             </p>
           </div>
@@ -69,9 +73,9 @@
       </div>
 
       <!-- Montant total -->
-      <div class="min-h-[98px] rounded-2xl bg-white p-5 shadow-sm">
-        <div class="flex h-full items-center gap-3">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50">
+      <div class="min-h-[100px] min-w-0 rounded-2xl bg-white p-3 shadow-sm sm:p-5">
+        <div class="flex h-full items-center gap-2 sm:gap-3">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-green-50 sm:h-10 sm:w-10">
             <svg class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
@@ -80,21 +84,21 @@
             </svg>
           </div>
           <div class="min-w-0">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <p class="text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px] sm:tracking-widest">
               Montant total
             </p>
-            <p class="mt-1 text-xl font-black leading-tight text-[#142337]">
+            <p class="mt-1 break-words text-lg font-black leading-tight text-[#142337] sm:text-xl">
               {{ montantTotal() | number:'1.0-0' }}
-              <span class="text-sm font-bold text-slate-400">FCFA</span>
+              <span class="text-xs font-bold text-slate-400 sm:text-sm">FCFA</span>
             </p>
           </div>
         </div>
       </div>
 
       <!-- Achats du mois -->
-      <div class="min-h-[98px] rounded-2xl bg-white p-5 shadow-sm">
-        <div class="flex h-full items-center gap-3">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+      <div class="min-h-[100px] min-w-0 rounded-2xl bg-white p-3 shadow-sm sm:p-5">
+        <div class="flex h-full items-center gap-2 sm:gap-3">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 sm:h-10 sm:w-10">
             <svg class="h-5 w-5 text-blue-500" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="9" cy="21" r="1"></circle>
@@ -103,10 +107,10 @@
             </svg>
           </div>
           <div class="min-w-0">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <p class="text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px] sm:tracking-widest">
               Achats du mois
             </p>
-            <p class="mt-1 text-2xl font-black leading-tight text-[#142337]">
+            <p class="mt-1 break-words text-xl font-black leading-tight text-[#142337] sm:text-2xl">
               {{ ventesduMois() }}
             </p>
           </div>
@@ -114,9 +118,9 @@
       </div>
 
       <!-- Ventes en attente -->
-      <div class="min-h-[98px] rounded-2xl bg-white p-5 shadow-sm">
-        <div class="flex h-full items-center gap-3">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-50">
+      <div class="min-h-[100px] min-w-0 rounded-2xl bg-white p-3 shadow-sm sm:p-5">
+        <div class="flex h-full items-center gap-2 sm:gap-3">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-50 sm:h-10 sm:w-10">
             <svg class="h-5 w-5 text-orange-500" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9"></circle>
@@ -124,10 +128,10 @@
             </svg>
           </div>
           <div class="min-w-0">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <p class="text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px] sm:tracking-widest">
               Ventes en attente
             </p>
-            <p class="mt-1 text-2xl font-black leading-tight text-[#142337]">
+            <p class="mt-1 break-words text-xl font-black leading-tight text-[#142337] sm:text-2xl">
               {{ ventesEnAttente() }}
             </p>
           </div>
@@ -136,39 +140,40 @@
 
     </div>
 
-    <!-- ─── BARRE FILTRES ─────────────────────────────────── -->
-    <div class="mb-5 flex flex-wrap items-center gap-3">
+    <!-- BARRE DE RECHERCHE ET FILTRES -->
+    <div class="mb-5 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center">
 
       <!-- Recherche -->
-      <div class="relative flex-1 min-w-[200px]">
+      <div class="relative min-w-0 sm:min-w-[200px] sm:flex-1">
         <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
              stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="M21 21l-4.35-4.35"></path>
         </svg>
+
         <input
           type="text"
           placeholder="Rechercher une vente..."
           (input)="onRecherche($event)"
-          class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
+          class="w-full min-w-0 rounded-xl border border-slate-200 bg-white py-3 pl-9 pr-3 text-sm text-[#142337] placeholder-slate-400 focus:border-[#0EA5A4] focus:outline-none"
         />
       </div>
 
-      <!-- Filtre période -->
+      <!-- Période -->
       <select
         (change)="onFiltrePeriode($event)"
-        class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
       >
         <option value="">Période : Tout</option>
         <option value="semaine">Cette semaine</option>
         <option value="mois">Ce mois</option>
       </select>
 
-      <!-- Filtre déchet -->
+      <!-- Type de déchet -->
       <select
         (change)="onFiltreDechet($event)"
-        class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
       >
         <option value="">Déchet : Tout</option>
         @for (type of typesDechet(); track type) {
@@ -176,10 +181,10 @@
         }
       </select>
 
-      <!-- Filtre statut -->
+      <!-- Statut -->
       <select
         (change)="onFiltreStatut($event)"
-        class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
       >
         <option value="">Statut : Tout</option>
         <option value="paye">Payée</option>
@@ -190,16 +195,113 @@
 
     </div>
 
-    <!-- ─── TABLEAU ───────────────────────────────────────── -->
-    <div class="rounded-2xl bg-white shadow-sm">
+    <!-- CONTENEUR DES VENTES -->
+    <div class="min-w-0 rounded-2xl bg-white shadow-sm">
 
       @if (ventesFiltrees().length === 0) {
-        <div class="py-16 text-center text-sm text-slate-400">
+        <div class="px-4 py-12 text-center text-sm text-slate-400 sm:py-16">
           Aucune vente ne correspond aux critères sélectionnés.
         </div>
       } @else {
-        <div class="overflow-x-auto">
+
+        <!-- VERSION MOBILE : CARTES -->
+        <div class="space-y-3 p-3 sm:hidden">
+
+          @for (vente of ventesPage(); track vente.idVente) {
+            <article class="min-w-0 rounded-xl border border-slate-100 bg-white p-3 sm:p-4">
+
+              <!-- Citoyen et statut -->
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex min-w-0 items-center gap-2">
+                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">
+                    {{ initiales(vente) }}
+                  </div>
+
+                  <div class="min-w-0">
+                    <p class="break-words text-sm font-semibold text-[#142337]">
+                      {{ nomCitoyen(vente) }}
+                    </p>
+                    <p class="break-all text-xs text-slate-400">
+                      {{ vente.emailUtilisateur ?? 'Adresse e-mail indisponible' }}
+                    </p>
+                  </div>
+                </div>
+
+                <span
+                  class="shrink-0 rounded-full px-2 py-1 text-[10px] font-bold"
+                  [ngClass]="classeStatut(vente.statutPaiement)"
+                >
+                  {{ libelleStatut(vente.statutPaiement) }}
+                </span>
+              </div>
+
+              <div class="my-3 border-t border-slate-100"></div>
+
+              <!-- Déchet -->
+              <div class="mb-3 flex items-center gap-2">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                  <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7l3 9h12l3-9H3z"></path>
+                  </svg>
+                </div>
+
+                <span class="break-words text-sm font-semibold text-[#142337]">
+                  {{ nomDechets(vente) }}
+                </span>
+              </div>
+
+              <!-- Quantité et prix au kilo -->
+              <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                <div class="min-w-0 rounded-lg bg-slate-50 p-3">
+                  <p class="text-xs text-slate-400">Quantité</p>
+                  <p class="mt-1 break-words text-sm font-bold text-[#142337]">
+                    {{ vente.quantite }} kg
+                  </p>
+                </div>
+
+                <div class="min-w-0 rounded-lg bg-slate-50 p-3">
+                  <p class="text-xs text-slate-400">Prix par kg</p>
+                  <p class="mt-1 break-words text-sm font-bold text-[#142337]">
+                    @if (vente.quantite > 0) {
+                      {{ (vente.prixPaye / vente.quantite) | number:'1.0-0' }} FCFA/kg
+                    } @else {
+                      —
+                    }
+                  </p>
+                </div>
+              </div>
+
+              <!-- Montant, date et action -->
+              <div class="mt-3 flex items-end justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="text-xs text-slate-400">Montant total</p>
+                  <p class="mt-1 break-words text-base font-black text-[#087C78]">
+                    {{ vente.prixPaye | number:'1.0-0' }} FCFA
+                  </p>
+                  <p class="mt-1 text-xs text-slate-400">
+                    {{ formaterDate(vente.dateVente) }}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  (click)="voirDetail(vente.idVente)"
+                  class="shrink-0 rounded-lg bg-[#E5F7F5] px-3 py-2 text-xs font-bold text-[#087C78] transition hover:bg-[#C9F5EF]"
+                >
+                  Voir détail
+                </button>
+              </div>
+
+            </article>
+          }
+
+        </div>
+
+        <!-- VERSION DESKTOP : TABLEAU ORIGINAL -->
+        <div class="hidden overflow-x-auto sm:block">
           <table class="w-full text-sm">
+
             <thead>
               <tr class="border-b border-slate-100">
                 <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen</th>
@@ -212,16 +314,18 @@
                 <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
               </tr>
             </thead>
+
             <tbody>
               @for (vente of ventesPage(); track vente.idVente) {
                 <tr class="border-b border-slate-50 hover:bg-slate-50">
 
-                  <!-- Citoyen : avatar initiales + email -->
+                  <!-- Citoyen -->
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
                       <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">
                         {{ initiales(vente) }}
                       </div>
+
                       <div class="min-w-0">
                         <p class="truncate text-sm font-semibold text-[#142337]">
                           {{ nomCitoyen(vente) }}
@@ -230,7 +334,6 @@
                           {{ vente.emailUtilisateur ?? 'Adresse e-mail indisponible' }}
                         </p>
                       </div>
-
                     </div>
                   </td>
 
@@ -255,8 +358,8 @@
                     {{ vente.quantite }} kg
                   </td>
 
-                  <!-- Prix par kg calculé (montant / quantité) -->
-                  <td class="px-4 py-4 text-slate-500 text-xs">
+                  <!-- Prix par kg -->
+                  <td class="px-4 py-4 text-xs text-slate-500">
                     @if (vente.quantite > 0) {
                       {{ (vente.prixPaye / vente.quantite) | number:'1.0-0' }} FCFA/kg
                     } @else {
@@ -264,7 +367,7 @@
                     }
                   </td>
 
-                  <!-- Montant total -->
+                  <!-- Montant -->
                   <td class="px-4 py-4">
                     <span class="font-bold text-[#142337]">
                       {{ vente.prixPaye | number:'1.0-0' }} FCFA
@@ -289,9 +392,9 @@
                   <!-- Action -->
                   <td class="px-4 py-4">
                     <button
-                      (click)="voirDetail(vente.idVente)"
                       type="button"
-                      class="text-sm font-bold text-[#0EA5A4] hover:underline whitespace-nowrap"
+                      (click)="voirDetail(vente.idVente)"
+                      class="whitespace-nowrap text-sm font-bold text-[#0EA5A4] hover:underline"
                     >
                       Voir détail
                     </button>
@@ -300,39 +403,51 @@
                 </tr>
               }
             </tbody>
+
           </table>
         </div>
 
-        <!-- ─── PAGINATION ──────────────────────────────── -->
-        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
-          <p class="text-xs text-slate-400">
-            Affichage de {{ (pageCourante() - 1) * parPage + 1 }} à
-            {{ Math.min(pageCourante() * parPage, ventesFiltrees().length) }}
-            sur {{ ventesFiltrees().length }} ventes réalisées
+        <!-- PAGINATION -->
+        <div class="flex flex-col gap-3 border-t border-slate-100 px-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
+
+          <p class="text-center text-xs text-slate-400 sm:text-left">
+            @if (ventesFiltrees().length > 0) {
+              Affichage de {{ (pageCourante() - 1) * parPage + 1 }} à
+              {{ Math.min(pageCourante() * parPage, ventesFiltrees().length) }}
+              sur {{ ventesFiltrees().length }} ventes réalisées
+            } @else {
+              Aucune vente à afficher
+            }
           </p>
-          <div class="flex items-center gap-1">
+
+          <div class="flex flex-wrap items-center justify-center gap-1">
 
             <!-- Précédent -->
             <button
+              type="button"
               (click)="allerPage(pageCourante() - 1)"
               [disabled]="pageCourante() === 1"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+              aria-label="Page précédente"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
             >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"></path>
               </svg>
             </button>
 
-            <!-- Numéros -->
+            <!-- Numéros de page -->
             @for (page of pagesVisibles(); track $index) {
               @if (page === '...') {
-                <span class="flex h-8 w-8 items-center justify-center text-sm text-slate-400">...</span>
+                <span class="flex h-9 w-6 items-center justify-center text-sm text-slate-400">
+                  …
+                </span>
               } @else {
                 <button
-                  (click)="allerPage(+page)"
                   type="button"
-                  class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
+                  (click)="allerPage(+page)"
+                  [attr.aria-current]="page === pageCourante() ? 'page' : null"
+                  class="flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-sm font-semibold transition"
                   [ngClass]="page === pageCourante()
                     ? 'bg-[#0EA5A4] text-white'
                     : 'border border-slate-200 text-slate-600 hover:bg-slate-50'"
@@ -344,12 +459,14 @@
 
             <!-- Suivant -->
             <button
+              type="button"
               (click)="allerPage(pageCourante() + 1)"
               [disabled]="pageCourante() === totalPages()"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+              aria-label="Page suivante"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40"
             >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"></path>
               </svg>
             </button>
@@ -364,9 +481,10 @@
 
 </div>
 
+<!-- FENÊTRE DÉTAIL DE LA VENTE -->
 @if (chargementDetail() || erreurDetail() || venteDetail()) {
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/50 p-3 sm:p-4"
     (click)="fermerDetail()"
     (keydown.escape)="fermerDetail()"
   >
@@ -374,75 +492,115 @@
       role="dialog"
       aria-modal="true"
       aria-labelledby="vente-detail-title"
-      class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+      class="my-auto max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 shadow-xl sm:p-6"
       (click)="$event.stopPropagation()"
     >
-      <div class="mb-5 flex items-center justify-between">
+
+      <!-- En-tête de la fenêtre -->
+      <div class="mb-5 flex items-center justify-between gap-3">
         <h2 id="vente-detail-title" class="text-lg font-bold text-[#142337]">
           Détail de la vente
         </h2>
+
         <button
           type="button"
           aria-label="Fermer le détail"
           (click)="fermerDetail()"
-          class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+          class="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
         >
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m18 6-12 12M6 6l12 12"></path>
           </svg>
         </button>
       </div>
 
+      <!-- Chargement du détail -->
       @if (chargementDetail()) {
         <div class="flex items-center gap-2 py-8 text-sm text-slate-500">
           <span class="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
           Chargement du détail...
         </div>
-      } @else if (erreurDetail()) {
+      }
+
+      <!-- Erreur du détail -->
+      @else if (erreurDetail()) {
         <p role="alert" class="rounded-xl bg-red-50 p-4 text-sm text-red-600">
           {{ erreurDetail() }}
         </p>
-      } @else if (venteDetail(); as vente) {
-        <dl class="grid grid-cols-2 gap-x-5 gap-y-4 text-sm">
-          <div>
+      }
+
+      <!-- Informations de la vente -->
+      @else if (venteDetail(); as vente) {
+        <dl class="grid grid-cols-1 gap-x-5 gap-y-4 text-sm sm:grid-cols-2">
+
+          <div class="min-w-0">
             <dt class="text-xs text-slate-400">Citoyen</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ nomCitoyen(vente) }}</dd>
+            <dd class="mt-1 break-words font-semibold text-[#142337]">
+              {{ nomCitoyen(vente) }}
+            </dd>
           </div>
-          <div>
+
+          <div class="min-w-0">
             <dt class="text-xs text-slate-400">Type de déchet</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ nomDechets(vente) }}</dd>
+            <dd class="mt-1 break-words font-semibold text-[#142337]">
+              {{ nomDechets(vente) }}
+            </dd>
           </div>
+
           <div>
             <dt class="text-xs text-slate-400">Quantité</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ vente.quantite }} kg</dd>
+            <dd class="mt-1 font-semibold text-[#142337]">
+              {{ vente.quantite }} kg
+            </dd>
           </div>
+
           <div>
             <dt class="text-xs text-slate-400">Montant</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ vente.prixPaye | number:'1.0-0' }} FCFA</dd>
+            <dd class="mt-1 break-words font-semibold text-[#142337]">
+              {{ vente.prixPaye | number:'1.0-0' }} FCFA
+            </dd>
           </div>
+
           <div>
             <dt class="text-xs text-slate-400">Statut</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ libelleStatut(vente.statutPaiement) }}</dd>
+            <dd class="mt-1 font-semibold text-[#142337]">
+              {{ libelleStatut(vente.statutPaiement) }}
+            </dd>
           </div>
+
           <div>
             <dt class="text-xs text-slate-400">Date</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ formaterDate(vente.dateVente) }}</dd>
+            <dd class="mt-1 font-semibold text-[#142337]">
+              {{ formaterDate(vente.dateVente) }}
+            </dd>
           </div>
-          <div>
+
+          <div class="min-w-0">
             <dt class="text-xs text-slate-400">Moyen de paiement</dt>
-            <dd class="mt-1 font-semibold text-[#142337]">{{ vente.methodePaiement || '—' }}</dd>
+            <dd class="mt-1 break-words font-semibold text-[#142337]">
+              {{ vente.methodePaiement || '—' }}
+            </dd>
           </div>
-          <div>
+
+          <div class="min-w-0">
             <dt class="text-xs text-slate-400">Référence</dt>
-            <dd class="mt-1 break-all font-semibold text-[#142337]">{{ vente.referencePaiement || '—' }}</dd>
+            <dd class="mt-1 break-all font-semibold text-[#142337]">
+              {{ vente.referencePaiement || '—' }}
+            </dd>
           </div>
-          <div class="col-span-2">
+
+          <div class="min-w-0 sm:col-span-2">
             <dt class="text-xs text-slate-400">E-mail</dt>
-            <dd class="mt-1 break-all font-semibold text-[#142337]">{{ vente.emailUtilisateur ?? 'Indisponible' }}</dd>
+            <dd class="mt-1 break-all font-semibold text-[#142337]">
+              {{ vente.emailUtilisateur ?? 'Indisponible' }}
+            </dd>
           </div>
+
         </dl>
       }
+
     </section>
   </div>
 }
+

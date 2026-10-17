@@ -1,40 +1,23 @@
-<div class="min-h-screen bg-[#f5f8fb] pb-24 text-[#182437] lg:pb-10">
-  <header class="sticky top-0 z-30 border-b border-slate-100 bg-white/95 backdrop-blur">
-    <div class="mx-auto flex h-[68px] max-w-[1200px] items-center justify-between px-4 sm:px-6 lg:h-[76px] lg:px-8">
-      <a routerLink="/home-citoyen" class="flex shrink-0 items-center gap-2" aria-label="DechetScan, accueil">
-        <img
-          src="assets/logo1-dechetscan.png"
-          alt="DechetScan"
-          class="h-14 w-[180px] object-contain"
-        >
-      </a>
+<div class="min-h-screen bg-[#f5f8fb] pb-24 text-[#182437] lg:pb-0">
+  <!-- NAVIGATION DESKTOP : visible uniquement sur grand écran -->
+  <div class="hidden lg:block">
+    <app-navigations></app-navigations>
+  </div>
 
-      <nav class="hidden items-center gap-7 text-sm font-semibold text-slate-500 lg:flex" aria-label="Navigation principale">
-        <a routerLink="/home-citoyen" class="transition hover:text-[#0EA5A4]">Accueil</a>
-        <a routerLink="/scan" class="transition hover:text-[#0EA5A4]">Scanner</a>
-        <a routerLink="/points-collecte" class="transition hover:text-[#0EA5A4]">Points de collecte</a>
-        <a routerLink="/historique" aria-current="page" class="border-b-2 border-[#0EA5A4] py-2 font-bold text-[#0EA5A4]">Historique</a>
-      </nav>
-
-      <div class="flex items-center gap-3">
-        <a
-          routerLink="/notification"
-          aria-label="Notifications"
-          class="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100"
-        >
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-            <path d="M10 21h4"/>
-          </svg>
-        </a>
-        <a routerLink="/profile" aria-label="Mon profil" class="flex h-10 w-10 items-center justify-center rounded-full bg-[#d9f4f1] text-sm font-extrabold text-[#087c78] ring-2 ring-white">
-          DS
-        </a>
-      </div>
-    </div>
+  <!-- EN-TÊTE MOBILE : masqué sur desktop -->
+  <header class="landing-header">
+    <a routerLink="/home-citoyen" class="landing-brand">
+      <img src="/assets/logo1-dechetscan.png" alt="DechetScan" />
+    </a>
+    <a routerLink="/notification" class="landing-notifications" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+        <path d="M10 21h4" />
+      </svg>
+    </a>
   </header>
 
-  <main class="mx-auto w-full max-w-[1200px] px-4 pt-7 sm:px-6 lg:px-8 lg:pt-9">
+  <main class="mx-auto w-full max-w-[1200px] px-4 pt-7 sm:px-6 lg:px-8 lg:pb-12 lg:pt-9">
     <section class="mb-6 sm:mb-8">
       <p class="mb-2 text-[11px] font-extrabold uppercase tracking-[0.17em] text-[#0EA5A4]">Journal éco-citoyen</p>
       <h1 class="text-[26px] font-black leading-tight tracking-tight text-[#182437] sm:text-3xl">
@@ -223,7 +206,7 @@
 
               <button
                 type="button"
-                (click)="ouvrirDetail(scan.id)"
+                (click)="voirDetail(scan.id)"
                 class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#eff9f8] px-4 py-2.5 text-sm font-extrabold text-[#079c99] transition hover:bg-[#dff4f2]"
               >
                 Voir le détail
@@ -269,16 +252,14 @@
     }
   </main>
 
-  <footer class="mx-auto mt-12 hidden max-w-[1200px] items-center justify-between border-t border-slate-200 px-8 py-5 text-xs text-slate-400 lg:flex">
-    <span>© 2026 DechetScan. Tous droits réservés.</span>
-    <div class="flex gap-5">
-      <a routerLink="/accueil" class="hover:text-[#0EA5A4]">Politique de confidentialité</a>
-      <a routerLink="/accueil" class="hover:text-[#0EA5A4]">Conditions d'utilisation</a>
-      <a routerLink="/accueil" class="hover:text-[#0EA5A4]">Aide</a>
-    </div>
-  </footer>
-
+  <!-- NAVIGATION MOBILE : visible uniquement sur petit écran -->
   <div class="lg:hidden">
     <app-barre-navigations></app-barre-navigations>
   </div>
+
+  <!-- FOOTER : desktop uniquement -->
+  <div class="hidden lg:block">
+    <app-footer></app-footer>
+  </div>
+
 </div>

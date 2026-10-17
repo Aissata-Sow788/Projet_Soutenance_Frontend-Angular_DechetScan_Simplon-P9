@@ -33,6 +33,17 @@ export interface DashboardStatistiques {
   };
 }
 
+// Un point du graphique (une date ou une semaine + son nombre de scans)
+export interface PointEvolution {
+  label: string;
+  scans: number;
+}
+
+export interface DashboardStatistiques {
+  // ... tes champs existants
+  evolutionScans: PointEvolution[]; // nouvelle série pour le graphique
+}
+
 
 @Injectable({
   providedIn: 'root'

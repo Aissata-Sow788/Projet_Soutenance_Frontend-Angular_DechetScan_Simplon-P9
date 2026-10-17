@@ -11,8 +11,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-// Leaflet permet d'afficher et de gérer la carte.
-import * as L from 'leaflet';
 
 // SweetAlert2 permet d'afficher les confirmations et messages.
 import Swal from 'sweetalert2';
@@ -23,6 +21,18 @@ import { PointCollecteService } from '../../../core/services/point-collecte';
 
 // Modèle représentant un point de collecte.
 import { PointCollecte } from '../../../shared/models/point-collecte.model';
+
+import { ElementRef, ViewChild } from '@angular/core';
+import * as L from 'leaflet';
+
+// Configuration des icônes de Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
+  iconUrl: 'assets/leaflet/marker-icon.png',
+  shadowUrl: 'assets/leaflet/marker-shadow.png',
+});
 
 
 @Component({

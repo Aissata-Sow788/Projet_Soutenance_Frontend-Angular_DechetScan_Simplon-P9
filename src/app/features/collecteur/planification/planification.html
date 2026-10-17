@@ -1,42 +1,42 @@
 <!-- Page Planification des ramassages -->
-<div class="p-6 xl:p-8">
+<div class="p-4 sm:p-6 xl:p-8">
 
-  <!-- EN-TÊTE -->
-  <div class="mb-6 flex items-start justify-between gap-4">
+  <!-- EN-TÊTE : empilé sur mobile, côte à côte dès la tablette -->
+  <div class="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-[#142337]">Planification des ramassages</h1>
+      <h1 class="text-xl font-bold text-[#142337] sm:text-2xl">Planification des ramassages</h1>
       <p class="mt-1 text-sm text-slate-500">Gérez votre itinéraire et vos collectes prévues.</p>
     </div>
     <button
       (click)="ouvrirModal()"
       type="button"
-      class="flex shrink-0 items-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+      class="flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78] sm:w-auto"
     >
       <span class="text-lg leading-none">+</span>
       Planifier une collecte
     </button>
   </div>
 
-  <!-- FILTRES -->
-  <div class="mb-6 flex flex-wrap items-center gap-3">
+  <!-- FILTRES : grille 2 colonnes sur mobile, ligne souple dès la tablette -->
+  <div class="mb-5 grid grid-cols-2 gap-3 sm:mb-6 sm:flex sm:flex-wrap sm:items-end">
     <!-- Filtre date -->
-    <div>
+    <div class="min-w-0">
       <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Date</p>
       <input
         type="date"
         [value]="filtreDate()"
         (input)="filtreDate.set($any($event.target).value)"
-        class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
       />
     </div>
 
     <!-- Filtre statut -->
-    <div>
+    <div class="min-w-0">
       <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Statut</p>
       <select
         [value]="filtreStatut()"
         (change)="filtreStatut.set($any($event.target).value)"
-        class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
       >
         <option value="">Tous les statuts</option>
         <option value="planifiee">Planifiée</option>
@@ -47,10 +47,10 @@
     </div>
 
     <!-- Filtre zone (statique) -->
-    <div>
+    <div class="min-w-0">
       <p class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Zone</p>
       <select
-        class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:w-auto"
       >
         <option>Dakar Plateau</option>
         <option>Médina</option>
@@ -60,10 +60,10 @@
     </div>
 
     <!-- Bouton Filtrer -->
-    <div class="mt-4">
+    <div class="flex items-end">
       <button
         type="button"
-        class="rounded-xl bg-[#142337] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#0E172B]"
+        class="h-[38px] w-full rounded-xl bg-[#142337] px-5 text-sm font-bold text-white transition hover:bg-[#0E172B] sm:w-auto"
       >
         Filtrer
       </button>
@@ -82,30 +82,32 @@
   @else {
 
     <!-- GRILLE PRINCIPALE : Calendrier + Résumé du jour -->
-    <div class="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
+    <div class="mb-5 grid grid-cols-1 gap-5 sm:mb-6 sm:gap-6 xl:grid-cols-3">
 
       <!-- ─── CALENDRIER ─────────────────────────────────── -->
-      <div class="xl:col-span-2 rounded-2xl bg-white shadow-sm overflow-hidden">
+      <div class="min-w-0 overflow-hidden rounded-2xl bg-white shadow-sm xl:col-span-2">
 
         <!-- En-tête calendrier -->
-        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-4 sm:px-5">
           <h2 class="font-bold text-[#142337]">Calendrier des collectes</h2>
           <div class="flex items-center gap-3">
             <button
               (click)="moisPrecedent()"
               type="button"
-              class="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50"
+              aria-label="Mois précédent"
+              class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 sm:h-7 sm:w-7"
             >
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"></path>
               </svg>
             </button>
-            <span class="text-sm font-bold text-[#142337] capitalize">{{ titreMois() }}</span>
+            <span class="min-w-[110px] text-center text-sm font-bold capitalize text-[#142337]">{{ titreMois() }}</span>
             <button
               (click)="moisSuivant()"
               type="button"
-              class="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50"
+              aria-label="Mois suivant"
+              class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 sm:h-7 sm:w-7"
             >
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -116,22 +118,22 @@
         </div>
 
         <!-- Grille calendrier -->
-        <div class="p-4">
+        <div class="p-2 sm:p-4">
 
           <!-- Noms des jours -->
           <div class="mb-2 grid grid-cols-7 text-center">
             @for (jour of joursSemaine; track jour) {
-              <div class="py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div class="py-1 text-[9px] font-bold uppercase tracking-wider text-slate-400 sm:text-[10px]">
                 {{ jour }}
               </div>
             }
           </div>
 
           <!-- Jours -->
-          <div class="grid grid-cols-7 gap-1">
+          <div class="grid grid-cols-7 gap-0.5 sm:gap-1">
             @for (jour of grille(); track jour.date.toISOString()) {
               <div
-                class="min-h-[60px] rounded-lg p-1 text-xs"
+                class="min-h-[48px] rounded-lg p-0.5 text-xs sm:min-h-[60px] sm:p-1"
                 [ngClass]="{
                   'opacity-40': !jour.moisCourant,
                   'ring-2 ring-[#0EA5A4] ring-offset-1': jour.jouActuel
@@ -139,7 +141,7 @@
               >
                 <!-- Numéro du jour -->
                 <div
-                  class="mb-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold"
+                  class="mx-auto mb-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold sm:mx-0"
                   [ngClass]="jour.jouActuel
                     ? 'bg-[#0EA5A4] text-white'
                     : 'text-slate-600'"
@@ -147,10 +149,10 @@
                   {{ jour.date.getDate() }}
                 </div>
 
-                <!-- Collectes du jour -->
+                <!-- Collectes du jour : étiquettes dès la tablette -->
                 @for (collecte of jour.collectes.slice(0, 3); track collecte.idCollecte) {
                   <div
-                    class="mb-0.5 truncate rounded px-1 py-0.5 text-[9px] font-semibold leading-tight cursor-pointer"
+                    class="mb-0.5 hidden cursor-pointer truncate rounded px-1 py-0.5 text-[9px] font-semibold leading-tight sm:block"
                     [ngClass]="couleurCollecteCalendrier(collecte)"
                     (click)="voirCollecte(collecte.idCollecte)"
                     [title]="etiquetteCalendrier(collecte)"
@@ -159,7 +161,24 @@
                   </div>
                 }
                 @if (jour.collectes.length > 3) {
-                  <div class="text-[9px] text-slate-400">+{{ jour.collectes.length - 3 }}</div>
+                  <div class="hidden text-[9px] text-slate-400 sm:block">+{{ jour.collectes.length - 3 }}</div>
+                }
+
+                <!-- Collectes du jour : pastilles sur mobile -->
+                @if (jour.collectes.length > 0) {
+                  <div class="flex flex-wrap items-center justify-center gap-0.5 sm:hidden">
+                    @for (collecte of jour.collectes.slice(0, 3); track collecte.idCollecte) {
+                      <span
+                        class="h-2 w-2 cursor-pointer rounded-full ring-1 ring-current"
+                        [ngClass]="couleurCollecteCalendrier(collecte)"
+                        (click)="voirCollecte(collecte.idCollecte)"
+                        [attr.aria-label]="etiquetteCalendrier(collecte)"
+                      ></span>
+                    }
+                    @if (jour.collectes.length > 3) {
+                      <span class="text-[8px] font-bold text-slate-400">+{{ jour.collectes.length - 3 }}</span>
+                    }
+                  </div>
                 }
               </div>
             }
@@ -167,18 +186,18 @@
         </div>
       </div>
 
-      <!-- ─── RÉSUMÉ DU JOUR ─────────────────────────────── -->
-      <div class="space-y-4">
+      <!-- ─── RÉSUMÉ DU JOUR (côte à côte sur tablette) ───── -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
 
         <!-- Carte résumé -->
-        <div class="rounded-2xl bg-white p-5 shadow-sm">
+        <div class="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
           <h3 class="mb-4 font-bold text-[#142337]">Résumé du jour</h3>
 
           <!-- Ramassages -->
           <div class="mb-3 rounded-xl bg-slate-50 p-4">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-2">
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">
+            <div class="mb-2 flex items-center justify-between gap-2">
+              <div class="flex min-w-0 items-center gap-2">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100">
                   <svg class="h-4 w-4 text-blue-600" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="1" y="3" width="15" height="13" rx="2"></rect>
@@ -187,9 +206,9 @@
                     <circle cx="18.5" cy="18.5" r="2.5"></circle>
                   </svg>
                 </div>
-                <span class="text-sm font-semibold text-[#142337]">Ramassages</span>
+                <span class="truncate text-sm font-semibold text-[#142337]">Ramassages</span>
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <span class="text-2xl font-black text-[#142337]">{{ nbRamassages() }}</span>
                 <span class="ml-2 text-sm font-bold text-blue-600">{{ pourcentageRamassages() }}%</span>
               </div>
@@ -203,18 +222,18 @@
 
           <!-- Points de collecte -->
           <div class="rounded-xl bg-slate-50 p-4">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-2">
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#C9F5EF]">
+            <div class="mb-2 flex items-center justify-between gap-2">
+              <div class="flex min-w-0 items-center gap-2">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#C9F5EF]">
                   <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
                     <circle cx="12" cy="10" r="2.5"></circle>
                   </svg>
                 </div>
-                <span class="text-sm font-semibold text-[#142337]">Points de collecte</span>
+                <span class="truncate text-sm font-semibold text-[#142337]">Points de collecte</span>
               </div>
-              <div class="text-right">
+              <div class="shrink-0 text-right">
                 <span class="text-2xl font-black text-[#142337]">{{ nbPointsCollecte() }}</span>
                 <span class="ml-2 text-sm font-bold text-[#0EA5A4]">{{ pourcentagePoints() }}%</span>
               </div>
@@ -227,16 +246,16 @@
         </div>
 
         <!-- Optimisation d'itinéraire -->
-        <div class="rounded-2xl bg-[#0E172B] p-5 text-white">
+        <div class="flex flex-col rounded-2xl bg-[#0E172B] p-5 text-white">
           <h3 class="mb-2 font-bold">Optimisation d'itinéraire</h3>
-          <p class="text-sm text-slate-300 leading-relaxed">
+          <p class="text-sm leading-relaxed text-slate-300">
             L'IA a calculé l'itinéraire le plus efficace pour vos
             {{ collectesAujourdhui().length }} collectes du jour.
             Gain de temps estimé : 24 min.
           </p>
           <button
             type="button"
-            class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78]"
+            class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78] sm:mt-auto"
           >
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -250,24 +269,24 @@
       </div>
     </div>
 
-    <!-- ─── TABLEAU DÉTAIL DES COLLECTES ──────────────────── -->
+    <!-- ─── DÉTAIL DES COLLECTES ──────────────────────────── -->
     <div class="rounded-2xl bg-white shadow-sm">
 
       <!-- En-tête -->
-      <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+      <div class="flex flex-col gap-3 border-b border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <h2 class="font-bold text-[#142337]">
           Détails des collectes (Aujourd'hui)
         </h2>
         <div class="flex items-center gap-2">
           <button
             type="button"
-            class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+            class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 sm:flex-none sm:py-1.5"
           >
             Exporter PDF
           </button>
           <button
             type="button"
-            class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+            class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 sm:flex-none sm:py-1.5"
           >
             Imprimer liste
           </button>
@@ -275,11 +294,71 @@
       </div>
 
       @if (collectesFiltrees().length === 0) {
-        <div class="py-12 text-center text-sm text-slate-400">
+        <div class="px-4 py-12 text-center text-sm text-slate-400">
           Aucune collecte planifiée pour le moment.
         </div>
       } @else {
-        <div class="overflow-x-auto">
+
+        <!-- MOBILE : liste de cartes (masquée dès md) -->
+        <ul class="divide-y divide-slate-100 md:hidden">
+          @for (collecte of collectesPage(); track collecte.idCollecte) {
+            <li class="p-4">
+
+              <!-- Citoyen / Point + statut -->
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex min-w-0 items-center gap-3">
+                  <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                    [ngClass]="collecte.idPoint
+                      ? 'bg-[#C9F5EF] text-[#087C78]'
+                      : 'bg-slate-100 text-slate-600'"
+                  >
+                    {{ collecte.idPoint ? 'PC' : 'CT' }}
+                  </div>
+                  <div class="min-w-0">
+                    <p class="truncate font-semibold text-[#142337]">
+                      {{ collecte.nomPoint ?? ('Demande #' + (collecte.idDemande ?? '—')) }}
+                    </p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider"
+                       [ngClass]="collecte.idPoint ? 'text-[#0EA5A4]' : 'text-slate-400'">
+                      {{ collecte.idPoint ? 'Point de collecte' : 'Chez le citoyen' }}
+                    </p>
+                  </div>
+                </div>
+
+                <span
+                  class="inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                  [ngClass]="classeStatut(collecte.statut)"
+                >
+                  {{ libelleStatut(collecte.statut) }}
+                </span>
+              </div>
+
+              <!-- Détails -->
+              <dl class="mt-3 grid grid-cols-3 gap-x-3 rounded-xl bg-slate-50 p-3 text-xs">
+                <div class="min-w-0">
+                  <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Zone</dt>
+                  <dd class="mt-0.5 truncate font-medium text-[#142337]">{{ collecte.nomPoint ?? 'Dakar' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Quantité</dt>
+                  <dd class="mt-0.5 font-medium text-[#142337]">
+                    {{ collecte.quantiteRecuperee ? collecte.quantiteRecuperee + ' kg' : '—' }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Date</dt>
+                  <dd class="mt-0.5 font-medium text-[#142337]">{{ formaterDate(collecte.datePlanifiee) }}</dd>
+                  <dd class="font-bold text-[#0EA5A4]">{{ formaterHeure(collecte.datePlanifiee) }}</dd>
+                </div>
+              </dl>
+
+            </li>
+          }
+        </ul>
+
+        <!-- TABLETTE ET DESKTOP : tableau (masqué sur mobile) -->
+        <div class="hidden overflow-x-auto md:block">
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-slate-100">
@@ -323,12 +402,12 @@
                   </td>
 
                   <!-- Quantité -->
-                  <td class="px-4 py-4 text-slate-600">
+                  <td class="whitespace-nowrap px-4 py-4 text-slate-600">
                     {{ collecte.quantiteRecuperee ? collecte.quantiteRecuperee + ' kg' : '—' }}
                   </td>
 
                   <!-- Date & Heure -->
-                  <td class="px-4 py-4">
+                  <td class="whitespace-nowrap px-4 py-4">
                     <p class="text-xs font-semibold text-[#142337]">
                       {{ formaterDate(collecte.datePlanifiee) }}
                     </p>
@@ -340,7 +419,7 @@
                   <!-- Statut -->
                   <td class="px-4 py-4">
                     <span
-                      class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold"
+                      class="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold"
                       [ngClass]="classeStatut(collecte.statut)"
                     >
                       {{ libelleStatut(collecte.statut) }}
@@ -353,16 +432,18 @@
           </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="flex items-center justify-between border-t border-slate-100 px-6 py-4">
-          <p class="text-xs text-slate-400">
+        <!-- Pagination : empilée et centrée sur mobile -->
+        <div class="flex flex-col items-center gap-3 border-t border-slate-100 px-4 py-4 sm:flex-row sm:justify-between sm:px-6">
+          <p class="text-center text-xs text-slate-400 sm:text-left">
             Affichage de 1 à {{ collectesFiltrees().length }} sur
             {{ collectes().length }} collectes planifiées
           </p>
-          <div class="flex items-center gap-1">
+          <div class="flex flex-wrap items-center justify-center gap-1">
             <button (click)="allerPage(pageCourante() - 1)"
               [disabled]="pageCourante() === 1"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40">
+              type="button"
+              aria-label="Page précédente"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 sm:h-8 sm:w-8">
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"></path>
@@ -370,7 +451,7 @@
             </button>
             @for (page of pages(); track page) {
               <button (click)="allerPage(page)" type="button"
-                class="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-semibold transition"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-semibold transition sm:h-8 sm:w-8"
                 [ngClass]="page === pageCourante()
                   ? 'bg-[#0EA5A4] text-white'
                   : 'border border-slate-200 text-slate-600 hover:bg-slate-50'">
@@ -379,7 +460,9 @@
             }
             <button (click)="allerPage(pageCourante() + 1)"
               [disabled]="pageCourante() === totalPages()"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40">
+              type="button"
+              aria-label="Page suivante"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 sm:h-8 sm:w-8">
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"></path>
@@ -396,14 +479,15 @@
 </div>
 
 <!-- ─── MODAL PLANIFIER UNE COLLECTE ──────────────────────── -->
+<!-- Mobile : feuille collée en bas de l'écran. Dès la tablette : fenêtre centrée. -->
 @if (modalOuverte()) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+  <div class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:px-4">
+    <div class="max-h-[90vh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 shadow-xl sm:max-w-md sm:rounded-2xl sm:p-6">
 
       <div class="mb-4 flex items-center justify-between">
         <h2 class="font-bold text-[#142337]">Planifier une collecte</h2>
-        <button (click)="fermerModal()" type="button"
-          class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+        <button (click)="fermerModal()" type="button" aria-label="Fermer"
+          class="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6L6 18"></path><path d="M6 6l12 12"></path>
@@ -424,7 +508,7 @@
             type="date"
             [value]="nouvelleDatePlanifiee()"
             (input)="nouvelleDatePlanifiee.set($any($event.target).value)"
-            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-base text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:text-sm"
           />
         </div>
 
@@ -435,7 +519,7 @@
             type="time"
             [value]="nouvelleHeure()"
             (input)="nouvelleHeure.set($any($event.target).value)"
-            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-base text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:text-sm"
           />
         </div>
 
@@ -447,7 +531,7 @@
           </label>
           <select
             (change)="nouvelIdDemande.set($any($event.target).value ? Number($any($event.target).value) : null)"
-            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-[#142337] focus:border-[#0EA5A4] focus:outline-none"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 text-base text-[#142337] focus:border-[#0EA5A4] focus:outline-none sm:text-sm"
           >
             <option value="">Aucune demande spécifique</option>
             @for (demande of demandes(); track demande.idDemande) {
@@ -465,7 +549,7 @@
         <button
           (click)="fermerModal()"
           type="button"
-          class="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+          class="flex-1 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 sm:py-2.5"
         >
           Annuler
         </button>
@@ -473,7 +557,7 @@
           (click)="planifierCollecte()"
           [disabled]="!nouvelleDatePlanifiee() || enCreation()"
           type="button"
-          class="flex-1 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:opacity-50"
+          class="flex-1 rounded-xl bg-[#0EA5A4] py-3 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:opacity-50 sm:py-2.5"
         >
           {{ enCreation() ? 'Planification...' : 'Planifier' }}
         </button>

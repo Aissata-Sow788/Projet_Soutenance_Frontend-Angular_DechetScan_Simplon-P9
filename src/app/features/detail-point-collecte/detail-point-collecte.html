@@ -1,316 +1,236 @@
-<div class="citizen-responsive citizen-map-detail min-h-screen bg-[#f5f6fa] text-[#172536] pb-10" *ngIf="!chargement()">
+<!-- lg:!pb-0 : supprime l'espace sous le footer sur desktop -->
+<div class="citizen-responsive citizen-map-detail min-h-screen bg-[#f5f6fa] text-[#172536] pb-10 lg:!pb-0 flex flex-col">
 
-  <div *ngIf="point() as p">
+  <!-- Navigation desktop -->
+  <div class="hidden lg:block">
+    <app-navigations></app-navigations>
+  </div>
 
-    <!-- ================= HEADER ================= -->
-    <header class="detail-header">
-      <button
-        type="button"
-        (click)="retour()"
-        class="header-back"
-        aria-label="Retour">
+  @if (!chargement()) {
 
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5"></path>
-          <path d="M11 6l-6 6 6 6"></path>
-        </svg>
-      </button>
+    @if (point(); as p) {
+      <!-- Desktop : colonne gauche (recherche + carte), colonne droite (infos) -->
+      <div class="flex-1 lg:mx-auto lg:w-full lg:max-w-6xl lg:px-6 lg:py-5
+                  lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-5 lg:items-start">
 
-      <h1>Point De Collecte Info</h1>
-    </header>
+        <!-- En-tête mobile -->
+        <header class="detail-header lg:!hidden">
+          <button type="button" (click)="retour()" class="header-back" aria-label="Retour">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path>
+            </svg>
+          </button>
+          <h1>Point De Collecte Info</h1>
+        </header>
 
-    <!-- ================= ZONE CARTE ================= -->
-    <section class="map-section">
+        <!-- ============ COLONNE GAUCHE ============ -->
+        <div class="min-w-0">
 
-      <!-- Carte Leaflet -->
-      <div #carte class="detail-map"></div>
-
-      <!-- GPS -->
-      <div class="gps-pill">
-        <span class="gps-dot"></span>
-        <span class="gps-title">GPS Dakar Actif</span>
-        <span class="gps-precision">Précis (4m)</span>
-      </div>
-
-      <!-- Centrage -->
-      <button
-        type="button"
-        class="location-button"
-        aria-label="Centrer sur le point"
-        (click)="centrerSurPoint()">
-
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3.2"></circle>
-          <circle cx="12" cy="12" r="8.5"></circle>
-          <path d="M12 2v3"></path>
-          <path d="M12 19v3"></path>
-          <path d="M2 12h3"></path>
-          <path d="M19 12h3"></path>
-        </svg>
-      </button>
-
-      <!-- Recherche -->
-      <div class="map-search">
-        <span class="search-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20l-4-4"></path>
-          </svg>
-        </span>
-
-        <span class="search-text">Sandaga, Dakar Plateau</span>
-
-        <button type="button" class="filter-button" aria-label="Filtres">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.9" stroke-linecap="round">
-            <path d="M4 6h16"></path>
-            <path d="M4 12h16"></path>
-            <path d="M4 18h16"></path>
-            <path d="M9 4v4"></path>
-            <path d="M15 10v4"></path>
-            <path d="M10 16v4"></path>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Filtres déchets -->
-      <div class="waste-filters">
-
-        <button type="button" class="waste-chip active">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7 7h4l-2-3"></path>
-            <path d="M17 7l2 3-2 3"></path>
-            <path d="M7 17h4l-2 3"></path>
-            <path d="M17 17l-2-3 2-3"></path>
-            <path d="M11 7h6"></path>
-            <path d="M13 17H7"></path>
-          </svg>
-          <span>Tous (18)</span>
-        </button>
-
-        <button type="button" class="waste-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 6h8"></path>
-            <path d="M9 6V4h6v2"></path>
-            <path d="M7 8h10l-.8 12H7.8L7 8Z"></path>
-            <path d="M10 11v6"></path>
-            <path d="M14 11v6"></path>
-          </svg>
-          <span>Plastique</span>
-        </button>
-
-        <button type="button" class="waste-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="5" y="7" width="14" height="13" rx="1.5"></rect>
-            <path d="M8 7V4h8v3"></path>
-            <path d="M8 11h8"></path>
-          </svg>
-          <span>Métal</span>
-        </button>
-
-        <button type="button" class="waste-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7 5h10v14H7z"></path>
-            <path d="M9 3h6"></path>
-            <path d="M9 9h6"></path>
-            <path d="M9 13h4"></path>
-          </svg>
-          <span>Carton</span>
-        </button>
-      </div>
-
-      <!-- Contrôles carte -->
-      <div class="map-controls">
-
-        <button
-          type="button"
-          aria-label="Zoom avant"
-          (click)="zoomIn()">
-          +
-        </button>
-
-        <button
-          type="button"
-          aria-label="Zoom arrière"
-          (click)="zoomOut()">
-          −
-        </button>
-
-        <button
-          type="button"
-          class="layers-control"
-          aria-label="Calques">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m12 4 8 4-8 4-8-4 8-4Z"></path>
-            <path d="m4 12 8 4 8-4"></path>
-            <path d="m4 16 8 4 8-4"></path>
-          </svg>
-        </button>
-
-      </div>
-
-      <!-- Itinéraire optimisé -->
-      <button type="button" class="optimized-route" (click)="ouvrirItineraire()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 19 20 5"></path>
-          <path d="m14 5 6 0-2 6"></path>
-          <path d="M4 19 8 8"></path>
-        </svg>
-        <span>Itinéraire optimisé</span>
-      </button>
-
-    </section>
-
-    <!-- ================= FICHE DU POINT ================= -->
-    <section class="point-card">
-
-      <!-- poignée -->
-      <div class="card-handle"></div>
-
-      <div class="point-title-row">
-        <div>
-          <h2>{{ p.nom }}</h2>
-          <p class="point-address">{{ adresse() }}</p>
-        </div>
-
-        <!-- badge vérifié -->
-        <span class="verified-icon" aria-label="Point vérifié">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m12 3 2 1.3 2.3-.1 1.1 2 2 1.1-.1 2.3L21 12l-.7 2.4.1 2.3-2 1.1-1.1 2-2.3-.1L12 21l-2-1.3-2.3.1-1.1-2-2-1.1.1-2.3L3 12l.7-2.4-.1-2.3 2-1.1 1.1-2 2.3.1L12 3Z"></path>
-            <path d="m8.5 12 2.2 2.2 4.8-5"></path>
-          </svg>
-        </span>
-      </div>
-
-      <!-- horaires -->
-      <div class="opening-row">
-        <span
-          class="opening-dot"
-          [class.open]="estOuvert()"
-          [class.closed]="!estOuvert()"></span>
-
-        <span class="opening-status">
-          {{ estOuvert() ? 'Ouvert' : 'Fermé' }}
-        </span>
-
-        <span class="separator">•</span>
-
-        <span>{{ p.heureOuverture }} - {{ p.heureFermeture }}</span>
-
-        <span class="separator">•</span>
-      </div>
-
-      <!-- déchets -->
-      <p class="accepted-title">DÉCHETS ACCEPTÉS POUR RECYCLAGE</p>
-
-      <div class="accepted-list">
-        <span
-          *ngFor="let d of p.dechetsAcceptes"
-          class="accepted-chip">
-
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7 7h4l-2-3"></path>
-            <path d="M17 7l2 3-2 3"></path>
-            <path d="M7 17h4l-2 3"></path>
-            <path d="M17 17l-2-3 2-3"></path>
-            <path d="M11 7h6"></path>
-            <path d="M13 17H7"></path>
-          </svg>
-
-          <span>{{ d.nom }}</span>
-        </span>
-      </div>
-
-      <!-- bouton itinéraire -->
-      <button
-        type="button"
-        (click)="ouvrirItineraire()"
-        class="route-button">
-
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="8.5"></circle>
-          <path d="m15.5 8.5-2.1 5.1-4.9 2 2.1-5.1 4.9-2Z"></path>
-        </svg>
-
-        <span>Itinéraire (2 min)</span>
-      </button>
-
-    </section>
-
-    <!-- ================= AUTRES POINTS ================= -->
-    <section
-      class="nearby-section"
-      *ngIf="autresPoints().length > 0">
-
-      <div class="nearby-heading">
-        <h3>Autres points à proximité</h3>
-        <button type="button">Voir les 18</button>
-      </div>
-
-      <button
-        *ngFor="let autre of autresPoints().slice(0, 2)"
-        type="button"
-        (click)="ouvrirAutrePoint(autre.idPoint)"
-        class="nearby-card">
-
-        <span class="nearby-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 9h16"></path>
-            <path d="M5 9V19h14V9"></path>
-            <path d="M3 9 5 5h14l2 4"></path>
-            <path d="M8 19v-5h3v5"></path>
-            <path d="M13 19v-5h3v5"></path>
-          </svg>
-        </span>
-
-        <div class="nearby-content">
-          <p class="nearby-name">{{ autre.nom }}</p>
-
-          <div class="nearby-meta">
-            <span>{{ autre.distanceKm.toFixed(1) }} km</span>
-            <span>•</span>
-            <span>À pied (8 min)</span>
-            <strong></strong>
+          <!-- GPS Dakar Actif et centrage (placés tout en haut selon la maquette) -->
+          <div class="flex items-center justify-between px-4 pt-3 pb-2 lg:px-0 lg:pt-0">
+            <div class="gps-pill !static !shadow-none">
+             
+              <span class="gps-title">GPS Dakar Actif</span>
+              <span class="gps-precision">Précis (4m)</span>
+            </div>
+            <button type="button" class="location-button !relative !top-auto !right-auto flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200" aria-label="Centrer sur le point" (click)="centrerSurPoint()">
+              <svg class="h-4 w-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3.2"></circle><circle cx="12" cy="12" r="8.5"></circle>
+                <path d="M12 2v3"></path><path d="M12 19v3"></path><path d="M2 12h3"></path><path d="M19 12h3"></path>
+              </svg>
+            </button>
           </div>
+
+          <!-- Barre de recherche (au-dessus de la carte, z-index > Leaflet) -->
+          <div class="relative z-[2000] px-4 pb-3 lg:px-0">
+
+            <div class="flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-sm ring-1 ring-slate-200
+                        focus-within:ring-2 focus-within:ring-[#0EA5A4]">
+              <!-- Loupe -->
+              <svg class="h-4 w-4 flex-shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path>
+              </svg>
+
+              <input
+                type="text"
+                placeholder="Rechercher un point, un déchet..."
+                class="min-w-0 flex-1 bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none"
+                [value]="recherche()"
+                (input)="surRecherche($event)"
+                (keyup.enter)="validerRecherche()" />
+
+              <!-- Croix : efface la recherche -->
+              @if (recherche()) {
+                <button type="button" (click)="effacerRecherche()" aria-label="Effacer"
+                        class="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+                  ✕
+                </button>
+              }
+
+              <!-- Bouton filtres (Icône style 'sliders') -->
+              <button type="button" (click)="basculerPanneau()" aria-label="Filtres"
+                      class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition"
+                      [class.bg-[#0EA5A4]]="ouvertSeulement() || panneauFiltres()"
+                      [class.text-white]="ouvertSeulement() || panneauFiltres()"
+                      [class.bg-slate-100]="!(ouvertSeulement() || panneauFiltres())"
+                      [class.text-slate-500]="!(ouvertSeulement() || panneauFiltres())">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 21v-7"></path>
+                  <path d="M4 10V3"></path>
+                  <path d="M12 21v-9"></path>
+                  <path d="M12 8V3"></path>
+                  <path d="M20 21v-5"></path>
+                  <path d="M20 11V3"></path>
+                  <path d="M1 14h6"></path>
+                  <path d="M9 8h6"></path>
+                  <path d="M17 16h6"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Panneau filtres + suggestions -->
+            @if (panneauFiltres() || recherche().trim()) {
+              <div class="absolute left-4 right-4 top-full -mt-1 overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-slate-200 lg:left-0 lg:right-0 z-[2100]">
+
+                @if (panneauFiltres()) {
+                  <label class="flex cursor-pointer items-center gap-2 border-b border-slate-100 px-4 py-2.5 text-sm hover:bg-slate-50">
+                    <input type="checkbox" class="accent-[#0EA5A4]" [checked]="ouvertSeulement()" (change)="basculerOuvert()" />
+                    Ouverts uniquement
+                  </label>
+                  <button type="button" (click)="reinitialiser()"
+                          class="w-full border-b border-slate-100 px-4 py-2.5 text-left text-sm font-semibold text-[#0EA5A4] hover:bg-slate-50">
+                    Réinitialiser les filtres
+                  </button>
+                }
+
+                @for (s of suggestions(); track s.idPoint) {
+                  <button type="button" (click)="ouvrirAutrePoint(s.idPoint)"
+                          class="w-full border-b border-slate-100 px-4 py-2.5 text-left text-sm hover:bg-slate-50">
+                    {{ s.nom }}
+                  </button>
+                }
+
+                @if (recherche().trim() && suggestions().length === 0) {
+                  <p class="px-4 py-2.5 text-sm text-slate-500">Aucun résultat</p>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- ============ CARTE ============ -->
+          <section class="map-section relative lg:!h-[calc(100vh-12.5rem)] lg:!min-h-[460px] lg:rounded-2xl lg:overflow-hidden lg:shadow-md">
+
+            <div #carte class="detail-map h-full w-full"></div>
+
+            <!-- Zoom épuré (sans calques superflus en dessous) -->
+            <div class="map-controls absolute right-3 top-3 z-[1000] flex flex-col overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-slate-200">
+              <button type="button" class="flex h-9 w-9 items-center justify-center text-slate-700 hover:bg-slate-100 border-b border-slate-100 font-semibold" aria-label="Zoom avant" (click)="zoomIn()">+</button>
+              <button type="button" class="flex h-9 w-9 items-center justify-center text-slate-700 hover:bg-slate-100 font-semibold" aria-label="Zoom arrière" (click)="zoomOut()">−</button>
+            </div>
+
+            <!-- Itinéraire optimisé -->
+            <button type="button" class="optimized-route" (click)="ouvrirItineraire()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19 20 5"></path><path d="m14 5 6 0-2 6"></path><path d="M4 19 8 8"></path>
+              </svg>
+              <span>Itinéraire optimisé</span>
+            </button>
+          </section>
         </div>
 
-        <svg class="nearby-arrow" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="m9 18 6-6-6-6"></path>
-        </svg>
-      </button>
+        <!-- ============ COLONNE DROITE ============ -->
+        <div class="lg:sticky lg:top-20 lg:space-y-3">
 
-    </section>
+          <!-- Fiche du point -->
+          <section class="point-card lg:!mt-0 lg:!rounded-2xl lg:shadow-md">
+            <div class="card-handle lg:hidden"></div>
 
+            <div class="point-title-row">
+              <div>
+                <h2>{{ p.nom }}</h2>
+                <p class="point-address">{{ adresse() }}</p>
+              </div>
+              <span class="verified-icon" aria-label="Point vérifié">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m12 3 2 1.3 2.3-.1 1.1 2 2 1.1-.1 2.3L21 12l-.7 2.4.1 2.3-2 1.1-1.1 2-2.3-.1L12 21l-2-1.3-2.3.1-1.1-2-2-1.1.1-2.3L3 12l.7-2.4-.1-2.3 2-1.1 1.1-2 2.3.1L12 3Z"></path>
+                  <path d="m8.5 12 2.2 2.2 4.8-5"></path>
+                </svg>
+              </span>
+            </div>
+
+            <div class="opening-row">
+              <span class="opening-dot" [class.open]="estOuvert()" [class.closed]="!estOuvert()"></span>
+              <span class="opening-status">{{ estOuvert() ? 'Ouvert' : 'Fermé' }}</span>
+              <span class="separator">•</span>
+              <span>{{ p.heureOuverture }} - {{ p.heureFermeture }}</span>
+            </div>
+
+            <p class="accepted-title">DÉCHETS ACCEPTÉS POUR RECYCLAGE</p>
+            <div class="accepted-list">
+              @for (d of p.dechetsAcceptes; track d.idTypeDechet) {
+                <span class="accepted-chip">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 7h4l-2-3"></path><path d="M17 7l2 3-2 3"></path><path d="M7 17h4l-2 3"></path>
+                    <path d="M17 17l-2-3 2-3"></path><path d="M11 7h6"></path><path d="M13 17H7"></path>
+                  </svg>
+                  <span>{{ d.nom }}</span>
+                </span>
+              }
+            </div>
+
+            <!-- Bouton itinéraire -->
+            <button type="button" (click)="ouvrirItineraire()"
+                    class="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#0EA5A4] py-2.5 text-sm font-semibold text-white transition hover:bg-[#087C78] lg:py-2 lg:text-[13px]">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="8.5"></circle><path d="m15.5 8.5-2.1 5.1-4.9 2 2.1-5.1 4.9-2Z"></path>
+              </svg>
+              <span>Itinéraire (2 min)</span>
+            </button>
+          </section>
+
+          <!-- Autres points (suivent les filtres) -->
+          @if (autresPoints().length > 0) {
+            <section class="nearby-section">
+              <div class="nearby-heading">
+                <h3>Autres points à proximité</h3>
+                <button type="button" (click)="retour()">Voir les {{ pointsFiltres().length }}</button>
+              </div>
+
+              @for (autre of autresPoints(); track autre.idPoint) {
+                <button type="button" (click)="ouvrirAutrePoint(autre.idPoint)" class="nearby-card">
+                  <span class="nearby-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 9h16"></path><path d="M5 9V19h14V9"></path><path d="M3 9 5 5h14l2 4"></path>
+                      <path d="M8 19v-5h3v5"></path><path d="M13 19v-5h3v5"></path>
+                    </svg>
+                  </span>
+                  <div class="nearby-content">
+                    <p class="nearby-name">{{ autre.nom }}</p>
+                    <div class="nearby-meta"><span>{{ autre.distanceKm.toFixed(1) }} km</span></div>
+                  </div>
+                  <svg class="nearby-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"></path>
+                  </svg>
+                </button>
+              }
+            </section>
+          }
+        </div>
+      </div>
+
+    } @else {
+      <!-- Point introuvable -->
+      <div class="flex flex-1 flex-col items-center justify-center min-h-[60vh] gap-4 px-6 text-center">
+        <p class="text-slate-600">Ce point de collecte est introuvable.</p>
+        <button type="button" (click)="retour()" class="rounded-full bg-[#0EA5A4] px-6 py-3 text-white font-semibold">
+          Retour à la liste
+        </button>
+      </div>
+    }
+  }
+
+  <!-- Footer desktop -->
+  <div class="hidden lg:block">
+    <app-footer></app-footer>
   </div>
-
-  <!-- ================= POINT INTROUVABLE ================= -->
-  <div
-    *ngIf="!point()"
-    class="flex flex-col items-center justify-center min-h-screen gap-4 px-6 text-center">
-
-    <p class="text-slate-600">Ce point de collecte est introuvable.</p>
-
-    <button
-      type="button"
-      (click)="retour()"
-      class="rounded-full bg-[#0EA5A4] px-6 py-3 text-white font-semibold">
-      Retour à la liste
-    </button>
-  </div>
-
 </div>

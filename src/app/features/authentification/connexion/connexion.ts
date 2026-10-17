@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-connexion',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   styleUrl: './connexion.css',
   templateUrl: './connexion.html',
 })

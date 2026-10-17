@@ -43,7 +43,8 @@ export class VendreDechets implements OnInit {
   enEnvoi = signal(false);
   erreur = signal<string | null>(null);
   venteCreee = signal(false);
-  readonly methodesPaiement = ['Wave', 'Orange Money', 'Free Money', 'Espèces'];
+  // paniersDisponibles = signal<PanierDechetApi[]>([]);
+  readonly methodesPaiement = ['Wave', 'Orange Money'];
 
   paniersDisponibles = computed(() =>
     this.paniers().filter((panier) => panier.nombreDisponible > 0)
@@ -71,6 +72,8 @@ export class VendreDechets implements OnInit {
       0,
     )
   );
+
+
 
   montantTotal = computed(() =>
     this.paniersChoisis().reduce((total, panier) => {

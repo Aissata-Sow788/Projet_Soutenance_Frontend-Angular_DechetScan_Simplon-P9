@@ -5,10 +5,11 @@ import { CommonModule } from '@angular/common';
 import { BarreNavigations } from '../../shared/components/barre-navigations/barre-navigations';
 import { AccueilService } from '../../core/services/accueil.service';
 import {StatistiquesAccueil, SolutionAccueil, DefiAccueil} from '../../shared/models/accueil.model';
+import { Footer } from '../../shared/components/footer/footer';
 
 
 @Component({
-  imports: [RouterLink, BarreNavigations, CommonModule],
+  imports: [RouterLink, BarreNavigations, CommonModule, Footer],
   selector: 'app-accueil',
   styleUrl: './accueil.css',
   templateUrl: './accueil.html',

@@ -1,25 +1,39 @@
-<section class="p-6 xl:p-8">
-  <!-- État de chargement pendant l'appel à l'API. -->
+
+<section class="min-h-screen bg-[#F3F6F8] px-3 py-4 text-[#142337] sm:px-5 sm:py-6 lg:p-6 xl:p-8">
+
+  <!-- Chargement -->
   @if (chargement()) {
-    <div class="py-16 text-center text-sm text-slate-400">Chargement de la collecte...</div>
-  <!-- Erreur bloquante si aucune des deux ressources n'a pu être chargée. -->
-  } @else if (erreur() && !demande() && !collecteOperation()) {
-    <div class="rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
-  <!-- Présentation quand la page est ouverte depuis « Mes collectes ». -->
-  } @else if (collecteOperation(); as collecte) {
+    <div class="flex min-h-48 items-center justify-center text-sm text-slate-500">
+      Chargement de la collecte...
+    </div>
+  }
+
+  <!-- Erreur générale -->
+  @else if (erreur() && !demande() && !collecteOperation()) {
+    <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+      {{ erreur() }}
+    </div>
+  }
+
+  <!-- ================================================== -->
+  <!-- COLLECTE DEPUIS MES COLLECTES -->
+  <!-- ================================================== -->
+  @else if (collecteOperation(); as collecte) {
+
     <button
       (click)="retour()"
       type="button"
-      class="mb-4 flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-[#0EA5A4]"
+      class="mb-5 inline-flex min-h-10 items-center gap-2 rounded-lg text-sm font-semibold text-slate-500 transition hover:text-[#0EA5A4]"
     >
       <span aria-hidden="true">←</span>
       Retour à mes collectes
     </button>
 
-    <!-- Titre et badge de statut avec une couleur adaptée à l'avancement. -->
-    <div class="mb-6 flex flex-wrap items-center gap-3">
-      <h1 class="text-2xl font-bold text-[#142337]">Détail de la collecte</h1>
-      <span class="rounded-full px-3 py-1 text-xs font-bold"
+    <header class="mb-6 flex flex-wrap items-center gap-3">
+      <h1 class="text-xl font-bold sm:text-2xl">Détail de la collecte</h1>
+
+      <span
+        class="rounded-full px-3 py-1.5 text-xs font-bold"
         [ngClass]="statutNormalise() === 'terminee'
           ? 'bg-green-100 text-green-700'
           : statutNormalise() === 'en_cours'
@@ -28,87 +42,123 @@
       >
         {{ collecte.statut | titlecase }}
       </span>
-    </div>
+    </header>
 
-    <!-- Messages non bloquants après une tentative de mise à jour du statut. -->
     @if (erreur()) {
-      <div class="mb-4 rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+      <div class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        {{ erreur() }}
+      </div>
     }
+
     @if (confirmation()) {
-      <div class="mb-4 rounded-xl bg-green-50 p-4 text-sm font-semibold text-green-700">
+      <div class="mb-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
         {{ confirmation() }}
       </div>
     }
 
-    <!-- Informations principales de la collecte : citoyen, lieu et déchets. -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <article class="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Citoyen</h2>
-        <p class="text-lg font-bold text-[#142337]">
+    <!-- Informations principales -->
+    <div class="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-2 lg:gap-6">
+
+      <article class="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-6">
+        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          Citoyen
+        </h2>
+
+        <p class="break-words text-base font-bold sm:text-lg">
           {{ collecte.prenomCitoyen }} {{ collecte.nomCitoyen }}
         </p>
       </article>
 
-      <article class="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Lieu et horaire</h2>
-        <p class="font-semibold text-[#142337]">{{ collecte.zone || 'Zone non renseignée' }}</p>
-        <p class="mt-2 text-sm text-slate-500">
-          {{ formaterDate(collecte.datePlanifiee) }} · {{ formaterHeure(collecte.datePlanifiee) }}
+      <article class="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-6">
+        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          Lieu et horaire
+        </h2>
+
+        <p class="break-words font-semibold">
+          {{ collecte.zone || 'Zone non renseignée' }}
         </p>
+
+        <p class="mt-2 text-sm text-slate-500">
+          {{ formaterDate(collecte.datePlanifiee) }}
+          ·
+          {{ formaterHeure(collecte.datePlanifiee) }}
+        </p>
+
         @if (collecte.nomPoint) {
-          <p class="mt-2 text-sm text-slate-500">Point de collecte : {{ collecte.nomPoint }}</p>
+          <p class="mt-2 break-words text-sm text-slate-500">
+            Point de collecte : {{ collecte.nomPoint }}
+          </p>
         }
       </article>
 
-      <article class="rounded-2xl bg-white p-6 shadow-sm lg:col-span-2">
-        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Déchets à récupérer</h2>
-        <p class="text-lg font-bold text-[#142337]">{{ collecte.nomDechet || 'Type de déchet non renseigné' }}</p>
-        <p class="mt-1 text-sm text-slate-500">
-          Quantité estimée : {{ collecte.quantite ?? collecte.quantiteRecuperee ?? '—' }} kg
+      <article class="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-6 lg:col-span-2">
+        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          Déchets à récupérer
+        </h2>
+
+        <p class="break-words text-base font-bold sm:text-lg">
+          {{ collecte.nomDechet || 'Type de déchet non renseigné' }}
+        </p>
+
+        <p class="mt-2 text-sm text-slate-500">
+          Quantité estimée :
+          {{ collecte.quantite ?? collecte.quantiteRecuperee ?? '—' }} kg
         </p>
       </article>
     </div>
 
-    <!-- Une seule action est proposée à la fois selon le statut actuel. -->
-    <div class="mt-6 flex flex-wrap gap-3">
+    <!-- Actions de la collecte -->
+    <div class="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:flex-wrap">
+
       @if (statutNormalise() === 'planifiee') {
         <button
           (click)="changerStatut('en_cours')"
           [disabled]="enTraitement()"
           type="button"
-          class="rounded-xl bg-[#0EA5A4] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:opacity-60"
+          class="w-full rounded-xl bg-[#0EA5A4] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6"
         >
           {{ enTraitement() ? 'Traitement...' : 'Commencer la collecte' }}
         </button>
-      } @else if (statutNormalise() === 'en_cours') {
+      }
+
+      @else if (statutNormalise() === 'en_cours') {
         <button
           (click)="changerStatut('terminee')"
           [disabled]="enTraitement()"
           type="button"
-          class="rounded-xl bg-green-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-green-700 disabled:opacity-60"
+          class="w-full rounded-xl bg-green-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6"
         >
           {{ enTraitement() ? 'Traitement...' : 'Terminer la collecte' }}
         </button>
-      } @else if (statutNormalise() === 'terminee') {
-        <p class="rounded-xl bg-green-50 px-5 py-3 text-sm font-semibold text-green-700">
+      }
+
+      @else if (statutNormalise() === 'terminee') {
+        <p class="w-full rounded-xl bg-green-50 px-5 py-3.5 text-sm font-semibold text-green-700 sm:w-auto">
           Cette collecte est terminée.
         </p>
       }
     </div>
-  <!-- Présentation quand la page est ouverte à partir d'une demande acceptée. -->
-  } @else if (demande(); as collecte) {
+  }
+
+  <!-- ================================================== -->
+  <!-- DEMANDE DE COLLECTE ACCEPTÉE -->
+  <!-- ================================================== -->
+  @else if (demande(); as collecte) {
+
     <button
       (click)="retour()"
       type="button"
-      class="mb-4 flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-[#0EA5A4]"
+      class="mb-5 inline-flex min-h-10 items-center gap-2 rounded-lg text-sm font-semibold text-slate-500 transition hover:text-[#0EA5A4]"
     >
       <span aria-hidden="true">←</span>
       Retour aux demandes
     </button>
 
-    <div class="mb-6 flex flex-wrap items-center gap-3">
-      <h1 class="text-2xl font-bold text-[#142337]">Détail de la collecte</h1>
-      <span class="rounded-full px-3 py-1 text-xs font-bold"
+    <header class="mb-6 flex flex-wrap items-center gap-3">
+      <h1 class="text-xl font-bold sm:text-2xl">Détail de la collecte</h1>
+
+      <span
+        class="rounded-full px-3 py-1.5 text-xs font-bold"
         [ngClass]="statutNormalise() === 'acceptee'
           ? 'bg-green-100 text-green-700'
           : statutNormalise() === 'en_cours'
@@ -117,83 +167,150 @@
       >
         {{ collecte.statut | titlecase }}
       </span>
-    </div>
+    </header>
 
     @if (erreur()) {
-      <div class="mb-4 rounded-xl bg-red-50 p-4 text-sm text-red-600">{{ erreur() }}</div>
+      <div class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        {{ erreur() }}
+      </div>
     }
+
     @if (confirmation()) {
-      <div class="mb-4 rounded-xl bg-green-50 p-4 text-sm font-semibold text-green-700">
+      <div class="mb-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
         {{ confirmation() }}
       </div>
     }
 
-    <!-- Coordonnées du citoyen, lieu GPS, horaire et déchet demandé. -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <article class="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Citoyen</h2>
-        <p class="text-lg font-bold text-[#142337]">
+    <!-- Informations du citoyen et de la demande -->
+    <div class="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-2 lg:gap-6">
+
+      <article class="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-6">
+        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          Citoyen
+        </h2>
+
+        <p class="break-words text-base font-bold sm:text-lg">
           {{ collecte.prenomUtilisateur }} {{ collecte.nomUtilisateur }}
         </p>
-        <p class="mt-1 text-sm text-slate-500">{{ collecte.telephoneUtilisateur || 'Téléphone non renseigné' }}</p>
+
+        <p class="mt-2 break-words text-sm text-slate-500">
+          {{ collecte.telephoneUtilisateur || 'Téléphone non renseigné' }}
+        </p>
       </article>
 
-      <article class="rounded-2xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Lieu et horaire</h2>
-        <p class="font-semibold text-[#142337]">{{ collecte.quartier || 'Quartier non renseigné' }}</p>
-        <p class="mt-2 text-sm text-slate-500">
-          {{ formaterDate(collecte.dateSouhaitee) }} · {{ formaterHeure(collecte.dateSouhaitee) }}
+      <article class="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-6">
+        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          Lieu et horaire
+        </h2>
+
+        <p class="break-words font-semibold">
+          {{ collecte.quartier || 'Quartier non renseigné' }}
         </p>
-        @if (collecte.latitude !== null && collecte.longitude !== null) {
+
+        <p class="mt-2 text-sm text-slate-500">
+          {{ formaterDate(collecte.dateSouhaitee) }}
+          ·
+          {{ formaterHeure(collecte.dateSouhaitee) }}
+        </p>
+
+        @if (collecte.latitude != null && collecte.longitude != null) {
           <a
             [href]="'https://www.google.com/maps?q=' + collecte.latitude + ',' + collecte.longitude"
             target="_blank"
             rel="noopener noreferrer"
-            class="mt-3 inline-block text-sm font-semibold text-[#0EA5A4] hover:underline"
+            class="mt-3 inline-flex min-h-10 items-center gap-2 font-semibold text-[#0EA5A4] hover:underline"
           >
+            <span aria-hidden="true">📍</span>
             Ouvrir la position GPS
           </a>
+        } @else {
+          <p class="mt-3 text-sm text-amber-700">
+            La position GPS n'est pas renseignée pour cette demande.
+          </p>
         }
       </article>
 
-      <article class="rounded-2xl bg-white p-6 shadow-sm lg:col-span-2">
-        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Déchets à récupérer</h2>
-        <p class="text-lg font-bold text-[#142337]">{{ collecte.typeDechet?.nom ?? 'Type inconnu' }}</p>
-        <p class="mt-1 text-sm text-slate-500">Quantité estimée : {{ collecte.quantite }} kg</p>
+      <article class="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-6 lg:col-span-2">
+        <h2 class="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">
+          Déchets à récupérer
+        </h2>
+
+        <p class="break-words text-base font-bold sm:text-lg">
+          {{ collecte.typeDechet?.nom ?? 'Type inconnu' }}
+        </p>
+
+        <p class="mt-2 text-sm text-slate-500">
+          Quantité estimée : {{ collecte.quantite }} kg
+        </p>
       </article>
     </div>
 
-    @if (!collecte.attribueAuCollecteurConnecte) {
-      <p class="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-bold text-amber-800" role="status">
-        Cette demande est déjà prise par {{ collecte.collecteurAttribue?.nomEntreprise ?? 'un autre collecteur' }}.
-      </p>
-    } @else {
-    <!-- Le workflow de demande affiche Commencer puis Terminer. -->
-    <div class="mt-6 flex flex-wrap gap-3">
-      @if (statutNormalise() === 'acceptee') {
-        <button
-          (click)="changerStatut('en_cours')"
-          [disabled]="enTraitement()"
-          type="button"
-          class="rounded-xl bg-[#0EA5A4] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:opacity-60"
-        >
-          {{ enTraitement() ? 'Traitement...' : 'Commencer la collecte' }}
-        </button>
-      } @else if (statutNormalise() === 'en_cours') {
-        <button
-          (click)="changerStatut('terminee')"
-          [disabled]="enTraitement()"
-          type="button"
-          class="rounded-xl bg-green-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-green-700 disabled:opacity-60"
-        >
-          {{ enTraitement() ? 'Traitement...' : 'Terminer la collecte' }}
-        </button>
-      } @else if (statutNormalise() === 'terminee') {
-        <p class="rounded-xl bg-green-50 px-5 py-3 text-sm font-semibold text-green-700">
-          Cette collecte est terminée.
+    <!-- Carte GPS : le composant TypeScript doit initialiser Leaflet -->
+    <article class="mt-5 overflow-hidden rounded-2xl bg-white p-4 shadow-sm sm:mt-6 sm:p-6">
+      <div class="mb-4">
+        <h2 class="text-base font-bold sm:text-lg">Localisation de la collecte</h2>
+        <p class="mt-1 text-sm text-slate-500">
+          Position indiquée par le citoyen
         </p>
+      </div>
+
+      @if (collecte.latitude != null && collecte.longitude != null) {
+        <div
+          id="carte-detail-collecte"
+          class="z-0 h-[260px] w-full overflow-hidden rounded-xl bg-slate-100 sm:h-[340px] lg:h-[380px]"
+          role="application"
+          aria-label="Carte indiquant la position GPS de la collecte"
+        ></div>
+      } @else {
+        <div class="flex min-h-40 items-center justify-center rounded-xl bg-slate-50 px-4 text-center text-sm text-slate-500">
+          Impossible d'afficher la carte : les coordonnées GPS sont absentes.
+        </div>
       }
-    </div>
+    </article>
+
+    <!-- Demande déjà attribuée à un autre collecteur -->
+    @if (!collecte.attribueAuCollecteurConnecte) {
+      <p
+        class="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm font-bold text-amber-800 sm:px-5"
+        role="status"
+      >
+        Cette demande est déjà prise par
+        {{ collecte.collecteurAttribue?.nomEntreprise ?? 'un autre collecteur' }}.
+      </p>
+    }
+
+    @else {
+      <div class="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:flex-wrap">
+
+        @if (statutNormalise() === 'acceptee') {
+          <button
+            (click)="changerStatut('en_cours')"
+            [disabled]="enTraitement()"
+            type="button"
+            class="w-full rounded-xl bg-[#0EA5A4] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6"
+          >
+            {{ enTraitement() ? 'Traitement...' : 'Commencer la collecte' }}
+          </button>
+        }
+
+        @else if (statutNormalise() === 'en_cours') {
+          <button
+            (click)="changerStatut('terminee')"
+            [disabled]="enTraitement()"
+            type="button"
+            class="w-full rounded-xl bg-green-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6"
+          >
+            {{ enTraitement() ? 'Traitement...' : 'Terminer la collecte' }}
+          </button>
+        }
+
+        @else if (statutNormalise() === 'terminee') {
+          <p class="w-full rounded-xl bg-green-50 px-5 py-3.5 text-sm font-semibold text-green-700 sm:w-auto">
+            Cette collecte est terminée.
+          </p>
+        }
+      </div>
     }
   }
 </section>
+

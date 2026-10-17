@@ -3,9 +3,11 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { BarreNavigations } from '../../shared/components/barre-navigations/barre-navigations';
 import { PanierDechetApi, ScanService } from '../../core/services/scan';
+import { Navigations } from '../../shared/components/navigations/navigations';
+import { Footer } from '../../shared/components/footer/footer';
 
 @Component({
-  imports: [CommonModule, BarreNavigations],
+  imports: [CommonModule, BarreNavigations, Navigations, Footer],
   selector: 'app-mes-paniers',
   styleUrl: './mes-paniers.css',
   templateUrl: './mes-paniers.html',

@@ -94,9 +94,7 @@ export class DetailVente implements OnInit {
   /**
    * Lance un appel téléphonique vers le collecteur.
    *
-   * Attention : nomCollecteur est actuellement utilisé temporairement
-   * comme numéro. Il faudra remplacer cette valeur par un vrai
-   * champ téléphone dans le modèle VenteDechet.
+
    */
   appelerCollecteur(): void {
     const tel = this.vente()?.nomCollecteur;

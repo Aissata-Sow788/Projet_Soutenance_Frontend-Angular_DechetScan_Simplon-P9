@@ -7,6 +7,9 @@ import { ScanService } from '../../core/services/scan';
 import { ScanDechet } from '../../shared/models/scan.model';
 import { PointCollecteService } from '../../core/services/point-collecte';
 import { Auth } from '../../core/services/auth';
+import { Footer } from '../../shared/components/footer/footer';
+import { Navigations } from '../../shared/components/navigations/navigations';
+
 
 
 /**
@@ -38,7 +41,7 @@ interface PointProche {
 
 
 @Component({
-  imports: [CommonModule, BarreNavigations, RouterLink],
+  imports: [CommonModule, BarreNavigations, RouterLink, Footer, Navigations],
   selector: 'app-home-citoyen',
   styleUrl: './home-citoyen.css',
   templateUrl: './home-citoyen.html',
@@ -167,7 +170,7 @@ export class HomeCitoyen implements OnInit {
 
   /**
    * Charge les scans du citoyen depuis Django.
-  
+
    * retourne uniquement les scans appartenant
    * à l'utilisateur connecté.
    */
@@ -207,6 +210,7 @@ export class HomeCitoyen implements OnInit {
     });
   }
 
+  
 
   /**
    * Transforme une réponse Django ScanDechet

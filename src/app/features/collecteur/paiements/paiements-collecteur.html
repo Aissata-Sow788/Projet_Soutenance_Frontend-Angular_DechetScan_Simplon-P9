@@ -1,33 +1,34 @@
-<!-- Page Paiements — le collecteur règle les citoyens vendeurs -->
-<div class="p-6 xl:p-8">
 
-  <!-- ─── EN-TÊTE ──────────────────────────────────────────── -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-[#142337]">Paiements</h1>
+<!-- Page Paiements — espace collecteur -->
+<div class="min-w-0 p-3 sm:p-5 lg:p-6 xl:p-8">
+
+  <!-- EN-TÊTE -->
+  <div class="mb-5 sm:mb-6">
+    <h1 class="text-xl font-bold text-[#142337] sm:text-2xl">
+      Paiements
+    </h1>
     <p class="mt-1 text-sm text-slate-500">
       Réglez les citoyens pour les déchets qu'ils vous ont vendus.
     </p>
   </div>
 
-  <!-- ─── MESSAGE RETOUR PAYDUNYA ──────────────────────────── -->
+  <!-- MESSAGE RETOUR PAYDUNYA -->
   @if (message()) {
-    <div
-      class="mb-5 flex items-center gap-2 rounded-xl border border-[#BDEBE0] bg-[#EFFBF5] px-4 py-3 text-sm text-[#196B61]"
-    >
-      {{ message() }}
+    <div class="mb-5 flex items-start gap-2 rounded-xl border border-[#BDEBE0] bg-[#EFFBF5] px-3 py-3 text-sm text-[#196B61] sm:px-4">
+      <span class="min-w-0 flex-1 break-words">{{ message() }}</span>
       @if (paiementEnVerification()) {
-        <span class="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-[#0EA5A4] border-t-transparent"></span>
+        <span class="mt-0.5 h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-[#0EA5A4] border-t-transparent"></span>
       }
     </div>
   }
 
   @if (erreur()) {
-    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <div class="mb-5 break-words rounded-xl border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700 sm:px-4">
       {{ erreur() }}
     </div>
   }
 
-  <!-- ─── CHARGEMENT ────────────────────────────────────────── -->
+  <!-- CHARGEMENT -->
   @if (chargement()) {
     <div class="flex items-center justify-center py-20">
       <div class="flex items-center gap-2 text-sm text-slate-400">
@@ -39,64 +40,72 @@
 
   @else {
 
-    <!-- ─── CARTES STATISTIQUES ───────────────────────────── -->
-    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <!-- CARTES STATISTIQUES -->
+    <div class="mb-5 grid grid-cols-2 gap-3 sm:mb-6 sm:gap-4 lg:grid-cols-3">
 
       <!-- À payer -->
-      <div class="rounded-2xl bg-white p-5 shadow-sm">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+      <div class="min-w-0 rounded-2xl bg-white p-3 shadow-sm sm:p-5">
+        <p class="text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px] sm:tracking-widest">
           À payer
         </p>
-        <p class="mt-2 text-3xl font-black text-[#142337]">
+
+        <p class="mt-2 break-words text-2xl font-black text-[#142337] sm:text-3xl">
           {{ nbAPayer() }}
-          <span class="text-base font-normal text-slate-400">ventes</span>
+          <span class="text-sm font-normal text-slate-400 sm:text-base">ventes</span>
         </p>
-        <p class="mt-1 text-sm font-semibold text-orange-500">
+
+        <p class="mt-1 break-words text-xs font-semibold text-orange-500 sm:text-sm">
           {{ montantAPayer() | number:'1.0-0' }} FCFA en attente
         </p>
       </div>
 
       <!-- Déjà payé -->
-      <div class="rounded-2xl bg-white p-5 shadow-sm">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+      <div class="min-w-0 rounded-2xl bg-white p-3 shadow-sm sm:p-5">
+        <p class="text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px] sm:tracking-widest">
           Déjà payé
         </p>
-        <p class="mt-2 text-3xl font-black text-[#142337]">
+
+        <p class="mt-2 break-words text-xl font-black text-[#142337] sm:text-3xl">
           {{ montantPaye() | number:'1.0-0' }}
-          <span class="text-base font-normal text-slate-400">FCFA</span>
+          <span class="text-xs font-normal text-slate-400 sm:text-base">FCFA</span>
         </p>
-        <p class="mt-1 text-sm font-semibold text-green-600">
+
+        <p class="mt-1 text-xs font-semibold text-green-600 sm:text-sm">
           Citoyens réglés
         </p>
       </div>
 
       <!-- Total ventes -->
-      <div class="rounded-2xl bg-white p-5 shadow-sm">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+      <div class="col-span-2 min-w-0 rounded-2xl bg-white p-3 shadow-sm sm:col-span-1 sm:p-5">
+        <p class="text-[9px] font-bold uppercase tracking-wide text-slate-400 sm:text-[10px] sm:tracking-widest">
           Total ventes
         </p>
-        <p class="mt-2 text-3xl font-black text-[#142337]">
+
+        <p class="mt-2 break-words text-2xl font-black text-[#142337] sm:text-3xl">
           {{ ventes().length }}
         </p>
-        <p class="mt-1 text-sm text-slate-400">transactions</p>
+
+        <p class="mt-1 text-xs text-slate-400 sm:text-sm">
+          transactions
+        </p>
       </div>
 
     </div>
 
-    <!-- ─── ONGLETS ────────────────────────────────────────── -->
-    <div class="mb-5 flex gap-1 border-b border-slate-200">
+    <!-- ONGLETS -->
+    <div class="mb-5 flex min-w-0 overflow-x-auto border-b border-slate-200">
 
       <button
         type="button"
         (click)="changerOnglet('a_payer')"
-        class="px-4 py-2.5 text-sm font-semibold transition"
+        class="flex shrink-0 items-center gap-1.5 px-3 py-3 text-sm font-semibold transition sm:px-4"
         [ngClass]="onglet() === 'a_payer'
           ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
           : 'text-slate-500 hover:text-[#142337]'"
       >
         À payer
         @if (nbAPayer() > 0) {
-          <span class="ml-1.5 rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-bold text-orange-600">
+          <span class="rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-bold text-orange-600">
             {{ nbAPayer() }}
           </span>
         }
@@ -105,7 +114,7 @@
       <button
         type="button"
         (click)="changerOnglet('payees')"
-        class="px-4 py-2.5 text-sm font-semibold transition"
+        class="shrink-0 px-3 py-3 text-sm font-semibold transition sm:px-4"
         [ngClass]="onglet() === 'payees'
           ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
           : 'text-slate-500 hover:text-[#142337]'"
@@ -116,7 +125,7 @@
       <button
         type="button"
         (click)="changerOnglet('tout')"
-        class="px-4 py-2.5 text-sm font-semibold transition"
+        class="shrink-0 px-3 py-3 text-sm font-semibold transition sm:px-4"
         [ngClass]="onglet() === 'tout'
           ? 'border-b-2 border-[#0EA5A4] text-[#0EA5A4]'
           : 'text-slate-500 hover:text-[#142337]'"
@@ -126,11 +135,11 @@
 
     </div>
 
-    <!-- ─── TABLEAU ───────────────────────────────────────── -->
-    <div class="rounded-2xl bg-white shadow-sm">
+    <!-- CONTENEUR DES VENTES -->
+    <div class="min-w-0 rounded-2xl bg-white shadow-sm">
 
       @if (ventesFiltrees().length === 0) {
-        <div class="py-16 text-center text-sm text-slate-400">
+        <div class="px-4 py-12 text-center text-sm text-slate-400 sm:py-16">
           @if (onglet() === 'a_payer') {
             Aucune vente en attente de paiement.
           } @else {
@@ -139,8 +148,102 @@
         </div>
       } @else {
 
-        <div class="overflow-x-auto">
+        <!-- VERSION MOBILE : CARTES -->
+        <div class="space-y-3 p-3 sm:hidden">
+
+          @for (vente of ventesFiltrees(); track vente.idVente) {
+            <article class="min-w-0 rounded-xl border border-slate-100 bg-white p-3">
+
+              <!-- Citoyen et statut -->
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex min-w-0 items-center gap-2">
+                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#C9F5EF] text-xs font-bold text-[#087C78]">
+                    {{ initiales(vente) }}
+                  </div>
+
+                  <div class="min-w-0">
+                    <p class="break-words text-sm font-semibold text-[#142337]">
+                      {{ nomCitoyen(vente) }}
+                    </p>
+                    <p class="break-all text-xs text-slate-400">
+                      {{ vente.emailUtilisateur ?? '—' }}
+                    </p>
+                  </div>
+                </div>
+
+                <span
+                  class="shrink-0 rounded-full px-2 py-1 text-[10px] font-bold"
+                  [ngClass]="classeStatut(vente.statutPaiement)"
+                >
+                  {{ libelleStatut(vente.statutPaiement) }}
+                </span>
+              </div>
+
+              <div class="my-3 border-t border-slate-100"></div>
+
+              <!-- Type de déchet -->
+              <div class="flex items-center gap-2">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                  <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                       stroke-linejoin="round">
+                    <path d="M3 7l3 9h12l3-9H3z"></path>
+                  </svg>
+                </div>
+
+                <span class="break-words text-sm font-medium text-[#142337]">
+                  {{ vente.typeDechet?.nom ?? '—' }}
+                </span>
+              </div>
+
+              <!-- Quantité et montant -->
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <div class="min-w-0 rounded-lg bg-slate-50 p-3">
+                  <p class="text-xs text-slate-400">Quantité</p>
+                  <p class="mt-1 break-words text-sm font-bold text-[#142337]">
+                    {{ vente.quantite }} kg
+                  </p>
+                </div>
+
+                <div class="min-w-0 rounded-lg bg-slate-50 p-3">
+                  <p class="text-xs text-slate-400">Montant</p>
+                  <p class="mt-1 break-words text-sm font-black text-[#142337]">
+                    {{ vente.prixPaye | number:'1.0-0' }} FCFA
+                  </p>
+                </div>
+              </div>
+
+              <!-- Date et action -->
+              <div class="mt-3 flex items-end justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="text-xs text-slate-400">Date de vente</p>
+                  <p class="mt-1 break-words text-xs font-medium text-slate-600">
+                    {{ formaterDate(vente.dateVente) }}
+                  </p>
+                </div>
+
+                @if (vente.statutPaiement === 'en_attente') {
+                  <button
+                    type="button"
+                    (click)="ouvrirPaiement(vente)"
+                    class="shrink-0 rounded-lg bg-[#0EA5A4] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#087C78]"
+                  >
+                    Payer →
+                  </button>
+                } @else {
+                  <span class="text-xs text-slate-300">Déjà traitée</span>
+                }
+              </div>
+
+            </article>
+          }
+
+        </div>
+
+        <!-- VERSION TABLETTE ET DESKTOP : TABLEAU -->
+        <div class="hidden overflow-x-auto sm:block">
           <table class="w-full text-sm">
+
             <thead>
               <tr class="border-b border-slate-100">
                 <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Citoyen</th>
@@ -152,16 +255,18 @@
                 <th class="px-4 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-400">Action</th>
               </tr>
             </thead>
+
             <tbody>
               @for (vente of ventesFiltrees(); track vente.idVente) {
                 <tr class="border-b border-slate-50 hover:bg-slate-50">
 
-                  <!-- Citoyen : avatar + nom -->
+                  <!-- Citoyen -->
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
                       <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#C9F5EF] text-xs font-bold text-[#087C78]">
                         {{ initiales(vente) }}
                       </div>
+
                       <div class="min-w-0">
                         <p class="truncate text-sm font-semibold text-[#142337]">
                           {{ nomCitoyen(vente) }}
@@ -173,16 +278,17 @@
                     </div>
                   </td>
 
-                  <!-- Type de déchet -->
+                  <!-- Déchet -->
                   <td class="px-4 py-4">
                     <div class="flex items-center gap-2">
-                      <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#C9F5EF]">
+                      <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#C9F5EF]">
                         <svg class="h-4 w-4 text-[#087C78]" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                              stroke-linejoin="round">
                           <path d="M3 7l3 9h12l3-9H3z"></path>
                         </svg>
                       </div>
+
                       <span class="font-medium text-[#142337]">
                         {{ vente.typeDechet?.nom ?? '—' }}
                       </span>
@@ -194,17 +300,17 @@
                     {{ vente.quantite }} kg
                   </td>
 
-                  <!-- Montant en gras -->
+                  <!-- Montant -->
                   <td class="px-4 py-4">
-                    <span class="font-bold text-[#142337]">
+                    <span class="whitespace-nowrap font-bold text-[#142337]">
                       {{ vente.prixPaye | number:'1.0-0' }} FCFA
                     </span>
                   </td>
 
-                  <!-- Badge statut -->
+                  <!-- Statut -->
                   <td class="px-4 py-4">
                     <span
-                      class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold"
+                      class="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold"
                       [ngClass]="classeStatut(vente.statutPaiement)"
                     >
                       {{ libelleStatut(vente.statutPaiement) }}
@@ -216,13 +322,13 @@
                     {{ formaterDate(vente.dateVente) }}
                   </td>
 
-                  <!-- Bouton Payer (visible uniquement si en_attente) -->
+                  <!-- Action -->
                   <td class="px-4 py-4">
                     @if (vente.statutPaiement === 'en_attente') {
                       <button
                         type="button"
                         (click)="ouvrirPaiement(vente)"
-                        class="rounded-lg bg-[#0EA5A4] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#087C78] whitespace-nowrap"
+                        class="whitespace-nowrap rounded-lg bg-[#0EA5A4] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#087C78]"
                       >
                         Payer →
                       </button>
@@ -234,6 +340,7 @@
                 </tr>
               }
             </tbody>
+
           </table>
         </div>
 
@@ -245,39 +352,42 @@
 </div>
 
 
-<!-- ============================================================
-     MODAL — CHOIX DE L'OPÉRATEUR DE PAIEMENT
-     Ouvert quand le collecteur clique sur "Payer →"
-     ============================================================ -->
+<!-- MODAL — CHOIX DE L'OPÉRATEUR DE PAIEMENT -->
 @if (modalOuvert() && venteSelectionnee()) {
   <div
-    class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/55 sm:items-center sm:p-5"
+    class="fixed inset-0 z-[100] flex items-end justify-center overflow-y-auto bg-slate-950/55 p-0 sm:items-center sm:p-5"
     (click)="fermerModal()"
   >
     <section
-      class="max-h-[94vh] w-full overflow-y-auto rounded-t-[28px] bg-white px-6 pb-8 pt-7 shadow-2xl sm:max-w-[540px] sm:rounded-[28px] sm:px-10 sm:pb-10 sm:pt-9"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="paiement-modal-title"
+      class="relative my-auto max-h-[95dvh] w-full overflow-y-auto rounded-t-[24px] bg-white px-4 pb-6 pt-5 shadow-2xl sm:max-w-[540px] sm:rounded-[28px] sm:px-8 sm:pb-8 sm:pt-7"
       (click)="$event.stopPropagation()"
     >
+
       <!-- Poignée mobile -->
       <div class="mx-auto mb-5 h-1 w-12 rounded-full bg-slate-200 sm:hidden"></div>
 
-      <!-- En-tête modal -->
+      <!-- En-tête -->
       <div class="flex items-start gap-3">
-        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E8F8F6] text-[#07978C]">
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8F8F6] text-[#07978C] sm:h-11 sm:w-11">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="5" width="20" height="14" rx="2"></rect>
             <path d="M2 10h20"></path>
           </svg>
         </span>
-        <div class="flex-1">
+
+        <div class="min-w-0 flex-1">
           <p class="text-[10px] font-bold uppercase tracking-widest text-[#0EA5A4]">
             Paiement sécurisé PayDunya
           </p>
-          <h2 class="mt-1 text-xl font-extrabold leading-tight text-[#17283D]">
+          <h2 id="paiement-modal-title" class="mt-1 text-lg font-extrabold leading-tight text-[#17283D] sm:text-xl">
             Régler ce citoyen
           </h2>
         </div>
+
         <button
           type="button"
           class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
@@ -291,29 +401,29 @@
       </div>
 
       <!-- Récapitulatif de la vente -->
-      <div class="mt-5 rounded-2xl border border-slate-100 bg-[#F7F9FA] px-5 py-4">
-        <div class="grid grid-cols-2 gap-3 text-sm">
+      <div class="mt-5 rounded-2xl border border-slate-100 bg-[#F7F9FA] p-4 sm:px-5 sm:py-4">
+        <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
 
-          <div>
+          <div class="min-w-0">
             <p class="text-[10px] font-bold uppercase text-slate-400">Citoyen</p>
-            <p class="mt-0.5 font-semibold text-[#142337]">
+            <p class="mt-1 break-words font-semibold text-[#142337]">
               {{ nomCitoyen(venteSelectionnee()!) }}
             </p>
           </div>
 
-          <div>
+          <div class="min-w-0">
             <p class="text-[10px] font-bold uppercase text-slate-400">Déchet</p>
-            <p class="mt-0.5 font-semibold text-[#142337]">
+            <p class="mt-1 break-words font-semibold text-[#142337]">
               {{ venteSelectionnee()!.typeDechet?.nom ?? '—' }}
               — {{ venteSelectionnee()!.quantite }} kg
             </p>
           </div>
 
-          <div class="col-span-2 border-t border-slate-200 pt-3">
+          <div class="border-t border-slate-200 pt-3 sm:col-span-2">
             <p class="text-[10px] font-bold uppercase text-slate-400">
               Montant à payer
             </p>
-            <p class="mt-0.5 text-2xl font-black text-[#0EA5A4]">
+            <p class="mt-1 break-words text-2xl font-black text-[#0EA5A4]">
               {{ venteSelectionnee()!.prixPaye | number:'1.0-0' }} FCFA
             </p>
           </div>
@@ -323,13 +433,13 @@
 
       <!-- Erreur paiement -->
       @if (erreurPaiement()) {
-        <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <div class="mt-4 break-words rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           {{ erreurPaiement() }}
         </div>
       }
 
       <!-- Choix opérateur -->
-      <p class="mt-5 mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+      <p class="mb-3 mt-5 text-xs font-bold uppercase tracking-wider text-slate-500">
         Choisissez l'opérateur de paiement
       </p>
 
@@ -338,28 +448,29 @@
           <button
             type="button"
             (click)="choisirOperateur(op.code)"
-            class="flex w-full items-center gap-4 rounded-2xl border-2 px-4 py-4 text-left transition"
+            class="flex w-full min-w-0 items-center gap-3 rounded-2xl border-2 px-3 py-3 text-left transition sm:gap-4 sm:px-4 sm:py-4"
             [ngClass]="operateurSelectionne() === op.code
               ? 'border-[#0EA5A4] bg-[#F7FCFB]'
               : 'border-slate-100 bg-white hover:border-slate-300'"
           >
-            <!-- Logo de l'opérateur -->
+
+            <!-- Logo opérateur -->
             <img
               [src]="op.code === 'wave'
                 ? 'assets/payment-operators/wave-logo.png'
                 : 'assets/payment-operators/orange-money-logo.png'"
               [alt]="op.label"
-              class="h-12 w-28 shrink-0 rounded-lg"
+              class="h-10 w-20 shrink-0 rounded-lg sm:h-12 sm:w-28"
               [ngClass]="op.code === 'wave'
                 ? 'bg-[#00BFFF] object-contain'
-                : 'bg-white object-cover'"
+                : 'bg-white object-contain'"
             />
 
-            <span class="flex-1 min-w-0">
-              <span class="block text-base font-bold text-[#17283D]">
+            <span class="min-w-0 flex-1">
+              <span class="block break-words text-sm font-bold text-[#17283D] sm:text-base">
                 {{ op.label }}
               </span>
-              <span class="mt-0.5 block text-xs text-slate-400">
+              <span class="mt-0.5 block break-words text-xs text-slate-400">
                 {{ op.description }}
               </span>
             </span>
@@ -375,14 +486,15 @@
                 <span class="h-3.5 w-3.5 rounded-full bg-[#0EA5A4]"></span>
               }
             </span>
+
           </button>
         }
       </div>
 
-      <!-- Bouton confirmer le paiement -->
+      <!-- Confirmer le paiement -->
       <button
         type="button"
-        class="mt-6 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-5 text-base font-bold text-white shadow-md transition hover:bg-[#0B9291] disabled:cursor-wait disabled:opacity-60"
+        class="mt-5 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#0B9291] disabled:cursor-wait disabled:opacity-60 sm:mt-6 sm:text-base"
         [disabled]="chargementPaiement()"
         (click)="continuerVersPaiement()"
       >
@@ -390,24 +502,28 @@
           <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
           Création du paiement...
         } @else {
-          Confirmer et payer → {{ venteSelectionnee()!.prixPaye | number:'1.0-0' }} FCFA
+          <span class="break-words">
+            Confirmer et payer →
+            {{ venteSelectionnee()!.prixPaye | number:'1.0-0' }} FCFA
+          </span>
         }
       </button>
 
       <!-- Annuler -->
       <button
         type="button"
-        class="mt-4 w-full py-2 text-sm font-medium text-slate-500 hover:text-[#17283D]"
+        class="mt-3 min-h-[40px] w-full py-2 text-sm font-medium text-slate-500 hover:text-[#17283D]"
         (click)="fermerModal()"
       >
         Annuler
       </button>
 
-      <!-- Note sécurité -->
-      <p class="mt-4 text-center text-[11px] text-slate-400">
-        Paiement chiffré et traité par PayDunya
+      <!-- Sécurité -->
+      <p class="mt-3 text-center text-[11px] text-slate-400">
+        Paiement traité par PayDunya
       </p>
 
     </section>
   </div>
 }
+

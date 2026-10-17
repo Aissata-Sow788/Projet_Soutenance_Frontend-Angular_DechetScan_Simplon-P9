@@ -1,28 +1,33 @@
+
 <!--
   Header commun à toutes les pages administrateur.
-  Il commence après le sidebar sur desktop.
-  Version compacte pour réduire l'espace occupé.
+  - Desktop : à droite du sidebar, fond blanc, statuts + notifications + avatar.
+  - Mobile / tablette : bouton cloche dans le coin droit de la barre sombre du menu.
 -->
+
 <header
-  class="fixed right-0 top-0 z-30 flex h-[60px] items-center justify-end border-b border-slate-100 bg-white px-4 lg:left-[220px] xl:px-6"
+  class="fixed right-0 top-0 z-[35] flex h-14 w-14 items-center justify-center bg-[#0E172B]
+         lg:left-[220px] lg:z-30 lg:h-[60px] lg:w-auto lg:justify-end lg:border-b lg:border-slate-100 lg:bg-white lg:px-4
+         xl:px-6"
 >
 
-  <div class="flex items-center gap-3">
+  <!-- ========================================================= -->
+  <!-- ACTIONS À DROITE -->
+  <!-- ========================================================= -->
+
+  <div class="flex items-center gap-3 lg:ml-auto">
 
     <!-- ========================================================= -->
-    <!-- STATUT DE LA PLATEFORME -->
+    <!-- STATUT DE LA PLATEFORME (desktop uniquement) -->
     <!-- ========================================================= -->
 
     <div class="hidden items-center gap-1.5 md:flex">
 
       <!-- Petit indicateur vert -->
-      <span
-        class="h-1.5 w-1.5 rounded-full bg-[#0B8D80]"
-      ></span>
+      <span class="h-1.5 w-1.5 rounded-full bg-[#0B8D80]"></span>
 
       <!-- État de la plateforme -->
       <div class="leading-tight">
-
         <p class="text-[9px] text-slate-600">
           Plateforme active
         </p>
@@ -30,14 +35,13 @@
         <p class="text-[9px] text-slate-600">
           (Dakar)
         </p>
-
       </div>
 
     </div>
 
 
     <!-- ========================================================= -->
-    <!-- SYSTÈME OPÉRATIONNEL -->
+    <!-- SYSTÈME OPÉRATIONNEL (desktop uniquement) -->
     <!-- ========================================================= -->
 
     <div
@@ -70,18 +74,21 @@
 
     <!-- ========================================================= -->
     <!-- NOTIFICATIONS -->
+    <!-- Mobile / tablette : cloche blanche sur fond sombre -->
+    <!-- Desktop : cloche grise sur fond blanc -->
     <!-- ========================================================= -->
 
     <button
       type="button"
       (click)="ouvrirNotifications()"
-      class="relative flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-50 hover:text-[#087C78]"
+      class="relative flex h-10 w-10 items-center justify-center rounded-xl text-white transition hover:bg-white/10
+             lg:h-8 lg:w-8 lg:rounded-full lg:text-slate-600 lg:hover:bg-slate-50 lg:hover:text-[#087C78]"
       aria-label="Notifications"
     >
 
       <!-- Icône cloche -->
       <svg
-        class="h-4 w-4"
+        class="h-5 w-5 lg:h-4 lg:w-4"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -95,20 +102,21 @@
 
       <!-- Indicateur de nouvelle notification -->
       <span
-        class="absolute right-1.5 top-1.5 h-1 w-1 rounded-full bg-[#0EA5A4]"
+        class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#0EA5A4]
+               lg:right-1.5 lg:top-1.5 lg:h-1 lg:w-1"
       ></span>
 
     </button>
 
 
     <!-- ========================================================= -->
-    <!-- AVATAR ADMINISTRATEUR -->
+    <!-- AVATAR ADMINISTRATEUR (desktop uniquement) -->
     <!-- ========================================================= -->
 
     <button
-    routerLink="/admin/profile-admin"
+      routerLink="/admin/profile-admin"
       type="button"
-      class="flex h-8 w-8 items-center justify-center rounded-full bg-[#0EA5A4] text-white"
+      class="hidden h-8 w-8 items-center justify-center rounded-full bg-[#0EA5A4] text-white lg:flex"
       aria-label="Profil administrateur"
     >
 
@@ -131,3 +139,4 @@
   </div>
 
 </header>
+

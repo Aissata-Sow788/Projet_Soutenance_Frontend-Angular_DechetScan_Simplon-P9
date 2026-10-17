@@ -1,6 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {DashboardService, DashboardStatistiques} from '../../../core/services/dashboard';
+import { DashboardService, DashboardStatistiques, PointEvolution } from '../../../core/services/dashboard';
 
 
 @Component({
@@ -9,15 +9,13 @@ import {DashboardService, DashboardStatistiques} from '../../../core/services/da
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
-
-
 export class Dashboard implements OnInit {
 
   // ============================================================
   // SERVICE
   // ============================================================
 
-  // Service permettant de récupérer les statistiques depuis Django.
+  // Service qui récupère les statistiques depuis Django.
   private readonly dashboardService = inject(DashboardService);
 
 
@@ -25,51 +23,72 @@ export class Dashboard implements OnInit {
   // ÉTAT DE LA PAGE
   // ============================================================
 
-  // Indique si les statistiques sont en cours de chargement.
+  // True pendant le chargement des statistiques.
   chargement = signal(true);
 
-  // Contient un éventuel message d'erreur.
+  // Message d'erreur éventuel.
   erreur = signal<string | null>(null);
+
+
+  // ============================================================
+  // GRAPHIQUE D'ÉVOLUTION
+  // ============================================================
+
+  // Série brute reçue de Django.
+  evolution = signal<PointEvolution[]>([]);
+
+  // Coordonnées SVG de chaque point (viewBox 700x245).
+  points = computed(() => {
+    const data = this.evolution();
+    const max = Math.max(...data.map(d => d.scans), 1); // évite /0
+    return data.map((d, i) => ({
+      ...d,
+      x: data.length > 1 ? (i / (data.length - 1)) * 700 : 350,
+      y: 215 - (d.scans / max) * 180, // plus de scans = plus haut
+    }));
+  });
+
+  // Courbe lissée (Bézier entre points voisins).
+  ligne = computed(() => {
+    const p = this.points();
+    if (!p.length) return '';
+    let d = `M${p[0].x} ${p[0].y}`;
+    for (let i = 1; i < p.length; i++) {
+      const mx = (p[i - 1].x + p[i].x) / 2; // point de contrôle au milieu
+      d += ` C${mx} ${p[i - 1].y} ${mx} ${p[i].y} ${p[i].x} ${p[i].y}`;
+    }
+    return d;
+  });
+
+  // Zone sous la courbe : on ferme le tracé en bas.
+  aire = computed(() => {
+    const p = this.points();
+    if (!p.length) return '';
+    return `${this.ligne()} L${p[p.length - 1].x} 245 L${p[0].x} 245 Z`;
+  });
 
 
   // ============================================================
   // STATISTIQUES
   // ============================================================
 
-  // Nombre total de scans.
   nombreScans = signal(0);
-
-  // Nombre d'utilisateurs actifs.
   utilisateursActifs = signal(0);
-
-  // Nombre de points actifs.
   pointsActifs = signal(0);
-
-  // Nombre total de déchets analysés.
   dechetsAnalyses = signal(0);
-
-  // Nombre d'utilisateurs ayant effectué au moins un scan.
   utilisateursAyantScan = signal(0);
-
-  // Taux de participation.
   tauxParticipation = signal(0);
 
 
   // ============================================================
-  // RÉPARTITION DES DÉCHETS
+  // RÉPARTITION DES DÉCHETS (en %)
   // ============================================================
 
-  // Pourcentages calculés pour chaque catégorie.
   plastique = signal(0);
-
   papier = signal(0);
-
   carton = signal(0);
-
   metal = signal(0);
-
   verre = signal(0);
-
   organique = signal(0);
 
 
@@ -77,7 +96,7 @@ export class Dashboard implements OnInit {
   // PÉRIODE DU GRAPHIQUE
   // ============================================================
 
-  // Période sélectionnée dans le dashboard.
+  // Période sélectionnée.
   periodeActive = signal('30 jours');
 
 
@@ -85,10 +104,7 @@ export class Dashboard implements OnInit {
   // CYCLE DE VIE
   // ============================================================
 
-  // ngOnInit est appelé après que Angular a complètement initialisé
-  // le composant ET que la navigation est terminée.
-  // Contrairement au constructor(), il garantit que le token JWT
-  // est disponible dans le localStorage avant d'appeler l'API.
+  // Appelé après l'init : le token JWT est déjà disponible.
   ngOnInit(): void {
     this.chargerStatistiques();
   }
@@ -100,82 +116,37 @@ export class Dashboard implements OnInit {
 
   chargerStatistiques(): void {
 
-    // Active l'état de chargement.
     this.chargement.set(true);
-
-    // Supprime l'ancienne erreur.
     this.erreur.set(null);
 
-
-    // Appelle Django.
     this.dashboardService.getStatistiques().subscribe({
-
-      // ========================================================
-      // SUCCÈS
-      // ========================================================
 
       next: (statistiques: DashboardStatistiques) => {
 
-        // Nombre total de scans.
-        this.nombreScans.set(
-          statistiques.nombreScans
-        );
+        this.nombreScans.set(statistiques.nombreScans);
+        this.utilisateursActifs.set(statistiques.utilisateursActifs);
+        this.pointsActifs.set(statistiques.pointsActifs);
+        this.dechetsAnalyses.set(statistiques.dechetsAnalyses);
+        this.utilisateursAyantScan.set(statistiques.utilisateursAyantScan);
+        this.tauxParticipation.set(statistiques.tauxParticipation);
 
-        // Nombre d'utilisateurs.
-        this.utilisateursActifs.set(
-          statistiques.utilisateursActifs
-        );
+        // TEMPORAIRE : fausses données pour tester le dessin.
+        // Remplacer par : this.evolution.set(statistiques.evolutionScans ?? []);
+        this.evolution.set([
+          { label: 'Sem 1', scans: 12 },
+          { label: 'Sem 2', scans: 30 },
+          { label: 'Sem 3', scans: 22 },
+          { label: 'Sem 4', scans: 45 },
+        ]);
 
-        // Nombre de points actifs.
-        this.pointsActifs.set(
-          statistiques.pointsActifs
-        );
+        this.calculerRepartition(statistiques.repartitionDechets);
 
-        // Nombre de déchets analysés.
-        this.dechetsAnalyses.set(
-          statistiques.dechetsAnalyses
-        );
-
-        // Nombre d'utilisateurs ayant participé.
-        this.utilisateursAyantScan.set(
-          statistiques.utilisateursAyantScan
-        );
-
-        // Taux de participation.
-        this.tauxParticipation.set(
-          statistiques.tauxParticipation
-        );
-
-
-        // Calcule les pourcentages de répartition.
-        this.calculerRepartition(
-          statistiques.repartitionDechets
-        );
-
-
-        // Fin du chargement.
         this.chargement.set(false);
       },
 
-
-      // ========================================================
-      // ERREUR
-      // ========================================================
-
       error: (error) => {
-
-        // Affiche l'erreur dans la console.
-        console.error(
-          'Erreur lors du chargement du Dashboard :',
-          error
-        );
-
-        // Message affiché dans l'interface.
-        this.erreur.set(
-          'Impossible de récupérer les statistiques.'
-        );
-
-        // Fin du chargement.
+        console.error('Erreur lors du chargement du Dashboard :', error);
+        this.erreur.set('Impossible de récupérer les statistiques.');
         this.chargement.set(false);
       }
 
@@ -187,82 +158,33 @@ export class Dashboard implements OnInit {
   // CALCUL DE LA RÉPARTITION
   // ============================================================
 
-  calculerRepartition(
-    repartition: { [categorie: string]: number }
-  ): void {
+  calculerRepartition(repartition: { [categorie: string]: number }): void {
 
-    // Calcule le nombre total de détections.
+    // Total des détections.
     const total = Object.values(repartition)
-      .reduce(
-        (somme, valeur) => somme + valeur,
-        0
-      );
+      .reduce((somme, valeur) => somme + valeur, 0);
 
-
-    // Évite une division par zéro.
+    // Évite la division par zéro.
     if (total === 0) {
-
       this.plastique.set(0);
       this.papier.set(0);
       this.carton.set(0);
       this.metal.set(0);
       this.verre.set(0);
       this.organique.set(0);
-
       return;
     }
 
-
     // Convertit une quantité en pourcentage.
-    const pourcentage = (valeur: number): number => {
+    const pourcentage = (valeur: number): number =>
+      Math.round((valeur / total) * 100);
 
-      return Math.round(
-        (valeur / total) * 100
-      );
-
-    };
-
-
-    // Récupère chaque catégorie.
-    this.plastique.set(
-      pourcentage(
-        repartition['Plastique'] ?? 0
-      )
-    );
-
-    this.papier.set(
-      pourcentage(
-        repartition['Papier'] ?? 0
-      )
-    );
-
-    this.carton.set(
-      pourcentage(
-        repartition['Papier-carton'] ??
-        repartition['Carton'] ??
-        0
-      )
-    );
-
-    this.metal.set(
-      pourcentage(
-        repartition['Métal'] ??
-        repartition['Metal'] ??
-        0
-      )
-    );
-
-    this.verre.set(
-      pourcentage(
-        repartition['Verre'] ?? 0
-      )
-    );
-
-    this.organique.set(
-      pourcentage(
-        repartition['Organique'] ?? 0
-      )
-    );
+    this.plastique.set(pourcentage(repartition['Plastique'] ?? 0));
+    this.papier.set(pourcentage(repartition['Papier'] ?? 0));
+    this.carton.set(pourcentage(repartition['Papier-carton'] ?? repartition['Carton'] ?? 0));
+    this.metal.set(pourcentage(repartition['Métal'] ?? repartition['Metal'] ?? 0));
+    this.verre.set(pourcentage(repartition['Verre'] ?? 0));
+    this.organique.set(pourcentage(repartition['Organique'] ?? 0));
   }
 
 
@@ -271,15 +193,9 @@ export class Dashboard implements OnInit {
   // ============================================================
 
   changerPeriode(periode: string): void {
-
-    // Met à jour la période sélectionnée.
     this.periodeActive.set(periode);
 
-    // Pour le moment, le changement de période ne modifie pas
-    // encore les données du backend.
-    //
-    // Pour avoir réellement "7 jours", "30 jours" et "3 mois",
-    // il faudra ajouter un paramètre de période à l'API Django.
+    // TODO : envoyer la période à Django pour filtrer les données.
   }
 
 
@@ -288,8 +204,6 @@ export class Dashboard implements OnInit {
   // ============================================================
 
   actualiser(): void {
-
-    // Recharge les statistiques depuis Django.
     this.chargerStatistiques();
   }
 
@@ -299,9 +213,7 @@ export class Dashboard implements OnInit {
   // ============================================================
 
   exporterRapport(): void {
-
-    // Cette fonction pourra être reliée plus tard
-    // à un endpoint Django générant le CSV.
+    // TODO : relier à un endpoint Django qui génère le CSV.
     console.log('Export du rapport CSV');
   }
 }

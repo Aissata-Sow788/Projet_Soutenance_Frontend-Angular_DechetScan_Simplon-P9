@@ -1,282 +1,324 @@
-<!--
-  Page Détail du scan — espace administrateur.
-  Le SidebarAdmin et le HeaderAdmin sont fournis par AdminLayout.
-  Interface fidèle à la maquette : photo gauche, détections droite,
-  conseil de tri, bannière carte, footer.
--->
-<div class="min-h-[calc(100vh-72px)] bg-[#F3F4F4] px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
 
-  <!-- ── RETOUR + TITRE ─────────────────────────────────────── -->
-  <div class="mx-auto max-w-[1180px]">
-    <div class="mb-4">
+<!-- ============================================================
+     PAGE DÉTAIL DU SCAN — DechetScan
+     Desktop : photo à gauche, objets identifiés à droite.
+     Mobile : photo puis liste des objets, sans débordement.
+     ============================================================ -->
+
+<div class="min-h-screen min-w-0 overflow-x-hidden bg-[#F3F4F4] px-3 py-5 text-[#122238] sm:px-5 sm:py-6 lg:px-8">
+
+  <main class="mx-auto w-full max-w-[1180px] min-w-0">
+
+    <!-- EN-TÊTE : retour, titre et nombre de déchets -->
+    <header class="mb-6">
+
       <button
         type="button"
         (click)="retourScans()"
-        class="mb-3 flex items-center gap-1.5 text-[12px] font-semibold text-[#0EA5A4] hover:underline"
+        class="mb-5 inline-flex min-h-9 items-center gap-2 text-xs font-semibold text-[#078B86] transition hover:underline sm:text-sm"
       >
-        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round"
+          aria-hidden="true">
           <path d="M19 12H5"/>
-          <path d="M12 19l-7-7 7-7"/>
+          <path d="m12 19-7-7 7-7"/>
         </svg>
-        Retour à la liste des scans
+        Retour à mon historique
       </button>
 
-      <div class="flex items-end justify-between gap-4">
-        <div>
-          <h1 class="text-[26px] font-black leading-tight text-[#122238] sm:text-[28px]">Détail du scan</h1>
+      <div class="flex min-w-0 items-center justify-between gap-3 sm:gap-5">
+
+        <div class="min-w-0 flex-1">
+          <h1 class="text-[23px] font-black leading-tight tracking-tight sm:text-3xl">
+            Détail du scan
+          </h1>
 
           @if (scan()) {
-            <div class="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-slate-500">
+            <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600 sm:text-sm">
               <span>Scan du {{ dateScan() }} — {{ heureScan() }}</span>
-              <span class="h-1.5 w-3 rounded-full bg-[#B8EEE8]" aria-hidden="true"></span>
-              <span class="text-[11px] text-slate-600">Analyse terminée</span>
+              <span class="h-1.5 w-1.5 rounded-full bg-[#0EA5A4]"></span>
+              <span>Analyse terminée</span>
             </div>
           }
         </div>
 
         @if (scan()) {
-          <div class="shrink-0 rounded-xl border border-slate-200 bg-white px-5 py-2 text-center">
-            <p class="text-[25px] font-black leading-none text-[#122238]">{{ detections().length }}</p>
-            <p class="mt-1 text-[8px] font-bold uppercase tracking-wider text-slate-500">Déchets détectés</p>
-          </div>
-        }
-      </div>
-    </div>
-
-  <!-- ── CHARGEMENT ─────────────────────────────────────────── -->
-  @if (chargement()) {
-    <div class="flex items-center justify-center py-24">
-      <span class="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
-      <span class="ml-3 text-[14px] text-slate-400">Chargement du scan...</span>
-    </div>
-  }
-
-  @else if (erreur()) {
-    <div class="rounded-2xl border border-red-100 bg-red-50 p-6 text-[13px] text-red-600">
-      {{ erreur() }}
-    </div>
-  }
-
-  @else if (scan()) {
-
-    <!-- ── BADGE NOMBRE DE DÉCHETS + GRILLE ─────────────────── -->
-    <!-- ══════════════════════════════════════════════════════
-         GRILLE PRINCIPALE : photo (gauche) + détections (droite)
-         ══════════════════════════════════════════════════════ -->
-    <div class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)] lg:gap-5">
-
-      <!-- ── COLONNE GAUCHE : photo + conseil ──────────────── -->
-      <div class="space-y-5">
-
-        <!-- Photo avec annotations IA -->
-        <div class="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white p-2">
-
-          @if (imageScan() && !imageEnErreur()) {
-            <img
-              [src]="imageScan()"
-              alt="Photo du déchet analysé"
-              class="max-h-[400px] min-h-[240px] w-full rounded-xl object-cover"
-              (error)="imageScanIndisponible()"
-            />
-          } @else {
-            <div class="flex h-[300px] items-center justify-center rounded-xl bg-slate-100 text-slate-400">
-              <svg class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="16" rx="2"/>
-                <circle cx="8.5" cy="9" r="1.5"/>
-                <path d="m21 15-5-5L7 20"/>
-              </svg>
-            </div>
-          }
-
-          <!-- Annotations flottantes des détections -->
-          @for (detection of detections().slice(0, 3); track detection.idDetection; let i = $index) {
-            <div
-              class="absolute flex items-center gap-1.5 rounded-md border border-white/90 px-2 py-1 text-[9px] font-bold text-white shadow"
-              [ngClass]="[
-                i === 0 ? 'bg-[#0EA5A4]/90 left-3 top-3' :
-                i === 1 ? 'bg-orange-500/90 right-3 top-5' :
-                'bg-blue-500/90 bottom-14 left-4'
-              ]"
-            >
-              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-              </svg>
-              {{ detection.objet }} ({{ formaterConfiance(detection.confiance) }})
-            </div>
-          }
-
-          <!-- Bouton agrandir -->
-          <button
-            type="button"
-            (click)="ouvrirImage()"
-            class="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-sm hover:bg-black/80"
-          >
-            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-            </svg>
-            Agrandir l'image
-          </button>
-        </div>
-
-        <!-- Conseil de tri -->
-        <div class="rounded-[17px] bg-[#C9E8E6] p-5">
-          <div class="flex items-start gap-3">
-            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white">
-              <svg class="h-5 w-5 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18h6M10 21h4M8.5 14.5A6 6 0 1 1 15.5 14.5c-.8.7-1.3 1.5-1.5 2.5h-4c-.2-1-.7-1.8-1.5-2.5Z"/>
-              </svg>
-            </div>
-            <div class="flex-1">
-              <h3 class="text-[12px] font-bold text-[#102D3E]">
-                Conseil de tri — {{ categoriePrincipale() }}
-              </h3>
-              <p class="mt-2 text-[11px] leading-relaxed text-[#253D4B]">
-                {{ conseilTri() }}
-              </p>
-              <button type="button"
-                class="mt-3 rounded-lg bg-[#0EA5A4] px-4 py-2 text-[10px] font-bold text-white hover:bg-[#087C78]">
-                Voir les conseils de tri
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ── COLONNE DROITE : objets identifiés + actions ────── -->
-      <div class="space-y-3">
-
-        <h2 class="text-[15px] font-bold text-[#122238]">Objets identifiés</h2>
-
-        <!-- Liste des détections -->
-        @if (detections().length === 0) {
-          <div class="rounded-2xl bg-white p-8 text-center shadow-sm">
-            <p class="text-[14px] text-slate-400">Aucun déchet identifié dans ce scan.</p>
+          <div class="shrink-0 rounded-xl border border-blue-100 bg-white px-3 py-3 text-center shadow-sm sm:min-w-[145px] sm:px-5">
+            <p class="text-2xl font-black leading-none sm:text-3xl">
+              {{ detections().length }}
+            </p>
+            <p class="mt-1.5 text-[8px] font-bold uppercase tracking-wide text-slate-600 sm:text-[10px]">
+              Déchets détectés
+            </p>
           </div>
         }
 
-        @for (detection of detections(); track detection.idDetection) {
-          <div class="rounded-[15px] border border-slate-100 bg-white p-3.5">
-            <div class="flex items-start gap-3">
+      </div>
+    </header>
 
-              <!-- Icône -->
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                [ngClass]="iconeBg(detection.idTypeDechet?.nom)"
-              >
-                <svg class="h-5 w-5" [ngClass]="iconeColor(detection.idTypeDechet?.nom)"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M7 7h10l-.8 13H7.8L7 7Z"/>
-                  <path d="M5 7h14M9 7V4h6v3"/>
-                </svg>
-              </div>
+    <!-- CHARGEMENT -->
+    @if (chargement()) {
+      <div class="flex min-h-52 items-center justify-center gap-3">
+        <span class="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-[#0EA5A4]"></span>
+        <span class="text-sm text-slate-500">Chargement du scan...</span>
+      </div>
+    }
 
-              <!-- Infos -->
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between gap-2">
-                  <h3 class="text-[12px] font-bold text-[#122238]">{{ detection.objet }}</h3>
-                  <span class="shrink-0 text-[10px] font-bold text-[#0EA5A4]">
-                    ×1
-                  </span>
-                </div>
+    <!-- ERREUR -->
+    @else if (erreur()) {
+      <div class="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
+        {{ erreur() }}
+      </div>
+    }
 
-                <!-- Badges -->
-                <div class="mt-1.5 flex flex-wrap items-center gap-2">
-                  <span class="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
-                        [ngClass]="badgeClasse(detection.idTypeDechet?.nom)">
-                    CAT: {{ detection.idTypeDechet?.nom ?? 'Inconnu' }}
-                  </span>
-                  <span class="rounded-full bg-[#C9F1E9] px-2 py-0.5 text-[8px] font-bold text-[#087C78]">
-                    CONFIANCE: {{ formaterConfiance(detection.confiance) }}
-                  </span>
-                </div>
+    <!-- CONTENU PRINCIPAL -->
+    @else if (scan()) {
 
-                <!-- Destination -->
-                <div class="mt-2 flex items-center gap-1.5">
-                  <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 7h16l-1 13H5L4 7Z"/>
-                    <path d="M3 7h18M9 7V4h6v3"/>
+      <div class="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-7">
+
+        <!-- ==================================================
+             COLONNE GAUCHE : PHOTO DU SCAN
+             ================================================== -->
+        <section class="min-w-0">
+
+          <div class="rounded-[20px] border border-blue-100 bg-white p-2.5 shadow-sm sm:rounded-[24px] sm:p-3">
+
+            <!-- Conteneur de la photo et des annotations -->
+            <div class="relative min-w-0 overflow-hidden rounded-[15px] bg-slate-100">
+
+              @if (imageScan() && !imageEnErreur()) {
+                <img
+                  [src]="imageScan()"
+                  alt="Photo des déchets analysés"
+                  class="block h-auto max-h-[560px] min-h-[230px] w-full object-contain sm:min-h-[300px] lg:min-h-[400px]"
+                  (error)="imageScanIndisponible()"
+                />
+              } @else {
+                <div class="flex min-h-[230px] flex-col items-center justify-center gap-3 text-slate-400 sm:min-h-[350px]">
+                  <svg class="h-12 w-12" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="16" rx="2"/>
+                    <circle cx="8.5" cy="9" r="1.5"/>
+                    <path d="m21 15-5-5L7 20"/>
                   </svg>
-                  <p class="text-[11px] text-slate-500">
-                    Destination :
-                    <span class="font-bold text-[#0EA5A4]">
-                      {{ destinationLabel(detection.idTypeDechet?.nom) }}
-                    </span>
-                  </p>
+                  <p class="text-xs">Image indisponible</p>
                 </div>
-              </div>
+              }
+
+              <!-- Annotations visuelles : nom seulement, sans confiance -->
+              @for (
+                detection of detections().slice(0, 3);
+                track detection.idDetection;
+                let i = $index
+              ) {
+                <div
+                  class="absolute flex max-w-[65%] items-center gap-1 overflow-hidden rounded-md border border-white/80 px-2 py-1 text-[9px] font-bold text-white shadow-sm sm:gap-1.5 sm:text-[10px]"
+                  [ngClass]="
+                    i === 0
+                      ? 'left-[4%] top-[16%] bg-[#0EA5A4]'
+                      : i === 1
+                        ? 'right-[4%] top-[5%] bg-sky-600'
+                        : 'bottom-[17%] left-[8%] bg-orange-500'
+                  "
+                >
+                  <svg class="h-3 w-3 shrink-0" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  </svg>
+                  <span class="truncate">{{ detection.objet }}</span>
+                </div>
+              }
+
+              <!-- Agrandir l'image -->
+              <button
+                type="button"
+                (click)="ouvrirImage()"
+                class="absolute bottom-3 right-3 inline-flex min-h-9 max-w-[calc(100%-24px)] items-center justify-center gap-1.5 rounded-xl bg-white px-3 py-2 text-[10px] font-bold text-[#122238] shadow-md transition hover:bg-slate-50 sm:text-xs"
+              >
+                <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  aria-hidden="true">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                </svg>
+                Agrandir l'image
+              </button>
+
             </div>
           </div>
-        }
 
-        <!-- Boutons d'action -->
-        <div class="space-y-2 pt-1">
+        </section>
+
+        <!-- ==================================================
+             COLONNE DROITE : OBJETS IDENTIFIÉS
+             ================================================== -->
+        <section class="min-w-0">
+
+          <div class="mb-3 flex items-center justify-between gap-2">
+            <h2 class="text-base font-bold sm:text-lg">
+              Objets identifiés
+            </h2>
+
+            <span class="shrink-0 rounded-full bg-[#DFF8F5] px-2.5 py-1 text-[9px] font-bold text-[#087C78] sm:text-[10px]">
+              {{ detections().length }} objet(s)
+            </span>
+          </div>
+
+          <!-- Aucun objet détecté -->
+          @if (detections().length === 0) {
+            <div class="rounded-2xl border border-blue-100 bg-white p-6 text-center">
+              <p class="text-sm text-slate-500">
+                Aucun déchet identifié dans ce scan.
+              </p>
+            </div>
+          }
+
+          <!-- Une carte par objet détecté -->
+          <div class="space-y-3">
+
+            @for (detection of detections(); track detection.idDetection) {
+
+              <article class="min-w-0 rounded-2xl border border-blue-100 bg-white p-3.5 shadow-sm transition sm:p-4">
+
+                <div class="flex min-w-0 items-start gap-3">
+
+                  <!-- Icône de catégorie -->
+                  <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                    [ngClass]="iconeBg(detection.idTypeDechet?.nom)"
+                  >
+                    <svg
+                      class="h-5 w-5"
+                      [ngClass]="iconeColor(detection.idTypeDechet?.nom)"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M7 7h10l-.8 13H7.8L7 7Z"/>
+                      <path d="M5 7h14M9 7V4h6v3"/>
+                    </svg>
+                  </div>
+
+                  <!-- Informations -->
+                  <div class="min-w-0 flex-1">
+
+                    <div class="flex min-w-0 items-start justify-between gap-2">
+
+                      <h3 class="break-words text-[13px] font-bold leading-5 text-[#122238] sm:text-sm">
+                        {{ detection.objet }}
+                      </h3>
+
+                      <!-- Quantité : valeur indicative par détection -->
+                      <span class="shrink-0 text-[10px] font-bold text-[#0EA5A4]">
+                        ×1
+                      </span>
+
+                    </div>
+
+                    <!-- Catégorie, sans score de confiance -->
+                    <div class="mt-2">
+                      <span
+                        class="inline-block max-w-full break-words rounded-full px-2.5 py-1 text-[9px] font-bold uppercase leading-4 sm:text-[10px]"
+                        [ngClass]="badgeClasse(detection.idTypeDechet?.nom)"
+                      >
+                        Cat : {{ detection.idTypeDechet?.nom ?? 'Inconnu' }}
+                      </span>
+                    </div>
+
+                    <!-- Destination du déchet -->
+                    <div class="mt-3 flex min-w-0 items-start gap-1.5">
+
+                      <svg
+                        class="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0EA5A4]"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M4 7h16l-1 13H5L4 7Z"/>
+                        <path d="M3 7h18M9 7V4h6v3"/>
+                      </svg>
+
+                      <p class="min-w-0 break-words text-[11px] leading-5 text-slate-600 sm:text-xs">
+                        Destination :
+                        <span class="font-bold text-[#078B86]">
+                          {{ destinationLabel(detection.idTypeDechet?.nom) }}
+                        </span>
+                      </p>
+
+                    </div>
+
+                  </div>
+                </div>
+              </article>
+
+            }
+
+          </div>
+
+          <!-- Bouton vers les points de collecte -->
           <button
             type="button"
-            class="flex h-[42px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#0EA5A4] text-[11px] font-bold text-white hover:bg-[#087C78]"
+            (click)="retourScans()"
+            class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-blue-100 bg-white px-4 py-3 text-xs font-bold text-[#122238] shadow-sm transition hover:bg-slate-50 sm:w-fit sm:text-sm"
           >
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
+            <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+              <circle cx="12" cy="10" r="2.5"/>
             </svg>
-            Ajouter les déchets à mes paniers
+            Points de collecte
           </button>
 
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button"
-              class="flex h-[36px] items-center justify-center gap-1.5 rounded-[10px] border border-slate-200 bg-white text-[9px] font-bold text-[#122238] hover:bg-slate-50"
-            >
-              <svg class="h-4 w-4 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                <line x1="3" y1="6" x2="21" y2="6"/>
-              </svg>
-              Voir mes paniers
-            </button>
-            <button type="button" (click)="retourScans()"
-              class="flex h-[36px] items-center justify-center gap-1.5 rounded-[10px] border border-slate-200 bg-white text-[9px] font-bold text-[#122238] hover:bg-slate-50"
-            >
-              <svg class="h-4 w-4 text-[#0EA5A4]" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
-                <circle cx="12" cy="10" r="2.5"/>
-              </svg>
-              Points de collecte
-            </button>
-          </div>
+        </section>
+      </div>
+
+      <!-- ==================================================
+           BANNIÈRE DE TRI
+           ================================================== -->
+      <aside class="mt-6 flex min-w-0 items-start gap-3 rounded-2xl bg-[#DCE8FA] p-4 sm:mt-7 sm:items-center sm:gap-4 sm:p-5">
+
+        <svg
+          class="mt-0.5 h-8 w-8 shrink-0 text-[#078B86] sm:mt-0 sm:h-9 sm:w-9"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/>
+          <path d="M9 3v15M15 6v15"/>
+        </svg>
+
+        <div class="min-w-0">
+          <h2 class="text-sm font-bold leading-5 text-[#122238] sm:text-base">
+            Prêt à déposer vos déchets ?
+          </h2>
+
+          <p class="mt-1 break-words text-xs leading-5 text-[#087C78] sm:text-sm">
+            Trouvez le bac approprié le plus proche de votre position actuelle.
+          </p>
         </div>
 
-      </div>
-    </div>
+      </aside>
 
-    <!-- ── BANNIÈRE CARTE ─────────────────────────────────────── -->
-    <div class="mt-6 flex items-center justify-between gap-4 rounded-[14px] bg-[#DCE8FA] px-5 py-4">
-      <div class="flex items-center gap-4">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl">
-          <svg class="h-7 w-7 text-[#078B86]" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/>
-            <path d="M9 3v15M15 6v15"/>
-          </svg>
-        </div>
-        <div>
-          <p class="text-[12px] font-bold text-[#122238]">Prêt à déposer vos déchets ?</p>
-          <p class="text-[10px] text-[#087C78]">Trouvez le bac approprié le plus proche de votre position actuelle.</p>
-        </div>
-      </div>
-      <button type="button"
-        class="shrink-0 rounded-[9px] bg-[#0EA5A4] px-5 py-2 text-[10px] font-bold text-white hover:bg-[#087C78]">
-        Voir sur la carte
-      </button>
-  </div>
-}
+    }
+
+  </main>
 </div>
