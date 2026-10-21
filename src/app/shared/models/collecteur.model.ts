@@ -42,7 +42,7 @@ export interface CollecteurCreation {
 export interface AbonnementCollecteur {
   idAbonnement: number;
   idCollecteur: number;
-  dateDebut: string;
+  datedebut: string;
   dateFin: string;
   statutPaiement: StatutPaiementAbonnement;
   methodePaiement: string;
@@ -68,7 +68,7 @@ export interface StatutAbonnementCollecteur {
   hasProfile: boolean;
   statutValidation: StatutValidation | null;
   isActive: boolean;
-  abonnement: Pick<AbonnementCollecteur, 'idAbonnement' | 'plan' | 'montant' | 'dateFin'> | null;
+  abonnement: Pick<AbonnementCollecteur, 'idAbonnement' | 'plan' | 'montant' | 'dateFin' | 'datedebut'> | null;
 }
 
 export interface ProfilCollecteur {
@@ -117,7 +117,7 @@ export interface ChangementMotDePasse {
  * idCollecteur est affecté automatiquement depuis request.user.
  */
 export interface AbonnementCollecteurCreation {
-  dateDebut: string;
+  datedebut: string;
   dateFin: string;
   statutPaiement: StatutPaiementAbonnement;
   methodePaiement: string;

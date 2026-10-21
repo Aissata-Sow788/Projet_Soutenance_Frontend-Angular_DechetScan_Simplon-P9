@@ -13,36 +13,28 @@ import {
 import { Auth } from '../services/auth';
 
 // =============================================================
-// INTERCEPTEUR JWT — Renouvellement automatique des tokens
+// INTERCEPTEUR JWT — Gestion de l'authentification
 // =============================================================
-// Rôle :
-//   1. Ajoute le token JWT à chaque requête protégée
-//   2. Si le serveur répond 401 (token expiré), lance un refresh
-//      silencieux SANS demander à l'utilisateur de se reconnecter
-//   3. Rejoue la requête originale avec le nouveau token
-//   4. Si le refresh échoue (refresh token aussi expiré),
-//      déconnecte et redirige vers la page de connexion
+// 1. Ajoute le token JWT si le citoyen est connecté.
+// 2. Autorise les requêtes publiques sans token.
+// 3. Renouvelle automatiquement un token expiré.
+// 4. Rejoue la requête après renouvellement.
+// 5. Déconnecte le citoyen si le renouvellement échoue.
 // =============================================================
 
-// -------------------------------------------------------------
-// Variable partagée pour éviter plusieurs refresh simultanés.
-// Si 3 requêtes reçoivent un 401 en même temps, une seule
-// tentative de refresh est lancée et les 3 attendent le résultat.
-// -------------------------------------------------------------
+// Partage une seule opération de renouvellement entre
+// les requêtes qui reçoivent simultanément une erreur 401.
 let refreshEnCours$: Observable<{
   access: string;
   refresh: string;
 }> | null = null;
 
-
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // -----------------------------------------------------------
-  // ROUTES PUBLIQUES — pas besoin de token JWT
+  // ROUTES PUBLIQUES
   // -----------------------------------------------------------
-  // Ces routes ne nécessitent aucune authentification.
-  // On les laisse passer directement sans modifier la requête.
-  // -----------------------------------------------------------
+  // Ces routes ne nécessitent pas de token JWT.
   const routesPubliques = [
     '/api/auth/register/',
     '/api/auth/login/',
@@ -56,7 +48,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     (route) => req.url.includes(route)
   );
 
-  // Les lectures du référentiel (types de déchets, conseils) sont publiques.
+  // Les types de déchets et les conseils sont publics en lecture.
   const estLectureReferentielPublique =
     req.method === 'GET' &&
     (
@@ -64,44 +56,36 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       req.url.includes('/api/conseils/')
     );
 
-  // Les scans anonymes (POST sans token) sont autorisés.
-  const estScanPublic =
-    req.method === 'POST' &&
-    req.url.includes('/api/scans/') &&
-    !req.url.includes('/api/scans/admin/') &&
-    !req.url.includes('/api/scans/historique/');
-
   const estRoutePublique =
     estRouteAuthentificationPublique ||
-    estScanPublic ||
     estLectureReferentielPublique;
 
-  // -----------------------------------------------------------
-  // Si c'est une route publique → on laisse passer sans token
-  // -----------------------------------------------------------
+  // Les routes publiques passent sans modification.
   if (estRoutePublique) {
     return next(req);
   }
 
   // -----------------------------------------------------------
-  // Injection des services
+  // SERVICES D'AUTHENTIFICATION
   // -----------------------------------------------------------
   const authService = inject(Auth);
-  const router     = inject(Router);
-  const token      = authService.getToken();
+  const router = inject(Router);
+  const token = authService.getToken();
 
   // -----------------------------------------------------------
-  // Si pas de token → on envoie la requête sans Authorization.
-  // Django retournera 401 si la route est protégée.
-  // Le cas du scan anonyme (AllowAny) passera sans problème.
+  // AUCUN TOKEN
   // -----------------------------------------------------------
+  // Un visiteur anonyme peut envoyer une image au scanner.
+  // Django doit autoriser cette requête et ne pas enregistrer
+  // le scan si aucun utilisateur n'est authentifié.
   if (!token) {
     return next(req);
   }
 
   // -----------------------------------------------------------
-  // Ajoute le token JWT à la requête
+  // TOKEN DISPONIBLE : AJOUT DU JWT
   // -----------------------------------------------------------
+  // Important : les accents graves sont nécessaires ici.
   const requeteAvecToken = req.clone({
     setHeaders: {
       Authorization: `Bearer ${token}`,
@@ -109,37 +93,24 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   });
 
   return next(requeteAvecToken).pipe(
-
     catchError((erreur: HttpErrorResponse) => {
 
-      // ---------------------------------------------------------
-      // Seul un 401 déclenche le renouvellement automatique.
-      // Les autres erreurs (403, 404, 500…) sont propagées
-      // normalement vers le composant qui a fait la requête.
-      // ---------------------------------------------------------
+      // Seule une erreur 401 déclenche le renouvellement.
       if (erreur.status !== 401) {
         return throwError(() => erreur);
       }
 
-      // ---------------------------------------------------------
-      // Vérifie qu'un refresh token existe en localStorage.
-      // S'il n'existe pas, la session est terminée → déconnexion.
-      // ---------------------------------------------------------
       const refreshToken = authService.getRefreshToken();
 
+      // Sans refresh token, la session ne peut pas être renouvelée.
       if (!refreshToken) {
-        // Nettoie le storage et redirige vers la connexion.
         authService.logout();
         void router.navigate(['/connexion']);
+
         return throwError(() => erreur);
       }
 
-      // ---------------------------------------------------------
-      // Lance le refresh UNE SEULE FOIS même si plusieurs
-      // requêtes ont reçu un 401 simultanément.
-      // shareReplay(1) diffuse le résultat à tous les abonnés.
-      // finalize() remet refreshEnCours$ à null après la fin.
-      // ---------------------------------------------------------
+      // Une seule demande de renouvellement est partagée.
       if (!refreshEnCours$) {
         refreshEnCours$ = authService.refreshToken().pipe(
           shareReplay(1),
@@ -151,35 +122,29 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       return refreshEnCours$.pipe(
 
-        // -------------------------------------------------------
-        // Refresh réussi → rejoue la requête originale
-        // avec le nouveau token. L'utilisateur ne voit rien.
-        // -------------------------------------------------------
+        // Le renouvellement a réussi : rejouer la requête
+        // avec le nouvel access token.
         switchMap((nouveauxTokens) => {
           const requeteRetry = req.clone({
             setHeaders: {
               Authorization: `Bearer ${nouveauxTokens.access}`,
             },
           });
+
           return next(requeteRetry);
         }),
 
-        // -------------------------------------------------------
-        // Refresh échoué → le refresh token est aussi expiré.
-        // On déconnecte et on redirige vers la connexion.
-        // L'URL actuelle est sauvegardée en queryParam pour
-        // rediriger l'utilisateur après reconnexion.
-        // -------------------------------------------------------
+        // Le renouvellement a échoué : terminer la session.
         catchError((erreurRefresh) => {
           authService.logout();
 
-          // Récupère l'URL courante pour rediriger après login.
           const urlActuelle = router.url;
 
           void router.navigate(['/connexion'], {
-            queryParams: urlActuelle && urlActuelle !== '/connexion'
-              ? { redirect: urlActuelle }
-              : {},
+            queryParams:
+              urlActuelle && urlActuelle !== '/connexion'
+                ? { redirect: urlActuelle }
+                : {},
           });
 
           return throwError(() => erreurRefresh);

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ScanDechet } from '../../shared/models/scan.model';
 
 /**
- * Panier d'un citoyen : un nombre d'objets par catégorie, sans poids inféré.
+ * Panier d'un citoyen : nombre d'objets par catégorie.
  */
 export interface PanierDechetApi {
   idPanier: number;
@@ -25,9 +25,7 @@ export interface PanierDechetApi {
   dateMiseAJour: string;
 }
 
-/**
- * Informations du citoyen associées à un scan côté administration.
- */
+/** Informations du citoyen affichées dans l'administration. */
 export interface CitoyenAdmin {
   id: number;
   prenom: string;
@@ -35,15 +33,11 @@ export interface CitoyenAdmin {
   email: string;
 }
 
-/**
- * Type de déchet retourné par Django.
- */
+/** Type de déchet retourné par l'API Django. */
 export interface TypeDechetAdmin {
   idTypeDechet: number;
   nom: string;
   description: string;
-
-  // Conseil de tri associé à ce type de déchet.
   conseil?: {
     idConseil: number;
     consigne: string;
@@ -51,9 +45,7 @@ export interface TypeDechetAdmin {
   } | null;
 }
 
-/**
- * Détection effectuée par l'IA.
- */
+/** Détection réalisée par l'intelligence artificielle. */
 export interface DetectionAdmin {
   idDetection: number;
   objet: string;
@@ -61,19 +53,14 @@ export interface DetectionAdmin {
   idTypeDechet: TypeDechetAdmin | null;
 }
 
-/**
- * Analyse IA complète d'un scan.
- */
+/** Résultat de l'analyse IA d'un scan. */
 export interface AnalyseAdmin {
   idAnalyse: number;
   dateAnalyse: string;
   detections: DetectionAdmin[];
 }
 
-/**
- * Structure d'un scan retourné par l'API
- * pour la console d'administration.
- */
+/** Structure d'un scan pour la console d'administration. */
 export interface ScanAdmin {
   idScan: number;
   dateScan: string;
@@ -81,41 +68,45 @@ export interface ScanAdmin {
   idUtilisateur: number | null;
   citoyen: CitoyenAdmin | null;
   analyseIA: AnalyseAdmin | null;
-  // Nombre total de scans réalisés par cet utilisateur.
-  // Pour un scan anonyme, cette valeur sera 1.
   nombreScans: number;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScanService {
 
-  // Client HTTP utilisé pour communiquer avec Django.
-  private http = inject(HttpClient);
+  // Client HTTP pour communiquer avec le backend Django.
+  private readonly http = inject(HttpClient);
 
-  // URL de base de l'API Django.
-  // En développement local (ng serve) : http://127.0.0.1:8000/api/
-  // En Docker (via Nginx proxy)       : /api/
-  // Nginx redirige automatiquement /api/ → backend:8000
+  // URL de base de l'API.
+  // En développement ou derrière un proxy, /api/ doit être routé
+  // vers le backend Django.
   private readonly baseUrl = '/api/';
 
-  // Conserve le dernier résultat d'un scan côté application citoyen.
+  // Conserve le dernier résultat pour les pages citoyennes.
   dernierResultat = signal<ScanDechet | null>(null);
 
   /**
-   * Envoie une photo à Django.
+   * Envoie une image pour analyse.
+   *
+   * L'intercepteur JWT ajoute automatiquement le token lorsque
+   * le citoyen est connecté.
+   *
+   * Sans token, la requête est envoyée comme une requête anonyme.
+   *
+   * IMPORTANT :
+   * C'est le backend Django qui doit décider si le scan doit
+   * être enregistré en base de données.
    */
   envoyerImage(fichier: File): Observable<ScanDechet> {
-
     const formData = new FormData();
 
-    // Le nom doit correspondre au champ du serializer Django.
+    // Le nom du champ doit correspondre au serializer Django.
     formData.append('photoUrl', fichier);
 
-    // Django enregistre la photo, lance l'analyse IA puis crée une notification
-    // persistante si l'utilisateur connecté a effectué le scan.
-    // Pour un visiteur anonyme, le remerciement est renvoyé dans la réponse.
+    // Ne pas définir manuellement Content-Type :
+    // le navigateur gère automatiquement le multipart/form-data.
     return this.http.post<ScanDechet>(
       `${this.baseUrl}scans/`,
       formData
@@ -123,20 +114,21 @@ export class ScanService {
   }
 
   /**
-   * Récupère l'historique des scans du citoyen connecté.
+   * Récupère l'historique du citoyen connecté.
+   *
+   * Django doit filtrer les résultats selon l'utilisateur
+   * authentifié et ne jamais retourner l'historique d'un autre.
    */
   historique(): Observable<ScanDechet[]> {
-
     return this.http.get<ScanDechet[]>(
       `${this.baseUrl}scans/historique/`
     );
   }
 
   /**
-   * Récupère un scan précis côté citoyen.
+   * Récupère le détail d'un scan citoyen.
    */
   getScan(idScan: number): Observable<ScanDechet> {
-
     return this.http.get<ScanDechet>(
       `${this.baseUrl}scans/${idScan}/`
     );
@@ -146,24 +138,29 @@ export class ScanService {
    * Récupère les paniers du citoyen authentifié.
    */
   getPaniers(): Observable<PanierDechetApi[]> {
-    return this.http.get<PanierDechetApi[]>(`${this.baseUrl}paniers/`);
+    return this.http.get<PanierDechetApi[]>(
+      `${this.baseUrl}paniers/`
+    );
   }
 
   /**
-   * Ajoute un nombre d'objets au panier de la catégorie sélectionnée.
+   * Ajoute des objets à un panier de déchets.
    */
   ajouterAuPanier(
     idTypeDechet: number,
     nombreObjets = 1,
   ): Observable<PanierDechetApi> {
-    return this.http.post<PanierDechetApi>(`${this.baseUrl}paniers/`, {
-      idTypeDechet,
-      nombreDisponible: nombreObjets,
-    });
+    return this.http.post<PanierDechetApi>(
+      `${this.baseUrl}paniers/`,
+      {
+        idTypeDechet,
+        nombreDisponible: nombreObjets,
+      }
+    );
   }
 
   /**
-   * Remplace le compte d'objets disponible d'un panier existant.
+   * Modifie le nombre d'objets disponibles dans un panier.
    */
   modifierPanier(
     idPanier: number,
@@ -171,32 +168,24 @@ export class ScanService {
   ): Observable<PanierDechetApi> {
     return this.http.patch<PanierDechetApi>(
       `${this.baseUrl}paniers/${idPanier}/`,
-      { nombreDisponible },
+      { nombreDisponible }
     );
   }
 
   /**
-   * Récupère tous les scans pour la console administrateur.
-   *
-   * Cette méthode correspond à :
-   * GET /api/scans/admin/
+   * Récupère tous les scans accessibles à l'administration.
+   * L'endpoint Django doit être protégé par les permissions admin.
    */
   tousLesScans(): Observable<ScanDechet[]> {
-
     return this.http.get<ScanDechet[]>(
       `${this.baseUrl}scans/admin/`
     );
   }
 
   /**
-   * Récupère le détail d'un scan pour l'administration.
-   *
-   * Cette méthode nécessite que Django possède
-   * l'endpoint :
-   * GET /api/scans/admin/<idScan>/
+   * Récupère le détail administratif d'un scan.
    */
   detailAdmin(idScan: number): Observable<ScanAdmin> {
-
     return this.http.get<ScanAdmin>(
       `${this.baseUrl}scans/admin/${idScan}/`
     );

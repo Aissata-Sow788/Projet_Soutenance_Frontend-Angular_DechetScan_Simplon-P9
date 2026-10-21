@@ -71,11 +71,16 @@
           <input type="date" name="dateDebut" [(ngModel)]="dateDebut" required />
         </label>
 
-        <label class="field">
-          <span>Date de fin</span>
-          <input type="date" name="dateFin" [(ngModel)]="dateFin" [min]="dateDebut" />
-          <small>Laisser vide pour un tarif sans date de fin.</small>
-        </label>
+<label class="field">
+  <span>Date de fin</span>
+  <input
+    type="date"
+    name="dateFin"
+    [(ngModel)]="dateFin"
+    [min]="dateMinimumFin"
+  />
+  <small>Laisser vide pour un tarif sans date de fin.</small>
+</label>
       </div>
 
       @if (dateFin && dateFin < dateDebut) {

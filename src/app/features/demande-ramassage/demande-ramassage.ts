@@ -1,3 +1,4 @@
+
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +11,6 @@ import {
   DemandeCollecteCreation
 } from '../../shared/models/demande-collecte.model';
 
-// Représente les différents états possibles de la géolocalisation.
 type GeoStatut = 'chargement' | 'obtenu' | 'refuse' | 'non_supporte';
 
 @Component({
@@ -21,156 +21,129 @@ type GeoStatut = 'chargement' | 'obtenu' | 'refuse' | 'non_supporte';
 })
 export class DemandeRamassage implements OnInit {
 
-  // Services utilisés pour la navigation, les appels HTTP et les demandes de collecte.
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
   private readonly demandeService = inject(DemandeCollecteService);
   private readonly scanService = inject(ScanService);
 
-  // Paniers déjà renseignés par le citoyen.
+  // Paniers et déchets
   paniers = signal<PanierDechetApi[]>([]);
   chargementPaniers = signal(true);
 
-  // Coordonnées GPS détectées par le navigateur.
-  // null signifie qu'aucune position n'a encore été obtenue.
+  // Géolocalisation
   latitude = signal<number | null>(null);
   longitude = signal<number | null>(null);
-
-  // Précision de la position GPS en mètres.
-  // Exemple : 15 signifie que la position est estimée à environ 15 mètres près.
   precisionPosition = signal<number | null>(null);
-
-  // État actuel de la géolocalisation.
   geoStatut = signal<GeoStatut>('chargement');
-
-  // Message affiché lorsque la géolocalisation échoue.
   geoErreur = signal('');
 
-  /**
-   * Adresse lisible obtenue à partir des coordonnées GPS.
-   *
-   * Les coordonnées comme 14.7167, -17.4677 sont difficiles
-   * à comprendre pour l'utilisateur. Le reverse geocoding permet
-   * donc de les transformer en une adresse lisible.
-   */
-  adresseDetectee = signal<string>('');
+  // Adresse et quartier
+  adresseDetectee = signal('');
+  quartierDetecte = signal('');
+  quartierManuel = signal('');
 
-  // Quartier récupéré automatiquement depuis l'adresse.
-  quartierDetecte = signal<string>('');
-
-  // Permet à l'utilisateur de remplacer le quartier détecté.
-  quartierManuel = signal<string>('');
-
-  /**
-   * Quartier réellement utilisé pour la demande.
-   *
-   * Si l'utilisateur saisit manuellement un quartier,
-   * celui-ci est prioritaire sur le quartier détecté automatiquement.
-   */
   quartierFinal = computed(() =>
     this.quartierManuel().trim() || this.quartierDetecte()
   );
 
-  // La sélection est explicite : aucune catégorie du panier n'est engagée d'office.
+  // Sélection des déchets
   paniersSelectionnes = signal<Set<number>>(new Set());
   nombresObjetsDemandes = signal<Record<number, number>>({});
   poidsMesuresKg = signal<Record<number, number | null>>({});
+
+  // Date et heure souhaitées
   dateSouhaitee = signal('');
   heureSouhaitee = signal('');
 
-  // Prix proposé uniquement si le citoyen souhaite vendre ses déchets.
+  // Vente éventuelle des déchets
   prixPropose = signal<number | null>(null);
   afficherPrix = signal(false);
 
-  // Informations supplémentaires éventuellement saisies par l'utilisateur.
+  // Informations complémentaires
   informationsComplementaires = signal('');
 
-  // États liés à l'envoi de la demande.
+  // État de la demande
   enEnvoi = signal(false);
   erreur = signal<string | null>(null);
   demandeCreee = signal<DemandeCollecte | null>(null);
 
+  // Paniers ayant des déchets disponibles
   paniersRemplis = computed(() =>
-    this.paniers().filter((panier) => panier.nombreDisponible > 0)
+    this.paniers().filter(panier => panier.nombreDisponible > 0)
   );
 
+  // Paniers sélectionnés uniquement
   paniersChoisis = computed(() =>
-    this.paniersRemplis().filter((panier) =>
-      this.paniersSelectionnes().has(panier.idPanier),
+    this.paniersRemplis().filter(panier =>
+      this.paniersSelectionnes().has(panier.idPanier)
     )
   );
 
+  // Nombre total d'objets demandés
   nombreObjetsDemande = computed(() =>
     this.paniersChoisis().reduce(
       (total, panier) => total + this.nombreObjetsPourDemande(panier),
-      0,
+      0
     )
   );
 
+  // Poids total demandé
   poidsTotalKgDemande = computed(() =>
     this.paniersChoisis().reduce(
       (total, panier) => total + (this.poidsKgPourDemande(panier) ?? 0),
-      0,
+      0
     )
   );
 
-  /**
-   * Calcule le montant estimé de la vente.
-   *
-   * Formule :
-   * poids réellement pesé × prix proposé par kilogramme.
-   */
+  // Montant estimé de la vente
   montantEstime = computed(() => {
-    const q = this.poidsTotalKgDemande();
-    const p = this.prixPropose();
+    const poids = this.poidsTotalKgDemande();
+    const prix = this.prixPropose();
 
-    if (!q || !p || q <= 0 || p <= 0) {
+    if (poids <= 0 || prix === null || prix <= 0) {
       return null;
     }
 
-    return Math.round(q * p);
+    return Math.round(poids * prix);
   });
 
-  /**
-   * Vérifie si les informations indispensables sont présentes.
-   *
-   * Les coordonnées GPS sont obligatoires car elles permettent
-   * au collecteur de connaître l'emplacement du ramassage.
-   */
+  // Validation générale du formulaire
   formulaireValide = computed(() =>
     !this.chargementPaniers() &&
     this.paniersChoisis().length > 0 &&
-    this.paniersChoisis().every((panier) =>
-      this.nombreObjetsPourDemande(panier) > 0
-      && (this.poidsKgPourDemande(panier) ?? 0) > 0,
+    this.paniersChoisis().every(panier =>
+      this.nombreObjetsPourDemande(panier) > 0 &&
+      (this.poidsKgPourDemande(panier) ?? 0) > 0
     ) &&
     this.latitude() !== null &&
-    this.longitude() !== null
+    this.longitude() !== null &&
+    this.messageErreurDate() === null
   );
 
   ngOnInit(): void {
-    // Charge les comptes d'objets disponibles depuis les paniers du citoyen.
     this.chargerPaniers();
-
-    // Demande automatiquement la position actuelle du citoyen.
     this.demanderGeolocalisation();
   }
 
+  // Chargement des paniers du citoyen
   private chargerPaniers(): void {
     this.chargementPaniers.set(true);
+
     this.scanService.getPaniers().subscribe({
-      next: (paniers) => {
+      next: paniers => {
         this.paniers.set(paniers);
         this.paniersSelectionnes.set(new Set());
         this.nombresObjetsDemandes.set({});
         this.poidsMesuresKg.set({});
         this.chargementPaniers.set(false);
       },
-      error: (erreur: unknown) => {
-        console.error('Erreur lors du chargement des paniers pour la demande :', erreur);
-        this.erreur.set('Impossible de charger vos déchets. Vérifiez votre connexion puis réessayez.');
+      error: (err: unknown) => {
+        console.error('Erreur chargement des paniers :', err);
+        this.erreur.set(
+          'Impossible de charger vos déchets. Vérifiez votre connexion puis réessayez.'
+        );
         this.chargementPaniers.set(false);
-      },
+      }
     });
   }
 
@@ -179,17 +152,21 @@ export class DemandeRamassage implements OnInit {
   }
 
   changerSelection(panier: PanierDechetApi, selectionne: boolean): void {
-    this.paniersSelectionnes.update((selection) => {
+    this.paniersSelectionnes.update(selection => {
       const miseAJour = new Set(selection);
+
       if (selectionne) {
         miseAJour.add(panier.idPanier);
-        this.nombresObjetsDemandes.update((nombres) => ({
+
+        this.nombresObjetsDemandes.update(nombres => ({
           ...nombres,
-          [panier.idPanier]: nombres[panier.idPanier] ?? panier.nombreDisponible,
+          [panier.idPanier]:
+            nombres[panier.idPanier] ?? panier.nombreDisponible
         }));
       } else {
         miseAJour.delete(panier.idPanier);
       }
+
       return miseAJour;
     });
   }
@@ -198,13 +175,20 @@ export class DemandeRamassage implements OnInit {
     return this.nombresObjetsDemandes()[panier.idPanier] ?? 0;
   }
 
-  modifierNombreObjets(panier: PanierDechetApi, valeur: number): void {
+  modifierNombreObjets(
+    panier: PanierDechetApi,
+    valeur: number
+  ): void {
     const nombre = Number.isFinite(valeur)
-      ? Math.max(1, Math.min(panier.nombreDisponible, Math.floor(valeur)))
+      ? Math.max(
+          1,
+          Math.min(panier.nombreDisponible, Math.floor(valeur))
+        )
       : 1;
-    this.nombresObjetsDemandes.update((nombres) => ({
+
+    this.nombresObjetsDemandes.update(nombres => ({
       ...nombres,
-      [panier.idPanier]: nombre,
+      [panier.idPanier]: nombre
     }));
   }
 
@@ -212,23 +196,21 @@ export class DemandeRamassage implements OnInit {
     return this.poidsMesuresKg()[panier.idPanier] ?? null;
   }
 
-  modifierPoidsMesure(panier: PanierDechetApi, valeur: number | null): void {
-    this.poidsMesuresKg.update((poids) => ({
+  modifierPoidsMesure(
+    panier: PanierDechetApi,
+    valeur: number | null
+  ): void {
+    this.poidsMesuresKg.update(poids => ({
       ...poids,
-      [panier.idPanier]: valeur !== null && Number.isFinite(valeur) && valeur > 0
-        ? valeur
-        : null,
+      [panier.idPanier]:
+        valeur !== null && Number.isFinite(valeur) && valeur > 0
+          ? valeur
+          : null
     }));
   }
 
-  /**
-   * Demande la position actuelle au navigateur.
-   *
-   * La position provient du service de géolocalisation du navigateur
-   * et non d'une estimation basée sur l'adresse IP.
-   */
+  // Géolocalisation
   demanderGeolocalisation(): void {
-    // Réinitialise l'état avant une nouvelle tentative.
     this.geoStatut.set('chargement');
     this.geoErreur.set('');
     this.latitude.set(null);
@@ -237,10 +219,6 @@ export class DemandeRamassage implements OnInit {
     this.adresseDetectee.set('');
     this.quartierDetecte.set('');
 
-    /**
-     * La géolocalisation du navigateur nécessite généralement
-     * HTTPS ou localhost pour des raisons de sécurité.
-     */
     if (!window.isSecureContext) {
       this.geoStatut.set('non_supporte');
       this.geoErreur.set(
@@ -249,7 +227,6 @@ export class DemandeRamassage implements OnInit {
       return;
     }
 
-    // Vérifie que le navigateur possède bien l'API Geolocation.
     if (!navigator.geolocation) {
       this.geoStatut.set('non_supporte');
       this.geoErreur.set(
@@ -258,58 +235,24 @@ export class DemandeRamassage implements OnInit {
       return;
     }
 
-    /**
-     * Demande la position actuelle de l'utilisateur.
-     *
-     * getCurrentPosition() ouvre une demande d'autorisation
-     * dans le navigateur si la permission n'a pas encore été donnée.
-     */
     navigator.geolocation.getCurrentPosition(
-
-      // Ce bloc est exécuté lorsque la position est obtenue avec succès.
-      (position) => {
-        // Latitude et longitude représentent la position GPS.
+      position => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
 
-        // Stocke les coordonnées pour les utiliser dans le formulaire.
         this.latitude.set(lat);
         this.longitude.set(lon);
-
-        /**
-         * accuracy indique la précision estimée de la position
-         * en mètres.
-         *
-         * Exemple :
-         * accuracy = 20 signifie que la position est estimée
-         * avec une précision d'environ 20 mètres.
-         */
         this.precisionPosition.set(position.coords.accuracy);
-
-        // Indique que la géolocalisation a réussi.
         this.geoStatut.set('obtenu');
 
-        // Transforme ensuite les coordonnées en adresse lisible.
         this.reverseGeocoder(lat, lon);
       },
-
-      // Ce bloc est exécuté lorsque le navigateur ne peut pas obtenir la position.
-      (erreur) => {
+      err => {
         this.geoStatut.set('refuse');
-
-        // Transforme le code d'erreur GPS en message compréhensible.
         this.geoErreur.set(
-          this.messageErreurGeolocalisation(erreur)
+          this.messageErreurGeolocalisation(err)
         );
       },
-
-      /**
-       * Options de géolocalisation :
-       *
-       * enableHighAccuracy: demande la meilleure précision disponible.
-       * timeout: abandonne la recherche après 30 secondes.
-       * maximumAge: 0 demande une position fraîche plutôt qu'une ancienne position.
-       */
       {
         enableHighAccuracy: true,
         timeout: 30000,
@@ -318,70 +261,32 @@ export class DemandeRamassage implements OnInit {
     );
   }
 
-  /**
-   * Transforme les erreurs techniques de l'API Geolocation
-   * en messages compréhensibles pour l'utilisateur.
-   */
   private messageErreurGeolocalisation(
-    erreur: GeolocationPositionError
+    err: GeolocationPositionError
   ): string {
-
-    switch (erreur.code) {
-      // Permission de localisation refusée par l'utilisateur.
+    switch (err.code) {
       case 1:
         return 'L’accès à votre position est refusé. Autorisez la localisation dans les réglages du navigateur, puis réessayez.';
-
-      // Le navigateur ou l'appareil n'arrive pas à déterminer la position.
       case 2:
         return 'La position est indisponible. Activez le GPS ou les services de localisation de votre appareil, puis réessayez.';
-
-      // Le délai maximum de recherche a été dépassé.
       case 3:
         return 'La recherche de position a pris trop de temps. Vérifiez que le GPS est activé, puis réessayez.';
-
       default:
         return 'La position n’a pas pu être déterminée. Vérifiez les réglages de localisation, puis réessayez.';
     }
   }
 
-  /**
-   * Reverse geocoding :
-   *
-   * Entrée :
-   * latitude + longitude
-   *
-   * Sortie :
-   * une adresse lisible et un quartier.
-   *
-   * Ici, Nominatim d'OpenStreetMap est utilisé pour convertir
-   * les coordonnées GPS en informations géographiques.
-   */
+  // Conversion des coordonnées GPS en adresse
   private reverseGeocoder(lat: number, lon: number): void {
-
-    // Construit l'URL de l'API Nominatim avec les coordonnées GPS.
     const url =
-      `https://nominatim.openstreetmap.org/reverse` +
+      'https://nominatim.openstreetmap.org/reverse' +
       `?lat=${lat}&lon=${lon}&format=json&accept-language=fr`;
 
-    // Envoie les coordonnées à Nominatim.
     this.http.get<any>(url).subscribe({
+      next: data => {
+        this.adresseDetectee.set(data.display_name ?? '');
 
-      // Réponse reçue avec succès.
-      next: (data) => {
-
-        // Adresse complète destinée à être affichée dans l'interface.
-        this.adresseDetectee.set(
-          data.display_name ?? ''
-        );
-
-        /**
-         * Nominatim peut placer le quartier dans différents champs
-         * selon la structure géographique de la zone.
-         *
-         * On essaie donc plusieurs propriétés dans un ordre de priorité.
-         */
         const addr = data.address ?? {};
-
         const quartier =
           addr.suburb ??
           addr.quarter ??
@@ -391,62 +296,119 @@ export class DemandeRamassage implements OnInit {
           addr.city ??
           '';
 
-        // Stocke le quartier détecté automatiquement.
         this.quartierDetecte.set(quartier);
       },
-
-      // Le reverse geocoding peut échouer même si le GPS fonctionne.
       error: () => {
-
-        /**
-         * Les coordonnées GPS restent disponibles même si
-         * Nominatim ne retourne pas d'adresse.
-         *
-         * On affiche donc les coordonnées comme solution de secours.
-         */
         this.adresseDetectee.set(
           `${lat.toFixed(5)}, ${lon.toFixed(5)}`
         );
-
-        // L'utilisateur peut alors saisir son quartier manuellement.
       }
     });
   }
 
+  // Validation de la date souhaitée
+
+  private formaterDateLocale(date: Date): string {
+    const annee = date.getFullYear();
+    const mois = String(date.getMonth() + 1).padStart(2, '0');
+    const jour = String(date.getDate()).padStart(2, '0');
+
+    return `${annee}-${mois}-${jour}`;
+  }
+
+  private heureActuelle(): string {
+    const maintenant = new Date();
+    const heures = String(maintenant.getHours()).padStart(2, '0');
+    const minutes = String(maintenant.getMinutes()).padStart(2, '0');
+
+    return `${heures}:${minutes}`;
+  }
+
+  // La date minimale autorisée est aujourd'hui
+  dateMinimale(): string {
+    return this.formaterDateLocale(new Date());
+  }
+
+  // L'heure minimale s'applique si la date choisie est aujourd'hui
+  heureMinimale(): string {
+    return this.dateSouhaitee() === this.dateMinimale()
+      ? this.heureActuelle()
+      : '';
+  }
+
+  /**
+   * La date est obligatoire.
+   * Une date passée est refusée.
+   * Si la date est aujourd'hui, l'heure indiquée doit être future.
+   */
+  messageErreurDate(): string | null {
+    const date = this.dateSouhaitee();
+    const heure = this.heureSouhaitee();
+    const aujourdHui = this.dateMinimale();
+
+    if (!date) {
+      return 'Veuillez choisir une date pour le ramassage.';
+    }
+
+    if (date < aujourdHui) {
+      return 'La date souhaitée ne peut pas être dans le passé.';
+    }
+
+    if (date === aujourdHui) {
+      if (heure && heure < this.heureActuelle()) {
+        return 'L’heure souhaitée est déjà passée pour aujourd’hui.';
+      }
+
+      // L'heure par défaut à l'envoi est 09:00.
+      // Si 09:00 est passée, une heure future doit être saisie.
+      if (!heure && this.heureActuelle() > '09:00') {
+        return 'Pour aujourd’hui, précisez une heure à venir.';
+      }
+    }
+
+    return null;
+  }
+
+  // Envoi de la demande de ramassage
   envoyerDemande(): void {
-    // Empêche l'envoi si le formulaire est incomplet ou déjà en cours d'envoi.
-    if (!this.formulaireValide() || this.enEnvoi()) {
+    if (this.enEnvoi()) {
+      return;
+    }
+
+    // Vérifie d'abord la date pour afficher son erreur précise.
+    const messageDate = this.messageErreurDate();
+
+    if (messageDate) {
+      this.erreur.set(messageDate);
+      return;
+    }
+
+    if (!this.formulaireValide()) {
+      this.erreur.set(
+        'Veuillez sélectionner vos déchets, renseigner leur nombre et leur poids, puis autoriser la géolocalisation.'
+      );
       return;
     }
 
     this.enEnvoi.set(true);
     this.erreur.set(null);
 
-    // Prépare la date au format attendu par le backend.
-    let dateSouhaiteeIso: string | null = null;
+    // La date est désormais obligatoire.
+    // Si aucune heure n'est saisie, on utilise 09:00.
+    const heure = this.heureSouhaitee() || '09:00';
+    const dateSouhaiteeIso =
+      `${this.dateSouhaitee()}T${heure}:00`;
 
-    if (this.dateSouhaitee() && this.heureSouhaitee()) {
-      dateSouhaiteeIso =
-        `${this.dateSouhaitee()}T${this.heureSouhaitee()}:00`;
-    } else if (this.dateSouhaitee()) {
-      // Si aucune heure n'est indiquée, utilise 09:00 par défaut.
-      dateSouhaiteeIso =
-        `${this.dateSouhaitee()}T09:00:00`;
-    }
-
-    /**
-     * Prépare les données envoyées au backend.
-     *
-     * Les coordonnées latitude/longitude permettent au collecteur
-     * de connaître précisément l'emplacement du ramassage.
-     */
-    const details = this.paniersRemplis()
-      .map((panier) => ({
+    // IMPORTANT : seuls les paniers sélectionnés sont envoyés.
+    const details = this.paniersChoisis()
+      .map(panier => ({
         idPanier: panier.idPanier,
         nombreObjets: this.nombreObjetsPourDemande(panier),
-        poidsKg: this.poidsKgPourDemande(panier) ?? 0,
+        poidsKg: this.poidsKgPourDemande(panier) ?? 0
       }))
-      .filter((detail) => detail.nombreObjets > 0 && detail.poidsKg > 0);
+      .filter(detail =>
+        detail.nombreObjets > 0 && detail.poidsKg > 0
+      );
 
     const donnees: DemandeCollecteCreation = {
       details,
@@ -454,29 +416,16 @@ export class DemandeRamassage implements OnInit {
       prixPropose: this.afficherPrix()
         ? this.prixPropose()
         : null,
-
-      // Envoie le quartier détecté ou celui corrigé par l'utilisateur.
       quartier: this.quartierFinal(),
-
-      // Position GPS du citoyen.
       latitude: this.latitude(),
       longitude: this.longitude(),
-
-      // Date souhaitée pour le ramassage.
-      dateSouhaitee: dateSouhaiteeIso,
+      dateSouhaitee: dateSouhaiteeIso
     };
 
-    // Création de la demande dans le backend.
     this.demandeService.creerDemande(donnees).subscribe({
-
-      // Demande créée avec succès.
-      next: (demande) => {
+      next: demande => {
         this.enEnvoi.set(false);
 
-        /**
-         * Vérifie que le backend a bien renvoyé l'identifiant
-         * de la demande avant de permettre son suivi.
-         */
         if (
           !Number.isInteger(demande?.idDemande) ||
           demande.idDemande <= 0
@@ -489,51 +438,46 @@ export class DemandeRamassage implements OnInit {
             'Réponse de création sans identifiant de demande :',
             demande
           );
-
           return;
         }
 
-        // Conserve la demande créée pour afficher la confirmation.
         this.demandeCreee.set(demande);
       },
-
-      // Gestion de l'erreur lors de la création.
-      error: (err) => {
+      error: err => {
         this.enEnvoi.set(false);
+
+        // Affiche un message serveur si disponible.
         this.erreur.set(
-          'Une erreur est survenue. Veuillez réessayer.'
+          err?.error?.dateSouhaitee?.[0] ??
+          err?.error?.detail ??
+          'Une erreur est survenue. Veuillez vérifier les informations puis réessayer.'
         );
 
-        console.error(
-          'Erreur création demande :',
-          err
-        );
+        console.error('Erreur création demande :', err);
       }
     });
   }
 
-  // Met à jour le prix proposé par l'utilisateur.
+  // Modification du prix proposé
   onPrixChange(event: Event): void {
-    const val =
-      parseFloat(
-        (event.target as HTMLInputElement).value
-      );
+    const valeur = parseFloat(
+      (event.target as HTMLInputElement).value
+    );
 
     this.prixPropose.set(
-      isNaN(val) ? null : val
+      Number.isNaN(valeur) ? null : valeur
     );
   }
 
-  // Retourne vers l'accueil citoyen.
+  // Navigation
   retour(): void {
-    this.router.navigate(['/home-citoyen']);
+    void this.router.navigate(['/home-citoyen']);
   }
 
   retourPanier(): void {
-    this.router.navigate(['/mes-paniers']);
+    void this.router.navigate(['/mes-paniers']);
   }
 
-  // Ouvre la page de suivi de la demande créée.
   suivreDemande(): void {
     const demande = this.demandeCreee();
 
@@ -545,50 +489,74 @@ export class DemandeRamassage implements OnInit {
     }
   }
 
-  // Génère une référence lisible à partir de l'identifiant de la demande.
+  // Référence de la demande
   referenceDemande(id: number): string {
     return `DEM-${String(id).padStart(5, '0')}`;
   }
 
+  // Types de déchets de la demande créée
   typesDechetsDemande(demande: DemandeCollecte): string {
-    const types = demande.details?.map((detail) => detail.typeDechet?.nom)
+    const types = demande.details
+      ?.map(detail => detail.typeDechet?.nom)
       .filter((nom): nom is string => Boolean(nom));
+
     return types?.length
       ? types.join(', ')
       : demande.typeDechet?.nom ?? 'Non précisé';
   }
 
-  nombreObjetsDemandeCreee(demande: DemandeCollecte): number | null {
-    if (demande.details.some((detail) => detail.nombreObjets === null)) {
+  // Nombre total d'objets de la demande créée
+  nombreObjetsDemandeCreee(
+    demande: DemandeCollecte
+  ): number | null {
+    if (
+      demande.details.some(
+        detail => detail.nombreObjets === null
+      )
+    ) {
       return null;
     }
+
     return demande.details.reduce(
       (total, detail) => total + (detail.nombreObjets ?? 0),
-      0,
+      0
     );
   }
 
-  // Formate la date souhaitée en français.
+  // Affichage de la date souhaitée
   formaterDateSouhaitee(dateIso: string | null): string {
     if (!dateIso) {
       return 'Non précisée';
     }
 
-    return new Date(dateIso).toLocaleDateString('fr-FR', {
+    const date = new Date(dateIso);
+
+    if (Number.isNaN(date.getTime())) {
+      return 'Date invalide';
+    }
+
+    return date.toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'long',
+      year: 'numeric'
     });
   }
 
-  // Formate l'heure souhaitée en français.
+  // Affichage de l'heure souhaitée
   formaterHeureSouhaitee(dateIso: string | null): string {
     if (!dateIso) {
       return 'Non précisée';
     }
 
-    return new Date(dateIso).toLocaleTimeString('fr-FR', {
+    const date = new Date(dateIso);
+
+    if (Number.isNaN(date.getTime())) {
+      return 'Heure invalide';
+    }
+
+    return date.toLocaleTimeString('fr-FR', {
       hour: '2-digit',
-      minute: '2-digit',
+      minute: '2-digit'
     });
   }
 }

@@ -124,64 +124,72 @@ export class AbonnementCollecteurPage implements OnInit {
 
   // ─── Chargement du statut actuel ───────────────────────────────
 
+
+  // Charge le statut de l'abonnement actuel.
   private chargerStatut(): void {
     this.collecteurService.obtenirStatutAbonnement().subscribe({
       next: (s) => {
-
-        // Sans profil collecteur, retour vers la page correspondante.
+        // Redirige uniquement si le serveur confirme l'absence de profil.
         if (!s.hasProfile) {
           this.router.navigate(['/devenir-collecteur']);
           return;
         }
 
+        // Enregistre le statut reçu de l'API.
         this.statut.set(s);
+        this.erreur.set(null);
 
-        // Sélectionne automatiquement le plan déjà actif.
+        // Sélectionne le plan actif s'il existe.
         if (s.abonnement?.plan) {
           this.offreSelectionnee.set(s.abonnement.plan);
         }
 
-        // Charge l'historique une fois le statut récupéré.
+        // Charge l'historique sans bloquer les offres.
         this.chargerHistorique();
       },
 
-      error: (error: { status?: number }) => {
-        if (error.status === 404) {
-          this.erreur.set(
-            'Le serveur ne permet pas de verifier le profil collecteur. Redemarrez Django avec la derniere version, puis reessayez.'
-          );
-          return;
-        }
+      error: (error: HttpErrorResponse) => {
+        console.error(
+          'Erreur lors du chargement du statut abonnement :',
+          error
+        );
+
+        // Conserve la page visible même si l'API du statut échoue.
+        this.statut.set(null);
 
         this.erreur.set(
-          'Impossible de verifier le statut de votre abonnement.'
+          'Le statut de votre abonnement est indisponible. Vous pouvez réessayer.'
         );
       },
     });
   }
 
+
   // ─── Historique des abonnements ────────────────────────────────
 
+
+  // Charge et trie l'historique des abonnements.
   private chargerHistorique(): void {
     this.collecteurService.listerAbonnements().subscribe({
       next: (liste) => {
-
-        // Trie les abonnements du plus récent au plus ancien.
         const trie = [...liste].sort(
           (a, b) =>
-            new Date(b.dateDebut).getTime() -
-            new Date(a.dateDebut).getTime()
+            new Date(b.datedebut).getTime() -
+            new Date(a.datedebut).getTime()
         );
 
         this.historiqueAbonnements.set(trie);
       },
 
-      error: () => {
-        // L'historique reste optionnel si l'API échoue.
+      error: (error) => {
+        console.error('Erreur lors du chargement de l’historique :', error);
+
+        // L'historique reste facultatif si l'API échoue.
         this.historiqueAbonnements.set([]);
       },
     });
   }
+
 
   // ─── Gestion des offres ────────────────────────────────────────
 
@@ -368,14 +376,29 @@ export class AbonnementCollecteurPage implements OnInit {
 
   // ─── Helpers d'affichage ───────────────────────────────────────
 
-  // Transforme une date ISO en date française lisible.
-  formaterDate(dateIso: string): string {
-    return new Date(dateIso).toLocaleDateString('fr-FR', {
+  // Formate une date reçue de l'API sans afficher "Invalid Date".
+  formaterDate(dateIso: string | null | undefined): string {
+    // Si l'API ne renvoie aucune date, afficher un texte explicite.
+    if (!dateIso || dateIso.trim() === '') {
+      return 'Date non disponible';
+    }
+
+    // Convertit la valeur reçue en objet Date.
+    const date = new Date(dateIso);
+
+    // Vérifie que la date est valide avant de la formater.
+    if (Number.isNaN(date.getTime())) {
+      return 'Date non disponible';
+    }
+
+    // Affiche la date dans le format français.
+    return date.toLocaleDateString('fr-FR', {
       day: '2-digit',
-      month: 'short',
+      month: 'long',
       year: 'numeric',
     });
   }
+
 
   // Retourne les classes Tailwind selon le statut du paiement.
   classeStatutPaiement(s: string): string {

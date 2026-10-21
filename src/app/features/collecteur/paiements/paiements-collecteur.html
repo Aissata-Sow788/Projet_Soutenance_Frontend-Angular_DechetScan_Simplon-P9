@@ -433,8 +433,25 @@
 
       <!-- Erreur paiement -->
       @if (erreurPaiement()) {
-        <div class="mt-4 break-words rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <div
+          role="alert"
+          class="mt-4 break-words rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+        >
           {{ erreurPaiement() }}
+        </div>
+      }
+
+      @if (venteSelectionnee()!.prixPaye < 200) {
+        <div
+          role="alert"
+          class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+        >
+          <p class="font-bold">Paiement indisponible</p>
+          <p class="mt-1">
+            Le montant de cette vente est de
+            {{ venteSelectionnee()!.prixPaye | number:'1.0-0' }} FCFA.
+            Le minimum requis par PayDunya est de 200 FCFA.
+          </p>
         </div>
       }
 
@@ -494,13 +511,15 @@
       <!-- Confirmer le paiement -->
       <button
         type="button"
-        class="mt-5 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#0B9291] disabled:cursor-wait disabled:opacity-60 sm:mt-6 sm:text-base"
-        [disabled]="chargementPaiement()"
+        class="mt-5 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] px-4 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#0B9291] disabled:cursor-not-allowed disabled:opacity-50 sm:mt-6 sm:text-base"
+        [disabled]="chargementPaiement() || venteSelectionnee()!.prixPaye < 200"
         (click)="continuerVersPaiement()"
       >
         @if (chargementPaiement()) {
           <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
           Création du paiement...
+        } @else if (venteSelectionnee()!.prixPaye < 200) {
+          Montant insuffisant
         } @else {
           <span class="break-words">
             Confirmer et payer →

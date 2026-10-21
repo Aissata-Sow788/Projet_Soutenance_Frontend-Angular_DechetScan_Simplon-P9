@@ -67,7 +67,6 @@ export interface DemandeCollecte {
   nombreObjets: number | null;
   details: DetailDemandeCollecte[];
   typeDemande: TypeDemande;
-  prixPropose: number | null;
   quartier: string;
   latitude: number | null;
   longitude: number | null;

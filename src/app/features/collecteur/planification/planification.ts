@@ -15,6 +15,21 @@ interface JourCalendrier {
   collectes: Collecte[];
 }
 
+/** Formate une date en "AAAA-MM-JJ" selon l'heure LOCALE (évite le décalage UTC de toISOString). */
+function formaterDateLocale(date: Date): string {
+  const annee = date.getFullYear();
+  const mois  = String(date.getMonth() + 1).padStart(2, '0');
+  const jour  = String(date.getDate()).padStart(2, '0');
+  return `${annee}-${mois}-${jour}`;
+}
+
+/** Formate l'heure locale en "HH:mm". */
+function formaterHeureLocale(date: Date): string {
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${h}:${m}`;
+}
+
 @Component({
   imports: [CommonModule, FormsModule],
   selector: 'app-planification',
@@ -53,6 +68,38 @@ export class Planification implements OnInit {
   nouvelleDatePlanifiee = signal('');
   nouvelleHeure         = signal('09:00');
   nouvelIdDemande       = signal<number | null>(null);
+
+  // ─── Validation de la date (pas de date passée) ───────────────
+  /** Date minimale autorisée = aujourd'hui (format AAAA-MM-JJ). */
+  dateMin = signal(formaterDateLocale(new Date()));
+
+  /** Heure minimale : l'heure actuelle si la date choisie est aujourd'hui, sinon aucune. */
+  heureMin = computed(() =>
+    this.nouvelleDatePlanifiee() === this.dateMin()
+      ? formaterHeureLocale(new Date())
+      : null
+  );
+
+  /** Message d'erreur si la date/heure choisie est dans le passé (null si valide). */
+  erreurDate = computed((): string | null => {
+    const date  = this.nouvelleDatePlanifiee();
+    const heure = this.nouvelleHeure() || '00:00';
+
+    // Rien de saisi : le bouton gère déjà ce cas.
+    if (!date) return null;
+
+    // Jour antérieur à aujourd'hui (comparaison de chaînes AAAA-MM-JJ).
+    if (date < this.dateMin()) {
+      return 'La date ne peut pas être dans le passé. Choisissez aujourd\'hui ou une date future.';
+    }
+
+    // Aujourd'hui mais heure déjà dépassée.
+    if (date === this.dateMin() && heure < formaterHeureLocale(new Date())) {
+      return 'Cette heure est déjà passée. Choisissez une heure à venir.';
+    }
+
+    return null;
+  });
 
   // ─── Titre du mois affiché ────────────────────────────────────
   titreMois = computed(() => {
@@ -212,9 +259,11 @@ export class Planification implements OnInit {
   ouvrirModal(): void {
     this.modalOuverte.set(true);
     this.erreurModal.set(null);
-    // Pré-remplit la date avec aujourd'hui.
+    // Recalcule "aujourd'hui" à chaque ouverture (la page peut rester ouverte plusieurs jours).
     const auj = new Date();
-    this.nouvelleDatePlanifiee.set(auj.toISOString().split('T')[0]);
+    this.dateMin.set(formaterDateLocale(auj));
+    // Pré-remplit la date avec aujourd'hui (heure locale).
+    this.nouvelleDatePlanifiee.set(formaterDateLocale(auj));
   }
 
   // Ferme la modal.
@@ -225,6 +274,14 @@ export class Planification implements OnInit {
   // Crée une nouvelle collecte planifiée.
   planifierCollecte(): void {
     if (!this.nouvelleDatePlanifiee() || this.enCreation()) return;
+
+    // Bloque l'envoi si la date ou l'heure est dans le passé
+    // (le champ HTML "min" peut être contourné en tapant la date à la main).
+    const messageDate = this.erreurDate();
+    if (messageDate) {
+      this.erreurModal.set(messageDate);
+      return;
+    }
 
     this.enCreation.set(true);
     this.erreurModal.set(null);

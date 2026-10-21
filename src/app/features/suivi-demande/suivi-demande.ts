@@ -130,7 +130,7 @@ export class SuiviDemande implements OnInit {
 
         // Le paiement est considéré comme effectué lorsque la collecte
         // est terminée et qu'un prix a été proposé.
-        statut: statut === 'terminee' && d.prixPropose
+        statut: statut === 'terminee'
           ? 'fait'
           : 'attente',
       },
