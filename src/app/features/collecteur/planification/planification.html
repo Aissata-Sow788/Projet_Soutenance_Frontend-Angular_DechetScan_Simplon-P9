@@ -245,17 +245,29 @@
           </div>
         </div>
 
-        <!-- Optimisation d'itinéraire -->
+        <!-- Itinéraire du jour -->
         <div class="flex flex-col rounded-2xl bg-[#0E172B] p-5 text-white">
-          <h3 class="mb-2 font-bold">Optimisation d'itinéraire</h3>
-          <p class="text-sm leading-relaxed text-slate-300">
-            L'IA a calculé l'itinéraire le plus efficace pour vos
-            {{ collectesAujourdhui().length }} collectes du jour.
-            Gain de temps estimé : 24 min.
-          </p>
+          <h3 class="mb-2 font-bold">Itinéraire du jour</h3>
+
+          @if (collectesAItineraire().length > 0) {
+            <p class="text-sm leading-relaxed text-slate-300">
+              {{ collectesAItineraire().length }}
+              collecte{{ collectesAItineraire().length > 1 ? 's' : '' }}
+              restante{{ collectesAItineraire().length > 1 ? 's' : '' }} aujourd'hui.
+              Ouvrez le trajet dans Google Maps pour être guidé étape par étape,
+              dans l'ordre des heures planifiées.
+            </p>
+          } @else {
+            <p class="text-sm leading-relaxed text-slate-300">
+              Aucune collecte restante aujourd'hui : il n'y a pas de trajet à lancer.
+            </p>
+          }
+
           <button
             type="button"
-            class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78] sm:mt-auto"
+            (click)="lancerItineraire()"
+            [disabled]="collectesAItineraire().length === 0"
+            class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0EA5A4] py-2.5 text-sm font-bold text-white transition hover:bg-[#087C78] disabled:cursor-not-allowed disabled:opacity-50 sm:mt-auto"
           >
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -264,6 +276,10 @@
             </svg>
             Lancer l'itinéraire
           </button>
+
+          @if (messageItineraire()) {
+            <p class="mt-2 text-xs font-semibold text-amber-300">{{ messageItineraire() }}</p>
+          }
         </div>
 
       </div>

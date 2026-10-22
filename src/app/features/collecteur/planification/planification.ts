@@ -15,6 +15,18 @@ interface JourCalendrier {
   collectes: Collecte[];
 }
 
+/**
+ * Collecte pouvant éventuellement porter des coordonnées GPS.
+ * Si ton API Django les renvoie (latitude / longitude), l'itinéraire sera plus précis.
+ */
+type CollecteGeo = Collecte & {
+  latitude?: number | null;
+  longitude?: number | null;
+};
+
+/** Nombre maximum d'étapes envoyées à Google Maps (9 étapes + 1 destination). */
+const MAX_ETAPES_ITINERAIRE = 10;
+
 /** Formate une date en "AAAA-MM-JJ" selon l'heure LOCALE (évite le décalage UTC de toISOString). */
 function formaterDateLocale(date: Date): string {
   const annee = date.getFullYear();
@@ -48,7 +60,10 @@ export class Planification implements OnInit {
 
   // ─── Données brutes ───────────────────────────────────────────
   collectes = signal<Collecte[]>([]);
+  /** Demandes proposées dans le formulaire (acceptées / en attente seulement). */
   demandes  = signal<DemandeCollecte[]>([]);
+  /** Toutes les demandes, sans filtre : sert à retrouver l'adresse d'une collecte. */
+  toutesDemandes = signal<DemandeCollecte[]>([]);
 
   // ─── Calendrier ───────────────────────────────────────────────
   /** Date du mois affiché dans le calendrier. */
@@ -68,6 +83,10 @@ export class Planification implements OnInit {
   nouvelleDatePlanifiee = signal('');
   nouvelleHeure         = signal('09:00');
   nouvelIdDemande       = signal<number | null>(null);
+
+  // ─── Itinéraire ───────────────────────────────────────────────
+  /** Message affiché sous le bouton "Lancer l'itinéraire" (info ou erreur). */
+  messageItineraire = signal<string | null>(null);
 
   // ─── Validation de la date (pas de date passée) ───────────────
   /** Date minimale autorisée = aujourd'hui (format AAAA-MM-JJ). */
@@ -109,7 +128,7 @@ export class Planification implements OnInit {
     });
   });
 
-  // ─── Grille du calendrier (6 semaines × 7 jours) ─────────────
+  // ─── Grille du calendrier (5 semaines × 7 jours) ─────────────
   grille = computed((): JourCalendrier[] => {
     const mois  = this.moisAffiche();
     const debut = new Date(mois.getFullYear(), mois.getMonth(), 1);
@@ -163,6 +182,15 @@ export class Planification implements OnInit {
       );
     });
   });
+
+  /** Collectes du jour encore à faire (ni terminées, ni annulées), triées par heure. */
+  collectesAItineraire = computed(() =>
+    this.collectesAujourdhui()
+      .filter(c => c.statut !== 'terminee' && c.statut !== 'annulee')
+      .sort((a, b) =>
+        new Date(a.datePlanifiee).getTime() - new Date(b.datePlanifiee).getTime()
+      )
+  );
 
   // ─── Statistiques résumé du jour ─────────────────────────────
   nbRamassages = computed(() =>
@@ -223,6 +251,8 @@ export class Planification implements OnInit {
         // Charge ensuite les demandes pour le formulaire.
         this.demandeService.listerDemandes().subscribe({
           next: (demandes) => {
+            // Garde la liste complète pour retrouver les adresses (itinéraire).
+            this.toutesDemandes.set(demandes);
             // Ne garde que les demandes acceptées (disponibles à planifier).
             this.demandes.set(
               demandes.filter(d => d.statut === 'acceptee' || d.statut === 'en_attente')
@@ -306,6 +336,75 @@ export class Planification implements OnInit {
         this.enCreation.set(false);
       }
     });
+  }
+
+  // ─── Itinéraire ───────────────────────────────────────────────
+
+  /**
+   * Retourne l'adresse (ou les coordonnées) utilisable par Google Maps pour une collecte.
+   * Ordre de priorité : coordonnées GPS > nom du point de collecte > quartier de la demande.
+   */
+  private adresseCollecte(collecte: CollecteGeo): string | null {
+    if (collecte.latitude != null && collecte.longitude != null) {
+      return `${collecte.latitude},${collecte.longitude}`;
+    }
+
+    if (collecte.nomPoint) {
+      return `${collecte.nomPoint}, Dakar, Sénégal`;
+    }
+
+    if (collecte.idDemande != null) {
+      const demande = this.toutesDemandes().find(d => d.idDemande === collecte.idDemande);
+      if (demande?.quartier) {
+        return `${demande.quartier}, Dakar, Sénégal`;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Ouvre Google Maps avec les collectes du jour comme étapes.
+   * Le trajet part de la position actuelle du collecteur (origine non précisée).
+   */
+  lancerItineraire(): void {
+    this.messageItineraire.set(null);
+
+    // Adresses dans l'ordre des heures planifiées, sans doublons.
+    const adresses = this.collectesAItineraire()
+      .map(c => this.adresseCollecte(c as CollecteGeo))
+      .filter((a): a is string => !!a);
+    const etapesUniques = [...new Set(adresses)];
+
+    if (etapesUniques.length === 0) {
+      this.messageItineraire.set(
+        'Aucune adresse exploitable pour les collectes du jour.'
+      );
+      return;
+    }
+
+    const etapes = etapesUniques.slice(0, MAX_ETAPES_ITINERAIRE);
+
+    const params = new URLSearchParams({
+      api: '1',
+      travelmode: 'driving',
+      destination: etapes[etapes.length - 1],
+    });
+    if (etapes.length > 1) {
+      params.set('waypoints', etapes.slice(0, -1).join('|'));
+    }
+
+    if (etapesUniques.length > MAX_ETAPES_ITINERAIRE) {
+      this.messageItineraire.set(
+        `Google Maps accepte ${MAX_ETAPES_ITINERAIRE} étapes maximum : les ${MAX_ETAPES_ITINERAIRE} premières ont été envoyées.`
+      );
+    }
+
+    window.open(
+      `https://www.google.com/maps/dir/?${params.toString()}`,
+      '_blank',
+      'noopener'
+    );
   }
 
   // Navigue vers le détail d'une collecte.
