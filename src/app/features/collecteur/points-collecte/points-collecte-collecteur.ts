@@ -95,7 +95,7 @@ export class PointsCollecteCollecteur implements OnInit, OnDestroy {
       // Vérifie le filtre du quartier.
       const correspondQuartier =
         quartier === 'Tous' ||
-        this.determinerQuartier(point) === quartier;
+        this.localisationContientQuartier(point, quartier);
 
       // Le point doit respecter les deux filtres.
       return correspondRecherche && correspondQuartier;
@@ -170,21 +170,12 @@ export class PointsCollecteCollecteur implements OnInit, OnDestroy {
     });
   }
 
-  // Détermine le quartier à partir des coordonnées GPS.
-  determinerQuartier(point: PointCollecte): string {
+  // Le quartier n'étant pas stocké séparément, le filtre vérifie l'adresse saisie.
+  private localisationContientQuartier(point: PointCollecte, quartier: string): boolean {
+    const normaliser = (texte: string) =>
+      texte.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
-    if (
-      point.latitude > 14.72 &&
-      point.longitude < -17.48
-    ) {
-      return 'Almadies';
-    }
-
-    if (point.longitude > -17.44) {
-      return 'Plateau';
-    }
-
-    return 'Grand Dakar';
+    return normaliser(point.ville ?? '').includes(normaliser(quartier));
   }
 
   // Met à jour la recherche lorsque l'utilisateur saisit du texte.

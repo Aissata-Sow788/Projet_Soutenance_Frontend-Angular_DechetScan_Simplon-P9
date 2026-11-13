@@ -390,6 +390,15 @@
                 <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-current"></span>
                 {{ libelleStatut(c.statutValidation) }}
               </span>
+              @if (c.statutValidation === 'en_attente') {
+                <button
+                  type="button"
+                  (click)="ouvrirPopupValidation(c)"
+                  class="mt-3 flex min-h-10 w-full items-center justify-center rounded-lg bg-[#0EA5A4] px-4 py-2 text-xs font-bold text-white hover:bg-[#087C78]"
+                >
+                  Traiter la demande
+                </button>
+              }
             </div>
 
           </article>
@@ -511,22 +520,32 @@
                   <td class="px-4 py-3.5 text-center">
                     <div class="relative inline-block" (click)="$event.stopPropagation()">
 
-                      <button
-                        type="button"
-                        (click)="toggleMenu(c.idCollecteur, $event)"
-                        aria-label="Ouvrir les actions du collecteur"
-                        class="flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                      >
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                             aria-hidden="true">
-                          <circle cx="12" cy="5" r="1"/>
-                          <circle cx="12" cy="12" r="1"/>
-                          <circle cx="12" cy="19" r="1"/>
-                        </svg>
-                      </button>
+                      @if (c.statutValidation === 'en_attente') {
+                        <button
+                          type="button"
+                          (click)="ouvrirPopupValidation(c)"
+                          class="whitespace-nowrap rounded-lg bg-[#0EA5A4] px-3 py-2 text-xs font-bold text-white hover:bg-[#087C78]"
+                        >
+                          Traiter
+                        </button>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="toggleMenu(c.idCollecteur, $event)"
+                          aria-label="Ouvrir les actions du collecteur"
+                          class="flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                        >
+                          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                               aria-hidden="true">
+                            <circle cx="12" cy="5" r="1"/>
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="12" cy="19" r="1"/>
+                          </svg>
+                        </button>
+                      }
 
-                      @if (menuOuvert() === c.idCollecteur) {
+                      @if (c.statutValidation !== 'en_attente' && menuOuvert() === c.idCollecteur) {
                         <div class="absolute right-0 z-30 mt-1 w-40 rounded-xl border border-slate-100 bg-white py-1.5 text-left shadow-xl">
 
                           <button
@@ -542,23 +561,6 @@
                             </svg>
                             Voir le profil
                           </button>
-
-                          @if (c.statutValidation === 'en_attente') {
-                            <div class="mx-3 my-1 h-px bg-slate-100"></div>
-                            <button
-                              type="button"
-                              (click)="ouvrirPopupValidation(c)"
-                              class="flex w-full items-center gap-2.5 px-3.5 py-2 text-[12px] font-semibold text-[#0EA5A4] hover:bg-[#F0FDFA]"
-                            >
-                              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none"
-                                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                   aria-hidden="true">
-                                <path d="M9 12l2 2 4-4"/>
-                                <circle cx="12" cy="12" r="9"/>
-                              </svg>
-                              Valider / Rejeter
-                            </button>
-                          }
 
                           @if (c.statutValidation === 'valide') {
                             <div class="mx-3 my-1 h-px bg-slate-100"></div>
@@ -825,4 +827,3 @@
     </div>
   </div>
 }
-

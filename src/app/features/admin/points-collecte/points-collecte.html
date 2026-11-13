@@ -155,13 +155,8 @@
             class="relative min-h-[312px] rounded-2xl bg-white px-5 py-5 shadow-sm"
           >
 
-            <!-- Zone + statut -->
+            <!-- La zone n'étant pas connue sans champ de quartier, seul le statut est affiché. -->
             <div class="flex items-center justify-between gap-2">
-
-              <span class="rounded-full bg-[#E8F1FF] px-3 py-1 text-[9px] font-bold leading-tight text-[#315273]">
-                Zone {{ quartier(point) }}
-              </span>
-
               @if (point.statut === 'actif') {
                 <span class="flex items-center gap-1 rounded-full bg-[#CFFAF0] px-2.5 py-1 text-[8px] font-extrabold text-[#087C78]">
                   <span class="h-1.5 w-1.5 rounded-full bg-[#0EA5A4]"></span>

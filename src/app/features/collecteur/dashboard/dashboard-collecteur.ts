@@ -61,6 +61,17 @@ export class DashboardCollecteur implements OnInit {
       .slice(0, 4)
   );
 
+  /** Affiche toutes les catégories d'une demande, y compris les anciennes demandes mono-déchet. */
+  nomsDechetsDemande(demande: DemandeCollecte): string {
+    const noms = [...new Set(
+      demande.details
+        .map(detail => detail.typeDechet?.nom?.trim())
+        .filter((nom): nom is string => Boolean(nom))
+    )];
+
+    return noms.join(', ') || demande.typeDechet?.nom || 'Inconnu';
+  }
+
   // Prochaine collecte planifiée
   prochaineCollecte = computed(() =>
     [...this.collectes()]

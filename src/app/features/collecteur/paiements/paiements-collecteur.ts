@@ -304,6 +304,17 @@ export class PaiementsCollecteur implements OnInit {
     return nom || vente.emailUtilisateur || 'Citoyen';
   }
 
+  /** Affiche toutes les catégories vendues, avec repli sur le champ historique. */
+  nomsDechets(vente: VenteDechet): string {
+    const noms = [...new Set(
+      vente.details
+        .map(detail => detail.typeDechet?.nom?.trim())
+        .filter((nom): nom is string => Boolean(nom))
+    )];
+
+    return noms.join(', ') || vente.typeDechet?.nom || '—';
+  }
+
   /** Formate une date ISO en "23 sept. 2026". */
   formaterDate(dateIso: string): string {
     return new Date(dateIso).toLocaleDateString('fr-FR', {

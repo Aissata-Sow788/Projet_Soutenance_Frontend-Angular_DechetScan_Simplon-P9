@@ -46,7 +46,7 @@ export class PointsCollecte implements OnInit, OnDestroy {
 
       const correspondQuartier =
         quartierSelectionne === 'Tous' ||
-        this.determinerQuartier(point) === quartierSelectionne;
+        this.localisationContientQuartier(point, quartierSelectionne);
 
       return correspondRecherche && correspondQuartier;
     });
@@ -167,23 +167,12 @@ export class PointsCollecte implements OnInit, OnDestroy {
     return this.points().filter(point => point.statut === 'actif').length;
   }
 
-  // Détermine le quartier à partir des coordonnées.
-  // À remplacer par un vrai champ quartier si ton API en fournit un.
-  private determinerQuartier(point: PointCollecte): string {
-    if (point.latitude > 14.72 && point.longitude < -17.48) {
-      return 'Almadies';
-    }
+  // Le quartier n'étant pas stocké séparément, le filtre utilise l'adresse saisie.
+  private localisationContientQuartier(point: PointCollecte, quartier: string): boolean {
+    const normaliser = (texte: string) =>
+      texte.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
-    if (point.longitude > -17.44) {
-      return 'Plateau';
-    }
-
-    return 'Grand Dakar';
-  }
-
-  // Libellé du quartier affiché sur la carte.
-  quartier(point: PointCollecte): string {
-    return this.determinerQuartier(point);
+    return normaliser(point.ville ?? '').includes(normaliser(quartier));
   }
 
   // Ouvre le détail du point.

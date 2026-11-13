@@ -41,7 +41,7 @@ export class DemandesCollecte implements OnInit {
     if (texte) {
       resultat = resultat.filter(d =>
         (d.prenomUtilisateur + ' ' + d.nomUtilisateur).toLowerCase().includes(texte) ||
-        d.typeDechet?.nom.toLowerCase().includes(texte) ||
+        this.nomsDechetsDemande(d).toLowerCase().includes(texte) ||
         d.quartier.toLowerCase().includes(texte)
       );
     }
@@ -76,6 +76,17 @@ export class DemandesCollecte implements OnInit {
   pages = computed(() =>
     Array.from({ length: this.totalPages() }, (_, i) => i + 1)
   );
+
+  /** Construit la liste des catégories depuis les détails ou le champ historique. */
+  nomsDechetsDemande(demande: DemandeCollecte): string {
+    const noms = [...new Set(
+      demande.details
+        .map(detail => detail.typeDechet?.nom?.trim())
+        .filter((nom): nom is string => Boolean(nom))
+    )];
+
+    return noms.join(', ') || demande.typeDechet?.nom || '—';
+  }
 
   // Expose Math pour les calculs dans le template.
   readonly Math = Math;
